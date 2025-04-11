@@ -1,0 +1,170 @@
+#container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    font-family: "Montserrat", sans-serif;
+    min-height: 100vh;
+    margin: -20px 0 50px;
+}
+
+
+.container {
+    max-width: 700px;
+    width: 100%;
+    padding: 25px 30px;
+    background: #fc6500;
+    border-radius: 5px;
+
+
+}
+
+.container .title {
+    font-size: 25px;
+    font-weight: 500;
+    display: grid;
+    align-items: center;
+    justify-content: center;
+
+
+    span {
+        font-size: 14px;
+        margin-left: 10px;
+        color: #be4d04;
+    }
+}
+
+.container .registerForm {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    margin: 10px 12px 0;
+    background: #2c2c2c;
+}
+
+.registerForm .registerForm-group {
+    margin: 8px 10px;
+    margin-bottom: 15px;
+    width: calc(100%/2 - 20px);
+}
+
+/* .registerForm span {
+    display: block;
+    font-weight: 500;
+    margin-bottom: 5px;
+} */
+
+.registerForm-group input {
+    height: 40px;
+    width: 100%;
+    outline: none;
+    border-radius: 5px;
+    border: 1px solid #2c2c2c;
+    padding-left: 15px;
+    border-bottom-width: 2px;
+    transition: all 0.3s ease;
+
+}
+
+.registerForm-group label {
+    color: red;
+    font-size: 12px;
+    font-weight: 500;
+}
+
+.registerForm .registerForm-button {
+    width: 100%;
+    height: 40px;
+    margin: 20px 10px;
+}
+
+.registerForm .registerForm-button button {
+    width: 100%;
+    height: 100%;
+    outline: none;
+    cursor: pointer;
+    background: #fc6500;
+    color: #fff;
+    font-size: 16px;
+    font-weight: 500;
+    border: none;
+    border-radius: 5px;
+    
+}
+
+.registerForm .registerForm-button button:hover{
+    /* background: #fff;
+    color: #fc6500; */
+    transform: scale(0.95);
+}
+
+/* navbar */
+nav {
+    padding: calc(8px - 2px) 0;
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-pack: justify;
+    -ms-flex-pack: justify;
+    justify-content: space-between;
+    -webkit-box-align: center;
+    -ms-flex-align: center;
+    align-items:center;
+    width: 50%;
+    max-width: 1500px;
+    margin-inline: auto;
+  }
+
+  nav a {
+    gap: 4px;
+    padding: 4px;
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-align: center;
+    -ms-flex-align: center;
+    align-items: center;
+    color: var(--second);
+    font-weight: bold;
+    text-decoration: none;
+  }
+  nav a:hover{
+    transform: scale(0.95);
+  }
+
+  #Linkicon {
+    width: 30px;
+    height: 30px;
+    color: var(--second);
+
+}
+  
+
+@media(max-width: 584px) {
+    .container{
+        max-width: 100%;
+    }    
+    .registerForm .registerForm-group {
+        margin-bottom: 15px;
+        width: 100%;
+    }
+    .container .registerForm{
+        max-height: 400px;
+        overflow-y: scroll;
+    } 
+
+    .container .registerForm::-webkit-scrollbar{
+        width: 0;
+    }
+
+    .registerForm .registerForm-button {
+        margin: 20px 10px;
+    }
+
+    nav {
+        width: 100%;
+    }
+    nav a span {
+        display: none;
+      }
+}
