@@ -14,9 +14,11 @@ import Notification, { notificationLoader } from "./pages/Notification.jsx";
 import RegisterUser from "./pages/register_user/Register_user.jsx";
 import LoginForm, { loginFormLoader } from "./pages/Login";
 import Error from "./pages/Error.jsx";
+import AddAppoin, { AddAppoinLoader } from './pages/appoinment/Add_appoin.jsx';
 //import { MyRoutes } from './routers/routes.jsx';
 // Actions
 import { logoutAction } from "./actions/logout.js";
+
 
 // const router = createBrowserRouter([<MyRoutes /> ]);
 
@@ -106,6 +108,13 @@ const router = createBrowserRouter([
         path: "notification",
         element: <Notification />,
         loader: notificationLoader,
+        /*action: expensesAction, */
+        errorElement: <Error />
+      },
+      {
+        path: "addAppoin",
+        element: <AddAppoin />,
+        loader: AddAppoinLoader,
         /*action: expensesAction, */
         errorElement: <Error />
       },
