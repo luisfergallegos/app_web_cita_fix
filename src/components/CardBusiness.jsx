@@ -3,9 +3,12 @@ import { BuildingStorefrontIcon, MapPinIcon, PhoneIcon, CalendarDaysIcon } from 
 import './CardBusiness.css';
 // assents
 import Store from "../assets/business.png";
+// rrd imports
+import { useNavigate } from 'react-router-dom';
 
 
-export function CardBusiness({ empresa }) {
+export function CardBusiness({ userId, userName, empresa }) {
+    const navigate = useNavigate();
     // Function to convert Base64 string to binary data
     const arrayBufferToBase64 = (buffer) => {
         var binary = '';
@@ -19,13 +22,12 @@ export function CardBusiness({ empresa }) {
         phone, Horario } = empresa;
     //console.log(PHOTO.data);
 
-    const TestClic = () => {
-        console.log('Nueva Cita Id_Business :'+BUSSINESS_ID);
-        console.log('           id_User :'+USER_ID);
+    const desplegarPantallaAddAppoin = () => {
+        navigate("/addAppoin",{state: {userId:userId,userName:userName,business:empresa}});
     }
-    
+
     return (
-        <div className='CardContainer' onClick={TestClic}>
+        <div className='CardContainer' onClick={desplegarPantallaAddAppoin}>
             <div className='CardContainer_Icon'>
                 {
                     PHOTO === null ? <img id='store' src={Store} /> :

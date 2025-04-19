@@ -13,13 +13,17 @@ import CardBusiness from '../../components/CardBusiness.jsx';
 export function findBusinessLoader() {
     const sCorreo = fetchData("correo");
     const sPassword = fetchData("pwd");
-    const empresas = fetchData("test") ?? [];
-    return { sCorreo, sPassword, empresas };
+    //Solicitar por GET
+    const empresas = fetchData("bussiness") ?? [];
+    const sUserCitaFix = fetchData("UserCitaFix") ?? [];
+    return { sCorreo, sPassword, empresas, sUserCitaFix };
 }
 
 export function FindBusiness() {
     const navigate = useNavigate();
-    const { sCorreo, sPassword, empresas } = useLoaderData();
+    const { sCorreo, sPassword, empresas, sUserCitaFix } = useLoaderData();
+    const userId = sUserCitaFix['USER_ID'];
+    const userName = sUserCitaFix['first_name'] +' '+sUserCitaFix['last_name'];
     useEffect(() => {
         if (sCorreo === null && sPassword === null) {
             navigate("/");
@@ -54,7 +58,7 @@ export function FindBusiness() {
                 searchText !== '' ? (
                     <div className='empresas'>
                         {
-                            filteredNames.map((empresa) => (<CardBusiness key={empresa.id} empresa={empresa} />))
+                            filteredNames.map((empresa) => (<CardBusiness key={empresa.id} userId={userId} userName={userName} empresa={empresa}  />))
                         }
                     </div>
                 )
@@ -69,7 +73,7 @@ export function FindBusiness() {
                             <div className='buildListRandom'>
                                 <p>Sugerencias para ti</p>
                                 <div className='empresas'>
-                                    <CardBusiness key={empresas[index].id} empresa={empresas[index]} />
+                                    <CardBusiness key={empresas[index].id} userId={userId} userName={userName} empresa={empresas[index]} />
                                 </div>
 
                             </div>
