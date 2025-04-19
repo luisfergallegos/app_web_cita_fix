@@ -1,14 +1,16 @@
 // rrd imports
 import { useLoaderData, useNavigate } from 'react-router-dom';
 import { fetchData } from "../../Wrapper.js";
-import { useEffect, useState } from "react";
+import { forwardRef, useEffect, useState } from "react";
 import { useLocation } from 'react-router-dom';
 // assets
 import './Add_appoin.css';
 import Store from "../../assets/business.png";
 // Library
 import { MapPinIcon, PhoneIcon, CalendarDaysIcon, CalendarDateRangeIcon } from '@heroicons/react/24/solid';
-import moment from 'moment';
+import DatePicker from 'react-datepicker';
+import "react-datepicker/dist/react-datepicker.css";
+//import moment from 'moment';
 
 // loader
 export function AddAppoinLoader() {
@@ -24,23 +26,23 @@ export function AddAppoinLoader() {
 export function AddAppoin() {
     const location = useLocation();
     const navigate = useNavigate();
-    const { sCorreo, sPassword, _dias, citas  } = useLoaderData();
+    const { sCorreo, sPassword, _dias, citas } = useLoaderData();
     useEffect(() => {
         if (sCorreo === null && sPassword === null) {
             navigate("/");
         }
     }, []);
-    const [bAccederUnaVezFecha, setbAccederUnaVezFecha] = useState(true);
-    
-    moment.defineLocale('es', {
+    /* const [bAccederUnaVezFecha, setbAccederUnaVezFecha] = useState(true); */
+
+    /* moment.defineLocale('es', {
         months: 'Enero_Febrero_Marzo_Abril_Mayo_Junio_Julio_Agosto_Septiembre_Octubre_Noviembre_Diciembre'.split('_'),
         monthsShort: 'Enero._Feb._Mar_Abr._May_Jun_Jul._Ago_Sept._Oct._Nov._Dec.'.split('_'),
         weekdays: 'Domingo_Lunes_Martes_Miercoles_Jueves_Viernes_Sabado'.split('_'),
         weekdaysShort: 'Dom._Lun._Mar._Mier._Jue._Vier._Sab.'.split('_'),
         weekdaysMin: 'Do_Lu_Ma_Mi_Ju_Vi_Sa'.split('_')
-  });
+  }); 
+    let _selectedDate = moment(new Date()).format('dddd, d MMMM y'); */
 
-    let _selectedDate = moment(new Date()).format('dddd, d MMMM y');
     const { BUSSINESS_ID, USER_ID, DORSL, PHOTO, CATEGORY, SERVICE_LEVEL,
         ADDRESS_FIRST, ADDRESS_SECOND, POSTAL_CODE, CITY, STATE,
         phone, Horario } = location.state.business;
@@ -51,9 +53,17 @@ export function AddAppoin() {
         bytes.forEach((b) => binary += String.fromCharCode(b));
         return btoa(binary);
     };
-    const ModbAccederUnaVezFecha = () => {
+    /* const ModbAccederUnaVezFecha = () => {
         setbAccederUnaVezFecha(!bAccederUnaVezFecha);
-    };
+    }; */
+    const [startDate, setStartDate] = useState(new Date());
+    const ExampleCustomInput = forwardRef(
+        ({ value, onClick, className }, ref) => (
+            <label className={className} onClick={onClick} ref={ref}>
+                <p>{value} ‒ Selecciona una hora</p>
+            </label>
+        ),
+    );
     return (
         <div className="AddAppoinContainer">
             <div>
@@ -100,9 +110,15 @@ export function AddAppoin() {
                     <CalendarDateRangeIcon width={30} />
                 </div>
                 <h2>Select a Date</h2>
+                <DatePicker
+                    dateFormat="dd/MM/yyyy"
+                    excludeDates={[new Date(2025, 3, 20), new Date(2025, 3, 23)]}
+                    selected={startDate} onChange={(date) => setStartDate(date)}
+                    customInput={<ExampleCustomInput className="example-custom-input" />}
+                />
                 <div >-----------------------------</div>
-                { bAccederUnaVezFecha && <p>Selecciona una fecha ‒ Selecciona una hora</p>}
-                <p>{_selectedDate}</p>
+                
+
             </div>
         </div>);
 }
