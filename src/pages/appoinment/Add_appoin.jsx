@@ -10,6 +10,7 @@ import Store from "../../assets/business.png";
 import { MapPinIcon, PhoneIcon, CalendarDaysIcon, CalendarDateRangeIcon } from '@heroicons/react/24/solid';
 import DatePicker from 'react-datepicker';
 import "react-datepicker/dist/react-datepicker.css";
+import SelectDateTime from '../../components/selectDateTime.jsx';
 //import moment from 'moment';
 
 // loader
@@ -17,16 +18,63 @@ export function AddAppoinLoader() {
     const sCorreo = fetchData("correo");
     const sPassword = fetchData("pwd");
     //Solicitar por GET
-    const _dias = fetchData("appoinBussDateDays") ?? [];
+    const tempListDias = fetchData("appoinBussDateDays") ?? [];
     const citas = fetchData("appoinBussDate") ?? [];
+    const _dias = defineInitialDate(tempListDias);
+    /* const _excludeDates = selectableDayPredicate(_dias); */
     return { sCorreo, sPassword, _dias, citas };
 }
 
+function defineInitialDate(_dias) {
+    var tempdias = [];
+    //Convert String to Date
+    for (let index = 0; index < _dias.length; index++) {
+        //console.log(_dias[index]);
+        var diaAux = parseInt(_dias[index].substring(0, 2));
+        var MesAux = parseInt(_dias[index].substring(3, 5)) - 1;
+        var AñoAux = parseInt(_dias[index].substring(6, 10));
+        //console.log(diaAux+'_'+MesAux+'_'+AñoAux);
+        var Aux = new Date(AñoAux, MesAux, diaAux);
+        tempdias.push(Aux);
+    }
+    return tempdias;
+}
+
+/* function selectableDayPredicate(_dias) {
+    var _tempdias = [];
+    var _initialDate = _dias[0];
+    var _lastDate = _dias[_dias.length - 1];
+    var formattedDate = _initialDate;
+    while (formattedDate <= _lastDate) {       
+        var bformattedDate = bBuscar(formattedDate, _dias);       
+        if (bformattedDate === true) {
+            _tempdias.push(new Date(formattedDate.getFullYear(), formattedDate.getMonth(), formattedDate.getDate()));
+        }
+        // Increment the date
+        var newDate = formattedDate.setDate(formattedDate.getDate() + 1);
+        formattedDate = new Date(newDate);
+    }
+
+    return _tempdias;
+} */
+
+/* function bBuscar(sDay, _dias) {
+    var bAux = true;
+    for (let index = 0; index < _dias.length; index++) {
+        var element = _dias[index];
+        if (element.toLocaleDateString() === sDay.toLocaleDateString()) {
+            bAux = false;
+            break;
+        }
+    }
+    return bAux;
+} */
 
 export function AddAppoin() {
     const location = useLocation();
     const navigate = useNavigate();
     const { sCorreo, sPassword, _dias, citas } = useLoaderData();
+
     useEffect(() => {
         if (sCorreo === null && sPassword === null) {
             navigate("/");
@@ -46,6 +94,8 @@ export function AddAppoin() {
     const { BUSSINESS_ID, USER_ID, DORSL, PHOTO, CATEGORY, SERVICE_LEVEL,
         ADDRESS_FIRST, ADDRESS_SECOND, POSTAL_CODE, CITY, STATE,
         phone, Horario } = location.state.business;
+    const initialDate = _dias[0];
+    const lastDate = _dias[_dias.length - 1];
     // Function to convert Base64 string to binary data
     const arrayBufferToBase64 = (buffer) => {
         var binary = '';
@@ -56,11 +106,14 @@ export function AddAppoin() {
     /* const ModbAccederUnaVezFecha = () => {
         setbAccederUnaVezFecha(!bAccederUnaVezFecha);
     }; */
-    const [startDate, setStartDate] = useState(new Date());
+    const [startDate, setStartDate] = useState();
+    const [selectedTime, setselectedTime] = useState();
     const ExampleCustomInput = forwardRef(
         ({ value, onClick, className }, ref) => (
             <label className={className} onClick={onClick} ref={ref}>
-                <p>{value} ‒ Selecciona una hora</p>
+                {startDate ? <p>{value} ‒ Selecciona una hora</p> :
+                <p>Selecciona una fecha ‒ { selectedTime ? selectedTime : 'Selecciona una hora' }</p>                
+                }
             </label>
         ),
     );
@@ -109,15 +162,19 @@ export function AddAppoin() {
                 <div>
                     <CalendarDateRangeIcon width={30} />
                 </div>
-                <h2>Select a Date</h2>
                 <DatePicker
                     dateFormat="dd/MM/yyyy"
-                    excludeDates={[new Date(2025, 3, 20), new Date(2025, 3, 23)]}
-                    selected={startDate} onChange={(date) => setStartDate(date)}
+                    excludeDates={_dias}
+                    selected={startDate}
+                    onChange={(date) => setStartDate(date)}
+                    minDate={initialDate}
+                    maxDate={lastDate}
                     customInput={<ExampleCustomInput className="example-custom-input" />}
                 />
+                {startDate && <SelectDateTime citas={citas} 
+                _selectedDate={startDate}  /> } 
                 <div >-----------------------------</div>
-                
+
 
             </div>
         </div>);
