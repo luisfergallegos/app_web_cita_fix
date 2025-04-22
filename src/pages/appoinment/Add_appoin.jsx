@@ -1,6 +1,6 @@
 // rrd imports
 import { useLoaderData, useNavigate } from 'react-router-dom';
-import { fetchData } from "../../Wrapper.js";
+import { fetchData, dateSpanish } from "../../Wrapper.js";
 import { forwardRef, useEffect, useState } from "react";
 import { useLocation } from 'react-router-dom';
 // assets
@@ -10,7 +10,6 @@ import Store from "../../assets/business.png";
 import { MapPinIcon, PhoneIcon, CalendarDaysIcon, CalendarDateRangeIcon } from '@heroicons/react/24/solid';
 import DatePicker from 'react-datepicker';
 import "react-datepicker/dist/react-datepicker.css";
-import SelectDateTime from '../../components/selectDateTime.jsx';
 //import moment from 'moment';
 
 // loader
@@ -108,15 +107,28 @@ export function AddAppoin() {
     }; */
     const [startDate, setStartDate] = useState();
     const [selectedTime, setselectedTime] = useState();
+    const [cita, setcita] = useState([]);
     const ExampleCustomInput = forwardRef(
         ({ value, onClick, className }, ref) => (
             <label className={className} onClick={onClick} ref={ref}>
-                {startDate ? <p>{value} ‒ Selecciona una hora</p> :
-                <p>Selecciona una fecha ‒ { selectedTime ? selectedTime : 'Selecciona una hora' }</p>                
+                {startDate ? <p>{dateSpanish(startDate)} ‒ {selectedTime ? selectedTime : 'Selecciona una hora'} </p> :
+                    <p>Selecciona una fecha ‒ Selecciona una hora</p>
                 }
             </label>
         ),
     );
+    function SelectDateTime(date) {
+        var tempcita = [];
+        for (let index = 0; index < citas.length; index++) {
+            var parts = citas[index]['APPOINTMENT_DATE'].split('-');
+            var formattedDate = new Date(parts[0], parts[1] - 1, parts[2]);
+            if (formattedDate.toLocaleDateString() == date.toLocaleDateString()) {
+                tempcita.push(citas[index]['APPOINTMENT']);
+            }
+        }
+        setcita(tempcita);
+
+    }
     return (
         <div className="AddAppoinContainer">
             <div>
@@ -166,13 +178,27 @@ export function AddAppoin() {
                     dateFormat="dd/MM/yyyy"
                     excludeDates={_dias}
                     selected={startDate}
-                    onChange={(date) => setStartDate(date)}
+                    onChange={(date) => { setStartDate(date); SelectDateTime(date); setselectedTime() }}
                     minDate={initialDate}
                     maxDate={lastDate}
                     customInput={<ExampleCustomInput className="example-custom-input" />}
                 />
-                {startDate && <SelectDateTime citas={citas} 
-                _selectedDate={startDate}  /> } 
+                {cita[0] &&
+                    cita[0].map(({ APPOINTMENT_TIME, STATUS }, index) =>
+                    (
+                        <div key={APPOINTMENT_TIME}
+                            style={STATUS === 'No' ?
+                                { background: 'grey' } :
+                                { background: '#e0e0e0' }
+                            }
+                            onClick={() =>
+                                setselectedTime(APPOINTMENT_TIME)
+
+                            }  >
+                            <label>{APPOINTMENT_TIME} </label>
+                        </div>
+                    ))
+                }
                 <div >-----------------------------</div>
 
 
