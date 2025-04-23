@@ -5,6 +5,7 @@ import { fetchData } from "../../Wrapper.js";
 import { useEffect, useState } from "react";
 // assets
 import './Find_business.css';
+import { urlApi } from "../../styles/Constants.jsx";
 import illustration from "../../assets/search_grey.png";
 import { MagnifyingGlassIcon } from '@heroicons/react/24/solid';
 import CardBusiness from '../../components/CardBusiness.jsx';
@@ -13,25 +14,25 @@ import CardBusiness from '../../components/CardBusiness.jsx';
 export function findBusinessLoader() {
     const sCorreo = fetchData("correo");
     const sPassword = fetchData("pwd");
-    //Solicitar por GET
-    const empresas = fetchData("bussiness") ?? [];
     const sUserCitaFix = fetchData("UserCitaFix") ?? [];
-    return { sCorreo, sPassword, empresas, sUserCitaFix };
+    return { sCorreo, sPassword, sUserCitaFix };
 }
+
 
 export function FindBusiness() {
     const navigate = useNavigate();
-    const { sCorreo, sPassword, empresas, sUserCitaFix } = useLoaderData();
+    const { sCorreo, sPassword, sUserCitaFix } = useLoaderData();
+    const [loading, setLoading] = useState(true);
+    const [empresas, setEmpresas] = useState([]);
+    const [index, setIndex] = useState();
+
+
     const userId = sUserCitaFix['USER_ID'];
-    const userName = sUserCitaFix['first_name'] +' '+sUserCitaFix['last_name'];
-    useEffect(() => {
-        if (sCorreo === null && sPassword === null) {
-            navigate("/");
-        }
-    }, []);
+    const userName = sUserCitaFix['first_name'] + ' ' + sUserCitaFix['last_name'];
     const [searchText, setsearchText] = useState('');
     const [filteredNames, setfilteredNames] = useState([]);
-    const index = Math.floor(Math.random() * empresas.length);
+    
+
     const handleChange = evt => {
         const tempList = [];
         const value = evt.target.value;
@@ -47,6 +48,46 @@ export function FindBusiness() {
         }
         setfilteredNames(tempList);
     };
+
+    useEffect(() => {
+        const fData = async () => {
+            const userId = sUserCitaFix['USER_ID'];
+            //Solicitar por GET
+            var options = {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                }
+            }
+            try {
+                const response = await fetch(`${urlApi}bussiness?user_id=${userId}&latitude=4&longitude=5&radio=6`, options);
+                if (!response.ok) {
+                    console.log(`Error getting empresas.`);
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                const json = await response.json();
+                setEmpresas(json['data']);
+                setIndex(Math.floor(Math.random() * empresas.length));
+                setLoading(false);
+            }
+            catch (e) {
+                return;
+            }
+
+
+        };
+        if (sCorreo === null && sPassword === null) {
+            navigate("/");
+        }
+        fData();
+    }, []);
+
+    if (loading) {
+        return <p>Loading...</p>;
+    }
+
+    
     return (
         <div className="FindBusinessContainer">
             <div className='searchContainer'>
@@ -58,7 +99,9 @@ export function FindBusiness() {
                 searchText !== '' ? (
                     <div className='empresas'>
                         {
-                            filteredNames.map((empresa) => (<CardBusiness key={empresa.id} userId={userId} userName={userName} empresa={empresa}  />))
+                            empresas &&
+                            filteredNames.map((empresa) => (<CardBusiness key={empresa.id} userId={userId} userName={userName} empresa={empresa} />))
+
                         }
                     </div>
                 )
@@ -73,7 +116,7 @@ export function FindBusiness() {
                             <div className='buildListRandom'>
                                 <p>Sugerencias para ti</p>
                                 <div className='empresas'>
-                                    <CardBusiness key={empresas[index].id} userId={userId} userName={userName} empresa={empresas[index]} />
+                                    <CardBusiness key={empresas[index]['BUSSINESS_ID']} userId={userId} userName={userName} empresa={empresas[index]} />
                                 </div>
 
                             </div>

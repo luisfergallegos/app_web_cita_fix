@@ -3,6 +3,7 @@ import React from "react";
 import { toast } from "react-toastify";
 import './SignIn.css';
 import { Link, useNavigate } from "react-router-dom";
+import { urlApi } from "../../styles/Constants.jsx";
 // rrd imports
 import { fetchData } from "../../Wrapper.js";
 
@@ -21,19 +22,59 @@ function SingIn() {
         });
     };
 
-    const handleOnSubmit = evt => {
+    const handleOnSubmit = async evt => {
         evt.preventDefault();
         const { sCorreo, sPassword } = state;
-        //alert(`You are login with email: ${sCorreo} and password: ${sPassword}`);
-        console.log("correo " + sCorreo);
-        console.log("pwd " + sPassword);
-        localStorage.setItem("correo", JSON.stringify(sCorreo));
-        localStorage.setItem("pwd", JSON.stringify(sPassword));
-        //obtener nombre
-        const sUserCitaFix = fetchData("UserCitaFix") ?? [];
-        var userName = sUserCitaFix['first_name'];
-        navigate(`/`,{ replace: true }); // <-- redirect
-        return toast.success(`Bienvenido, ${userName}`);
+
+        var options = {  
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json',
+                'x-citafix-ps': sPassword
+            }
+          }
+        try {
+            const response = await fetch(`${urlApi}login?email=${sCorreo}`, options);            
+            if (!response.ok) {
+                alert(`No se pudo iniciar sesión con esas credenciales`);
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            const json = await response.json();
+            if(json['sucess']){
+                localStorage.setItem("correo", '');
+                localStorage.setItem("pwd", '');
+                localStorage.setItem("tokenH", '');
+                localStorage.setItem("BusinessCitaFix", '');
+                localStorage.setItem("UserCitaFix", '');
+
+                localStorage.setItem("correo", JSON.stringify(sCorreo));
+                localStorage.setItem("pwd", JSON.stringify(sPassword));
+                try {
+                    const response = await fetch( `${urlApi}usr?email=${sCorreo}`, options);            
+                    if (!response.ok) {
+                        console.log(`No se pudo obtener informacion del usuario`);
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    const json = await response.json();
+                    //obtener nombre
+                    localStorage.setItem("UserCitaFix", JSON.stringify(json['data']));
+                    var userName = json['data']['first_name'];
+                    navigate(`/`,{ replace: true }); // <-- redirect
+                    return toast.success(`Bienvenido, ${userName}`);
+                }
+                catch (e) {
+                    return;
+                } 
+            }
+            
+          } catch (e) {
+            return;
+          } 
+            
+
+        
+        
 
     };
     function signInAction() {

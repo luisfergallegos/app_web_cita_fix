@@ -59,6 +59,9 @@ export function Sidebar({ sidebarOpen, setSidebarOpen }) {
         // delete tha user
         localStorage.removeItem("correo");
         localStorage.removeItem("pwd");
+        localStorage.removeItem("tokenH");
+        localStorage.removeItem("BusinessCitaFix");
+        localStorage.removeItem("UserCitaFix");
         navigate(`/`, { replace: true }); // <-- redirect
         toast.success('Regresa pronto!');
     }

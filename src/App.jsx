@@ -92,7 +92,7 @@ const router = createBrowserRouter([
         path: "findBusiness",
         element: <FindBusiness />,
         loader: findBusinessLoader,
-        /*action: expensesAction, */
+        /* action: findBusinessAction, */
         errorElement: <Error />
       },
 
