@@ -71,12 +71,8 @@ function SingIn() {
           } catch (e) {
             return;
           } 
-            
-
-        
-        
-
     };
+
     function signInAction() {
         /* if (confirm("Delete user and all data?")) {
             
