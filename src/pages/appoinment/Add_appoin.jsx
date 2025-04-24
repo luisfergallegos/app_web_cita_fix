@@ -6,6 +6,8 @@ import { useLocation } from 'react-router-dom';
 // assets
 import './Add_appoin.css';
 import Store from "../../assets/business.png";
+import Loaging from '../../components/Loading.jsx';
+import { urlApi } from "../../styles/Constants.jsx";
 // Library
 import { MapPinIcon, PhoneIcon, CalendarDaysIcon, CalendarDateRangeIcon } from '@heroicons/react/24/solid';
 import DatePicker from 'react-datepicker';
@@ -16,31 +18,45 @@ import "react-datepicker/dist/react-datepicker.css";
 export function AddAppoinLoader() {
     const sCorreo = fetchData("correo");
     const sPassword = fetchData("pwd");
-    //Solicitar por GET
-    const tempListDias = fetchData("appoinBussDateDays") ?? [];
     const citas = fetchData("appoinBussDate") ?? [];
-    const _dias = defineInitialDate(tempListDias);
-    /* const _excludeDates = selectableDayPredicate(_dias); */
-    return { sCorreo, sPassword, _dias, citas };
+    return { sCorreo, sPassword, citas };
 }
 
-function defineInitialDate(_dias) {
+function defineInitialDate() {
     var tempdias = [];
-    //Convert String to Date
-    for (let index = 0; index < _dias.length; index++) {
-        //console.log(_dias[index]);
-        var diaAux = parseInt(_dias[index].substring(0, 2));
-        var MesAux = parseInt(_dias[index].substring(3, 5)) - 1;
-        var AñoAux = parseInt(_dias[index].substring(6, 10));
-        //console.log(diaAux+'_'+MesAux+'_'+AñoAux);
-        var Aux = new Date(AñoAux, MesAux, diaAux);
-        tempdias.push(Aux);
-    }
+    var _today = new Date();
+    var Aux = new Date(_today.getFullYear(), _today.getMonth(), _today.getDate());
+    //console.log(`Aux : ${Aux}`);
+    tempdias.push(Aux);
+
+    var lasttoday = new Date(_today.getFullYear(), _today.getMonth() + 2, 0);
+    var AñoAux = parseInt(lasttoday.getFullYear());
+    var MesAux = parseInt(lasttoday.getMonth());
+    var diaAux = parseInt(lasttoday.getDate());
+    var Aux = new Date(AñoAux, MesAux, diaAux);
+
+    //console.log(`Aux : ${Aux}`);
+    tempdias.push(Aux);
+
     return tempdias;
 }
 
-/* function selectableDayPredicate(_dias) {
-    var _tempdias = [];
+function selectableDayPredicate(_dias) {
+    var tempdias = [];
+    //Convert String to Date
+    if (_dias.length !== 0) {
+        for (let index = 0; index < _dias.length; index++) {
+            //console.log(_dias[index]);
+            var diaAux = parseInt(_dias[index].substring(0, 2));
+            var MesAux = parseInt(_dias[index].substring(3, 5)) - 1;
+            var AñoAux = parseInt(_dias[index].substring(6, 10));
+            //console.log(diaAux+'_'+MesAux+'_'+AñoAux);
+            var Aux = new Date(AñoAux, MesAux, diaAux);
+            tempdias.push(Aux);
+        }
+    }
+    return tempdias;
+    /* var _tempdias = [];
     var _initialDate = _dias[0];
     var _lastDate = _dias[_dias.length - 1];
     var formattedDate = _initialDate;
@@ -54,8 +70,8 @@ function defineInitialDate(_dias) {
         formattedDate = new Date(newDate);
     }
 
-    return _tempdias;
-} */
+    return _tempdias; */
+}
 
 /* function bBuscar(sDay, _dias) {
     var bAux = true;
@@ -72,29 +88,22 @@ function defineInitialDate(_dias) {
 export function AddAppoin() {
     const location = useLocation();
     const navigate = useNavigate();
-    const { sCorreo, sPassword, _dias, citas } = useLoaderData();
+    const { sCorreo, sPassword, citas } = useLoaderData();
 
-    useEffect(() => {
-        if (sCorreo === null && sPassword === null) {
-            navigate("/");
-        }
-    }, []);
-    /* const [bAccederUnaVezFecha, setbAccederUnaVezFecha] = useState(true); */
+    const [startDate, setStartDate] = useState();
+    const [selectedTime, setselectedTime] = useState();
+    const [cita, setcita] = useState([]);
+    const [_excludeDates, setExcludeDates] = useState([]);
+    const [_dias, setDias] = useState([]);
 
-    /* moment.defineLocale('es', {
-        months: 'Enero_Febrero_Marzo_Abril_Mayo_Junio_Julio_Agosto_Septiembre_Octubre_Noviembre_Diciembre'.split('_'),
-        monthsShort: 'Enero._Feb._Mar_Abr._May_Jun_Jul._Ago_Sept._Oct._Nov._Dec.'.split('_'),
-        weekdays: 'Domingo_Lunes_Martes_Miercoles_Jueves_Viernes_Sabado'.split('_'),
-        weekdaysShort: 'Dom._Lun._Mar._Mier._Jue._Vier._Sab.'.split('_'),
-        weekdaysMin: 'Do_Lu_Ma_Mi_Ju_Vi_Sa'.split('_')
-  }); 
-    let _selectedDate = moment(new Date()).format('dddd, d MMMM y'); */
+    const [loading, setLoading] = useState(true);
 
     const { BUSSINESS_ID, USER_ID, DORSL, PHOTO, CATEGORY, SERVICE_LEVEL,
         ADDRESS_FIRST, ADDRESS_SECOND, POSTAL_CODE, CITY, STATE,
         phone, Horario } = location.state.business;
     const initialDate = _dias[0];
     const lastDate = _dias[_dias.length - 1];
+
     // Function to convert Base64 string to binary data
     const arrayBufferToBase64 = (buffer) => {
         var binary = '';
@@ -102,12 +111,7 @@ export function AddAppoin() {
         bytes.forEach((b) => binary += String.fromCharCode(b));
         return btoa(binary);
     };
-    /* const ModbAccederUnaVezFecha = () => {
-        setbAccederUnaVezFecha(!bAccederUnaVezFecha);
-    }; */
-    const [startDate, setStartDate] = useState();
-    const [selectedTime, setselectedTime] = useState();
-    const [cita, setcita] = useState([]);
+
     const ExampleCustomInput = forwardRef(
         ({ value, onClick, className }, ref) => (
             <label className={className} onClick={onClick} ref={ref}>
@@ -129,6 +133,61 @@ export function AddAppoin() {
         setcita(tempcita);
 
     }
+
+    useEffect(() => {
+        const fData = async () => {
+            //Solicitar por GET
+            var options = {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                }
+            }
+            try {
+                const response = await fetch(`${urlApi}appoinBussDateDays?bussiness_id=${BUSSINESS_ID}`);
+                if (!response.ok) {
+                    console.log(`Error getting getDaysInactive.`);
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                const json = await response.json();
+                setExcludeDates(selectableDayPredicate(json['data']));
+                if (_excludeDates.length === 0) {
+                    setDias(defineInitialDate());
+                }
+                setLoading(false);
+            }
+            catch (e) {
+                return;
+            }
+
+
+        };
+        if (sCorreo === null && sPassword === null) {
+            navigate("/");
+        }
+        fData();
+    }, []);
+    /* const [bAccederUnaVezFecha, setbAccederUnaVezFecha] = useState(true); */
+
+    /* moment.defineLocale('es', {
+        months: 'Enero_Febrero_Marzo_Abril_Mayo_Junio_Julio_Agosto_Septiembre_Octubre_Noviembre_Diciembre'.split('_'),
+        monthsShort: 'Enero._Feb._Mar_Abr._May_Jun_Jul._Ago_Sept._Oct._Nov._Dec.'.split('_'),
+        weekdays: 'Domingo_Lunes_Martes_Miercoles_Jueves_Viernes_Sabado'.split('_'),
+        weekdaysShort: 'Dom._Lun._Mar._Mier._Jue._Vier._Sab.'.split('_'),
+        weekdaysMin: 'Do_Lu_Ma_Mi_Ju_Vi_Sa'.split('_')
+  }); 
+    let _selectedDate = moment(new Date()).format('dddd, d MMMM y'); */
+
+
+    /* const ModbAccederUnaVezFecha = () => {
+        setbAccederUnaVezFecha(!bAccederUnaVezFecha);
+    }; */
+
+    if (loading) {
+        return <Loaging />;
+    }
+
     return (
         <div className="AddAppoinContainer">
             <div>
@@ -176,7 +235,7 @@ export function AddAppoin() {
                 </div>
                 <DatePicker
                     dateFormat="dd/MM/yyyy"
-                    excludeDates={_dias}
+                    excludeDates={_excludeDates}
                     selected={startDate}
                     onChange={(date) => { setStartDate(date); SelectDateTime(date); setselectedTime() }}
                     minDate={initialDate}

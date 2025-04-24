@@ -9,6 +9,7 @@ import { urlApi } from "../../styles/Constants.jsx";
 import illustration from "../../assets/search_grey.png";
 import { MagnifyingGlassIcon } from '@heroicons/react/24/solid';
 import CardBusiness from '../../components/CardBusiness.jsx';
+import Loaging from '../../components/Loading.jsx';
 
 // loader
 export function findBusinessLoader() {
@@ -84,7 +85,7 @@ export function FindBusiness() {
     }, []);
 
     if (loading) {
-        return <p>Loading...</p>;
+        return <Loaging/>;
     }
 
     
