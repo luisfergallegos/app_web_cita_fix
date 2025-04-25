@@ -17,5 +17,5 @@
 }
 
 .HomeContainer img {
-    filter: invert(39%) sepia(75%) saturate(1790%) hue-rotate(2deg) brightness(102%) contrast(106%);
+     filter: invert(39%) sepia(75%) saturate(1790%) hue-rotate(2deg) brightness(102%) contrast(106%); 
 }

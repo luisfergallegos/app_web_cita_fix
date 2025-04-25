@@ -18,11 +18,10 @@ import "react-datepicker/dist/react-datepicker.css";
 export function AddAppoinLoader() {
     const sCorreo = fetchData("correo");
     const sPassword = fetchData("pwd");
-    const citas = fetchData("appoinBussDate") ?? [];
-    return { sCorreo, sPassword, citas };
+    return { sCorreo, sPassword };
 }
 
-function defineInitialDate() {
+/* function defineInitialDate() {
     var tempdias = [];
     var _today = new Date();
     var Aux = new Date(_today.getFullYear(), _today.getMonth(), _today.getDate());
@@ -39,7 +38,7 @@ function defineInitialDate() {
     tempdias.push(Aux);
 
     return tempdias;
-}
+} */
 
 function selectableDayPredicate(_dias) {
     var tempdias = [];
@@ -88,21 +87,23 @@ function selectableDayPredicate(_dias) {
 export function AddAppoin() {
     const location = useLocation();
     const navigate = useNavigate();
-    const { sCorreo, sPassword, citas } = useLoaderData();
+    const { sCorreo, sPassword } = useLoaderData();
 
     const [startDate, setStartDate] = useState();
     const [selectedTime, setselectedTime] = useState();
     const [cita, setcita] = useState([]);
     const [_excludeDates, setExcludeDates] = useState([]);
-    const [_dias, setDias] = useState([]);
+    const [citas, setCitas] = useState([]);
+    const [bMostrarAddress, setbMostrarAddress] = useState(false);
 
     const [loading, setLoading] = useState(true);
 
     const { BUSSINESS_ID, USER_ID, DORSL, PHOTO, CATEGORY, SERVICE_LEVEL,
         ADDRESS_FIRST, ADDRESS_SECOND, POSTAL_CODE, CITY, STATE,
         phone, Horario } = location.state.business;
-    const initialDate = _dias[0];
-    const lastDate = _dias[_dias.length - 1];
+    var _today = new Date();
+    const initialDate = new Date(_today);
+    const lastDate = new Date(_today.setDate(_today.getDate() + 31));
 
     // Function to convert Base64 string to binary data
     const arrayBufferToBase64 = (buffer) => {
@@ -113,7 +114,7 @@ export function AddAppoin() {
     };
 
     const ExampleCustomInput = forwardRef(
-        ({ value, onClick, className }, ref) => (
+        ({ onClick, className }, ref) => (
             <label className={className} onClick={onClick} ref={ref}>
                 {startDate ? <p>{dateSpanish(startDate)} ‒ {selectedTime ? selectedTime : 'Selecciona una hora'} </p> :
                     <p>Selecciona una fecha ‒ Selecciona una hora</p>
@@ -134,16 +135,13 @@ export function AddAppoin() {
 
     }
 
+    const ModMostrarAddres = () => {
+        setbMostrarAddress(!bMostrarAddress);
+    };
+
     useEffect(() => {
         const fData = async () => {
             //Solicitar por GET
-            var options = {
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Accept': 'application/json'
-                }
-            }
             try {
                 const response = await fetch(`${urlApi}appoinBussDateDays?bussiness_id=${BUSSINESS_ID}`);
                 if (!response.ok) {
@@ -152,9 +150,22 @@ export function AddAppoin() {
                 }
                 const json = await response.json();
                 setExcludeDates(selectableDayPredicate(json['data']));
-                if (_excludeDates.length === 0) {
-                    setDias(defineInitialDate());
+
+                //Solicitar por GET
+                try {
+                    const response = await fetch(`${urlApi}appoinBussDate?bussiness_id=${BUSSINESS_ID}`);
+                    if (!response.ok) {
+                        console.log(`Error getting getDaysInactive.`);
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    const json = await response.json();
+                    setCitas(json['data']);
+                    setLoading(false);
                 }
+                catch (e) {
+                    return;
+                }
+
                 setLoading(false);
             }
             catch (e) {
@@ -168,7 +179,7 @@ export function AddAppoin() {
         }
         fData();
     }, []);
-    /* const [bAccederUnaVezFecha, setbAccederUnaVezFecha] = useState(true); */
+
 
     /* moment.defineLocale('es', {
         months: 'Enero_Febrero_Marzo_Abril_Mayo_Junio_Julio_Agosto_Septiembre_Octubre_Noviembre_Diciembre'.split('_'),
@@ -180,9 +191,7 @@ export function AddAppoin() {
     let _selectedDate = moment(new Date()).format('dddd, d MMMM y'); */
 
 
-    /* const ModbAccederUnaVezFecha = () => {
-        setbAccederUnaVezFecha(!bAccederUnaVezFecha);
-    }; */
+
 
     if (loading) {
         return <Loaging />;
@@ -250,17 +259,36 @@ export function AddAppoin() {
                                 { background: 'grey' } :
                                 { background: '#e0e0e0' }
                             }
-                            onClick={() =>
-                                setselectedTime(APPOINTMENT_TIME)
-
+                            onClick={() => {
+                                if (STATUS === 'free') {
+                                    setselectedTime(APPOINTMENT_TIME);
+                                }
+                            }
                             }  >
                             <label>{APPOINTMENT_TIME} </label>
                         </div>
                     ))
                 }
                 <div >-----------------------------</div>
-
-
+                <div >
+                    {bMostrarAddress ? '¿Cuál es la dirección?' : 'Visita a domicilio'}
+                    <input type="checkbox" onClick={ModMostrarAddres}></input>
+                    <div style={bMostrarAddress ?
+                        { display: 'grid' } :
+                        { display: 'none' }} >
+                        <label>Código postal</label>
+                        <input type="text" placeholder='Código postal' />
+                        <label>Estado</label>
+                        <input type="text" placeholder='Estado' disabled />
+                        <label>Municipio/Ciudad</label>
+                        <input type="text" placeholder='Municipio/Ciudad' disabled />
+                        <label>Colonia</label>
+                        <input type="text" placeholder='Colonia' />
+                        <label>Calle / Número externo</label>
+                        <input type="text" placeholder='Calle / Número externo' />
+                    </div>
+                </div>
+                <button>Guardar</button>
             </div>
         </div>);
 }
