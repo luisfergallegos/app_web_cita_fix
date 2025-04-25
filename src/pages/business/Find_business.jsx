@@ -96,7 +96,6 @@ export function FindBusiness() {
                 <input type="text" name="searchText" placeholder="Buscar en Planner Days" onChange={handleChange} />
             </div>
             {
-
                 searchText !== '' ? (
                     <div className='empresas'>
                         {
@@ -109,7 +108,6 @@ export function FindBusiness() {
                     :
                     (
                         <div className='buildPageFindBusinessContainer'>
-
                             <img id='search_grey' src={illustration} alt="Planners Day" width={350} />
                             <p>¿Estás en busca de un servicio nó visita?</p>
                             <p>Dirígete a la parte superior para iniciar la búsqueda.</p>
@@ -119,7 +117,6 @@ export function FindBusiness() {
                                 <div className='empresas'>
                                     <CardBusiness key={empresas[index]['BUSSINESS_ID']} userId={userId} userName={userName} empresa={empresas[index]} />
                                 </div>
-
                             </div>
                         </div>
                     )

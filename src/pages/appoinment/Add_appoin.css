@@ -1,5 +1,198 @@
-.AddAppoinContainer{
+.AddAppoinContainer {
     height: 100vh;
     background: white;
     color: black;
+}
+
+.businessTitleContainer {
+    width: 90%;
+    margin-top: 50px;
+    margin-left: 50px;
+    display: grid;
+    grid-template-columns: 70% auto;
+
+    #store {
+        width: 200px;
+    }
+
+    img {
+        width: 200px;
+    }
+}
+
+.businessTitleContainer--Name {
+    padding: 90px 60px;
+    color: black;
+
+    h4 {
+        font-size: 33px;
+        font-weight: bold;
+    }
+
+    p {
+        font-size: 15px;
+        color: gray;
+    }
+}
+
+.businessSubTitle {
+    width: 90%;
+    margin-left: 50px;
+}
+
+.businessSubTitleContainer {
+    width: 100%;
+    display: grid;
+    grid-template-columns: 3% 97%;
+    justify-content: center;
+    align-items: center;
+
+    p {
+        font-size: 15px;
+        color: gray;
+        margin-left: 10px;
+    }
+}
+
+.businessSubTitleIcon {
+    color: var(--second);
+    width: 30px;
+}
+
+.businessTitle {
+    padding: 10px 60px;
+    color: black;
+
+    h4 {
+        font-size: 15px;
+        font-weight: bold;
+    }
+
+    p {
+        font-size: 20px;
+    }
+}
+
+.businessContainer_Divider {
+    height: 1px;
+    width: 90%;
+    background: var(--third);
+    margin: 10px 50px;
+
+}
+
+.businessAppointmentTimeContainer {
+    margin-top: 10px;
+    margin-left: 60px;
+    margin-bottom: 30px;
+    width: 89%;
+
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -ms-flex-wrap: wrap;
+    flex-wrap: wrap;
+    gap: 16px;
+    justify-content: center;
+}
+
+.businessAppointmentTime {
+    -webkit-box-flex: 1;
+    width: 5vw;
+    height: 5vw;
+    text-align: center;
+    padding: 27px 0;
+    border-radius: 5px;
+    cursor: pointer;
+    -webkit-box-shadow: 0.25em 0.3em 1em var(--primary);
+    box-shadow: 0.25em 0.3em 1em var(--primary);
+    gap: 8px;
+    text-decoration: none;
+    transition: transform 80ms ease-in;
+    
+}
+
+.businessAppointmentTime:active {
+    transform: scale(0.95);
+}
+
+.businessBtn {
+    display: block;
+    margin-top: 10px;
+    margin-left: 70px;
+    
+
+    button {
+        justify-content: center;
+        align-items: center;
+        width: 92%;
+        height: 50px;
+        font-size: 25px;
+        font-weight: bold;
+        background: var(--primary);
+        border-radius: 8px;
+        color:var(--fifth);
+        cursor: pointer;
+        outline: none;
+        transition: transform 80ms ease-in;
+    }
+
+    button:active {
+        transform: scale(0.95);
+    }
+
+}
+
+@media (max-width: 575px) {
+
+    .businessTitleContainer {
+        margin-top: 10px;
+        margin-left: 10px;
+        display: flex;
+
+        #store {
+            width: 100px;
+        }
+
+        img {
+            width: 100px;
+        }
+    }
+
+    .businessTitleContainer--Name {
+        padding: 10px 10px;
+    }
+
+    .businessSubTitle {
+        margin-top: 10px;
+        margin-left: 10px;
+    }
+
+
+    .businessContainer_Divider {
+        margin: 10px 10px;
+
+    }
+
+    .businessSubTitleContainer {
+        height: 100%;
+        width: 100%;
+        grid-template-columns: 10% 90%;
+    }
+
+    .businessTitle {
+        padding: 10px 10px;
+    }
+
+    .businessAppointmentTimeContainer {
+        margin-top: 10px;
+        margin-left: 10px;
+    }
+
+    .businessAppointmentTime {
+        width: 12vw;
+        height: 12vw;
+        padding: 13px 0;
+
+    }
 }

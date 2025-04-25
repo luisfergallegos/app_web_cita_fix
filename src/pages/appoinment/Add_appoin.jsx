@@ -199,62 +199,74 @@ export function AddAppoin() {
 
     return (
         <div className="AddAppoinContainer">
-            <div>
-                <h4><b>{DORSL}</b></h4>
-                <p >{CATEGORY}</p>
-            </div>
-            <div >
-                {
-                    PHOTO === null ? <img id='store' src={Store} /> :
-                        <img src={'data:image/jpeg;base64,' + arrayBufferToBase64(PHOTO.data)} width={100} />
-                }
-            </div>
-            <div>
-                <div>
-                    <MapPinIcon width={30} />
+            <div className='businessTitleContainer'>
+                <div className='businessTitleContainer--Name'>
+                    <h4>{DORSL}</h4>
+                    <p >{CATEGORY}</p>
                 </div>
-                <div>
+                <div >
+                    {
+                        PHOTO === null ? <img id='store' src={Store} /> :
+                            <img src={'data:image/jpeg;base64,' + arrayBufferToBase64(PHOTO.data)} />
+                    }
+                </div>
+            </div>
+
+            <div className='businessSubTitle'>
+                <div className='businessSubTitleContainer'>
+                    <div className='businessSubTitleIcon'>
+                        <MapPinIcon />
+                    </div>
                     <p>{ADDRESS_FIRST} {ADDRESS_SECOND} CP {POSTAL_CODE} {CITY}, {STATE}</p>
                 </div>
-            </div>
-            {phone && <div >
-                <div >
-                    <PhoneIcon width={30} />
-                </div>
 
-                {phone}
-            </div>}
+                {phone &&
+                    <div className='businessSubTitleContainer'>
+                        <div className='businessSubTitleIcon'>
+                            <PhoneIcon />
+                        </div>
+                        <p>{phone}</p>
+                    </div>
+                }
 
-            <div >
-                <div>
-                    <CalendarDaysIcon width={30} />
+                <div className='businessSubTitleContainer'>
+                    <div className='businessSubTitleIcon'>
+                        <CalendarDaysIcon />
+                    </div>
+                    <p>{Horario}</p>
                 </div>
-                {Horario}
             </div>
-            <div >-----------------------------</div>
-            <div >
-                Información de contacto
-                <h1>{location.state.userName}</h1>
+
+            <div className='businessContainer_Divider'></div>
+            <div className='businessTitle'>
+                <h4>Información de contacto</h4>
+                <p>{location.state.userName}</p>
             </div>
-            <div >-----------------------------</div>
-            <div >Agendar</div>
-            <div >
-                <div>
-                    <CalendarDateRangeIcon width={30} />
+            <div className='businessContainer_Divider'></div>
+            <div className='businessTitle'>
+                <h4>Agendar</h4>
+            </div>
+            <div className='businessSubTitle'>
+                <div className='businessSubTitleContainer'>
+                    <div className='businessSubTitleIcon'>
+                        <CalendarDateRangeIcon />
+                    </div>
+                    <DatePicker
+                        dateFormat="dd/MM/yyyy"
+                        excludeDates={_excludeDates}
+                        selected={startDate}
+                        onChange={(date) => { setStartDate(date); SelectDateTime(date); setselectedTime() }}
+                        minDate={initialDate}
+                        maxDate={lastDate}
+                        customInput={<ExampleCustomInput className="example-custom-input" />}
+                    />
                 </div>
-                <DatePicker
-                    dateFormat="dd/MM/yyyy"
-                    excludeDates={_excludeDates}
-                    selected={startDate}
-                    onChange={(date) => { setStartDate(date); SelectDateTime(date); setselectedTime() }}
-                    minDate={initialDate}
-                    maxDate={lastDate}
-                    customInput={<ExampleCustomInput className="example-custom-input" />}
-                />
+            </div>
+            <div className='businessAppointmentTimeContainer' >
                 {cita[0] &&
                     cita[0].map(({ APPOINTMENT_TIME, STATUS }, index) =>
                     (
-                        <div key={APPOINTMENT_TIME}
+                        <div className='businessAppointmentTime' key={APPOINTMENT_TIME}
                             style={STATUS === 'No' ?
                                 { background: 'grey' } :
                                 { background: '#e0e0e0' }
@@ -269,27 +281,31 @@ export function AddAppoin() {
                         </div>
                     ))
                 }
-                <div >-----------------------------</div>
-                <div >
-                    {bMostrarAddress ? '¿Cuál es la dirección?' : 'Visita a domicilio'}
-                    <input type="checkbox" onClick={ModMostrarAddres}></input>
-                    <div style={bMostrarAddress ?
-                        { display: 'grid' } :
-                        { display: 'none' }} >
-                        <label>Código postal</label>
-                        <input type="text" placeholder='Código postal' />
-                        <label>Estado</label>
-                        <input type="text" placeholder='Estado' disabled />
-                        <label>Municipio/Ciudad</label>
-                        <input type="text" placeholder='Municipio/Ciudad' disabled />
-                        <label>Colonia</label>
-                        <input type="text" placeholder='Colonia' />
-                        <label>Calle / Número externo</label>
-                        <input type="text" placeholder='Calle / Número externo' />
-                    </div>
-                </div>
-                <button>Guardar</button>
             </div>
+
+            <div className='businessContainer_Divider'></div>
+
+            <div className='businessTitle'>
+                <h4>{bMostrarAddress ? '¿Cuál es la dirección?' : 'Visita a domicilio'}</h4>
+                <p><input type="checkbox" onClick={ModMostrarAddres}></input></p>
+                <div style={bMostrarAddress ?
+                    { display: 'grid' } :
+                    { display: 'none' }} >
+                    <label>Código postal</label>
+                    <input type="text" placeholder='Código postal' />
+                    <label>Estado</label>
+                    <input type="text" placeholder='Estado' disabled />
+                    <label>Municipio/Ciudad</label>
+                    <input type="text" placeholder='Municipio/Ciudad' disabled />
+                    <label>Colonia</label>
+                    <input type="text" placeholder='Colonia' />
+                    <label>Calle / Número externo</label>
+                    <input type="text" placeholder='Calle / Número externo' />
+                </div>
+            </div>
+            <div className='businessBtn'><button>Guardar</button></div>
+            
+
         </div>);
 }
 

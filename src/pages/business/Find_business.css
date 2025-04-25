@@ -1,4 +1,4 @@
-.FindBusinessContainer{
+.FindBusinessContainer {
     min-height: 100vh;
     background: white;
     color: black;
@@ -8,7 +8,7 @@
     flex-direction: column;
 }
 
-.empresas {    
+.empresas {
     color: var(--second);
     display: -webkit-box;
     display: -ms-flexbox;
@@ -16,6 +16,8 @@
     -ms-flex-wrap: wrap;
     flex-wrap: wrap;
     gap: 16px;
+    margin-top: 10px;
+    justify-content: center;
 }
 
 .buildPageFindBusinessContainer {
@@ -26,6 +28,9 @@
     font-family: "Montserrat", sans-serif;
     min-height: 100vh;
     margin: -50px 0 50px;
+    position: relative;
+    margin-top: 10px;
+    font-size: 20px;
 }
 
 #search_grey {
@@ -39,10 +44,12 @@
     color: var(--fourth);
     background: gold;
     position: relative; */
-    position: relative; 
+    position: relative;
     align-items: center;
     width: 90%;
     border: none;
+    margin-top: 30px;
+    margin-bottom: 30px;
 }
 
 .searchContainer input {
@@ -77,8 +84,28 @@
 
 
 .buildListRandom {
-    display: flex;
+    /* display: flex;
     justify-content: center;
     align-items: center;
-    margin: 20px 20px;
+    margin: 20px 20px; */
+    
+    margin-top: 30px;
+    text-align: left;
+    width: 100%;
+}
+
+
+
+@media (max-width: 575px) {
+
+    .buildPageFindBusinessContainer {
+        height: 300px;
+        width: 300px;
+        text-align: center;
+    }
+
+    #search_grey {
+        margin-top: 30px;
+        transform: scale(0.7);
+    }
 }
