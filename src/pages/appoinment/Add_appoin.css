@@ -109,18 +109,25 @@
     gap: 8px;
     text-decoration: none;
     transition: transform 80ms ease-in;
-    
+    background: #e0e0e0;
+    &.active{
+        background: grey;
+        cursor: auto;
+    }
+
 }
 
 .businessAppointmentTime:active {
     transform: scale(0.95);
 }
 
+
+
 .businessBtn {
     display: block;
     margin-top: 10px;
     margin-left: 70px;
-    
+
 
     button {
         justify-content: center;
@@ -131,7 +138,7 @@
         font-weight: bold;
         background: var(--primary);
         border-radius: 8px;
-        color:var(--fifth);
+        color: var(--fifth);
         cursor: pointer;
         outline: none;
         transition: transform 80ms ease-in;
@@ -142,6 +149,53 @@
     }
 
 }
+
+.businessContainer_Address {
+    width: 95%;
+    padding: 10px 10px;
+    display: flex;
+    flex-wrap: wrap;
+
+    &.active {
+        display: none;
+    }
+}
+
+.businessContainer_Address .AddressForm-group {
+    margin: 5px 8px;
+    margin-bottom: 15px;
+    width: calc(100%/2 - 20px);
+    label {
+        font-size: 12px;
+        font-weight: bold;
+    }
+
+    input {
+        height: 40px;
+        width: 100%;
+        outline: none;
+        border-radius: 5px;
+        border: 1px solid var(--third);
+        padding-left: 15px;
+        transition: all 0.3s ease;
+    
+    }
+}
+
+.AddressForm-group--dasentas {
+    display: grid;
+    position:absolute;
+    color: var(--eighth);
+    font-size: 12px;
+    background: #e0e0e0;
+    width: 39%;
+}
+
+.AddressForm-group--dasentas label:active {
+    background: white;
+    color: black;
+}
+
 
 @media (max-width: 575px) {
 
@@ -194,5 +248,21 @@
         height: 12vw;
         padding: 13px 0;
 
+    }
+
+    .businessBtn {
+        margin-top: 10px;
+        margin-left: 10px;
+        button {
+            font-size: 18px;
+        }
+    }
+
+    .businessContainer_Address .AddressForm-group {
+        width: 100%;
+    }
+
+    .AddressForm-group--dasentas {
+        width: 60%;
     }
 }

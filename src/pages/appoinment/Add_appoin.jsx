@@ -95,6 +95,12 @@ export function AddAppoin() {
     const [_excludeDates, setExcludeDates] = useState([]);
     const [citas, setCitas] = useState([]);
     const [bMostrarAddress, setbMostrarAddress] = useState(false);
+    const [estado, setEstado] = useState();
+    const [ciudad, setCiudad] = useState();
+    const [colonias, setColonias] = useState([]);
+    const [colonia, setColonia] = useState();
+    const [searchText, setsearchText] = useState('');
+    const [filteredNames, setfilteredNames] = useState([]);
 
     const [loading, setLoading] = useState(true);
 
@@ -137,6 +143,46 @@ export function AddAppoin() {
 
     const ModMostrarAddres = () => {
         setbMostrarAddress(!bMostrarAddress);
+    };
+
+    const getCodigoPostal = async (evt) => {
+        const value = evt.target.value;
+
+        if (evt.target.value.length === 5) {
+            const json = fetchData("postalCode") ?? [];
+            setEstado(json['data'][0].d_estado);
+            setCiudad(json['data'][0].d_ciudad);
+            var tempcita = [];
+            for (let index = 0; index < json['data'][0].d_asentas.length; index++) {
+                var element = json['data'][0].d_asentas[index];
+                tempcita.push(element.d_asenta);
+            }
+            setColonias(tempcita);
+        }
+        //Solicitar por GET
+        /* try {
+            const response = await fetch(`${urlApi}postalCode?d_codigo=${value}`);
+            if (!response.ok) {
+                console.log(`Error getting getDaysInactive.`);
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            const json = await response.json();
+        }
+        catch (e) {
+            return;
+        } */
+    };
+
+    const handleChange = evt => {
+        const tempList = [];
+        const value = evt.target.value;
+        setsearchText(value);
+        for (var filName in colonias) {
+            if (colonias[filName].toLowerCase().startsWith(value.toLowerCase())) {
+                tempList.push(colonias[filName]);
+            }
+        }
+        setfilteredNames(tempList);
     };
 
     useEffect(() => {
@@ -266,11 +312,8 @@ export function AddAppoin() {
                 {cita[0] &&
                     cita[0].map(({ APPOINTMENT_TIME, STATUS }, index) =>
                     (
-                        <div className='businessAppointmentTime' key={APPOINTMENT_TIME}
-                            style={STATUS === 'No' ?
-                                { background: 'grey' } :
-                                { background: '#e0e0e0' }
-                            }
+                        <div className={STATUS === 'No' ? 'businessAppointmentTime active' : 'businessAppointmentTime'}
+                            key={APPOINTMENT_TIME}
                             onClick={() => {
                                 if (STATUS === 'free') {
                                     setselectedTime(APPOINTMENT_TIME);
@@ -288,23 +331,43 @@ export function AddAppoin() {
             <div className='businessTitle'>
                 <h4>{bMostrarAddress ? '¿Cuál es la dirección?' : 'Visita a domicilio'}</h4>
                 <p><input type="checkbox" onClick={ModMostrarAddres}></input></p>
-                <div style={bMostrarAddress ?
-                    { display: 'grid' } :
-                    { display: 'none' }} >
-                    <label>Código postal</label>
-                    <input type="text" placeholder='Código postal' />
-                    <label>Estado</label>
-                    <input type="text" placeholder='Estado' disabled />
-                    <label>Municipio/Ciudad</label>
-                    <input type="text" placeholder='Municipio/Ciudad' disabled />
-                    <label>Colonia</label>
-                    <input type="text" placeholder='Colonia' />
-                    <label>Calle / Número externo</label>
-                    <input type="text" placeholder='Calle / Número externo' />
+                <div className={bMostrarAddress ? 'businessContainer_Address' : 'businessContainer_Address active'} >
+                    <div className='AddressForm-group'>
+                        <label>Código postal</label>
+                        <input type="text" placeholder='Código postal' maxLength={5} onChange={getCodigoPostal} />
+                    </div>
+                    <div className='AddressForm-group'>
+                        <label>Estado</label>
+                        <input type="text" placeholder='Estado' value={estado} disabled />
+                    </div>
+                    <div className='AddressForm-group'>
+                        <label>Municipio/Ciudad</label>
+                        <input type="text" placeholder='Municipio/Ciudad' value={ciudad} disabled />
+                    </div>
+                    <div className='AddressForm-group'>
+                        <label>Colonia</label>
+                        <input type="text" placeholder={ searchText === '' ? 'Colonia' : {colonia} } onChange={handleChange}/>
+                        {
+                            searchText !== '' ? (
+                                <div className='AddressForm-group--dasentas'>
+                                    {
+                                        colonias &&
+                                        filteredNames.map((_colonia) => (<label onClick={() => setColonia(_colonia)
+                                        } >{_colonia}</label>))
+            
+                                    }
+                                </div>
+                            ) : <div></div>
+                        }
+                    </div>
+                    <div className='AddressForm-group'>
+                        <label>Calle / Número externo</label>
+                        <input type="text" placeholder='Calle / Número externo' />
+                    </div>
                 </div>
             </div>
             <div className='businessBtn'><button>Guardar</button></div>
-            
+
 
         </div>);
 }
