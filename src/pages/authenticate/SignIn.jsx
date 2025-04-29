@@ -110,6 +110,13 @@ export default function Login() {
               />
             </div>
 
+              <p className="text-sm text-center text-gray-500 mt-6">
+            ¿Olvidaste tu contraseña?{' '}
+            <span className="text-orange-500 underline cursor-pointer hover:text-orange-600 transition">
+              Recuperar acceso
+            </span>
+          </p>
+
             <button
               type="submit"
               className="w-full py-3 bg-orange-500 text-white font-semibold rounded-md shadow-md hover:bg-orange-600 transition duration-300"
@@ -118,12 +125,7 @@ export default function Login() {
             </button>
           </form>
 
-          <p className="text-sm text-center text-gray-500 mt-6">
-            ¿Olvidaste tu contraseña?{' '}
-            <span className="text-orange-500 underline cursor-pointer hover:text-orange-600 transition">
-              Recuperar acceso
-            </span>
-          </p>
+        
         </div>
 
         {/* Panel derecho (visual) */}
