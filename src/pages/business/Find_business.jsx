@@ -19,6 +19,24 @@ export function findBusinessLoader() {
     return { sCorreo, sPassword, sUserCitaFix };
 }
 
+/* const CloseIcon = () => (
+    <svg width="24" height="24" fill="none" viewBox="0 0 24 24">
+        <path
+            stroke="currentColor"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="1.5"
+            d="M17.25 6.75L6.75 17.25"
+        />
+        <path
+            stroke="currentColor"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="1.5"
+            d="M6.75 6.75L17.25 17.25"
+        />
+    </svg>
+); */
 
 export function FindBusiness() {
     const navigate = useNavigate();
@@ -32,6 +50,8 @@ export function FindBusiness() {
     const userName = sUserCitaFix['first_name'] + ' ' + sUserCitaFix['last_name'];
     const [searchText, setsearchText] = useState('');
     const [filteredNames, setfilteredNames] = useState([]);
+
+    /* const [isOpen, setIsOpen] = useState(false); */
     
 
     const handleChange = evt => {
@@ -121,6 +141,19 @@ export function FindBusiness() {
                         </div>
                     )
             }
+            {/* {
+                isOpen ?
+                    <>
+                        <div className="backdropDialog" ></div>
+                        <div className="dialogDialog">
+                        <button className="closeDialog" onClick={() => setIsOpen(false)}>
+                                <CloseIcon />
+                            </button>
+                            <h2>Confirmar</h2>
+                        </div>
+                    </>
+                    : null
+            } */}
         </div>);
 }
 

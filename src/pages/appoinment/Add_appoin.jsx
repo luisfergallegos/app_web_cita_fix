@@ -12,6 +12,7 @@ import { urlApi } from "../../styles/Constants.jsx";
 import { MapPinIcon, PhoneIcon, CalendarDaysIcon, CalendarDateRangeIcon } from '@heroicons/react/24/solid';
 import DatePicker from 'react-datepicker';
 import "react-datepicker/dist/react-datepicker.css";
+import AutocompleteInput from '../../components/AutocompleteInput.jsx';
 //import moment from 'moment';
 
 // loader
@@ -90,7 +91,7 @@ export function AddAppoin() {
     const { sCorreo, sPassword } = useLoaderData();
 
     const [startDate, setStartDate] = useState();
-    const [selectedTime, setselectedTime] = useState();
+    const [selectedTime, setselectedTime] = useState('');
     const [cita, setcita] = useState([]);
     const [_excludeDates, setExcludeDates] = useState([]);
     const [citas, setCitas] = useState([]);
@@ -98,11 +99,14 @@ export function AddAppoin() {
     const [estado, setEstado] = useState();
     const [ciudad, setCiudad] = useState();
     const [colonias, setColonias] = useState([]);
-    const [colonia, setColonia] = useState();
-    const [searchText, setsearchText] = useState('');
-    const [filteredNames, setfilteredNames] = useState([]);
+    const [bAcceder, setbAcceder] = useState(true);
+    const [direccionUno, setDireccionUno] = useState('');
+    const [direccionDos, setDireccionDos] = useState('');
+    const [codigoPostal, setCodigoPostal] = useState('');
+    const [message, setMessage] = useState('');
 
     const [loading, setLoading] = useState(true);
+    const [isOpen, setIsOpen] = useState(false);
 
     const { BUSSINESS_ID, USER_ID, DORSL, PHOTO, CATEGORY, SERVICE_LEVEL,
         ADDRESS_FIRST, ADDRESS_SECOND, POSTAL_CODE, CITY, STATE,
@@ -145,10 +149,57 @@ export function AddAppoin() {
         setbMostrarAddress(!bMostrarAddress);
     };
 
+    const _buildConfirm = () => {
+        console.log(selectedTime);
+
+        if (selectedTime !== '') {
+            if (bAcceder) {
+                setbAcceder(false);
+                if (bMostrarAddress) {
+                    console.log(`userId ${location.state.userId}`);
+                    console.log(`business.id ${BUSSINESS_ID}`);
+                    console.log(`business.userId ${USER_ID}`);
+                    var dateFormat = startDate.getMonth() + 1;
+                    console.log(`selectedDate ${startDate.getFullYear()}-${('0' + dateFormat).slice(-2)}-${startDate.getDate()}`);
+                    console.log(`_selectedTime ${selectedTime}`);
+                    console.log(`  `);
+                    console.log(`sMessage ${message}`);
+                    console.log(`userName ${location.state.userName}`);
+                    console.log(`Bus`);
+                    console.log(`direccionUno ${direccionUno}`);
+                    console.log(`direccionDos ${direccionDos}`);
+                    console.log(`codigoPostal ${codigoPostal}`);
+                    console.log(`ciudad ${ciudad}`);
+                    console.log(`estado ${estado}`);
+                    setbAcceder(true);
+
+                }
+                else {
+                    console.log(`userId ${location.state.userId}`);
+                    console.log(`business.id ${BUSSINESS_ID}`);
+                    console.log(`business.userId ${USER_ID}`);
+                    var dateFormat = startDate.getMonth() + 1;
+                    console.log(`selectedDate ${startDate.getFullYear()}-${('0' + dateFormat).slice(-2)}-${startDate.getDate()}`);
+                    console.log(`_selectedTime ${selectedTime}`);
+                    console.log(`  `);
+                    console.log(`sMessage ${message}`);
+                    console.log(`userName ${location.state.userName}`);
+                    console.log(`Bus`);
+                    setbAcceder(true);
+
+                }
+            }
+        }
+
+
+
+    };
+
     const getCodigoPostal = async (evt) => {
         const value = evt.target.value;
 
         if (evt.target.value.length === 5) {
+            setCodigoPostal(value);
             const json = fetchData("postalCode") ?? [];
             setEstado(json['data'][0].d_estado);
             setCiudad(json['data'][0].d_ciudad);
@@ -174,16 +225,16 @@ export function AddAppoin() {
     };
 
     const handleChange = evt => {
-        const tempList = [];
         const value = evt.target.value;
-        setsearchText(value);
-        for (var filName in colonias) {
-            if (colonias[filName].toLowerCase().startsWith(value.toLowerCase())) {
-                tempList.push(colonias[filName]);
-            }
-        }
-        setfilteredNames(tempList);
+        setDireccionUno(value);
     };
+
+    const handleChangeMessage = evt => {
+        const value = evt.target.value;
+        setMessage(value);
+    };
+
+
 
     useEffect(() => {
         const fData = async () => {
@@ -297,15 +348,17 @@ export function AddAppoin() {
                     <div className='businessSubTitleIcon'>
                         <CalendarDateRangeIcon />
                     </div>
-                    <DatePicker
-                        dateFormat="dd/MM/yyyy"
-                        excludeDates={_excludeDates}
-                        selected={startDate}
-                        onChange={(date) => { setStartDate(date); SelectDateTime(date); setselectedTime() }}
-                        minDate={initialDate}
-                        maxDate={lastDate}
-                        customInput={<ExampleCustomInput className="example-custom-input" />}
-                    />
+                    <div>
+                        <DatePicker
+                            dateFormat="dd/MM/yyyy"
+                            excludeDates={_excludeDates}
+                            selected={startDate}
+                            onChange={(date) => { setStartDate(date); SelectDateTime(date); setselectedTime('') }}
+                            minDate={initialDate}
+                            maxDate={lastDate}
+                            customInput={<ExampleCustomInput className="example-custom-input" />}
+                        />
+                    </div>
                 </div>
             </div>
             <div className='businessAppointmentTimeContainer' >
@@ -346,28 +399,36 @@ export function AddAppoin() {
                     </div>
                     <div className='AddressForm-group'>
                         <label>Colonia</label>
-                        <input type="text" placeholder={ searchText === '' ? 'Colonia' : {colonia} } onChange={handleChange}/>
-                        {
-                            searchText !== '' ? (
-                                <div className='AddressForm-group--dasentas'>
-                                    {
-                                        colonias &&
-                                        filteredNames.map((_colonia) => (<label onClick={() => setColonia(_colonia)
-                                        } >{_colonia}</label>))
-            
-                                    }
-                                </div>
-                            ) : <div></div>
-                        }
+                        <AutocompleteInput data={colonias} placeholder={'Colonia'} setDireccionDos={setDireccionDos} />
                     </div>
                     <div className='AddressForm-group'>
                         <label>Calle / Número externo</label>
-                        <input type="text" placeholder='Calle / Número externo' />
+                        <input type="text" placeholder='Calle / Número externo'
+                            onChange={handleChange} />
                     </div>
                 </div>
             </div>
-            <div className='businessBtn'><button>Guardar</button></div>
+            <div className='businessBtn'><button onClick={() => { if(selectedTime !== '') {
+                setIsOpen(true);
+            }}}>Guardar</button></div>
+            {
+                isOpen ?
+                    <>
+                        <div className="backdropDialog" ></div>
+                        <div className="dialogDialog">
+                            <h2>Confirmar</h2>
+                            <span>¿Deseas guardar tu cita?</span>
+                            <label>Motivo de la visita/Servicio</label>
+                            <textarea type="text" placeholder='Opcional' rows="4" cols="50" onChange={handleChangeMessage}></textarea>
+                            <div className='buttonDialog'>
+                                <button className='primaryBkg' onClick={() => setIsOpen(false)}>Cancelar</button>
+                                <button className='secondBkg' onClick={_buildConfirm}>Confirmar</button>
+                            </div>
 
+                        </div>
+                    </>
+                    : null
+            }
 
         </div>);
 }

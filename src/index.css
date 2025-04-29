@@ -49,8 +49,16 @@ body {
   color: var(--primary);
 }
 
+.primaryBkg {
+  background: var(--primary);
+}
+
 .second {
   color: var(--second);
+}
+
+.secondBkg {
+  background: var(--second);
 }
 
 .eighth {
