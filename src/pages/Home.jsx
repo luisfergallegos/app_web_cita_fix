@@ -5,7 +5,7 @@ import { fetchData } from "../Wrapper.js";
 import { useEffect } from "react";
 
 // assets
-import illustration from "../assets/clock_green.png";
+import illustration from "../assets/clock_green.svg";
 import './Home.css';
 
 // loader
@@ -37,7 +37,7 @@ export function Home() {
                         :
                         (
                             <div>
-                                <img src={illustration} alt="Planners Day" width={350} />
+                                <img src={illustration} alt="Planners Day" width={350}/>
                                 <p>¡No olvides crear tu cita!</p>
                                 <p>Genera tus proximas citas de manera fácil y al instante.</p>
                                 <p>Dirígete al buscador</p>

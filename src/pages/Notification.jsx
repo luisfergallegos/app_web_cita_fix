@@ -5,7 +5,8 @@ import { fetchData } from "../Wrapper.js";
 import { useEffect } from "react";
 // assets
 import './Notification.css';
-
+// Library
+import { BellAlertIcon } from '@heroicons/react/24/solid';
 // loader
 export function notificationLoader() {
     const sCorreo = fetchData("correo");
@@ -24,7 +25,8 @@ export function Notification() {
     }, []);
     return (
         <div className="NotificationContainer">
-            <h1>Notification</h1>
+            <BellAlertIcon width={100}/>
+            <h1>Sin Notification</h1>
         </div>);
 }
 

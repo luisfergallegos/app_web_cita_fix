@@ -1,5 +1,375 @@
-.AddAppoinContainer{
+.AddAppoinContainer {
     height: 100vh;
     background: white;
     color: black;
+}
+
+.businessTitleContainer {
+    width: 90%;
+    margin-top: 50px;
+    margin-left: 50px;
+    display: grid;
+    grid-template-columns: 70% auto;
+
+    #store {
+        width: 200px;
+    }
+
+    img {
+        width: 200px;
+    }
+}
+
+.businessTitleContainer--Name {
+    padding: 90px 60px;
+    color: black;
+
+    h4 {
+        font-size: 33px;
+        font-weight: bold;
+    }
+
+    p {
+        font-size: 15px;
+        color: gray;
+    }
+}
+
+.businessSubTitle {
+    width: 90%;
+    margin-left: 50px;
+}
+
+.businessSubTitleContainer {
+    width: 100%;
+    display: grid;
+    grid-template-columns: 3% 97%;
+    justify-content: center;
+    align-items: center;
+
+    p {
+        font-size: 15px;
+        color: gray;
+        margin-left: 10px;
+    }
+}
+
+.businessSubTitleIcon {
+    color: var(--second);
+    width: 30px;
+}
+
+.businessTitle {
+    padding: 10px 60px;
+    color: black;
+
+    h4 {
+        font-size: 15px;
+        font-weight: bold;
+    }
+
+    p {
+        font-size: 20px;
+    }
+}
+
+.businessContainer_Divider {
+    height: 1px;
+    width: 90%;
+    background: var(--third);
+    margin: 10px 50px;
+
+}
+
+.businessAppointmentTimeContainer {
+    margin-top: 10px;
+    margin-left: 60px;
+    margin-bottom: 30px;
+    width: 89%;
+
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -ms-flex-wrap: wrap;
+    flex-wrap: wrap;
+    gap: 16px;
+    justify-content: center;
+}
+
+.businessAppointmentTime {
+    -webkit-box-flex: 1;
+    width: 5vw;
+    height: 5vw;
+    text-align: center;
+    padding: 27px 0;
+    border-radius: 5px;
+    cursor: pointer;
+    -webkit-box-shadow: 0.25em 0.3em 1em var(--primary);
+    box-shadow: 0.25em 0.3em 1em var(--primary);
+    gap: 8px;
+    text-decoration: none;
+    transition: transform 80ms ease-in;
+    background: #e0e0e0;
+
+    &.active {
+        background: grey;
+        cursor: auto;
+    }
+
+}
+
+.businessAppointmentTime:active {
+    transform: scale(0.95);
+}
+
+
+
+.businessBtn {
+    display: block;
+    margin-top: 10px;
+    margin-left: 70px;
+
+
+    button {
+        justify-content: center;
+        align-items: center;
+        width: 92%;
+        height: 50px;
+        font-size: 25px;
+        font-weight: bold;
+        background: var(--primary);
+        border-radius: 8px;
+        color: var(--fifth);
+        cursor: pointer;
+        outline: none;
+        transition: transform 80ms ease-in;
+    }
+
+    button:active {
+        transform: scale(0.95);
+    }
+
+}
+
+.businessContainer_Address {
+    width: 95%;
+    padding: 10px 10px;
+    display: flex;
+    flex-wrap: wrap;
+
+    &.active {
+        display: none;
+    }
+}
+
+.businessContainer_Address .AddressForm-group {
+    margin: 5px 8px;
+    margin-bottom: 15px;
+    width: calc(100%/2 - 20px);
+
+    label {
+        font-size: 12px;
+        font-weight: bold;
+    }
+
+    input {
+        height: 40px;
+        width: 100%;
+        outline: none;
+        border-radius: 5px;
+        border: 1px solid var(--third);
+        padding-left: 15px;
+        transition: all 0.3s ease;
+    }
+}
+
+.AddressForm-group--dasentas {
+    display: grid;
+    position: absolute;
+    color: var(--eighth);
+    font-size: 12px;
+    background: #e0e0e0;
+    width: 39%;
+}
+
+.AddressForm-group--dasentas label:active {
+    background: white;
+    color: black;
+}
+
+.backdropDialog {
+    background: rgba(0, 0, 0, 0.3);
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+.dialogDialog {
+    width: 460px;
+    height: 310px;
+    background: #fff;
+    border-radius: 2rem;
+    position: fixed;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    display: flex;
+    flex-direction: column;
+    max-width: 95%;
+
+    &.large {
+        width: 1024px;
+        max-width: 90%;
+    }
+
+    h2 {
+        margin-top: 10px;
+        margin-left: 30px;
+        margin-right: 10px;
+        margin-bottom: 10px;
+    }
+
+    span {
+        margin-top: 10px;
+        margin-left: 30px;
+        margin-right: 10px;
+        margin-bottom: 10px;
+        font-size: 15px;
+        font-weight: bold;
+    }
+
+    label {
+        margin-top: 10px;
+        margin-left: 30px;
+        margin-right: 10px;
+        margin-bottom: 10px;
+        font-size: 15px;
+    }
+
+    textarea {
+        margin-top: 10px;
+        margin-left: 30px;
+        margin-right: 30px;
+        margin-bottom: 10px;
+    }
+
+    .buttonDialog {
+        margin-top: 10px;
+        margin-left: 30px;
+        margin-right: 30px;
+        margin-bottom: 10px;
+        display: flex;
+        justify-content: flex-end;
+
+
+        button {
+            width: 100px;
+            height: 30px;
+            margin-right: 5px;
+            justify-content: end;
+            align-items: end;
+            font-size: 15px;
+            font-weight: bold;
+            border-radius: 15px;
+            color: var(--fifth);
+            cursor: pointer;
+            outline: none;
+            transition: transform 80ms ease-in;
+            color: white;
+        }
+
+        button:active {
+            transform: scale(0.95);
+        }
+    }
+}
+
+.dialogDialog .closeDialog {
+    position: absolute;
+    top: 0.5rem;
+    right: 0.5rem;
+    background: none;
+    border: 0;
+    padding: 0.5rem;
+    margin: 0;
+    cursor: pointer;
+    border-radius: 1rem;
+    display: flex;
+
+    &:hover {
+        background: rgba(0, 0, 0, 0.2);
+    }
+}
+
+@media (max-width: 575px) {
+
+    .businessTitleContainer {
+        margin-top: 10px;
+        margin-left: 10px;
+        display: flex;
+
+        #store {
+            width: 100px;
+        }
+
+        img {
+            width: 100px;
+        }
+    }
+
+    .businessTitleContainer--Name {
+        padding: 10px 10px;
+    }
+
+    .businessSubTitle {
+        margin-top: 10px;
+        margin-left: 10px;
+    }
+
+
+    .businessContainer_Divider {
+        margin: 10px 10px;
+
+    }
+
+    .businessSubTitleContainer {
+        height: 100%;
+        width: 100%;
+        grid-template-columns: 10% 90%;
+    }
+
+    .businessTitle {
+        padding: 10px 10px;
+    }
+
+    .businessAppointmentTimeContainer {
+        margin-top: 10px;
+        margin-left: 10px;
+    }
+
+    .businessAppointmentTime {
+        width: 12vw;
+        height: 12vw;
+        padding: 13px 0;
+
+    }
+
+    .businessBtn {
+        margin-top: 10px;
+        margin-left: 10px;
+
+        button {
+            font-size: 18px;
+        }
+    }
+
+    .businessContainer_Address .AddressForm-group {
+        width: 100%;
+    }
+
+    .AddressForm-group--dasentas {
+        width: 60%;
+    }
 }

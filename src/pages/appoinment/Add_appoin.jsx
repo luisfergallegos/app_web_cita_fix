@@ -1,47 +1,62 @@
 // rrd imports
 import { useLoaderData, useNavigate } from 'react-router-dom';
-import { fetchData } from "../../Wrapper.js";
+import { fetchData, dateSpanish } from "../../Wrapper.js";
 import { forwardRef, useEffect, useState } from "react";
 import { useLocation } from 'react-router-dom';
 // assets
 import './Add_appoin.css';
 import Store from "../../assets/business.png";
+import Loaging from '../../components/Loading.jsx';
+import { urlApi } from "../../styles/Constants.jsx";
 // Library
 import { MapPinIcon, PhoneIcon, CalendarDaysIcon, CalendarDateRangeIcon } from '@heroicons/react/24/solid';
 import DatePicker from 'react-datepicker';
 import "react-datepicker/dist/react-datepicker.css";
-import SelectDateTime from '../../components/selectDateTime.jsx';
+import AutocompleteInput from '../../components/AutocompleteInput.jsx';
 //import moment from 'moment';
 
 // loader
 export function AddAppoinLoader() {
     const sCorreo = fetchData("correo");
     const sPassword = fetchData("pwd");
-    //Solicitar por GET
-    const tempListDias = fetchData("appoinBussDateDays") ?? [];
-    const citas = fetchData("appoinBussDate") ?? [];
-    const _dias = defineInitialDate(tempListDias);
-    /* const _excludeDates = selectableDayPredicate(_dias); */
-    return { sCorreo, sPassword, _dias, citas };
+    return { sCorreo, sPassword };
 }
 
-function defineInitialDate(_dias) {
+/* function defineInitialDate() {
+    var tempdias = [];
+    var _today = new Date();
+    var Aux = new Date(_today.getFullYear(), _today.getMonth(), _today.getDate());
+    //console.log(`Aux : ${Aux}`);
+    tempdias.push(Aux);
+
+    var lasttoday = new Date(_today.getFullYear(), _today.getMonth() + 2, 0);
+    var AñoAux = parseInt(lasttoday.getFullYear());
+    var MesAux = parseInt(lasttoday.getMonth());
+    var diaAux = parseInt(lasttoday.getDate());
+    var Aux = new Date(AñoAux, MesAux, diaAux);
+
+    //console.log(`Aux : ${Aux}`);
+    tempdias.push(Aux);
+
+    return tempdias;
+} */
+
+function selectableDayPredicate(_dias) {
     var tempdias = [];
     //Convert String to Date
-    for (let index = 0; index < _dias.length; index++) {
-        //console.log(_dias[index]);
-        var diaAux = parseInt(_dias[index].substring(0, 2));
-        var MesAux = parseInt(_dias[index].substring(3, 5)) - 1;
-        var AñoAux = parseInt(_dias[index].substring(6, 10));
-        //console.log(diaAux+'_'+MesAux+'_'+AñoAux);
-        var Aux = new Date(AñoAux, MesAux, diaAux);
-        tempdias.push(Aux);
+    if (_dias.length !== 0) {
+        for (let index = 0; index < _dias.length; index++) {
+            //console.log(_dias[index]);
+            var diaAux = parseInt(_dias[index].substring(0, 2));
+            var MesAux = parseInt(_dias[index].substring(3, 5)) - 1;
+            var AñoAux = parseInt(_dias[index].substring(6, 10));
+            //console.log(diaAux+'_'+MesAux+'_'+AñoAux);
+            var Aux = new Date(AñoAux, MesAux, diaAux);
+            tempdias.push(Aux);
+        }
     }
     return tempdias;
-}
-
-/* function selectableDayPredicate(_dias) {
-    var _tempdias = [];
+    /* var _tempdias = [];
     var _initialDate = _dias[0];
     var _lastDate = _dias[_dias.length - 1];
     var formattedDate = _initialDate;
@@ -55,8 +70,8 @@ function defineInitialDate(_dias) {
         formattedDate = new Date(newDate);
     }
 
-    return _tempdias;
-} */
+    return _tempdias; */
+}
 
 /* function bBuscar(sDay, _dias) {
     var bAux = true;
@@ -73,14 +88,195 @@ function defineInitialDate(_dias) {
 export function AddAppoin() {
     const location = useLocation();
     const navigate = useNavigate();
-    const { sCorreo, sPassword, _dias, citas } = useLoaderData();
+    const { sCorreo, sPassword } = useLoaderData();
+
+    const [startDate, setStartDate] = useState();
+    const [selectedTime, setselectedTime] = useState('');
+    const [cita, setcita] = useState([]);
+    const [_excludeDates, setExcludeDates] = useState([]);
+    const [citas, setCitas] = useState([]);
+    const [bMostrarAddress, setbMostrarAddress] = useState(false);
+    const [estado, setEstado] = useState();
+    const [ciudad, setCiudad] = useState();
+    const [colonias, setColonias] = useState([]);
+    const [bAcceder, setbAcceder] = useState(true);
+    const [direccionUno, setDireccionUno] = useState('');
+    const [direccionDos, setDireccionDos] = useState('');
+    const [codigoPostal, setCodigoPostal] = useState('');
+    const [message, setMessage] = useState('');
+
+    const [loading, setLoading] = useState(true);
+    const [isOpen, setIsOpen] = useState(false);
+
+    const { BUSSINESS_ID, USER_ID, DORSL, PHOTO, CATEGORY, SERVICE_LEVEL,
+        ADDRESS_FIRST, ADDRESS_SECOND, POSTAL_CODE, CITY, STATE,
+        phone, Horario } = location.state.business;
+    var _today = new Date();
+    const initialDate = new Date(_today);
+    const lastDate = new Date(_today.setDate(_today.getDate() + 31));
+
+    // Function to convert Base64 string to binary data
+    const arrayBufferToBase64 = (buffer) => {
+        var binary = '';
+        var bytes = [].slice.call(new Uint8Array(buffer));
+        bytes.forEach((b) => binary += String.fromCharCode(b));
+        return btoa(binary);
+    };
+
+    const ExampleCustomInput = forwardRef(
+        ({ onClick, className }, ref) => (
+            <label className={className} onClick={onClick} ref={ref}>
+                {startDate ? <p>{dateSpanish(startDate)} ‒ {selectedTime ? selectedTime : 'Selecciona una hora'} </p> :
+                    <p>Selecciona una fecha ‒ Selecciona una hora</p>
+                }
+            </label>
+        ),
+    );
+    function SelectDateTime(date) {
+        var tempcita = [];
+        for (let index = 0; index < citas.length; index++) {
+            var parts = citas[index]['APPOINTMENT_DATE'].split('-');
+            var formattedDate = new Date(parts[0], parts[1] - 1, parts[2]);
+            if (formattedDate.toLocaleDateString() == date.toLocaleDateString()) {
+                tempcita.push(citas[index]['APPOINTMENT']);
+            }
+        }
+        setcita(tempcita);
+
+    }
+
+    const ModMostrarAddres = () => {
+        setbMostrarAddress(!bMostrarAddress);
+    };
+
+    const _buildConfirm = () => {
+        console.log(selectedTime);
+
+        if (selectedTime !== '') {
+            if (bAcceder) {
+                setbAcceder(false);
+                if (bMostrarAddress) {
+                    console.log(`userId ${location.state.userId}`);
+                    console.log(`business.id ${BUSSINESS_ID}`);
+                    console.log(`business.userId ${USER_ID}`);
+                    var dateFormat = startDate.getMonth() + 1;
+                    console.log(`selectedDate ${startDate.getFullYear()}-${('0' + dateFormat).slice(-2)}-${startDate.getDate()}`);
+                    console.log(`_selectedTime ${selectedTime}`);
+                    console.log(`  `);
+                    console.log(`sMessage ${message}`);
+                    console.log(`userName ${location.state.userName}`);
+                    console.log(`Bus`);
+                    console.log(`direccionUno ${direccionUno}`);
+                    console.log(`direccionDos ${direccionDos}`);
+                    console.log(`codigoPostal ${codigoPostal}`);
+                    console.log(`ciudad ${ciudad}`);
+                    console.log(`estado ${estado}`);
+                    setbAcceder(true);
+
+                }
+                else {
+                    console.log(`userId ${location.state.userId}`);
+                    console.log(`business.id ${BUSSINESS_ID}`);
+                    console.log(`business.userId ${USER_ID}`);
+                    var dateFormat = startDate.getMonth() + 1;
+                    console.log(`selectedDate ${startDate.getFullYear()}-${('0' + dateFormat).slice(-2)}-${startDate.getDate()}`);
+                    console.log(`_selectedTime ${selectedTime}`);
+                    console.log(`  `);
+                    console.log(`sMessage ${message}`);
+                    console.log(`userName ${location.state.userName}`);
+                    console.log(`Bus`);
+                    setbAcceder(true);
+
+                }
+            }
+        }
+
+
+
+    };
+
+    const getCodigoPostal = async (evt) => {
+        const value = evt.target.value;
+
+        if (evt.target.value.length === 5) {
+            setCodigoPostal(value);
+            const json = fetchData("postalCode") ?? [];
+            setEstado(json['data'][0].d_estado);
+            setCiudad(json['data'][0].d_ciudad);
+            var tempcita = [];
+            for (let index = 0; index < json['data'][0].d_asentas.length; index++) {
+                var element = json['data'][0].d_asentas[index];
+                tempcita.push(element.d_asenta);
+            }
+            setColonias(tempcita);
+        }
+        //Solicitar por GET
+        /* try {
+            const response = await fetch(`${urlApi}postalCode?d_codigo=${value}`);
+            if (!response.ok) {
+                console.log(`Error getting getDaysInactive.`);
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            const json = await response.json();
+        }
+        catch (e) {
+            return;
+        } */
+    };
+
+    const handleChange = evt => {
+        const value = evt.target.value;
+        setDireccionUno(value);
+    };
+
+    const handleChangeMessage = evt => {
+        const value = evt.target.value;
+        setMessage(value);
+    };
+
+
 
     useEffect(() => {
+        const fData = async () => {
+            //Solicitar por GET
+            try {
+                const response = await fetch(`${urlApi}appoinBussDateDays?bussiness_id=${BUSSINESS_ID}`);
+                if (!response.ok) {
+                    console.log(`Error getting getDaysInactive.`);
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                const json = await response.json();
+                setExcludeDates(selectableDayPredicate(json['data']));
+
+                //Solicitar por GET
+                try {
+                    const response = await fetch(`${urlApi}appoinBussDate?bussiness_id=${BUSSINESS_ID}`);
+                    if (!response.ok) {
+                        console.log(`Error getting getDaysInactive.`);
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    const json = await response.json();
+                    setCitas(json['data']);
+                    setLoading(false);
+                }
+                catch (e) {
+                    return;
+                }
+
+                setLoading(false);
+            }
+            catch (e) {
+                return;
+            }
+
+
+        };
         if (sCorreo === null && sPassword === null) {
             navigate("/");
         }
+        fData();
     }, []);
-    /* const [bAccederUnaVezFecha, setbAccederUnaVezFecha] = useState(true); */
+
 
     /* moment.defineLocale('es', {
         months: 'Enero_Febrero_Marzo_Abril_Mayo_Junio_Julio_Agosto_Septiembre_Octubre_Noviembre_Diciembre'.split('_'),
@@ -91,92 +287,149 @@ export function AddAppoin() {
   }); 
     let _selectedDate = moment(new Date()).format('dddd, d MMMM y'); */
 
-    const { BUSSINESS_ID, USER_ID, DORSL, PHOTO, CATEGORY, SERVICE_LEVEL,
-        ADDRESS_FIRST, ADDRESS_SECOND, POSTAL_CODE, CITY, STATE,
-        phone, Horario } = location.state.business;
-    const initialDate = _dias[0];
-    const lastDate = _dias[_dias.length - 1];
-    // Function to convert Base64 string to binary data
-    const arrayBufferToBase64 = (buffer) => {
-        var binary = '';
-        var bytes = [].slice.call(new Uint8Array(buffer));
-        bytes.forEach((b) => binary += String.fromCharCode(b));
-        return btoa(binary);
-    };
-    /* const ModbAccederUnaVezFecha = () => {
-        setbAccederUnaVezFecha(!bAccederUnaVezFecha);
-    }; */
-    const [startDate, setStartDate] = useState();
-    const [selectedTime, setselectedTime] = useState();
-    const ExampleCustomInput = forwardRef(
-        ({ value, onClick, className }, ref) => (
-            <label className={className} onClick={onClick} ref={ref}>
-                {startDate ? <p>{value} ‒ Selecciona una hora</p> :
-                <p>Selecciona una fecha ‒ { selectedTime ? selectedTime : 'Selecciona una hora' }</p>                
-                }
-            </label>
-        ),
-    );
+
+
+
+    if (loading) {
+        return <Loaging />;
+    }
+
     return (
         <div className="AddAppoinContainer">
-            <div>
-                <h4><b>{DORSL}</b></h4>
-                <p >{CATEGORY}</p>
-            </div>
-            <div >
-                {
-                    PHOTO === null ? <img id='store' src={Store} /> :
-                        <img src={'data:image/jpeg;base64,' + arrayBufferToBase64(PHOTO.data)} width={100} />
-                }
-            </div>
-            <div>
-                <div>
-                    <MapPinIcon width={30} />
+            <div className='businessTitleContainer'>
+                <div className='businessTitleContainer--Name'>
+                    <h4>{DORSL}</h4>
+                    <p >{CATEGORY}</p>
                 </div>
-                <div>
+                <div >
+                    {
+                        PHOTO === null ? <img id='store' src={Store} /> :
+                            <img src={'data:image/jpeg;base64,' + arrayBufferToBase64(PHOTO.data)} />
+                    }
+                </div>
+            </div>
+
+            <div className='businessSubTitle'>
+                <div className='businessSubTitleContainer'>
+                    <div className='businessSubTitleIcon'>
+                        <MapPinIcon />
+                    </div>
                     <p>{ADDRESS_FIRST} {ADDRESS_SECOND} CP {POSTAL_CODE} {CITY}, {STATE}</p>
                 </div>
-            </div>
-            {phone && <div >
-                <div >
-                    <PhoneIcon width={30} />
+
+                {phone &&
+                    <div className='businessSubTitleContainer'>
+                        <div className='businessSubTitleIcon'>
+                            <PhoneIcon />
+                        </div>
+                        <p>{phone}</p>
+                    </div>
+                }
+
+                <div className='businessSubTitleContainer'>
+                    <div className='businessSubTitleIcon'>
+                        <CalendarDaysIcon />
+                    </div>
+                    <p>{Horario}</p>
                 </div>
+            </div>
 
-                {phone}
-            </div>}
-
-            <div >
-                <div>
-                    <CalendarDaysIcon width={30} />
+            <div className='businessContainer_Divider'></div>
+            <div className='businessTitle'>
+                <h4>Información de contacto</h4>
+                <p>{location.state.userName}</p>
+            </div>
+            <div className='businessContainer_Divider'></div>
+            <div className='businessTitle'>
+                <h4>Agendar</h4>
+            </div>
+            <div className='businessSubTitle'>
+                <div className='businessSubTitleContainer'>
+                    <div className='businessSubTitleIcon'>
+                        <CalendarDateRangeIcon />
+                    </div>
+                    <div>
+                        <DatePicker
+                            dateFormat="dd/MM/yyyy"
+                            excludeDates={_excludeDates}
+                            selected={startDate}
+                            onChange={(date) => { setStartDate(date); SelectDateTime(date); setselectedTime('') }}
+                            minDate={initialDate}
+                            maxDate={lastDate}
+                            customInput={<ExampleCustomInput className="example-custom-input" />}
+                        />
+                    </div>
                 </div>
-                {Horario}
             </div>
-            <div >-----------------------------</div>
-            <div >
-                Información de contacto
-                <h1>{location.state.userName}</h1>
+            <div className='businessAppointmentTimeContainer' >
+                {cita[0] &&
+                    cita[0].map(({ APPOINTMENT_TIME, STATUS }, index) =>
+                    (
+                        <div className={STATUS === 'No' ? 'businessAppointmentTime active' : 'businessAppointmentTime'}
+                            key={APPOINTMENT_TIME}
+                            onClick={() => {
+                                if (STATUS === 'free') {
+                                    setselectedTime(APPOINTMENT_TIME);
+                                }
+                            }
+                            }  >
+                            <label>{APPOINTMENT_TIME} </label>
+                        </div>
+                    ))
+                }
             </div>
-            <div >-----------------------------</div>
-            <div >Agendar</div>
-            <div >
-                <div>
-                    <CalendarDateRangeIcon width={30} />
+
+            <div className='businessContainer_Divider'></div>
+
+            <div className='businessTitle'>
+                <h4>{bMostrarAddress ? '¿Cuál es la dirección?' : 'Visita a domicilio'}</h4>
+                <p><input type="checkbox" onClick={ModMostrarAddres}></input></p>
+                <div className={bMostrarAddress ? 'businessContainer_Address' : 'businessContainer_Address active'} >
+                    <div className='AddressForm-group'>
+                        <label>Código postal</label>
+                        <input type="text" placeholder='Código postal' maxLength={5} onChange={getCodigoPostal} />
+                    </div>
+                    <div className='AddressForm-group'>
+                        <label>Estado</label>
+                        <input type="text" placeholder='Estado' value={estado} disabled />
+                    </div>
+                    <div className='AddressForm-group'>
+                        <label>Municipio/Ciudad</label>
+                        <input type="text" placeholder='Municipio/Ciudad' value={ciudad} disabled />
+                    </div>
+                    <div className='AddressForm-group'>
+                        <label>Colonia</label>
+                        <AutocompleteInput data={colonias} placeholder={'Colonia'} setDireccionDos={setDireccionDos} />
+                    </div>
+                    <div className='AddressForm-group'>
+                        <label>Calle / Número externo</label>
+                        <input type="text" placeholder='Calle / Número externo'
+                            onChange={handleChange} />
+                    </div>
                 </div>
-                <DatePicker
-                    dateFormat="dd/MM/yyyy"
-                    excludeDates={_dias}
-                    selected={startDate}
-                    onChange={(date) => setStartDate(date)}
-                    minDate={initialDate}
-                    maxDate={lastDate}
-                    customInput={<ExampleCustomInput className="example-custom-input" />}
-                />
-                {startDate && <SelectDateTime citas={citas} 
-                _selectedDate={startDate}  /> } 
-                <div >-----------------------------</div>
-
-
             </div>
+            <div className='businessBtn'><button onClick={() => { if(selectedTime !== '') {
+                setIsOpen(true);
+            }}}>Guardar</button></div>
+            {
+                isOpen ?
+                    <>
+                        <div className="backdropDialog" ></div>
+                        <div className="dialogDialog">
+                            <h2>Confirmar</h2>
+                            <span>¿Deseas guardar tu cita?</span>
+                            <label>Motivo de la visita/Servicio</label>
+                            <textarea type="text" placeholder='Opcional' rows="4" cols="50" onChange={handleChangeMessage}></textarea>
+                            <div className='buttonDialog'>
+                                <button className='primaryBkg' onClick={() => setIsOpen(false)}>Cancelar</button>
+                                <button className='secondBkg' onClick={_buildConfirm}>Confirmar</button>
+                            </div>
+
+                        </div>
+                    </>
+                    : null
+            }
+
         </div>);
 }
 

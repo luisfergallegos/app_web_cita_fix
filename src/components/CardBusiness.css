@@ -32,8 +32,8 @@
     left: 50%;
     transform: translate(-50%, -50%);
     border-radius: 150px 150px 150px 150px;
-    width: 300px;
-    height: 300px;
+    width: 250px;
+    height: 250px;
     color: var(--second);
     background: white;
 }
@@ -42,8 +42,8 @@
     box-shadow: 0.25em 0.3em 1em var(--primary);
     border-radius: 150px 150px 150px 150px ;
     object-fit: fill;
-    width: 300px;
-    height: 300px;
+    width: 250px;
+    height: 250px;
 }
 
 #store {

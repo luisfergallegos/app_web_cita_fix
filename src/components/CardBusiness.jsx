@@ -1,11 +1,20 @@
 // Library
-import { BuildingStorefrontIcon, MapPinIcon, PhoneIcon, CalendarDaysIcon } from '@heroicons/react/24/solid';
+import { BuildingStorefrontIcon, MapPinIcon, PhoneIcon, CalendarDaysIcon, StarIcon } from '@heroicons/react/24/solid';
 import './CardBusiness.css';
 // assents
 import Store from "../assets/business.png";
 // rrd imports
 import { useNavigate } from 'react-router-dom';
 
+function StarRating(maxRating) {
+    const stars = [];
+    var colors= 'grey_red_amber_orange_lightGreen_green'.split('_');
+    for (let i = 1; i <= maxRating; i++) {
+        stars.push(
+          <StarIcon width={20} color={colors[maxRating-1]}/>);
+      }
+    return stars;
+}
 
 export function CardBusiness({ userId, userName, empresa }) {
     const navigate = useNavigate();
@@ -38,7 +47,7 @@ export function CardBusiness({ userId, userName, empresa }) {
             <div className='CardContainer_Titulo'>
                 <h4><b>{DORSL}</b></h4>
                 <p className='eighth'>{CATEGORY}</p>
-                <span> Estrellas : {SERVICE_LEVEL}</span>
+                {StarRating(SERVICE_LEVEL)}
             </div>
             <div className='CardContainer_Divider' ></div>
             <div className='CardContainer_Detalle'>
