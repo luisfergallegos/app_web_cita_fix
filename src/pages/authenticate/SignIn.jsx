@@ -1,5 +1,6 @@
 
 import { useState } from 'react';
+import { urlApi } from '../../styles/Constants';
 
 export default function Login() {
   const [email, setEmail] = useState('');
@@ -8,59 +9,63 @@ export default function Login() {
 
   const handleLogin = async (e) => {
     e.preventDefault();
-    if (!email || !password) {
+
+    if (email === '' || password === '') {
       setShowAlert(true);
       setTimeout(() => setShowAlert(false), 3000); // ocultar alerta
       return;
     }
-
-    var options = {  
-      method: 'GET',
-      headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json',
-          'x-citafix-ps': password
+    else {
+      var options = {  
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+            'x-citafix-ps': password
+        }
       }
+      try {
+        const response = await fetch(`${urlApi}login?email=${email}`, options);            
+        if (!response.ok) {
+            alert(`No se pudo iniciar sesión con esas credenciales`);
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const json = await response.json();
+        if(json['sucess']){
+            localStorage.setItem("correo", '');
+            localStorage.setItem("pwd", '');
+            localStorage.setItem("tokenH", '');
+            localStorage.setItem("BusinessCitaFix", '');
+            localStorage.setItem("UserCitaFix", '');
+  
+            localStorage.setItem("correo", JSON.stringify(email));
+            localStorage.setItem("pwd", JSON.stringify(password));
+            try {
+                const response = await fetch( `${urlApi}usr?email=${email}`, options);            
+                if (!response.ok) {
+                    console.log(`No se pudo obtener informacion del usuario`);
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                const json = await response.json();
+                console.log('Login con:', email, password);
+                //obtener nombre
+                localStorage.setItem("UserCitaFix", JSON.stringify(json['data']));
+                var userName = json['data']['first_name'];
+                navigate(`/`,{ replace: true }); // <-- redirect
+                return toast.success(`Bienvenido, ${userName}`);
+            }
+            catch (e) {
+                return;
+            } 
+        }
+        
+      } catch (e) {
+        return;
+      } 
     }
-    try {
-      const response = await fetch(`${urlApi}login?email=${sCorreo}`, options);            
-      if (!response.ok) {
-          alert(`No se pudo iniciar sesión con esas credenciales`);
-          throw new Error(`HTTP error! status: ${response.status}`);
-      }
-      const json = await response.json();
-      if(json['sucess']){
-          localStorage.setItem("correo", '');
-          localStorage.setItem("pwd", '');
-          localStorage.setItem("tokenH", '');
-          localStorage.setItem("BusinessCitaFix", '');
-          localStorage.setItem("UserCitaFix", '');
 
-          localStorage.setItem("correo", JSON.stringify(sCorreo));
-          localStorage.setItem("pwd", JSON.stringify(sPassword));
-          try {
-              const response = await fetch( `${urlApi}usr?email=${sCorreo}`, options);            
-              if (!response.ok) {
-                  console.log(`No se pudo obtener informacion del usuario`);
-                  throw new Error(`HTTP error! status: ${response.status}`);
-              }
-              const json = await response.json();
-              console.log('Login con:', email, password);
-              //obtener nombre
-              //localStorage.setItem("UserCitaFix", JSON.stringify(json['data']));
-              //var userName = json['data']['first_name'];
-              navigate(`/`,{ replace: true }); // <-- redirect
-              //return toast.success(`Bienvenido, ${userName}`);
-          }
-          catch (e) {
-              return;
-          } 
-      }
-      
-    } catch (e) {
-      return;
-    } 
     
+
   };
 
   return (
