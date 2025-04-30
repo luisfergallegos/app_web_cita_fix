@@ -7,91 +7,89 @@ export default function RegisterUser() {
   const [userPass, setUserPass] = useState('');
   const [userName, setUserName] = useState('');
   const [userLastName, setUserLastName] = useState('');
-  const [errors, setErrors] = useState({});
-
+  const [errorMsg, setErrorMsg] = useState('');
   const navigate = useNavigate();
 
-  const register = (e) => {
+  const validateAndRegister = (e) => {
     e.preventDefault();
-
-    const newErrors = {};
-
-    if (!userName) newErrors.name = "Ingresa tu nombre";
-    if (!userLastName) newErrors.lastname = "Ingresa tu apellido";
-
+    if (!userName || !userLastName || !userEmail || !userPass) {
+      setErrorMsg('Completa todos los campos.');
+      return;
+    }
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!userEmail) newErrors.email = "Usarás este dato cuando entres";
-    else if (!emailRegex.test(userEmail)) newErrors.email = "Ingresa un correo electrónico válido";
+    if (!emailRegex.test(userEmail)) {
+      setErrorMsg('Correo electrónico inválido.');
+      return;
+    }
+    if (userPass.length < 6) {
+      setErrorMsg('La contraseña debe tener al menos 6 caracteres.');
+      return;
+    }
 
-    if (!userPass) newErrors.password = "Introduce una contraseña segura";
-    else if (userPass.length < 6) newErrors.password = "Mínimo 6 caracteres";
-
-    setErrors(newErrors);
-    if (Object.keys(newErrors).length > 0) return;
-
-    console.log("Registro exitoso:", { userEmail, userName, userLastName, userPass });
-    navigate(`/home`, { replace: true });
+    setErrorMsg('');
+    console.log({ userEmail, userPass, userName, userLastName });
+    navigate('/home', { replace: true });
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-900 to-purple-900 px-4">
-      <div className="bg-white w-full max-w-2xl p-10 rounded-3xl shadow-xl animate-fade-in-up">
-        <NavLink to="/" className="flex items-center text-sm text-gray-500 hover:text-indigo-500 mb-6">
-          <ChevronLeftIcon className="w-5 h-5 mr-2" />
-          Regresar
-        </NavLink>
+    <div className="min-h-screen bg-gradient-to-br from-orange-600 to-orange-800 flex items-center justify-center px-4 relative overflow-hidden">
+      {/* Alerta centrada */}
+      {errorMsg && (
+        <div className="absolute top-6 bg-red-600 text-white px-6 py-3 rounded-lg shadow-lg text-sm animate-bounce z-50">
+          {errorMsg}
+        </div>
+      )}
 
-        <h2 className="text-3xl font-bold text-gray-800 mb-2 text-center">Registrarte</h2>
-        <p className="text-sm text-gray-500 text-center mb-8">Es rápido y fácil 🚀</p>
+      <div className="flex w-full max-w-4xl bg-white rounded-3xl shadow-2xl overflow-hidden animate-fade-in-up scale-95 hover:scale-100 transition-all duration-300">
+        {/* Formulario */}
+        <div className="w-full md:w-1/2 p-10">
+          <NavLink to="/" className="flex items-center text-sm text-gray-500 hover:text-orange-500 mb-6">
+            <ChevronLeftIcon className="w-5 h-5 mr-2" />
+            Regresar
+          </NavLink>
 
-        <form onSubmit={register} className="space-y-5">
-          <div>
+          <h2 className="text-3xl font-bold text-gray-800 mb-2">Registrarte</h2>
+          <p className="text-sm text-gray-500 mb-6">Es rápido y fácil 🎉</p>
+
+          <form onSubmit={validateAndRegister} className="space-y-5">
             <input
               type="text"
               placeholder="Nombre"
-              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 outline-none"
+              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-orange-500 focus:outline-none"
               onChange={(e) => setUserName(e.target.value)}
             />
-            {errors.name && <p className="text-red-500 text-sm mt-1">{errors.name}</p>}
-          </div>
-
-          <div>
             <input
               type="text"
               placeholder="Apellido"
-              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 outline-none"
+              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-orange-500 focus:outline-none"
               onChange={(e) => setUserLastName(e.target.value)}
             />
-            {errors.lastname && <p className="text-red-500 text-sm mt-1">{errors.lastname}</p>}
-          </div>
-
-          <div>
             <input
               type="email"
               placeholder="Correo electrónico"
-              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 outline-none"
+              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-orange-500 focus:outline-none"
               onChange={(e) => setUserEmail(e.target.value)}
             />
-            {errors.email && <p className="text-red-500 text-sm mt-1 flex items-center gap-1"><UserIcon className="w-4 h-4" /> {errors.email}</p>}
-          </div>
-
-          <div>
             <input
               type="password"
               placeholder="Contraseña"
-              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 outline-none"
+              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-orange-500 focus:outline-none"
               onChange={(e) => setUserPass(e.target.value)}
             />
-            {errors.password && <p className="text-red-500 text-sm mt-1 flex items-center gap-1"><LockClosedIcon className="w-4 h-4" /> {errors.password}</p>}
-          </div>
+            <button
+              type="submit"
+              className="w-full py-3 bg-orange-500 text-white font-semibold rounded-md hover:bg-orange-600 transition duration-300"
+            >
+              Registrarte
+            </button>
+          </form>
+        </div>
 
-          <button
-            type="submit"
-            className="w-full py-3 bg-indigo-600 text-white font-semibold rounded-md hover:bg-indigo-700 transition"
-          >
-            Registrarte
-          </button>
-        </form>
+        {/* Panel visual derecho */}
+        <div className="hidden md:flex md:w-1/2 items-center justify-center bg-orange-500 text-white p-10 flex-col text-center">
+          <h2 className="text-2xl font-bold mb-4">¡Bienvenido!</h2>
+          <p className="text-sm">Crea tu cuenta para comenzar a usar la plataforma.</p>
+        </div>
       </div>
     </div>
   );
