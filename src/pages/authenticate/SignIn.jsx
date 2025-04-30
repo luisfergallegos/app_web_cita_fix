@@ -123,6 +123,12 @@ export default function Login() {
             >
               Iniciar sesión
             </button>
+            <p className="text-sm text-center text-gray-500 mt-6">
+            ¿Olvidaste tu contraseña?{' '}
+            <span className="text-orange-500 underline cursor-pointer hover:text-orange-600 transition">
+              Recuperar acceso
+            </span>
+          </p>
           </form>
 
         
@@ -130,6 +136,7 @@ export default function Login() {
 
         {/* Panel derecho (visual) */}
         <div className="hidden md:flex md:w-1/2 items-center justify-center bg-orange-500 text-white p-10 flex-col text-center">
+          
           <h2 className="text-2xl font-bold mb-4">¡Hola otra vez!</h2>
           <p className="text-sm">Ingresa tus credenciales para continuar</p>
         </div>
