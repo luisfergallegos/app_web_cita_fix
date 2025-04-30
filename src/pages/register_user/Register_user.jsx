@@ -1,135 +1,98 @@
 import { useState } from "react";
-import { toast } from "react-toastify";
-// library
 import { LockClosedIcon, UserIcon, ChevronLeftIcon } from "@heroicons/react/24/solid";
-
-// rrd imports
 import { useNavigate, NavLink } from "react-router-dom";
-import "./Register_user.css";
 
+export default function RegisterUser() {
+  const [userEmail, setUserEmail] = useState('');
+  const [userPass, setUserPass] = useState('');
+  const [userName, setUserName] = useState('');
+  const [userLastName, setUserLastName] = useState('');
+  const [errors, setErrors] = useState({});
 
-const registerUser = () => {
-    const [userEmail, setUserEmail] = useState('');
-    const [userEmailError, setUserEmailError] = useState();
-    const [userPass, setUserPass] = useState('');
-    const [userPassError, setUserPassError] = useState();
-    const [userName, setUserName] = useState('');
-    const [userNameError, setUserNameError] = useState();
-    const [userLastName, setUserLastName] = useState('');
-    const [userLastNameError, setUserLastNameError] = useState();
+  const navigate = useNavigate();
 
-    const navigate = useNavigate();
+  const register = (e) => {
+    e.preventDefault();
 
-    function register(e) {
+    const newErrors = {};
 
-        //ValidateName
-        if (userName === "") {
-            setUserNameError("Ingresa tu nombre");
-            return;
-        }
-        else {
-            setUserNameError("");
-        }
+    if (!userName) newErrors.name = "Ingresa tu nombre";
+    if (!userLastName) newErrors.lastname = "Ingresa tu apellido";
 
-        //ValidateLastName
-        if (userLastName === "") {
-            setUserLastNameError("Ingresa tu apellido");
-            return;
-        }
-        else {
-            setUserLastNameError("");
-        }
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!userEmail) newErrors.email = "Usarás este dato cuando entres";
+    else if (!emailRegex.test(userEmail)) newErrors.email = "Ingresa un correo electrónico válido";
 
-        //ValidateEmail
-        const isValidEmail = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    if (!userPass) newErrors.password = "Introduce una contraseña segura";
+    else if (userPass.length < 6) newErrors.password = "Mínimo 6 caracteres";
 
-        if (userEmail === "") {
-            setUserEmailError("Usarás este dato cuando entres");
-            return;
-        } else if (!isValidEmail.test(userEmail)) {
-            setUserEmailError("Ingresa un correo electrónico válido");
-            return;
-        }
-        else {
-            setUserEmailError("");
-        }
+    setErrors(newErrors);
+    if (Object.keys(newErrors).length > 0) return;
 
-        //ValidatePass
-        if (userPass === "") {
-            setUserPassError("Introduce una combinación de al menos 6 números, letras y signos de puntuación");
-            return;
-        } else if (userPass.length < 6) {
-            setUserPassError("La contraseña debe tener al menos 6 caracteres");
-            return;
-        } else {
-            setUserPassError("");
-        }
+    console.log("Registro exitoso:", { userEmail, userName, userLastName, userPass });
+    navigate(`/home`, { replace: true });
+  };
 
-        try {
-            /* restDatasource.registerUser(
-                sCorreo,
-                sNombre,
-                sApellido,
-                'Movil',
-                'user',
-                sPassword); */
-            console.log("correo " + userEmail);
-            console.log("name " + userName);
-            console.log("lastName " + userLastName);
-            console.log("Web ");
-            console.log("user ");
-            console.log("pwd " + userPass);
-            navigate(`/home`, { replace: true }); // <-- redirect
-            toast.success("Registro completo");
-            return;
-        }
-        catch (e) {
-            throw new Error("There was a problem creating your account.");
-        }
-    }
+  return (
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-900 to-purple-900 px-4">
+      <div className="bg-white w-full max-w-2xl p-10 rounded-3xl shadow-xl animate-fade-in-up">
+        <NavLink to="/" className="flex items-center text-sm text-gray-500 hover:text-indigo-500 mb-6">
+          <ChevronLeftIcon className="w-5 h-5 mr-2" />
+          Regresar
+        </NavLink>
 
+        <h2 className="text-3xl font-bold text-gray-800 mb-2 text-center">Registrarte</h2>
+        <p className="text-sm text-gray-500 text-center mb-8">Es rápido y fácil 🚀</p>
 
-    return (
-        <div id="container">
-            <nav>
-                <NavLink to="/" aria-label="Back">
-                    <div id="Linkicon"><ChevronLeftIcon /></div>                    
-                    <span>Regresar</span>
-                </NavLink>
-            </nav>
+        <form onSubmit={register} className="space-y-5">
+          <div>
+            <input
+              type="text"
+              placeholder="Nombre"
+              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 outline-none"
+              onChange={(e) => setUserName(e.target.value)}
+            />
+            {errors.name && <p className="text-red-500 text-sm mt-1">{errors.name}</p>}
+          </div>
 
-            <div className="container">
-                <div className="title">
-                    Registrarte <span>Es rápido y fácil</span>
-                </div>
-                <div className="registerForm">
-                    <div className="registerForm-group">
+          <div>
+            <input
+              type="text"
+              placeholder="Apellido"
+              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 outline-none"
+              onChange={(e) => setUserLastName(e.target.value)}
+            />
+            {errors.lastname && <p className="text-red-500 text-sm mt-1">{errors.lastname}</p>}
+          </div>
 
-                        <input type="text" name="sName" placeholder="Nombre" required onChange={(e) => setUserName(e.target.value)} />
-                        {userNameError ? <label name="userNameError">{userNameError}</label> : <></>}
-                    </div>
-                    <div className="registerForm-group">
+          <div>
+            <input
+              type="email"
+              placeholder="Correo electrónico"
+              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 outline-none"
+              onChange={(e) => setUserEmail(e.target.value)}
+            />
+            {errors.email && <p className="text-red-500 text-sm mt-1 flex items-center gap-1"><UserIcon className="w-4 h-4" /> {errors.email}</p>}
+          </div>
 
-                        <input type="text" name="sApellido" placeholder="Apellido" required onChange={(e) => setUserLastName(e.target.value)} />
-                        {userLastNameError ? <label name="userLastNameError"> {userLastNameError}</label> : <></>}
-                    </div>
-                    <div className="registerForm-group">
+          <div>
+            <input
+              type="password"
+              placeholder="Contraseña"
+              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 outline-none"
+              onChange={(e) => setUserPass(e.target.value)}
+            />
+            {errors.password && <p className="text-red-500 text-sm mt-1 flex items-center gap-1"><LockClosedIcon className="w-4 h-4" /> {errors.password}</p>}
+          </div>
 
-                        <input type="text" name="sCorreo" placeholder="Correo electrónico" required onChange={(e) => setUserEmail(e.target.value)} />
-                        {userEmailError ? <label name="userEmailError"><UserIcon width={20} /> {userEmailError}</label> : <></>}
-                    </div>
-                    <div className="registerForm-group">
-
-                        <input type="password" name="sPassword" placeholder="Contraseña" required onChange={(e) => setUserPass(e.target.value)} />
-                        {userPassError ? <label name="userPassError"><LockClosedIcon width={20} /> {userPassError}</label> : <></>}
-                    </div>
-                    <div className="registerForm-button">
-                        <button type="submit" onClick={register} > <span>Registrarte</span></button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    )
+          <button
+            type="submit"
+            className="w-full py-3 bg-indigo-600 text-white font-semibold rounded-md hover:bg-indigo-700 transition"
+          >
+            Registrarte
+          </button>
+        </form>
+      </div>
+    </div>
+  );
 }
-
-export default registerUser;
