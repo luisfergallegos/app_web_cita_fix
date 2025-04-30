@@ -7,7 +7,8 @@ import { useEffect, useState } from "react";
 import './Find_business.css';
 import { urlApi } from "../../styles/Constants.jsx";
 import illustration from "../../assets/search_grey.svg";
-import { MagnifyingGlassIcon } from '@heroicons/react/24/solid';
+import Store from "../../assets/business.png";
+import { MagnifyingGlassIcon, StarIcon } from '@heroicons/react/24/solid';
 import CardBusiness from '../../components/CardBusiness.jsx';
 import Loaging from '../../components/Loading.jsx';
 
@@ -19,7 +20,17 @@ export function findBusinessLoader() {
     return { sCorreo, sPassword, sUserCitaFix };
 }
 
-/* const CloseIcon = () => (
+function StarRating(maxRating) {
+    const stars = [];
+    var colors = 'grey_red_amber_orange_lightGreen_green'.split('_');
+    for (let i = 1; i <= maxRating; i++) {
+        stars.push(
+            <StarIcon width={20} color={colors[maxRating - 1]} />);
+    }
+    return stars;
+}
+
+const CloseIcon = () => (
     <svg width="24" height="24" fill="none" viewBox="0 0 24 24">
         <path
             stroke="currentColor"
@@ -36,7 +47,7 @@ export function findBusinessLoader() {
             d="M6.75 6.75L17.25 17.25"
         />
     </svg>
-); */
+);
 
 export function FindBusiness() {
     const navigate = useNavigate();
@@ -51,8 +62,16 @@ export function FindBusiness() {
     const [searchText, setsearchText] = useState('');
     const [filteredNames, setfilteredNames] = useState([]);
 
-    /* const [isOpen, setIsOpen] = useState(false); */
-    
+    const [isOpen, setIsOpen] = useState(false);
+    const [indexEmp, setIndexEmp] = useState();
+    const [qualifications, setQualifications] = useState([]);
+
+    const arrayBufferToBase64 = (buffer) => {
+        var binary = '';
+        var bytes = [].slice.call(new Uint8Array(buffer));
+        bytes.forEach((b) => binary += String.fromCharCode(b));
+        return btoa(binary);
+    };
 
     const handleChange = evt => {
         const tempList = [];
@@ -105,10 +124,10 @@ export function FindBusiness() {
     }, []);
 
     if (loading) {
-        return <Loaging/>;
+        return <Loaging />;
     }
 
-    
+
     return (
         <div className="FindBusinessContainer">
             <div className='searchContainer'>
@@ -120,7 +139,9 @@ export function FindBusiness() {
                     <div className='empresas'>
                         {
                             empresas &&
-                            filteredNames.map((empresa) => (<CardBusiness key={empresa.id} userId={userId} userName={userName} empresa={empresa} />))
+                            filteredNames.map((empresa) =>
+                            (<CardBusiness key={empresa['BUSSINESS_ID']} userId={userId} userName={userName} empresa={empresa} setIsOpen={setIsOpen} setIndexEmp={setIndexEmp} setQualifications={setQualifications} />
+                            ))
 
                         }
                     </div>
@@ -135,25 +156,51 @@ export function FindBusiness() {
                             <div className='buildListRandom'>
                                 <p>Sugerencias para ti</p>
                                 <div className='empresas'>
-                                    <CardBusiness key={empresas[index]['BUSSINESS_ID']} userId={userId} userName={userName} empresa={empresas[index]} />
+                                    <CardBusiness key={empresas[index]['BUSSINESS_ID']} userId={userId} userName={userName} empresa={empresas[index]} setIsOpen={setIsOpen} setIndexEmp={setIndexEmp} setQualifications={setQualifications} />
                                 </div>
                             </div>
                         </div>
                     )
             }
-            {/* {
+            {
                 isOpen ?
                     <>
                         <div className="backdropDialog" ></div>
                         <div className="dialogDialog">
-                        <button className="closeDialog" onClick={() => setIsOpen(false)}>
+                            <button className="closeDialog" onClick={() => setIsOpen(false)}>
                                 <CloseIcon />
                             </button>
-                            <h2>Confirmar</h2>
+                            <div>
+                                {
+                                    indexEmp['PHOTO'] === null ? <img id='store' src={Store} /> :
+                                        <img src={'data:image/jpeg;base64,' + arrayBufferToBase64(indexEmp['PHOTO'].data)} />
+                                }
+                            </div>
+                            <div className='CardContainer_Titulo'>
+                                <h4><b>{indexEmp['DORSL']}</b></h4>
+                                {StarRating(indexEmp['SERVICE_LEVEL'])}
+                                <p className='eighth'>{indexEmp['CATEGORY']}</p>
+                            </div>
+                            <div className='CardContainer_Divider' ></div>
+                            <div className='CardContainer_Detalle'>
+                                <label >Información de calificaciones</label>
+                                { qualifications.length !== 0 && 
+                                qualifications.map((qualification) =>  (
+                                    <div key={qualification} >
+                                    <span>{qualification['USER']}</span>
+                                    <span>{qualification['COMMENTS']}</span>
+                                    <span>{qualification['SERVICE_LEVEL']}</span>
+                                    <span>{qualification['SERVICE_LEVEL_DATE']}</span>
+                                </div>
+                                ))
+                                
+                                }
+                                
+                            </div>
                         </div>
                     </>
                     : null
-            } */}
+            }
         </div>);
 }
 

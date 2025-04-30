@@ -94,6 +94,50 @@
     width: 100%;
 }
 
+.FindBusinessContainer .dialogDialog {
+    width: 460px;
+    height: 610px;
+    background: #fff;
+    border-radius: 2rem;
+    position: fixed;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    display: flex;
+    flex-direction: column;
+    max-width: 95%;
+
+    &.large {
+        width: 1024px;
+        max-width: 90%;
+    }
+
+    h2 {
+        margin-top: 10px;
+        margin-left: 30px;
+        margin-right: 10px;
+        margin-bottom: 10px;
+    }
+
+    span {
+        margin-top: 10px;
+        margin-left: 30px;
+        margin-right: 10px;
+        margin-bottom: 10px;
+        font-size: 15px;
+        font-weight: bold;
+    }
+
+    label {
+        margin-top: 10px;
+        margin-left: 30px;
+        margin-right: 10px;
+        margin-bottom: 10px;
+        font-size: 15px;
+    }
+
+    
+}
 
 
 @media (max-width: 575px) {
