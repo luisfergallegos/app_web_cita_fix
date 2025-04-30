@@ -26,17 +26,9 @@ export function LoginForm() {
                 <div id="containerLogin">
                     <div className="containerLogin">
                         <SingIn />
-                        <div className="overlay-container">
-                            <div className="overlay">
-                                <div className="overlay-panel overlay-right">
-                                    <img src={Logo} alt="Planners Day" />
-                                </div>
-                            </div>
-                        </div>
                     </div>
                 </div>
             }
-
         </>
     );
 }

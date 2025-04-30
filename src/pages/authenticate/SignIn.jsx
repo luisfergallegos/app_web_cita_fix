@@ -1,245 +1,174 @@
-import React from "react";
-// library
+
+import { useState } from 'react';
+import { urlApi } from '../../styles/Constants';
 import { toast } from "react-toastify";
-import './SignIn.css';
-import { Link, useNavigate } from "react-router-dom";
-import { urlApi } from "../../styles/Constants.jsx";
-// rrd imports
-import { fetchData } from "../../Wrapper.js";
+import { useNavigate } from "react-router-dom";
+// assents
+import Logo from "../../assets/menu.png";
 
+export default function Login() {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [showAlert, setShowAlert] = useState(false);
+  const [showAlertConfirmation, setshowAlertConfirmation] = useState(false);
+  const navigate = useNavigate();
 
-function SingIn() {
-    const navigate = useNavigate();
-    const [state, setState] = React.useState({
-        sCorreo: "",
-        sPassword: ""
-    });
-    const handleChange = evt => {
-        const value = evt.target.value;
-        setState({
-            ...state,
-            [evt.target.name]: value
-        });
-    };
+  const handleLogin = async (e) => {
+    e.preventDefault();
 
-    const handleOnSubmit = async evt => {
-        evt.preventDefault();
-        const { sCorreo, sPassword } = state;
+    if (email === '' || password === '') {
+      setShowAlert(true);
+      setTimeout(() => setShowAlert(false), 3000); // ocultar alerta
+      return;
+    }
+    else {
+      var options = {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          'x-citafix-ps': password
+        }
+      }
+      try {
+        const response = await fetch(`${urlApi}login?email=${email}`, options);
+        if (!response.ok) {
+          alert(`No se pudo iniciar sesión con esas credenciales`);
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const json = await response.json();
+        if (json['sucess']) {
+          localStorage.setItem("correo", '');
+          localStorage.setItem("pwd", '');
+          localStorage.setItem("tokenH", '');
+          localStorage.setItem("BusinessCitaFix", '');
+          localStorage.setItem("UserCitaFix", '');
 
-        var options = {  
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-                'Accept': 'application/json',
-                'x-citafix-ps': sPassword
-            }
-          }
-        try {
-            const response = await fetch(`${urlApi}login?email=${sCorreo}`, options);            
+          localStorage.setItem("correo", JSON.stringify(email));
+          localStorage.setItem("pwd", JSON.stringify(password));
+          try {
+            const response = await fetch(`${urlApi}usr?email=${email}`, options);
             if (!response.ok) {
-                alert(`No se pudo iniciar sesión con esas credenciales`);
-                throw new Error(`HTTP error! status: ${response.status}`);
+              console.log(`No se pudo obtener informacion del usuario`);
+              throw new Error(`HTTP error! status: ${response.status}`);
             }
             const json = await response.json();
-            if(json['sucess']){
-                localStorage.setItem("correo", '');
-                localStorage.setItem("pwd", '');
-                localStorage.setItem("tokenH", '');
-                localStorage.setItem("BusinessCitaFix", '');
-                localStorage.setItem("UserCitaFix", '');
-
-                localStorage.setItem("correo", JSON.stringify(sCorreo));
-                localStorage.setItem("pwd", JSON.stringify(sPassword));
-                try {
-                    const response = await fetch( `${urlApi}usr?email=${sCorreo}`, options);            
-                    if (!response.ok) {
-                        console.log(`No se pudo obtener informacion del usuario`);
-                        throw new Error(`HTTP error! status: ${response.status}`);
-                    }
-                    const json = await response.json();
-                    //obtener nombre
-                    localStorage.setItem("UserCitaFix", JSON.stringify(json['data']));
-                    var userName = json['data']['first_name'];
-                    navigate(`/`,{ replace: true }); // <-- redirect
-                    return toast.success(`Bienvenido, ${userName}`);
-                }
-                catch (e) {
-                    return;
-                } 
-            }
-            
-          } catch (e) {
+            console.log('Login con:', email, password);
+            //obtener nombre
+            localStorage.setItem("UserCitaFix", JSON.stringify(json['data']));
+            var userName = json['data']['first_name'];
+            navigate(`/`, { replace: true }); // <-- redirect
+            return toast.success(`Bienvenido, ${userName}`);
+          }
+          catch (e) {
             return;
-          } 
-    };
-
-    function signInAction() {
-        /* if (confirm("Delete user and all data?")) {
-            
-        } */
-        const { sCorreo, sPassword } = state;
-        //ValidateEmail
-        const isValidEmail = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-
-        if (sCorreo === "") {
-            alert("Por favor ingresa tu correo electrónico");
-            return;
-        } else if (!isValidEmail.test(sCorreo)) {
-            alert("Ingresa un correo electrónico válido");
-            return;
-        }
-        else {
-            console.log("correo " + sCorreo);
-            return toast.success("Información enviada!");
+          }
         }
 
-    };
+      } catch (e) {
+        return;
+      }
+    }
+  };
 
-    return (
-        <>
-            <div className="form-containerLogin sign-in-container">
-                <form onSubmit={handleOnSubmit}>
-                    <h1>Hola</h1>
-                    <span>Inicia tu sesión</span>
-                    <p className="spacing">Ingresa los siguientes datos</p>
-                    <input type="email" placeholder="Correo electrónico" name="sCorreo" required value={state.sCorreo}
-                        onChange={handleChange} />
-                    <input type="password" placeholder="Contraseña" name="sPassword" required value={state.sPassword}
-                        onChange={handleChange} minLength={6} />
-                    <a onClick={signInAction} >Olvidé mi contraseña</a>
-                    <div className="loginForm-button">
-                        <button>ENTRAR</button>
-                    </div>
-                    <p>¿No tienes cuenta? | <Link to="registerUser" className="Link" >Regístrate</Link></p>{/* <a href="#" className="a second">Regístrate</a> </p>*/}
-                </form>
+  function signInAction() {
+    //ValidateEmail
+    const isValidEmail = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+
+    if (email === "") {
+      setShowAlert(true);
+      setTimeout(() => setShowAlert(false), 3000); // ocultar alerta
+      return;
+    } else if (!isValidEmail.test(email)) {
+      setShowAlert(true);
+      setTimeout(() => setShowAlert(false), 3000); // ocultar alerta
+      return;
+    }
+    else {
+      console.log("correo " + email);
+      setshowAlertConfirmation(true);
+      setTimeout(() => setshowAlertConfirmation(false), 3000); // ocultar alerta
+      return;
+    }
+
+  };
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 to-gray-700 flex items-center justify-center px-4 relative overflow-hidden">
+      {/* Alerta centrada */}
+      {showAlert && (
+        <div className="absolute top-6 bg-red-600 text-white px-6 py-3 rounded-lg shadow-lg text-sm animate-bounce z-50">
+          Por favor completa todos los campos.
+        </div>
+      )}
+
+      {showAlertConfirmation && (
+        <div className="absolute top-6 bg-green-600 text-white px-6 py-3 rounded-lg shadow-lg text-sm animate-bounce z-50">
+          Información enviada.
+        </div>
+      )}
+
+      {/* Contenedor principal */}
+      <div className="flex w-full max-w-4xl bg-white rounded-3xl shadow-2xl overflow-hidden animate-fade-in-up scale-95 hover:scale-100 transition-all duration-300">
+        {/* Formulario */}
+        <div className="w-full md:w-1/2 p-10">
+          <h2 className="text-4xl font-bold text-gray-800 mb-2 animate-fade-in-down">Iniciar sesión</h2>
+          <p className="text-1xl text-gray-500 mb-6">Bienvenido de nuevo 👋</p>
+
+          <form onSubmit={handleLogin} className="space-y-6">
+            <div>
+              <label className="block text-gray-600 text-sm mb-1">Correo electrónico</label>
+              <input
+                type="email"
+                placeholder="tucorreo@ejemplo.com"
+                className="w-full px-4 py-2 rounded-md border border-gray-300 shadow-sm focus:ring-2 focus:ring-orange-500 focus:outline-none transition-all duration-300"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+              />
             </div>
-        </>
-    );
+
+            <div>
+              <label className="block text-gray-600 text-sm mb-1">Contraseña</label>
+              <input
+                type="password"
+                placeholder="••••••••"
+                className="w-full px-4 py-2 rounded-md border border-gray-300 shadow-sm focus:ring-2 focus:ring-orange-500 focus:outline-none transition-all duration-300"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+              />
+            </div>
+            <p className="text-sm text-center text-gray-500 mt-6">
+              ¿Olvidaste tu contraseña?{' '}
+              <a onClick={signInAction} ><span className="text-orange-500 underline cursor-pointer hover:text-orange-600 transition">
+                Recuperar acceso
+              </span></a>
+            </p>
+            <button
+              type="submit"
+              className="w-full py-3 bg-orange-500 text-white font-semibold rounded-md shadow-md hover:bg-orange-600 transition duration-300"
+            >
+              Iniciar sesión
+            </button>
+            <p className="text-sm text-center text-gray-500 mt-6">
+              ¿No tienes cuenta? {' '}
+              <a href="/registerUser">
+                <span className="text-orange-500 underline cursor-pointer hover:text-orange-600 transition">
+                  Regístrate
+                </span>
+              </a>
+            </p>
+          </form>
+
+
+        </div>
+
+        {/* Panel derecho (visual) */}
+        <div className="hidden md:flex md:w-1/2 items-center justify-center bg-orange-400 text-white p-10 flex-col text-center">
+          <img src={Logo} alt="Planners Day" width={300} />
+          <h2 className="text-2xl font-bold mb-4">¡Hola otra vez!</h2>
+          <p className="text-sm">Ingresa tus credenciales para continuar</p>
+        </div>
+      </div>
+    </div>
+  );
 }
-
-export default SingIn;
-
-// // rrd imports
-// import { Form, Link, useNavigate } from "react-router-dom"
-
-// // library
-// import { LockClosedIcon, UserIcon } from "@heroicons/react/24/solid";
-
-// /* import { useLoaderData } from "react-router-dom";
-// import { fetchData } from "../../Wrapper"; */
-// import { toast } from "react-toastify";
-// import { useState } from "react";
-// // assents
-// import illustration from "../../assets/menu.png";
-
-// import './SignIn.css';
-
-
-// function SignIn() {
-//     const [userEmail, setUserEmail] = useState('');
-//     const [userEmailError, setUserEmailError] = useState();
-//     const [userPass, setUserPass] = useState('');
-//     const [userPassError, setUserPassError] = useState();
-
-//     const navigate = useNavigate();
-
-
-//     function signInAction() {
-//         /* if (confirm("Delete user and all data?")) {
-            
-//         } */
-//         //ValidateEmail
-//         const isValidEmail = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-
-//         if (userEmail === "") {
-//             setUserEmailError("Por favor ingresa tu correo electrónico");
-//             return;
-//         } else if (!isValidEmail.test(userEmail)) {
-//             setUserEmailError("Ingresa un correo electrónico válido");
-//             return;
-//         }
-//         else {
-//             setUserEmailError("");
-//             console.log("correo " + userEmail);
-//             return toast.success("Información enviada!");
-//         }
-
-//     }
-//     function authenticate(e) {
-
-//         //ValidateEmail
-//         const isValidEmail = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-
-//         if (userEmail === "") {
-//             setUserEmailError("Por favor ingresa tu correo electrónico");
-//             return;
-//         } else if (!isValidEmail.test(userEmail)) {
-//             setUserEmailError("Ingresa un correo electrónico válido");
-//             return;
-//         }
-//         else {
-//             setUserEmailError("");
-//         }
-
-//         //ValidatePass
-//         if (userPass === "") {
-//             setUserPassError("La contraseña debe tener al menos 6 caracteres");
-//             return;
-//         } else if (userPass.length < 6) {
-//             setUserPassError("La contraseña debe tener al menos 6 caracteres");
-//             return;
-//         } else {
-//             setUserPassError("");
-//         }
-//         try {
-//             console.log("correo " + userEmail);
-//             console.log("pwd " + userPass);
-//             localStorage.setItem("correo", JSON.stringify(userEmail));
-//             localStorage.setItem("pwd", JSON.stringify(userPass));
-//             //obtener nombre
-//             var userName = 'prueba';
-//             navigate(`/`, { replace: true }); // <-- redirect
-//             toast.success(`Bienvenido, ${userName}`);
-//             return;
-//         }
-//         catch (e) {
-//             throw new Error("There was a problem creating your account.");
-//         }
-//     }
-//     return (
-//         <div>
-//             <div className="SignInContainer">
-//                 <div className="title">
-//                     <h1>
-//                         Hola <span>Inicia tu sesión</span>
-//                     </h1>
-//                 </div>
-//                 <div className="loginForm">
-//                     <p>Ingresa los siguientes datos</p>
-//                     <div className="flex-lg">
-//                         <input type="text" name="sCorreo" placeholder="Ingresa tu correo electrónico" autoComplete="given-name" required onChange={(e) => setUserEmail(e.target.value)} />
-//                         {userEmailError ? <label name="userEmailError"><UserIcon width={15} /> {userEmailError}</label> : <></>}
-//                     </div>
-//                     <div className="flex-lg">
-//                         <input type="password" name="sPassword" placeholder="Contraseña" required onChange={(e) => setUserPass(e.target.value)} />
-//                         {userPassError ? <label name="userPassError"><LockClosedIcon width={15} /> {userPassError}</label> : <></>}
-//                     </div>
-//                     {/* <label htmlFor="lostPass" onClick={signInAction}>Olvidé mi contraseña</label> */}
-//                     <Link className="Link" onClick={signInAction}>Olvidé mi contraseña</Link>
-//                     <div className="loginForm-button">
-//                         <button type="submit" onClick={authenticate}> <span> ENTRAR </span></button>
-//                     </div>
-//                     <div className="grid-md">
-//                         <p>¿No tienes cuenta? | <Link to="registerUser" className="Link" >Regístrate</Link></p>
-//                     </div>
-//                 </div>
-
-//             </div>
-//             <div className="SignInContainer">
-//                 <img src={illustration} alt="Planners Day" width={400} />
-//             </div>
-//         </div>
-//     );
-// }
-
-// export default SignIn;
