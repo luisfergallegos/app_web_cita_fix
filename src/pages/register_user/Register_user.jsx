@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { LockClosedIcon, UserIcon, ChevronLeftIcon } from "@heroicons/react/24/solid";
 import { useNavigate, NavLink } from "react-router-dom";
+import { toast } from "react-toastify";
 
 export default function RegisterUser() {
   const [userEmail, setUserEmail] = useState('');
@@ -27,8 +28,28 @@ export default function RegisterUser() {
     }
 
     setErrorMsg('');
-    console.log({ userEmail, userPass, userName, userLastName });
-    navigate('/home', { replace: true });
+    try {
+      /* restDatasource.registerUser(
+          <correo>,
+          <name>,
+          <lastName>,
+          'Web',
+          'user',
+          <pwd>); */
+      console.log(`correo ${userEmail}`);
+      console.log("name " + userName);
+      console.log("lastName " + userLastName);
+      console.log("Web ");
+      console.log("user ");
+      console.log("pwd " + userPass);
+      console.log({ userEmail, userPass, userName, userLastName });
+      navigate('/home', { replace: true });
+      return toast.success(`Bienvenido, ${userName}`);
+    }
+    catch (e) {
+      throw new Error("There was a problem creating your account.");
+    }
+    
   };
 
   return (

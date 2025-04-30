@@ -3,6 +3,8 @@ import { useState } from 'react';
 import { urlApi } from '../../styles/Constants';
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
+// assents
+import Logo from "../../assets/menu.png";
 
 export default function Login() {
   const [email, setEmail] = useState('');
@@ -19,55 +21,55 @@ export default function Login() {
       return;
     }
     else {
-      var options = {  
+      var options = {
         method: 'GET',
         headers: {
-            'Content-Type': 'application/json',
-            'Accept': 'application/json',
-            'x-citafix-ps': password
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          'x-citafix-ps': password
         }
       }
       try {
-        const response = await fetch(`${urlApi}login?email=${email}`, options);            
+        const response = await fetch(`${urlApi}login?email=${email}`, options);
         if (!response.ok) {
-            alert(`No se pudo iniciar sesión con esas credenciales`);
-            throw new Error(`HTTP error! status: ${response.status}`);
+          alert(`No se pudo iniciar sesión con esas credenciales`);
+          throw new Error(`HTTP error! status: ${response.status}`);
         }
         const json = await response.json();
-        if(json['sucess']){
-            localStorage.setItem("correo", '');
-            localStorage.setItem("pwd", '');
-            localStorage.setItem("tokenH", '');
-            localStorage.setItem("BusinessCitaFix", '');
-            localStorage.setItem("UserCitaFix", '');
-  
-            localStorage.setItem("correo", JSON.stringify(email));
-            localStorage.setItem("pwd", JSON.stringify(password));
-            try {
-                const response = await fetch( `${urlApi}usr?email=${email}`, options);            
-                if (!response.ok) {
-                    console.log(`No se pudo obtener informacion del usuario`);
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-                const json = await response.json();
-                console.log('Login con:', email, password);
-                //obtener nombre
-                localStorage.setItem("UserCitaFix", JSON.stringify(json['data']));
-                var userName = json['data']['first_name'];
-                navigate(`/`,{ replace: true }); // <-- redirect
-                return toast.success(`Bienvenido, ${userName}`);
+        if (json['sucess']) {
+          localStorage.setItem("correo", '');
+          localStorage.setItem("pwd", '');
+          localStorage.setItem("tokenH", '');
+          localStorage.setItem("BusinessCitaFix", '');
+          localStorage.setItem("UserCitaFix", '');
+
+          localStorage.setItem("correo", JSON.stringify(email));
+          localStorage.setItem("pwd", JSON.stringify(password));
+          try {
+            const response = await fetch(`${urlApi}usr?email=${email}`, options);
+            if (!response.ok) {
+              console.log(`No se pudo obtener informacion del usuario`);
+              throw new Error(`HTTP error! status: ${response.status}`);
             }
-            catch (e) {
-                return;
-            } 
+            const json = await response.json();
+            console.log('Login con:', email, password);
+            //obtener nombre
+            localStorage.setItem("UserCitaFix", JSON.stringify(json['data']));
+            var userName = json['data']['first_name'];
+            navigate(`/`, { replace: true }); // <-- redirect
+            return toast.success(`Bienvenido, ${userName}`);
+          }
+          catch (e) {
+            return;
+          }
         }
-        
+
       } catch (e) {
         return;
-      } 
+      }
     }
 
-    
+
 
   };
 
@@ -84,8 +86,8 @@ export default function Login() {
       <div className="flex w-full max-w-4xl bg-white rounded-3xl shadow-2xl overflow-hidden animate-fade-in-up scale-95 hover:scale-100 transition-all duration-300">
         {/* Formulario */}
         <div className="w-full md:w-1/2 p-10">
-          <h2 className="text-3xl font-bold text-gray-800 mb-2 animate-fade-in-down">Iniciar sesión</h2>
-          <p className="text-sm text-gray-500 mb-6">Bienvenido de nuevo 👋</p>
+          <h2 className="text-4xl font-bold text-gray-800 mb-2 animate-fade-in-down">Iniciar sesión</h2>
+          <p className="text-1xl text-gray-500 mb-6">Bienvenido de nuevo 👋</p>
 
           <form onSubmit={handleLogin} className="space-y-6">
             <div>
@@ -109,14 +111,12 @@ export default function Login() {
                 onChange={(e) => setPassword(e.target.value)}
               />
             </div>
-
-              <p className="text-sm text-center text-gray-500 mt-6">
-            ¿Olvidaste tu contraseña?{' '}
-            <span className="text-orange-500 underline cursor-pointer hover:text-orange-600 transition">
-              Recuperar acceso
-            </span>
-          </p>
-
+            <p className="text-sm text-center text-gray-500 mt-6">
+              ¿Olvidaste tu contraseña?{' '}
+              <span className="text-orange-500 underline cursor-pointer hover:text-orange-600 transition">
+                Recuperar acceso
+              </span>
+            </p>
             <button
               type="submit"
               className="w-full py-3 bg-orange-500 text-white font-semibold rounded-md shadow-md hover:bg-orange-600 transition duration-300"
@@ -124,19 +124,21 @@ export default function Login() {
               Iniciar sesión
             </button>
             <p className="text-sm text-center text-gray-500 mt-6">
-            ¿Olvidaste tu contraseña?{' '}
-            <span className="text-orange-500 underline cursor-pointer hover:text-orange-600 transition">
-              Recuperar acceso
-            </span>
-          </p>
+              ¿No tienes cuenta? {' '}
+              <a href="/registerUser">
+                <span className="text-orange-500 underline cursor-pointer hover:text-orange-600 transition">
+                  Regístrate
+                </span>
+              </a>
+            </p>
           </form>
 
-        
+
         </div>
 
         {/* Panel derecho (visual) */}
-        <div className="hidden md:flex md:w-1/2 items-center justify-center bg-orange-500 text-white p-10 flex-col text-center">
-          
+        <div className="hidden md:flex md:w-1/2 items-center justify-center bg-orange-400 text-white p-10 flex-col text-center">
+          <img src={Logo} alt="Planners Day" width={300}/>
           <h2 className="text-2xl font-bold mb-4">¡Hola otra vez!</h2>
           <p className="text-sm">Ingresa tus credenciales para continuar</p>
         </div>
