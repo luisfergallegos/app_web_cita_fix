@@ -10,6 +10,7 @@ export default function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showAlert, setShowAlert] = useState(false);
+  const [showAlertConfirmation, setshowAlertConfirmation] = useState(false);
   const navigate = useNavigate();
 
   const handleLogin = async (e) => {
@@ -68,8 +69,27 @@ export default function Login() {
         return;
       }
     }
+  };
 
+  function signInAction() {
+    //ValidateEmail
+    const isValidEmail = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
+    if (email === "") {
+      setShowAlert(true);
+      setTimeout(() => setShowAlert(false), 3000); // ocultar alerta
+      return;
+    } else if (!isValidEmail.test(email)) {
+      setShowAlert(true);
+      setTimeout(() => setShowAlert(false), 3000); // ocultar alerta
+      return;
+    }
+    else {
+      console.log("correo " + email);
+      setshowAlertConfirmation(true);
+      setTimeout(() => setshowAlertConfirmation(false), 3000); // ocultar alerta
+      return;
+    }
 
   };
 
@@ -79,6 +99,12 @@ export default function Login() {
       {showAlert && (
         <div className="absolute top-6 bg-red-600 text-white px-6 py-3 rounded-lg shadow-lg text-sm animate-bounce z-50">
           Por favor completa todos los campos.
+        </div>
+      )}
+
+      {showAlertConfirmation && (
+        <div className="absolute top-6 bg-green-600 text-white px-6 py-3 rounded-lg shadow-lg text-sm animate-bounce z-50">
+          Información enviada.
         </div>
       )}
 
@@ -113,9 +139,9 @@ export default function Login() {
             </div>
             <p className="text-sm text-center text-gray-500 mt-6">
               ¿Olvidaste tu contraseña?{' '}
-              <span className="text-orange-500 underline cursor-pointer hover:text-orange-600 transition">
+              <a onClick={signInAction} ><span className="text-orange-500 underline cursor-pointer hover:text-orange-600 transition">
                 Recuperar acceso
-              </span>
+              </span></a>
             </p>
             <button
               type="submit"
@@ -138,7 +164,7 @@ export default function Login() {
 
         {/* Panel derecho (visual) */}
         <div className="hidden md:flex md:w-1/2 items-center justify-center bg-orange-400 text-white p-10 flex-col text-center">
-          <img src={Logo} alt="Planners Day" width={300}/>
+          <img src={Logo} alt="Planners Day" width={300} />
           <h2 className="text-2xl font-bold mb-4">¡Hola otra vez!</h2>
           <p className="text-sm">Ingresa tus credenciales para continuar</p>
         </div>
