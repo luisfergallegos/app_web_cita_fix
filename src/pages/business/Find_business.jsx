@@ -170,7 +170,7 @@ export function FindBusiness() {
                             <button className="closeDialog" onClick={() => setIsOpen(false)}>
                                 <CloseIcon />
                             </button>
-                            <div>
+                            <div className='dialogDialogPHOTO'>
                                 {
                                     indexEmp['PHOTO'] === null ? <img id='store' src={Store} /> :
                                         <img src={'data:image/jpeg;base64,' + arrayBufferToBase64(indexEmp['PHOTO'].data)} />
@@ -178,24 +178,22 @@ export function FindBusiness() {
                             </div>
                             <div className='CardContainer_Titulo'>
                                 <h4><b>{indexEmp['DORSL']}</b></h4>
-                                {StarRating(indexEmp['SERVICE_LEVEL'])}
+                                <p>{StarRating(indexEmp['SERVICE_LEVEL'])}</p>
                                 <p className='eighth'>{indexEmp['CATEGORY']}</p>
                             </div>
-                            <div className='CardContainer_Divider' ></div>
-                            <div className='CardContainer_Detalle'>
+                            <div className='Container_Divider'></div>
+                            <div className='dialogDialogCali'>
                                 <label >Información de calificaciones</label>
                                 { qualifications.length !== 0 && 
                                 qualifications.map((qualification) =>  (
-                                    <div key={qualification} >
-                                    <span>{qualification['USER']}</span>
+                                    <div key={qualification} className='dialogDialogCaliDetail' >
+                                    <span>{qualification['USER']}</span>                                    
+                                    <p>{StarRating(qualification['SERVICE_LEVEL'])}  <p>{qualification['SERVICE_LEVEL_DATE']}</p></p>
                                     <span>{qualification['COMMENTS']}</span>
-                                    <span>{qualification['SERVICE_LEVEL']}</span>
-                                    <span>{qualification['SERVICE_LEVEL_DATE']}</span>
+                                    <div className='Container_Divider_Sub'></div>
                                 </div>
                                 ))
-                                
                                 }
-                                
                             </div>
                         </div>
                     </>
