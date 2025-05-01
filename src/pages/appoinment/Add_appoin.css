@@ -197,7 +197,7 @@
     color: black;
 }
 
-.backdropDialog {
+.AddAppoinContainer .backdropDialog {
     background: rgba(0, 0, 0, 0.3);
     position: fixed;
     top: 0;
@@ -206,7 +206,7 @@
     height: 100%;
 }
 
-.dialogDialog {
+.AddAppoinContainer .dialogDialog {
     width: 460px;
     height: 310px;
     background: #fff;
