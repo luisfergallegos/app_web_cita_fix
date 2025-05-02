@@ -111,6 +111,7 @@
     display: flex;
     flex-direction: column;
     max-width: 95%;
+    overflow: scroll;
 
     &.large {
         width: 1024px;
@@ -148,7 +149,6 @@
     cursor: pointer;
     border-radius: 1rem;
     display: flex;
-    overflow: auto;
 
     &:hover {
         background: rgba(0, 0, 0, 0.2);
