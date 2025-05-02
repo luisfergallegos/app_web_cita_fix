@@ -105,7 +105,7 @@ export default function RegisterUser() {
               className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-orange-500 focus:outline-none"
               onChange={(e) => setUserEmail(e.target.value)}
             />
-            <div >
+            <div className="flex text-gray-600 text-sm mb-1" >
               <input
                 type={passType}
                 placeholder="Contraseña"
