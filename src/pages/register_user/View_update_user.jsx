@@ -10,7 +10,7 @@ import PhoneIcon from "../../assets/phone.png";
 import MailIcon from "../../assets/mail.png";
 import LockIcon from "../../assets/lock.png";
 import CardMemberIcon from "../../assets/card_membership.png";
-import { ChevronDownIcon, ChevronUpIcon, UserCircleIcon } from '@heroicons/react/24/solid';
+import { ChevronDownIcon, ChevronUpIcon, EyeIcon, EyeSlashIcon, UserCircleIcon } from '@heroicons/react/24/solid';
 
 // loader
 export function viewUpdateUserLoader() {
@@ -30,6 +30,8 @@ export function ViewUpdateUser() {
     const [mailGroup, setMailGroup] = useState(true);
     const [passGroup, setPassGroup] = useState(true);
     const [desAccGroup, setDesAccGroup] = useState(true);
+    const [passView, setPassView] = useState(true);
+    const [passType, setPassType] = useState('password');
 
     const arrayBufferToBase64 = (buffer) => {
         var binary = '';
@@ -55,11 +57,22 @@ export function ViewUpdateUser() {
     };
 
     const ModDesAccGroupOpen = () => {
-        if(confirm('Quitar cuenta')){
+        if (confirm('Quitar cuenta')) {
             setDesAccGroup(true);
         }
-        else{
+        else {
             setDesAccGroup(false);
+        }
+    };
+
+    const ModPassViewOpen = () => {
+        if (passView) {
+            setPassView(false);
+            setPassType('text');
+        }
+        else {
+            setPassView(true);
+            setPassType('password');
         }
     };
 
@@ -81,8 +94,8 @@ export function ViewUpdateUser() {
             </div>
             <div className='UpdateUserContainerGroupClic'>
                 <img src={UserIcon} /><label>Nombre</label>
-                {nameGroup ? <ChevronDownIcon onClick={ModNameGroupOpen} /> : 
-                <ChevronUpIcon onClick={ModNameGroupOpen} />}
+                {nameGroup ? <ChevronDownIcon onClick={ModNameGroupOpen} /> :
+                    <ChevronUpIcon onClick={ModNameGroupOpen} />}
             </div>
             <div className={nameGroup ? 'nameGroup active' : 'nameGroup'}>
                 <div className='GroupLabel'>
@@ -92,52 +105,70 @@ export function ViewUpdateUser() {
                 <div className='GroupLabel'>
                     <label>Apellido</label>
                     <input type="text" />
+                    <div class="bt-btn">
+                        <button>Guardar</button>
+                    </div>
                 </div>
+
             </div>
             <div className='UpdateUserContainerGroupClic'>
                 <img src={PhoneIcon} />
                 <label>Información de contacto</label>
-                {infGroup ? <ChevronDownIcon onClick={ModInfGroupOpen} /> : 
-                <ChevronUpIcon onClick={ModInfGroupOpen} />}
+                {infGroup ? <ChevronDownIcon onClick={ModInfGroupOpen} /> :
+                    <ChevronUpIcon onClick={ModInfGroupOpen} />}
             </div>
             <div className={infGroup ? 'infGroup active' : 'infGroup'}>
                 <div className='GroupLabel'>
                     <label>Agrega un número de celular</label>
                     <input type="tel" />
                     <span>{`Mexico (+52)`}</span>
+                    <div class="bt-btn">
+                        <button>Guardar</button>
+                    </div>
                 </div>
             </div>
             <div className='UpdateUserContainerGroupClic'>
                 <img src={MailIcon} />
                 <label>Correo electrónico</label>
-                {mailGroup ? <ChevronDownIcon onClick={ModMailGroupOpen} /> : 
-                <ChevronUpIcon onClick={ModMailGroupOpen} />}
+                {mailGroup ? <ChevronDownIcon onClick={ModMailGroupOpen} /> :
+                    <ChevronUpIcon onClick={ModMailGroupOpen} />}
             </div>
             <div className={mailGroup ? 'mailGroup active' : 'mailGroup'}>
                 <div className='GroupLabel'>
                     <label>Confirma tu correo electrónico</label>
                     <input type="mail" />
+                    <div class="bt-btn">
+                        <button>Guardar</button>
+                    </div>
                 </div>
             </div>
             <div className='UpdateUserContainerGroupClic'>
                 <img src={LockIcon} />
                 <label>Contraseña</label>
-                {passGroup ? <ChevronDownIcon onClick={ModPassGroupOpen} /> : 
-                <ChevronUpIcon onClick={ModPassGroupOpen} />}
+                {passGroup ? <ChevronDownIcon onClick={ModPassGroupOpen} /> :
+                    <ChevronUpIcon onClick={ModPassGroupOpen} />}
             </div>
             <div className={passGroup ? 'passGroup active' : 'passGroup'}>
                 <div className='GroupLabel'>
                     <label>Confirma tu contraseña</label>
-                    <input type="password" />
+                    <div className="searchicon">
+                        <input type={passType} />
+                        {passView ? <EyeSlashIcon onClick={ModPassViewOpen} /> :
+                            <EyeIcon onClick={ModPassViewOpen} />}
+                    </div>
+                    
+                    <div class="bt-btn">
+                        <button>Guardar</button>
+                    </div>
                 </div>
             </div>
             <div className='UpdateUserContainerGroupClic'>
                 <img src={CardMemberIcon} />
                 <label>Desactivación</label>
-                {desAccGroup ? <ChevronDownIcon onClick={ModDesAccGroupOpen} /> : 
-                <ChevronUpIcon onClick={ModDesAccGroupOpen} />}
+                {desAccGroup ? <ChevronDownIcon onClick={ModDesAccGroupOpen} /> :
+                    <ChevronUpIcon onClick={ModDesAccGroupOpen} />}
             </div>
-            <div className={ desAccGroup ? 'desAccGroup active' : 'desAccGroup'}>
+            <div className={desAccGroup ? 'desAccGroup active' : 'desAccGroup'}>
                 <div className='GroupLabel'>
                     <label>Desactiva tu cuenta durante un tiempo</label>
                 </div>

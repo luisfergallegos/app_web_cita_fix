@@ -131,7 +131,7 @@ export function FindBusiness() {
     return (
         <div className="FindBusinessContainer">
             <div className='searchContainer'>
-                <div className="searchicon"><MagnifyingGlassIcon /></div>
+                <div className="searchicon"><MagnifyingGlassIcon/></div>
                 <input type="text" name="searchText" placeholder="Buscar en Planner Days" onChange={handleChange} />
             </div>
             {

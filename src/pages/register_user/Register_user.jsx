@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { LockClosedIcon, UserIcon, ChevronLeftIcon } from "@heroicons/react/24/solid";
+import { LockClosedIcon, UserIcon, ChevronLeftIcon, EyeSlashIcon, EyeIcon } from "@heroicons/react/24/solid";
 import { useNavigate, NavLink } from "react-router-dom";
 import { toast } from "react-toastify";
 
@@ -10,6 +10,9 @@ export default function RegisterUser() {
   const [userLastName, setUserLastName] = useState('');
   const [errorMsg, setErrorMsg] = useState('');
   const navigate = useNavigate();
+
+  const [passView, setPassView] = useState(true);
+  const [passType, setPassType] = useState('password');
 
   const validateAndRegister = (e) => {
     e.preventDefault();
@@ -49,7 +52,18 @@ export default function RegisterUser() {
     catch (e) {
       throw new Error("There was a problem creating your account.");
     }
-    
+
+  };
+
+  const ModPassViewOpen = () => {
+    if (passView) {
+      setPassView(false);
+      setPassType('text');
+    }
+    else {
+      setPassView(true);
+      setPassType('password');
+    }
   };
 
   return (
@@ -91,12 +105,16 @@ export default function RegisterUser() {
               className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-orange-500 focus:outline-none"
               onChange={(e) => setUserEmail(e.target.value)}
             />
-            <input
-              type="password"
-              placeholder="Contraseña"
-              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-orange-500 focus:outline-none"
-              onChange={(e) => setUserPass(e.target.value)}
-            />
+            <div >
+              <input
+                type={passType}
+                placeholder="Contraseña"
+                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-orange-500 focus:outline-none"
+                onChange={(e) => setUserPass(e.target.value)}
+              />
+              {passView ? <EyeSlashIcon onClick={ModPassViewOpen} width={30} color="#424242" /> :
+                <EyeIcon onClick={ModPassViewOpen} width={30} color="#424242"  />}
+            </div>
             <button
               type="submit"
               className="w-full py-3 bg-orange-500 text-white font-semibold rounded-md hover:bg-orange-600 transition duration-300"

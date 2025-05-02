@@ -35,19 +35,21 @@
     align-items: center;
     justify-items: center;
     width: 100%;
-    
+
 
     img {
         margin-top: 10px;
         margin-left: 25px;
         margin-bottom: 10px;
-        width: 40px;
+        margin-right: auto;
+        width: 35px;
     }
 
     label {
         margin-top: 10px;
         margin-left: 25px;
         margin-bottom: 10px;
+        margin-right: auto;
         width: 80%;
         font-size: 20px;
     }
@@ -56,6 +58,7 @@
         margin-top: 10px;
         margin-left: 25px;
         margin-bottom: 10px;
+        margin-right: 20px;
         width: 40px;
         color: gray;
     }
@@ -63,36 +66,36 @@
 }
 
 .nameGroup {
-    &.active{
+    &.active {
         display: none;
 
     }
 }
 
 .infGroup {
-    &.active{
+    &.active {
         display: none;
 
     }
-    
+
 }
 
 .mailGroup {
-    &.active{
+    &.active {
         display: none;
 
     }
 }
 
 .passGroup {
-    &.active{
+    &.active {
         display: none;
 
     }
 }
 
 .desAccGroup {
-    &.active{
+    &.active {
         display: none;
 
     }
@@ -102,6 +105,8 @@
     display: grid;
     margin-bottom: 10px;
     margin-left: 30px;
+
+    
 
     label {
         margin-left: 10px;
@@ -113,9 +118,58 @@
         border: 2px solid salmon;
         width: 90%;
         outline: none;
+        height: 32px;
     }
+
     span {
         margin-left: 10px;
+    }
+
+    .bt-btn {
+        margin: 0 auto;
+        text-align: right;
+        width: 81%;
+    }
+
+    button {
+        width: 100px;
+        height: 30px;
+        margin-right: 5px;
+        font-size: 15px;
+        font-weight: bold;
+        border-radius: 15px;
+        color: var(--fifth);
+        cursor: pointer;
+        outline: none;
+        transition: transform 80ms ease-in;
+        color: white;
+        background: var(--eighth);
+        margin-top: 10px;
+    }
+
+    .searchicon {
+        display: flex; align-items: center;
+        width: 90%;
+
+        svg {
+            color: var(--eighth);
+            height: 30px;
+            width: 30px;
+            right: 10px;
+            margin-top: 10px;
+            margin-bottom: 10px;
+            margin-left: -45px;
+        }
+
+        input {
+            flex: 1;
+            margin-left: 10px;
+            margin-right: 10px;
+            border: 2px solid salmon;
+            height: 32px;
+            width: 90%;
+            outline: none;
+        }
     }
 }
 
