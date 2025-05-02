@@ -75,7 +75,7 @@ export function CardBusiness({ key, userId, userName, empresa, setIsOpen, setInd
             <div className='CardContainer_Titulo'>
                 <h4><b>{DORSL}</b></h4>
                 <p className='eighth'>{CATEGORY}</p>
-                {StarRating(SERVICE_LEVEL)}
+                <p>{StarRating(SERVICE_LEVEL)}</p>
             </div>
             <div className='CardContainer_Divider' ></div>
             <div className='CardContainer_Detalle'>
