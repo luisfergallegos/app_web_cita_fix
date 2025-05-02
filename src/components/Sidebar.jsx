@@ -40,7 +40,9 @@ const linksArray = [
             : sUserCitaFix['DORSL']),
         sublabel: (sUserCitaFix['DORSL'] === '' ? '' : 'Ver tu empresa'),
         icon: <BuildingStorefrontIcon />,
-        to: "viewUpdateBusiness"
+        to: (sUserCitaFix['DORSL'] === '' || sUserCitaFix.length === 0
+            ? "registerBusiness"
+            : "viewUpdateBusiness") 
     },
     {
         label: "Notificaiones",
