@@ -1,7 +1,12 @@
 import { useState } from "react";
-import { LockClosedIcon, UserIcon, ChevronLeftIcon, EyeSlashIcon, EyeIcon } from "@heroicons/react/24/solid";
+import {
+  LockClosedIcon,
+  UserIcon,
+  ChevronLeftIcon,
+  EyeIcon,
+  EyeSlashIcon,
+} from "@heroicons/react/24/solid";
 import { useNavigate, NavLink } from "react-router-dom";
-import { toast } from "react-toastify";
 
 export default function RegisterUser() {
   const [userEmail, setUserEmail] = useState('');
@@ -9,61 +14,31 @@ export default function RegisterUser() {
   const [userName, setUserName] = useState('');
   const [userLastName, setUserLastName] = useState('');
   const [errorMsg, setErrorMsg] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
-
-  const [passView, setPassView] = useState(true);
-  const [passType, setPassType] = useState('password');
 
   const validateAndRegister = (e) => {
     e.preventDefault();
+
     if (!userName || !userLastName || !userEmail || !userPass) {
       setErrorMsg('Completa todos los campos.');
       return;
     }
+
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(userEmail)) {
       setErrorMsg('Correo electrónico inválido.');
       return;
     }
+
     if (userPass.length < 6) {
       setErrorMsg('La contraseña debe tener al menos 6 caracteres.');
       return;
     }
 
     setErrorMsg('');
-    try {
-      /* restDatasource.registerUser(
-          <correo>,
-          <name>,
-          <lastName>,
-          'Web',
-          'user',
-          <pwd>); */
-      console.log(`correo ${userEmail}`);
-      console.log("name " + userName);
-      console.log("lastName " + userLastName);
-      console.log("Web ");
-      console.log("user ");
-      console.log("pwd " + userPass);
-      console.log({ userEmail, userPass, userName, userLastName });
-      navigate('/home', { replace: true });
-      return toast.success(`Bienvenido, ${userName}`);
-    }
-    catch (e) {
-      throw new Error("There was a problem creating your account.");
-    }
-
-  };
-
-  const ModPassViewOpen = () => {
-    if (passView) {
-      setPassView(false);
-      setPassType('text');
-    }
-    else {
-      setPassView(true);
-      setPassType('password');
-    }
+    console.log({ userEmail, userPass, userName, userLastName });
+    navigate('/home', { replace: true });
   };
 
   return (
@@ -105,16 +80,30 @@ export default function RegisterUser() {
               className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-orange-500 focus:outline-none"
               onChange={(e) => setUserEmail(e.target.value)}
             />
-            <div >
+
+            {/* Campo de contraseña con icono */}
+            <div className="relative">
               <input
-                type={passType}
+                type={showPassword ? "text" : "password"}
                 placeholder="Contraseña"
-                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-orange-500 focus:outline-none"
+                value={userPass}
                 onChange={(e) => setUserPass(e.target.value)}
+                className="w-full px-4 py-2 pr-10 border border-gray-300 rounded-md focus:ring-2 focus:ring-orange-500 focus:outline-none"
               />
-              {passView ? <EyeSlashIcon onClick={ModPassViewOpen} width={30} color="#424242" /> :
-                <EyeIcon onClick={ModPassViewOpen} width={30} color="#424242"  />}
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute inset-y-0 right-3 flex items-center text-gray-500 hover:text-orange-500"
+                tabIndex={-1}
+              >
+                {showPassword ? (
+                  <EyeSlashIcon className="w-5 h-5" />
+                ) : (
+                  <EyeIcon className="w-5 h-5" />
+                )}
+              </button>
             </div>
+
             <button
               type="submit"
               className="w-full py-3 bg-orange-500 text-white font-semibold rounded-md hover:bg-orange-600 transition duration-300"
