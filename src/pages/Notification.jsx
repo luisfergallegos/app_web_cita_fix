@@ -3,8 +3,7 @@
 import { useLoaderData, useNavigate } from 'react-router-dom';
 import { fetchData } from "../Wrapper.js";
 import { useEffect } from "react";
-// assets
-import './Notification.css';
+
 // Library
 import { BellAlertIcon } from '@heroicons/react/24/solid';
 // loader
@@ -24,12 +23,16 @@ export function Notification() {
         }
     }, []);
     return (
-        <div className="NotificationContainer">
-            <div>
-                <BellAlertIcon width={100} />
-                <h1>Sin Notification</h1>
+        <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-orange-600 to-orange-800 px-4">
+            <div className="bg-white rounded-3xl shadow-xl p-10 max-w-md w-full text-center animate-fade-in-up">
+                <BellAlertIcon className="w-16 h-16 text-orange-500 mx-auto mb-4" />
+                <h1 className="text-2xl font-bold text-gray-800 mb-2">Sin notificaciones</h1>
+                <p className="text-gray-500 text-sm">
+                    Actualmente no tienes notificaciones pendientes. ¡Te avisaremos si ocurre algo nuevo!
+                </p>
             </div>
-        </div>);
+        </div>
+    );
 }
 
 export default Notification;
