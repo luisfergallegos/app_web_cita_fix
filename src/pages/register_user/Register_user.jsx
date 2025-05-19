@@ -12,7 +12,7 @@ export default function RegisterUser() {
   const navigate = useNavigate();
 
   const [passView, setPassView] = useState(true);
-  const [passType, setPassType] = useState('password');
+  const [showPassword, setShowPassword] = useState(false);
 
   const validateAndRegister = (e) => {
     e.preventDefault();
@@ -105,15 +105,27 @@ export default function RegisterUser() {
               className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-orange-500 focus:outline-none"
               onChange={(e) => setUserEmail(e.target.value)}
             />
-            <div className="flex text-gray-600 text-sm mb-1" >
+            {/* Campo de contraseña con icono */}
+            <div className="relative">
               <input
-                type={passType}
+                type={showPassword ? "text" : "password"}
                 placeholder="Contraseña"
-                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-orange-500 focus:outline-none"
+                value={userPass}
                 onChange={(e) => setUserPass(e.target.value)}
+                className="w-full px-4 py-2 pr-10 border border-gray-300 rounded-md focus:ring-2 focus:ring-orange-500 focus:outline-none"
               />
-              {passView ? <EyeSlashIcon onClick={ModPassViewOpen} width={30} color="#424242" /> :
-                <EyeIcon onClick={ModPassViewOpen} width={30} color="#424242"  />}
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute inset-y-0 right-3 flex items-center text-gray-500 hover:text-orange-500"
+                tabIndex={-1}
+              >
+                {showPassword ? (
+                  <EyeIcon className="w-5 h-5" />
+                ) : (
+                  <EyeSlashIcon className="w-5 h-5" />
+                )}
+              </button>
             </div>
             <button
               type="submit"
