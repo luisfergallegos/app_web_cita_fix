@@ -25,8 +25,10 @@ export function Notification() {
     }, []);
     return (
         <div className="NotificationContainer">
-            <BellAlertIcon width={100}/>
-            <h1>Sin Notification</h1>
+            <div>
+                <BellAlertIcon width={100} />
+                <h1>Sin Notification</h1>
+            </div>
         </div>);
 }
 

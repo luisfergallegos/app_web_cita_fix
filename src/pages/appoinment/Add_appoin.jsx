@@ -197,7 +197,7 @@ export function AddAppoin() {
 
     const getCodigoPostal = async (evt) => {
         const value = evt.target.value;
-
+        var tempcita = [];
         if (evt.target.value.length === 5) {
             setCodigoPostal(value);
             const json = fetchData("postalCode") ?? [];
@@ -209,6 +209,11 @@ export function AddAppoin() {
                 tempcita.push(element.d_asenta);
             }
             setColonias(tempcita);
+        }
+        else{
+            setColonias(tempcita);
+            setEstado('');
+            setCiudad('');
         }
         //Solicitar por GET
         /* try {

@@ -1,7 +1,8 @@
 .NotificationContainer {
-    height: 100vh;
+     height: 100vh;
     background: white;
     color: var(--second);
-    align-items: center;
+    display: flex;
     justify-content: center;
+    align-items: center;
 }
