@@ -1,4 +1,3 @@
-
 // rrd imports
 import { useLoaderData, useNavigate } from "react-router-dom";
 import { fetchData } from "../Wrapper.js";
@@ -17,14 +16,17 @@ export function homeLoader() {
 export function Home() {
     const navigate = useNavigate();
     const { sCorreo, sPassword } = useLoaderData();
+
     useEffect(() => {
         if (sCorreo === null && sPassword === null) {
             navigate("/");
         }
     }, []);
+
     const sUserCitaFix = fetchData("UserCitaFix") ?? [];
     const citas = [];
     const firstName = sUserCitaFix['first_name'];
+
     return (
          <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-orange-600 to-orange-800 px-4">
       <div className="bg-white rounded-3xl shadow-xl p-10 max-w-2xl w-full text-center animate-fade-in-up">
@@ -51,9 +53,7 @@ export function Home() {
         }
       </div>
     </div>
-
     );
 }
-
 
 export default Home;
