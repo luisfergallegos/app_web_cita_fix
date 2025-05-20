@@ -1,12 +1,16 @@
+// rrd imports
 import { useLoaderData, useNavigate } from "react-router-dom";
 import { fetchData } from "../Wrapper.js";
 import { useEffect } from "react";
+
+// assets
 import illustration from "../assets/clock_green.svg";
 
+// loader
 export function homeLoader() {
-  const sCorreo = fetchData("correo");
-  const sPassword = fetchData("pwd");
-  return { sCorreo, sPassword };
+    const sCorreo = fetchData("correo");
+    const sPassword = fetchData("pwd");
+    return { sCorreo, sPassword };
 }
 
 export function Home() {
