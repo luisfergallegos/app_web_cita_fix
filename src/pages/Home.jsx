@@ -14,21 +14,22 @@ export function homeLoader() {
 }
 
 export function Home() {
-    const navigate = useNavigate();
-    const { sCorreo, sPassword } = useLoaderData();
 
-    useEffect(() => {
-        if (sCorreo === null && sPassword === null) {
-            navigate("/");
-        }
-    }, []);
+  const navigate = useNavigate();
+  const { sCorreo, sPassword } = useLoaderData();
 
-    const sUserCitaFix = fetchData("UserCitaFix") ?? [];
-    const citas = [];
-    const firstName = sUserCitaFix['first_name'];
+  useEffect(() => {
+    if (sCorreo === null && sPassword === null) {
+      navigate("/");
+    }
+  }, []);
 
-    return (
-         <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-orange-600 to-orange-800 px-4">
+  const sUserCitaFix = fetchData("UserCitaFix") ?? [];
+  const citas = [];
+  const firstName = sUserCitaFix['first_name'] ?? "Usuario";
+
+  return (
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-orange-600 to-orange-800 px-4">
       <div className="bg-white rounded-3xl shadow-xl p-10 max-w-2xl w-full text-center animate-fade-in-up">
         {
           citas.length > 0 ? (
@@ -43,7 +44,7 @@ export function Home() {
               <p className="text-gray-600">Genera tus próximas citas de manera fácil y al instante.</p>
               <p className="text-gray-600 mb-4">Dirígete al buscador para empezar.</p>
               <button
-                onClick={() => navigate("/findBusiness")}
+                onClick={() => navigate("/buscador")}
                 className="bg-orange-500 hover:bg-orange-600 text-white font-semibold py-2 px-6 rounded-md shadow-md transition"
               >
                 Ir al buscador
@@ -53,7 +54,8 @@ export function Home() {
         }
       </div>
     </div>
-    );
+  );
 }
 
-export default Home;
+
+
