@@ -18,6 +18,7 @@ import AddAppoin, { AddAppoinLoader } from './pages/appoinment/Add_appoin.jsx';
 //import { MyRoutes } from './routers/routes.jsx';
 // Actions
 import { logoutAction } from "./actions/logout.js";
+import RegisterBusiness, { registerBusinessLoader } from './pages/register_business/Register_business.jsx';
 
 
 // const router = createBrowserRouter([<MyRoutes /> ]);
@@ -101,6 +102,13 @@ const router = createBrowserRouter([
         element: <ViewUpdateBusiness />,
         loader: viewUpdateBusinessLoader,
         /* action: expensesAction, */
+        errorElement: <Error />
+      },
+      {
+        path: "registerBusiness",
+        element: <RegisterBusiness />,
+        loader: registerBusinessLoader,
+        /*action: expensesAction, */
         errorElement: <Error />
       },
 

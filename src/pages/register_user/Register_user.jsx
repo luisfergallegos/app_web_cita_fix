@@ -97,9 +97,9 @@ export default function RegisterUser() {
                 tabIndex={-1}
               >
                 {showPassword ? (
-                  <EyeSlashIcon className="w-5 h-5" />
-                ) : (
                   <EyeIcon className="w-5 h-5" />
+                ) : (
+                  <EyeSlashIcon className="w-5 h-5" />
                 )}
               </button>
             </div>

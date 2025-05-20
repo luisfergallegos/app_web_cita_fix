@@ -14,6 +14,7 @@ export function homeLoader() {
 }
 
 export function Home() {
+
   const navigate = useNavigate();
   const { sCorreo, sPassword } = useLoaderData();
 
@@ -56,4 +57,5 @@ export function Home() {
   );
 }
 
-export default Home;
+
+
