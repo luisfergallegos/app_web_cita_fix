@@ -44,7 +44,7 @@ export function Home() {
               <p className="text-gray-600">Genera tus próximas citas de manera fácil y al instante.</p>
               <p className="text-gray-600 mb-4">Dirígete al buscador para empezar.</p>
               <button
-                onClick={() => navigate("/buscador")}
+                onClick={() => navigate("/findBusiness")}
                 className="bg-orange-500 hover:bg-orange-600 text-white font-semibold py-2 px-6 rounded-md shadow-md transition"
               >
                 Ir al buscador
