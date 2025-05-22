@@ -115,6 +115,7 @@ export function Sidebar({ sidebarOpen, setSidebarOpen }) {
                 {sidebarOpen && <Form method="post" action="/logout" onSubmit={(event) => {
                         if(!confirm("¿Desea cerrar sesión?")){
                             event.preventDefault();
+                            onLogout();
                         }
                     }}>
                         <button type="submit" id="LogoutButton" >

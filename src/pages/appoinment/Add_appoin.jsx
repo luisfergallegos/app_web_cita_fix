@@ -92,6 +92,7 @@ export function AddAppoin() {
 
     const [startDate, setStartDate] = useState();
     const [selectedTime, setselectedTime] = useState('');
+    const [selectedIndex, setselectedIndex] = useState();
     const [cita, setcita] = useState([]);
     const [_excludeDates, setExcludeDates] = useState([]);
     const [citas, setCitas] = useState([]);
@@ -142,16 +143,13 @@ export function AddAppoin() {
             }
         }
         setcita(tempcita);
-
     }
 
     const ModMostrarAddres = () => {
         setbMostrarAddress(!bMostrarAddress);
     };
 
-    const _buildConfirm = () => {
-        console.log(selectedTime);
-
+    const _buildConfirm = async () => {
         if (selectedTime !== '') {
             if (bAcceder) {
                 setbAcceder(false);
@@ -172,20 +170,57 @@ export function AddAppoin() {
                     console.log(`ciudad ${ciudad}`);
                     console.log(`estado ${estado}`);
                     setbAcceder(true);
+                    setIsOpen(false);
 
                 }
                 else {
-                    console.log(`userId ${location.state.userId}`);
+                    /* console.log(`userId ${location.state.userId}`);
                     console.log(`business.id ${BUSSINESS_ID}`);
-                    console.log(`business.userId ${USER_ID}`);
+                    console.log(`business.userId ${USER_ID}`); */
                     var dateFormat = startDate.getMonth() + 1;
-                    console.log(`selectedDate ${startDate.getFullYear()}-${('0' + dateFormat).slice(-2)}-${startDate.getDate()}`);
+                    var _selectedDate = `${startDate.getFullYear()}-${('0' + dateFormat).slice(-2)}-${startDate.getDate()}`;
+                    /* console.log(`selectedDate ${_selectedDate}`);
                     console.log(`_selectedTime ${selectedTime}`);
                     console.log(`  `);
                     console.log(`sMessage ${message}`);
                     console.log(`userName ${location.state.userName}`);
-                    console.log(`Bus`);
-                    setbAcceder(true);
+                    console.log(`Bus`);*/
+                    setbAcceder(true); 
+
+                    //Enviar por POST
+                    var options = {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(
+                        {
+                            'user_id': location.state.userId,
+                            'bussiness_id': BUSSINESS_ID,
+                            'usernotification_id': USER_ID,
+                            'appointment_date': _selectedDate,
+                            'appointment_time': selectedTime,
+                            'anonimo': '',
+                            'message': message,
+                            'estatus': '0',
+                            'dorsl': location.state.userName,
+                            'for_who': 'Bus'
+                        })
+                    }
+                    try {
+                        const response = await fetch(`${urlApi}appoin`, options);
+                        const json = await response.json();
+                        if( json['sucess'] == false){
+                            alert(`Ya no se encuentra disponible Fecha : ${_selectedDate} Hora : ${selectedTime} Corríjalo e inténtelo nuevamente.`);
+                            console.log(`Error al guardar cita.`);
+                            throw new Error(`HTTP error! status: ${response.status}`);
+                        }
+                        else{
+                            navigate("/");
+                        }
+                        
+                    }
+                    catch (e) {
+                        return;
+                    }
 
                 }
             }
@@ -210,7 +245,7 @@ export function AddAppoin() {
             }
             setColonias(tempcita);
         }
-        else{
+        else {
             setColonias(tempcita);
             setEstado('');
             setCiudad('');
@@ -358,7 +393,7 @@ export function AddAppoin() {
                             dateFormat="dd/MM/yyyy"
                             excludeDates={_excludeDates}
                             selected={startDate}
-                            onChange={(date) => { setStartDate(date); SelectDateTime(date); setselectedTime('') }}
+                            onChange={(date) => { setStartDate(date); SelectDateTime(date); setselectedTime(''); setselectedIndex(); }}
                             minDate={initialDate}
                             maxDate={lastDate}
                             customInput={<ExampleCustomInput className="example-custom-input" />}
@@ -371,13 +406,17 @@ export function AddAppoin() {
                     cita[0].map(({ APPOINTMENT_TIME, STATUS }, index) =>
                     (
                         <div className={STATUS === 'No' ? 'businessAppointmentTime active' : 'businessAppointmentTime'}
-                            key={APPOINTMENT_TIME}
+                            key={index}
+                            style={{
+                                backgroundColor: index === selectedIndex ? 'white' : STATUS === 'No' ? 'grey' : '#e0e0e0',
+                                color: index === selectedIndex ? '#fc6500' : 'black'
+                            }}
                             onClick={() => {
                                 if (STATUS === 'free') {
                                     setselectedTime(APPOINTMENT_TIME);
+                                    setselectedIndex(index);
                                 }
-                            }
-                            }  >
+                            }}  >
                             <label>{APPOINTMENT_TIME} </label>
                         </div>
                     ))
@@ -413,9 +452,11 @@ export function AddAppoin() {
                     </div>
                 </div>
             </div>
-            <div className='businessBtn'><button onClick={() => { if(selectedTime !== '') {
-                setIsOpen(true);
-            }}}>Guardar</button></div>
+            <div className='businessBtn'><button onClick={() => {
+                if (selectedTime !== '') {
+                    setIsOpen(true);
+                }
+            }}>Guardar</button></div>
             {
                 isOpen ?
                     <>
@@ -426,8 +467,10 @@ export function AddAppoin() {
                             <label>Motivo de la visita/Servicio</label>
                             <textarea type="text" placeholder='Opcional' rows="4" cols="50" onChange={handleChangeMessage}></textarea>
                             <div className='buttonDialog'>
-                                <button className='primaryBkg' onClick={() => setIsOpen(false)}>Cancelar</button>
-                                <button className='secondBkg' onClick={_buildConfirm}>Confirmar</button>
+                                <button className='primaryBkg' onClick={() => { setIsOpen(false); setMessage(''); }}>Cancelar</button>
+                                <button className='secondBkg' onClick={() => {
+                                    _buildConfirm();
+                                }}>Confirmar</button>
                             </div>
 
                         </div>

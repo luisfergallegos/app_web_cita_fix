@@ -114,6 +114,7 @@
     &.active {
         background: grey;
         cursor: auto;
+        border-radius: 15px 0px 15px 0px;
     }
 
 }
@@ -121,7 +122,6 @@
 .businessAppointmentTime:active {
     transform: scale(0.95);
 }
-
 
 
 .businessBtn {
