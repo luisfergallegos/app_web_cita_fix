@@ -11,7 +11,10 @@ export async function logoutAction(){
     // delete tha user
     deleteItem({ key: "correo"});
     deleteItem({ key: "pwd"});
-    toast.success("Nos vemos pronto!");
+    // deleteItem({ key: "tokenH"});
+    // deleteItem({ key: "BusinessCitaFix"});
+    deleteItem({ key: "UserCitaFix"});
+    toast.success("Regresa pronto!");
     // return redirect
     return redirect("/");
 }

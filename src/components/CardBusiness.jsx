@@ -9,7 +9,7 @@ import { urlApi } from "../styles/Constants.jsx";
 
 function StarRating(maxRating) {
     const stars = [];
-    var colors = 'grey_red_amber_orange_lightGreen_green'.split('_');
+    var colors = 'grey_red_#ffbf00_orange_lightGreen_green'.split('_');
     for (let i = 1; i <= maxRating; i++) {
         stars.push(
             <StarIcon width={20} color={colors[maxRating - 1]} />);

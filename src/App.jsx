@@ -16,10 +16,12 @@ import LoginForm, { loginFormLoader } from "./pages/Login";
 import Error from "./pages/Error.jsx";
 import AddAppoin, { AddAppoinLoader } from './pages/appoinment/Add_appoin.jsx';
 import CancelarAppoin, { CancelarAppoinLoader } from './pages/appoinment/Cancel_appoin.jsx';
+import HomeBusiness, { HomeBusinessLoader } from './pages/business/Home_business.jsx';
 //import { MyRoutes } from './routers/routes.jsx';
 // Actions
 import { logoutAction } from "./actions/logout.js";
 import RegisterBusiness, { registerBusinessLoader } from './pages/register_business/Register_business.jsx';
+
 
 
 
@@ -95,6 +97,14 @@ const router = createBrowserRouter([
         path: "findBusiness",
         element: <FindBusiness />,
         loader: findBusinessLoader,
+        /* action: findBusinessAction, */
+        errorElement: <Error />
+      },
+
+      {
+        path: "homeBusiness",
+        element: <HomeBusiness />,
+        loader: HomeBusinessLoader,
         /* action: findBusinessAction, */
         errorElement: <Error />
       },

@@ -7,7 +7,7 @@ import { useEffect, useState } from "react";
 import illustration from "../assets/clock_green.svg";
 import Loaging from '../components/Loading.jsx';
 import { urlApi } from "../styles/Constants.jsx";
-import { ChevronRightIcon, ClockIcon } from '@heroicons/react/24/solid';
+import { BuildingStorefrontIcon, ChevronRightIcon, ClockIcon } from '@heroicons/react/24/solid';
 
 
 // loader
@@ -27,6 +27,7 @@ export function Home() {
   const [citas, setCitas] = useState([]);
   const firstName = sUserCitaFix['first_name'] ?? "Usuario";
   const userId = sUserCitaFix['USER_ID'] ?? "";
+  const dorsl = sUserCitaFix['DORSL'] ?? "";
 
   const arrayBufferToBase64 = (buffer) => {
     var binary = '';
@@ -93,8 +94,8 @@ export function Home() {
 
               {citas.map((index) =>
               (
-                <div className="flex bg-gray-100 scale-95 hover:scale-100 transition-all duration-300"
-                  key={index}
+                <div className="flex bg-white-100 rounded-2xl shadow-2xl overflow-hidden scale-95 hover:scale-100 transition-all duration-300"
+                  key={index['APOINMENT_ID']}
                   onClick={() => {
                     if (index['ESTATUS'] !== '-1' && index['ESTATUS'] !== '2') {
                       navigate(`/cancelAppoin/${index['APOINMENT_ID']}`);
@@ -136,7 +137,19 @@ export function Home() {
             </div>
           )
         }
+
       </div>
+      {
+        dorsl == '' ? <div></div> :
+          <div >
+            <button
+              onClick={() => navigate("/homeBusiness")}
+              className="absolute bg-orange-500 hover:bg-orange-600 text-white font-semibold py-2 px-6 rounded-md shadow-md transition"
+            >
+              <BuildingStorefrontIcon width={50}/>
+            </button>
+          </div>
+      }
     </div>
   );
 }

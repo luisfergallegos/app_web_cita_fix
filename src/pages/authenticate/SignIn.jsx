@@ -5,16 +5,24 @@ import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 // assents
 import Logo from "../../assets/menu.png";
+import {
+  EyeIcon,
+  EyeSlashIcon,
+} from "@heroicons/react/24/solid";
+import Loaging from '../../components/Loading.jsx';
 
 export default function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showAlert, setShowAlert] = useState(false);
   const [showAlertConfirmation, setshowAlertConfirmation] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
   const handleLogin = async (e) => {
     e.preventDefault();
+    
 
     if (email === '' || password === '') {
       setShowAlert(true);
@@ -22,6 +30,7 @@ export default function Login() {
       return;
     }
     else {
+      setLoading(true);
       var options = {
         method: 'GET',
         headers: {
@@ -53,11 +62,11 @@ export default function Login() {
               throw new Error(`HTTP error! status: ${response.status}`);
             }
             const json = await response.json();
-            console.log('Login con:', email, password);
             //obtener nombre
             localStorage.setItem("UserCitaFix", JSON.stringify(json['data']));
             var userName = json['data']['first_name'];
             navigate(`/`, { replace: true }); // <-- redirect
+            setLoading(false);
             return toast.success(`Bienvenido, ${userName}`);
           }
           catch (e) {
@@ -85,13 +94,16 @@ export default function Login() {
       return;
     }
     else {
-      console.log("correo " + email);
       setshowAlertConfirmation(true);
       setTimeout(() => setshowAlertConfirmation(false), 3000); // ocultar alerta
       return;
     }
 
   };
+
+  if (loading) {
+        return <Loaging />;
+    }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-orange-600 to-orange-800 flex items-center justify-center px-4 relative overflow-hidden">
@@ -129,13 +141,28 @@ export default function Login() {
 
             <div>
               <label className="block text-gray-600 text-sm mb-1">Contraseña</label>
-              <input
-                type="password"
-                placeholder="••••••••"
-                className="w-full px-4 py-2 rounded-md border border-gray-300 shadow-sm focus:ring-2 focus:ring-orange-500 focus:outline-none transition-all duration-300"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-              />
+              <div className="relative">
+                <input
+                  type={showPassword ? "text" : "password"}
+                  placeholder="••••••••"
+                  className="w-full px-4 py-2 rounded-md border border-gray-300 shadow-sm focus:ring-2 focus:ring-orange-500 focus:outline-none transition-all duration-300"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                />
+                <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute inset-y-0 right-3 flex items-center text-gray-500 hover:text-orange-500"
+                tabIndex={-1}
+              >
+                {showPassword ? (
+                  <EyeIcon className="w-5 h-5" />
+                ) : (
+                  <EyeSlashIcon className="w-5 h-5" />
+                )}
+              </button>
+              </div>
+
             </div>
             <p className="text-sm text-center text-gray-500 mt-6">
               ¿Olvidaste tu contraseña?{' '}

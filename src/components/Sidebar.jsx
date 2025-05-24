@@ -57,16 +57,11 @@ export function Sidebar({ sidebarOpen, setSidebarOpen }) {
     const ModSidebaropen = () => {
         setSidebarOpen(!sidebarOpen);
     };
-    const onLogout=()=>{
+    /* const onLogout=()=>{
         // delete tha user
         localStorage.removeItem("correo");
         localStorage.removeItem("pwd");
-        localStorage.removeItem("tokenH");
-        localStorage.removeItem("BusinessCitaFix");
-        localStorage.removeItem("UserCitaFix");
-        navigate(`/`, { replace: true }); // <-- redirect
-        toast.success('Regresa pronto!');
-    }
+    } */
     return (
         <div className='SidebarContainer'>
             {sidebarOpen ? <button id="sidebar" onClick={ModSidebaropen}>
@@ -115,7 +110,6 @@ export function Sidebar({ sidebarOpen, setSidebarOpen }) {
                 {sidebarOpen && <Form method="post" action="/logout" onSubmit={(event) => {
                         if(!confirm("¿Desea cerrar sesión?")){
                             event.preventDefault();
-                            onLogout();
                         }
                     }}>
                         <button type="submit" id="LogoutButton" >

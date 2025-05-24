@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import './Add_appoin.css';
 import Loaging from '../../components/Loading.jsx';
 import { urlApi } from "../../styles/Constants.jsx";
+import RatingBar from "../../components/RatingBar.jsx";
 import User from "../../assets/e.png";
 import { BuildingStorefrontIcon, EnvelopeIcon, InformationCircleIcon, MapPinIcon } from '@heroicons/react/24/solid';
 
@@ -24,6 +25,7 @@ export function CancelarAppoin() {
     const [cita, setCita] = useState([]);
     const [isOpen, setIsOpen] = useState(false);
     const [isOpenC, setIsOpenC] = useState(false);
+    const [selectedRating, setSelectedRating] = useState(0);
     const [comentario, setComentario] = useState('');
 
     // Function to convert Base64 string to binary data
@@ -54,19 +56,28 @@ export function CancelarAppoin() {
 
     const _buildConfirm = () => {
         console.log('_buildConfirm');
+        console.log(cita.APOINMENT_ID);
         setIsOpen(false);
     };
 
     const _buildCalif = () => {
         console.log('buildCalif');
+        console.log(cita.APOINMENT_ID);
         console.log(comentario);
+        console.log(selectedRating);
         setIsOpenC(false);
     };
 
-    const handleChangeComentario= evt => {
+    const handleRatingChange = (newRating) => {
+        setSelectedRating(newRating);
+    };
+
+    const handleChangeComentario = evt => {
         const value = evt.target.value;
         setComentario(value);
     };
+
+
 
     useEffect(() => {
         const fData = async () => {
@@ -220,12 +231,12 @@ export function CancelarAppoin() {
             <div className='businessContainer_Divider'></div>
             <div className='businessBtn'>
                 <button onClick={() => {
-                    if(cita.ESTATUS == '0' && cita.FLAG_SERVICE_LEVEL == '0'){
+                    if (cita.ESTATUS == '2' && cita.FLAG_SERVICE_LEVEL == '0') {
                         setIsOpenC(true);
-                    }else{
+                    } else {
                         setIsOpen(true);
                     }
-                    
+
                 }}>{cita.ESTATUS == '2' && cita.FLAG_SERVICE_LEVEL == '0' ? 'Calificar'
                     : 'Cancelar'}</button>
             </div>
@@ -244,12 +255,12 @@ export function CancelarAppoin() {
                                         cita.ESTATUS == '-1') {
                                         if (cita.ESTATUS == '3') {
                                             alert('No se puede cancelar la cita (Actual)');
-                                          } else if (cita.ESTATUS == '-1') {
+                                        } else if (cita.ESTATUS == '-1') {
                                             alert('No se puede cancelar la cita (Cancelada)');
-                                          } else if (cita.FLAG_SERVICE_LEVEL ==
-                                              '0') {
+                                        } else if (cita.FLAG_SERVICE_LEVEL ==
+                                            '0') {
                                             _buildCalif();
-                                          }
+                                        }
                                     }
                                     else {
                                         _buildConfirm();
@@ -261,24 +272,24 @@ export function CancelarAppoin() {
                         </div>
                     </>
                     : isOpenC ?
-                    <>
-                        <div className="backdropDialog" ></div>
-                        <div className="dialogDialog">
-                            <h2>Calificación</h2>
-                            <span>Comparte tu calificación con otros usuarios</span>
+                        <>
+                            <div className="backdropDialog" ></div>
+                            <div className="dialogDialog">
+                                <h2>Calificación</h2>
+                                <span>Comparte tu calificación con otros usuarios</span>
+                                <RatingBar onRatingChange={handleRatingChange} />
+                                <label>Comentario para el lugar (Opcional)</label>
+                                <textarea type="text" rows="4" cols="50" placeholder='Puedes añadir cualquier comentario que sea de interés para el lugar' onChange={handleChangeComentario} />
+                                <div className='buttonDialog'>
+                                    <button className='primaryBkg' onClick={() => { setIsOpenC(false); }}>Cancelar</button>
+                                    <button className='secondBkg' onClick={() => {
+                                        _buildCalif();
+                                    }}>Calificar</button>
+                                </div>
 
-                            <label>Comentario para el lugar (Opcional)</label>
-                            <input type="text" placeholder='Puedes añadir cualquier comentario que sea de interés para el lugar' onChange={handleChangeComentario}/>
-                            <div className='buttonDialog'>
-                                <button className='primaryBkg' onClick={() => { setIsOpenC(false); }}>Cancelar</button>
-                                <button className='secondBkg' onClick={() => {
-                                    _buildCalif();
-                                }}>Calificar</button>
                             </div>
-
-                        </div>
-                    </>
-                    : null
+                        </>
+                        : null
             }
 
         </div>);
