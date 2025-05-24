@@ -15,10 +15,12 @@ import RegisterUser from "./pages/register_user/Register_user.jsx";
 import LoginForm, { loginFormLoader } from "./pages/Login";
 import Error from "./pages/Error.jsx";
 import AddAppoin, { AddAppoinLoader } from './pages/appoinment/Add_appoin.jsx';
+import CancelarAppoin, { CancelarAppoinLoader } from './pages/appoinment/Cancel_appoin.jsx';
 //import { MyRoutes } from './routers/routes.jsx';
 // Actions
 import { logoutAction } from "./actions/logout.js";
 import RegisterBusiness, { registerBusinessLoader } from './pages/register_business/Register_business.jsx';
+
 
 
 // const router = createBrowserRouter([<MyRoutes /> ]);
@@ -123,6 +125,13 @@ const router = createBrowserRouter([
         path: "addAppoin",
         element: <AddAppoin />,
         loader: AddAppoinLoader,
+        /*action: expensesAction, */
+        errorElement: <Error />
+      },
+       {
+        path: "cancelAppoin/:id",
+        element: <CancelarAppoin />,
+        loader: CancelarAppoinLoader,
         /*action: expensesAction, */
         errorElement: <Error />
       },

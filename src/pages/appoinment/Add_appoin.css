@@ -1,7 +1,13 @@
 .AddAppoinContainer {
     height: 100vh;
     background: white;
-    color: black;
+
+    h1 {
+        font-size: 30px;
+        font-weight: bold;
+        margin-bottom: 30px;
+        color: var(--second);
+    }
 }
 
 .businessTitleContainer {
@@ -25,15 +31,18 @@
     color: black;
 
     h4 {
-        font-size: 33px;
+        font-size: 30px;
         font-weight: bold;
     }
 
     p {
+        margin-bottom: 10px;
         font-size: 15px;
         color: gray;
     }
 }
+
+
 
 .businessSubTitle {
     width: 90%;
@@ -208,7 +217,7 @@
 
 .AddAppoinContainer .dialogDialog {
     width: 460px;
-    height: 310px;
+    height: auto;
     background: #fff;
     border-radius: 2rem;
     position: fixed;
@@ -218,6 +227,7 @@
     display: flex;
     flex-direction: column;
     max-width: 95%;
+    color: black;
 
     &.large {
         width: 1024px;
@@ -251,6 +261,14 @@
     }
 
     textarea {
+        margin-top: 10px;
+        margin-left: 30px;
+        margin-right: 30px;
+        margin-bottom: 10px;
+        border: 2px solid #ccc;
+    }
+
+    input {
         margin-top: 10px;
         margin-left: 30px;
         margin-right: 30px;

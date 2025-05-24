@@ -63,7 +63,6 @@ export function Home() {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
         const json = await response.json();
-        console.log(json['data']);
         setCitas(json['data']);
 
         setLoading(false);
@@ -97,9 +96,8 @@ export function Home() {
                 <div className="flex bg-gray-100 scale-95 hover:scale-100 transition-all duration-300"
                   key={index}
                   onClick={() => {
-                    console.log(`ESTATUS: ${index['ESTATUS']}`);
                     if (index['ESTATUS'] !== '-1' && index['ESTATUS'] !== '2') {
-                      alert(`desplegarPantallaCancelarAppoin`);
+                      navigate(`/cancelAppoin/${index['APOINMENT_ID']}`);
                     }
                   }}  >
                   {

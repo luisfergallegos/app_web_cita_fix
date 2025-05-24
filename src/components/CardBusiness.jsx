@@ -83,7 +83,7 @@ export function CardBusiness({ key, userId, userName, empresa, setIsOpen, setInd
                     <MapPinIcon />
                 </div>
                 <div onClick={handleADDRESS}>
-                    <p>{ADDRESS_FIRST} {ADDRESS_SECOND} CP {POSTAL_CODE} {CITY}, {STATE}</p>
+                    <p>{ADDRESS_FIRST}, {ADDRESS_SECOND}, {POSTAL_CODE} {CITY}, {STATE}, Mexico</p>
                 </div>
             </div>
             {phone && <div className='CardContainer_Detalle'>
