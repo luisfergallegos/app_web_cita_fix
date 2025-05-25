@@ -8,6 +8,7 @@ import illustration from "../assets/clock_green.svg";
 import Loaging from '../components/Loading.jsx';
 import { urlApi } from "../styles/Constants.jsx";
 import { BuildingStorefrontIcon, ChevronRightIcon, ClockIcon } from '@heroicons/react/24/solid';
+import './Home.css';
 
 
 // loader
@@ -59,13 +60,15 @@ export function Home() {
       //Solicitar por GET
       try {
         const response = await fetch(`${urlApi}appoin?userid=${userId}`);
-        if (!response.ok) {
+        if (response.status == 200) {
+          const json = await response.json();
+          setCitas(json['data']);
+        } else if (response.status == 404) {
+          setCitas([]);
+        } else {
           console.log(`Error getting appoin.`);
           throw new Error(`HTTP error! status: ${response.status}`);
         }
-        const json = await response.json();
-        setCitas(json['data']);
-
         setLoading(false);
       }
       catch (e) {
@@ -94,7 +97,7 @@ export function Home() {
 
               {citas.map((index) =>
               (
-                <div className="flex bg-white-100 rounded-2xl shadow-2xl overflow-hidden scale-95 hover:scale-100 transition-all duration-300"
+                <div className="flex justify-between bg-white-100 rounded-2xl shadow-2xl overflow-hidden scale-95 hover:scale-100 transition-all duration-300"
                   key={index['APOINMENT_ID']}
                   onClick={() => {
                     if (index['ESTATUS'] !== '-1' && index['ESTATUS'] !== '2') {
@@ -103,9 +106,9 @@ export function Home() {
                   }}  >
                   {
                     index['BUS_PHOTO'] === null ? <ClockIcon width={40}
-                      color={index['ESTATUS'] == '-1' ? 'red-900' :
-                        index['ESTATUS'] == '1' ? 'gray-800' :
-                          index['ESTATUS'] == '3' ? 'blueAccent' : 'grey'
+                      color={index['ESTATUS'] == '-1' ? '#B71C1C' :
+                        index['ESTATUS'] == '1' ? '#32325d' :
+                          index['ESTATUS'] == '3' ? '#4472C4' : 'grey'
                       } /> :
                       <img src={'data:image/jpeg;base64,' + arrayBufferToBase64(index['BUS_PHOTO'].data)} width={40} />
                   }
@@ -141,13 +144,15 @@ export function Home() {
       </div>
       {
         dorsl == '' ? <div></div> :
-          <div >
-            <button
-              onClick={() => navigate("/homeBusiness")}
-              className="absolute bg-orange-500 hover:bg-orange-600 text-white font-semibold py-2 px-6 rounded-md shadow-md transition"
-            >
-              <BuildingStorefrontIcon width={50}/>
-            </button>
+          <div class="fab-container">
+            <div class="button iconbutton">
+              <button
+                onClick={() => navigate("/homeBusiness")}
+                class="fa-solid fa-plus"
+              >
+                <BuildingStorefrontIcon width={40} />
+              </button>
+            </div>
           </div>
       }
     </div>

@@ -176,7 +176,7 @@ export function CancelarAppoin() {
                     </div> :
                         cita.ESTATUS == '3' ? <div className='businessSubTitleContainer'>
                             <div className='businessSubTitleIcon'>
-                                <InformationCircleIcon color='blueAccent' />
+                                <InformationCircleIcon color='#4472C4' />
                             </div>
                             <p>En cita</p>
                         </div> :
