@@ -156,7 +156,7 @@ export function HomeBusiness() {
                             <p className="text-gray-600">Guarda tus proximas citas de manera fácil y al instante. </p>
                             <p className="text-gray-600 mb-4">Dirígete al buscador de cliente</p>
                             <button
-                                onClick={() => alert('Abrir buscador de clientes')}
+                                onClick={() => navigate("/findUser")}
                                 className="bg-orange-500 hover:bg-orange-600 text-white font-semibold py-2 px-6 rounded-md shadow-md transition"
                             >
                                 Ir a clientes
@@ -169,7 +169,7 @@ export function HomeBusiness() {
                     <div class="fab-container">
                         <div class="button iconbutton">
                             <button
-                                onClick={() => alert('Abrir buscador de clientes')}
+                                onClick={() => navigate("/findUser")}
                                 class="fa-solid fa-plus"
                             >
                                 <UserPlusIcon width={40} />
