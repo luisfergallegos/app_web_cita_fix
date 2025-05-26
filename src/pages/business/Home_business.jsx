@@ -130,6 +130,7 @@ export function HomeBusiness() {
                                         <div className="grid">
                                             <label className="text-2xl font-bold text-black">{ConvertDateTime(citas[currentPage - 1]['APPOINTMENT_DATE'], index['APPOINTMENT_TIME'], 1)} </label>
                                             <label className="text-1xl font-bold text-gray-400">{index['ANONIMO'] == '' ? index['COMPLET_NAME'] : index['ANONIMO'].substring(0, index['ANONIMO'].indexOf(","))} </label>
+                                            <label className="text-1xl font-bold text-gray-400">{index['ANONIMO'] != '' ? index['ANONIMO'].substring(index['ANONIMO'].indexOf(",")+1,index['ANONIMO'].length) : ''} </label>
                                             <label className="text-1xl font-bold text-gray-400">{index['ESTATUS'] == '1' ? 'Cita modificada.' : ''} </label>
                                         </div>
                                         <ChevronRightIcon width={30} color="black" />

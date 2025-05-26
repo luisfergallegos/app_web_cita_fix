@@ -82,11 +82,12 @@ export function FindUser() {
 
 
     return (
-        <div className="FindBusinessContainer">
-            <div className='searchContainer'>
-                <div className="searchicon"><MagnifyingGlassIcon /></div>
-                <input type="text" name="searchText" placeholder="Buscar ..." onChange={handleChange} />
-            </div>
+        <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-orange-600 to-orange-800 px-4">
+            <div className="bg-white rounded-3xl shadow-xl p-10 max-w-2xl w-full text-center animate-fade-in-up">      
+                <div className='searchContainer'>
+                    <div className="searchicon"><MagnifyingGlassIcon /></div>
+                    <input type="text" name="searchText" placeholder="Buscar ..." onChange={handleChange} />
+                </div>
             {
                 searchText !== '' ? (
                     <div>
@@ -97,7 +98,7 @@ export function FindUser() {
                                 <div className="flex justify-between bg-white-100 rounded-2xl shadow-2xl overflow-hidden scale-95 hover:scale-100 transition-all duration-300"
                                         key={index['USER_ID']}
                                         onClick={() => {
-                                            alert('Abrir cita');
+                                            navigate("/addAppoinBusiness", { state: { userCita: index, businessId: sUserCitaFix['BUSSINESS_ID'], dorsl: sUserCitaFix['DORSL']  } });
                                         }}  >
                                         {
                                             index['PHOTO'] === null ? <UserCircleIcon width={40}
@@ -118,7 +119,11 @@ export function FindUser() {
                     (
                         <div className="space-y-4">
                             <button
-                                onClick={() => alert('Abrir cita anonima')}
+                                onClick={() => 
+                                {
+                                    navigate("/addAppoinBusinessAnon", { state: { userId: sUserCitaFix['USER_ID'], businessId: sUserCitaFix['BUSSINESS_ID'], dorsl: sUserCitaFix['DORSL'] } });
+                                }
+                                }
                                 className="flex bg-orange-500 hover:bg-orange-600 text-white font-semibold py-2 px-6 rounded-md shadow-md transition"
                             >
                                 <UserPlusIcon width={40} />
@@ -127,7 +132,7 @@ export function FindUser() {
                         </div>
                     )
             }
-
+            </div>
         </div>);
 }
 

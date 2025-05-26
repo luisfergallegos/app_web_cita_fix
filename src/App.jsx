@@ -19,13 +19,11 @@ import CancelarAppoin, { CancelarAppoinLoader } from './pages/appoinment/Cancel_
 import HomeBusiness, { HomeBusinessLoader } from './pages/business/Home_business.jsx';
 import RegisterBusiness, { registerBusinessLoader } from './pages/register_business/Register_business.jsx';
 import FindUser, { findUserLoader } from './pages/register_user/Find_user.jsx';
+import AddAppoinBusinesss, { AddAppoinBusinesssLoader } from './pages/appoinment/Add_appoin_business.jsx';
+import AddAppoinBusinesssAnon, { AddAppoinBusinesssAnonLoader } from './pages/appoinment/Add_appoin_business_anon.jsx';
 //import { MyRoutes } from './routers/routes.jsx';
 // Actions
 import { logoutAction } from "./actions/logout.js";
-
-
-
-
 
 // const router = createBrowserRouter([<MyRoutes /> ]);
 
@@ -151,6 +149,20 @@ const router = createBrowserRouter([
         path: "cancelAppoin/:id",
         element: <CancelarAppoin />,
         loader: CancelarAppoinLoader,
+        /*action: expensesAction, */
+        errorElement: <Error />
+      },
+      {
+        path: "addAppoinBusiness",
+        element: <AddAppoinBusinesss />,
+        loader: AddAppoinBusinesssLoader,
+        /*action: expensesAction, */
+        errorElement: <Error />
+      },
+      {
+        path: "addAppoinBusinessAnon",
+        element: <AddAppoinBusinesssAnon />,
+        loader: AddAppoinBusinesssAnonLoader,
         /*action: expensesAction, */
         errorElement: <Error />
       },

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   LockClosedIcon,
   UserIcon,
@@ -7,8 +7,12 @@ import {
   EyeSlashIcon,
 } from "@heroicons/react/24/solid";
 import { useNavigate, NavLink } from "react-router-dom";
+import { fetchData } from "../../Wrapper";
 
 export default function RegisterUser() {
+  const sCorreo = fetchData("correo");
+  const sPassword = fetchData("pwd");
+
   const [userEmail, setUserEmail] = useState('');
   const [userPass, setUserPass] = useState('');
   const [userName, setUserName] = useState('');
@@ -58,6 +62,12 @@ export default function RegisterUser() {
       throw new Error("There was a problem creating your account.");
     }
   };
+
+  useEffect(() => {
+    if (sCorreo !== null && sPassword !== null) {
+      navigate("/");
+    }
+  }, []);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-orange-600 to-orange-800 flex items-center justify-center px-4 relative overflow-hidden">
