@@ -173,7 +173,7 @@ export function FindBusiness() {
                             <div className='dialogDialogPHOTO'>
                                 {
                                     indexEmp['PHOTO'] === null ? <img id='store' src={Store} /> :
-                                        <img src={'data:image/jpeg;base64,' + arrayBufferToBase64(indexEmp['PHOTO'].data)} />
+                                        <img id='store' src={'data:image/jpeg;base64,' + arrayBufferToBase64(indexEmp['PHOTO'].data)} />
                                 }
                             </div>
                             <div className='CardContainer_Titulo'>

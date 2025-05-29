@@ -4,7 +4,7 @@ import { createBrowserRouter, RouterProvider, BrowserRouter } from "react-router
 
 // Layouts
 import Main, { mainLoader } from "./layouts/Main.jsx";
-// Routes
+
 // Routers
 import Home, { homeLoader } from "./pages/Home.jsx";
 import ViewUpdateUser, { viewUpdateUserLoader } from "./pages/register_user/View_update_user.jsx";
@@ -21,42 +21,10 @@ import RegisterBusiness, { registerBusinessLoader } from './pages/register_busin
 import FindUser, { findUserLoader } from './pages/register_user/Find_user.jsx';
 import AddAppoinBusinesss, { AddAppoinBusinesssLoader } from './pages/appoinment/Add_appoin_business.jsx';
 import AddAppoinBusinesssAnon, { AddAppoinBusinesssAnonLoader } from './pages/appoinment/Add_appoin_business_anon.jsx';
-//import { MyRoutes } from './routers/routes.jsx';
+import UpdateAppoinBusiness, { UpdateAppoinLoader } from './pages/appoinment/Update_appoin_business.jsx';
+
 // Actions
 import { logoutAction } from "./actions/logout.js";
-
-// const router = createBrowserRouter([<MyRoutes /> ]);
-
-// function App() {
-
-//   return (
-//     <>
-//     <RouterProvider router={router} /> 
-//     </>
-//   )
-// }
-
-// export default App;
-
-
-
-// import { createBrowserRouter, RouterProvider } from "react-router-dom";
-
-
-// // Library
-// import { ToastContainer } from 'react-toastify';
-// import 'react-toastify/dist/ReactToastify.css';
-
-// // Routes
-// import Home, { homeLoader } from "./screens/home/Home";
-// import RegisterUser, { registerUserLoader } from "./screens/register_user/Register_user";
-// import Error from "./screens/Error";
-// import Auth, { authLoader } from "./services/auth";
-// import ViewUpdateUser, { viewUpdateUserLoader } from "./screens/register_user/View_update_user";
-// import FindBusiness, { findBusinessLoader } from "./screens/business/Find_business";
-// import ViewUpdateBusiness, { viewUpdateBusinessLoader } from "./screens/register_business/View_update_business";
-// import Notification, { notificationLoader } from "./screens/Notification";
-
 
 const router = createBrowserRouter([
   {
@@ -163,6 +131,13 @@ const router = createBrowserRouter([
         path: "addAppoinBusinessAnon",
         element: <AddAppoinBusinesssAnon />,
         loader: AddAppoinBusinesssAnonLoader,
+        /*action: expensesAction, */
+        errorElement: <Error />
+      },
+      {
+        path: "updateAppoinBusiness/:id",
+        element: <UpdateAppoinBusiness />,
+        loader: UpdateAppoinLoader,
         /*action: expensesAction, */
         errorElement: <Error />
       },

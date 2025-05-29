@@ -1,3 +1,12 @@
+#imgS {
+    margin-left: 8px;
+    margin-top: 4px;
+    width: 65px;
+    height: 65px;
+    object-fit: cover;
+    border-radius: 50%;    
+}
+
 .FindBusinessContainer {
     min-height: 100vh;
     background: white;

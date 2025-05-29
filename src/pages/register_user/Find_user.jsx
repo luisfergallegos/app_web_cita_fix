@@ -101,9 +101,9 @@ export function FindUser() {
                                             navigate("/addAppoinBusiness", { state: { userCita: index, businessId: sUserCitaFix['BUSSINESS_ID'], dorsl: sUserCitaFix['DORSL']  } });
                                         }}  >
                                         {
-                                            index['PHOTO'] === null ? <UserCircleIcon width={40}
+                                            index['PHOTO'] === null ? <UserCircleIcon width={80} 
                                                 color={'#fc6500'} /> :
-                                                <img src={'data:image/jpeg;base64,' + arrayBufferToBase64(index['PHOTO'].data)} width={40} />
+                                                <img id='imgS' src={'data:image/jpeg;base64,' + arrayBufferToBase64(index['PHOTO'].data)} />
                                         }
                                         <div className="grid">
                                             <label className="text-2xl font-bold text-black">{index['first_name']} {index['last_name']} </label>

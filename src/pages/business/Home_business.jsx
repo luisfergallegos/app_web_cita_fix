@@ -100,7 +100,6 @@ export function HomeBusiness() {
 
     return (
         <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-600 to-gray-800 px-4">
-
             {
                 citas.length > 0 ?
                     <div>
@@ -115,22 +114,23 @@ export function HomeBusiness() {
                                         key={index['APOINMENT_ID']}
                                         onClick={() => {
                                             if (index['ESTATUS'] !== '-1' && index['ESTATUS'] !== '2') {
-                                                // navigate(`/cancelAppoin/${index['APOINMENT_ID']}`);
-                                                alert('Abrir Update cita');
+                                                navigate(`/updateAppoinBusiness/${index['APOINMENT_ID']}`);
                                             }
                                         }}  >
                                         {
-                                            index['PHOTO'] === null ? <UserCircleIcon width={40}
-                                                color={index['ESTATUS'] == '-1' ? '#B71C1C' :
-                                                    index['ESTATUS'] == '1' ? '#32325d' :
-                                                        index['ESTATUS'] == '3' ? '#4472C4' : '#fc6500'
-                                                } /> :
-                                                <img src={'data:image/jpeg;base64,' + arrayBufferToBase64(index['PHOTO'].data)} width={40} />
+                                            index['PHOTO'] === null ?
+                                                <UserCircleIcon  width={80} 
+                                                    color={index['ESTATUS'] == '-1' ? '#B71C1C' :
+                                                        index['ESTATUS'] == '1' ? '#32325d' :
+                                                            index['ESTATUS'] == '3' ? '#4472C4' : '#fc6500'
+                                                    } /> :
+                                                <img id='imgS' src={'data:image/jpeg;base64,' + arrayBufferToBase64(index['PHOTO'].data)}  />
+
                                         }
                                         <div className="grid">
                                             <label className="text-2xl font-bold text-black">{ConvertDateTime(citas[currentPage - 1]['APPOINTMENT_DATE'], index['APPOINTMENT_TIME'], 1)} </label>
                                             <label className="text-1xl font-bold text-gray-400">{index['ANONIMO'] == '' ? index['COMPLET_NAME'] : index['ANONIMO'].substring(0, index['ANONIMO'].indexOf(","))} </label>
-                                            <label className="text-1xl font-bold text-gray-400">{index['ANONIMO'] != '' ? index['ANONIMO'].substring(index['ANONIMO'].indexOf(",")+1,index['ANONIMO'].length) : ''} </label>
+                                            <label className="text-1xl font-bold text-gray-400">{index['ANONIMO'] != '' ? index['ANONIMO'].substring(index['ANONIMO'].indexOf(",") + 1, index['ANONIMO'].length) : ''} </label>
                                             <label className="text-1xl font-bold text-gray-400">{index['ESTATUS'] == '1' ? 'Cita modificada.' : ''} </label>
                                         </div>
                                         <ChevronRightIcon width={30} color="black" />

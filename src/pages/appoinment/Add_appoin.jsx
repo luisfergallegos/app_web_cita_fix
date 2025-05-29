@@ -133,6 +133,7 @@ export function AddAppoin() {
             </label>
         ),
     );
+    
     function SelectDateTime(date) {
         var tempcita = [];
         for (let index = 0; index < citas.length; index++) {
@@ -185,38 +186,38 @@ export function AddAppoin() {
                     console.log(`sMessage ${message}`);
                     console.log(`userName ${location.state.userName}`);
                     console.log(`Bus`);*/
-                    setbAcceder(true); 
+                    setbAcceder(true);
 
                     //Enviar por POST
                     var options = {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify(
-                        {
-                            'user_id': location.state.userId,
-                            'bussiness_id': BUSSINESS_ID,
-                            'usernotification_id': USER_ID,
-                            'appointment_date': _selectedDate,
-                            'appointment_time': selectedTime,
-                            'anonimo': '',
-                            'message': message,
-                            'estatus': '0',
-                            'dorsl': location.state.userName,
-                            'for_who': 'Bus'
-                        })
+                            {
+                                'user_id': location.state.userId,
+                                'bussiness_id': BUSSINESS_ID,
+                                'usernotification_id': USER_ID,
+                                'appointment_date': _selectedDate,
+                                'appointment_time': selectedTime,
+                                'anonimo': '',
+                                'message': message,
+                                'estatus': '0',
+                                'dorsl': location.state.userName,
+                                'for_who': 'Bus'
+                            })
                     }
                     try {
                         const response = await fetch(`${urlApi}appoin`, options);
                         const json = await response.json();
-                        if( json['sucess'] == false){
+                        if (json['sucess'] == false) {
                             alert(`Ya no se encuentra disponible Fecha : ${_selectedDate} Hora : ${selectedTime} Corríjalo e inténtelo nuevamente.`);
                             console.log(`Error al guardar cita.`);
                             throw new Error(`HTTP error! status: ${response.status}`);
                         }
-                        else{
+                        else {
                             navigate("/");
                         }
-                        
+
                     }
                     catch (e) {
                         return;
@@ -426,8 +427,13 @@ export function AddAppoin() {
             <div className='businessContainer_Divider'></div>
 
             <div className='businessTitle'>
-                <h4>{bMostrarAddress ? '¿Cuál es la dirección?' : 'Visita a domicilio'}</h4>
-                <p><input type="checkbox" onClick={ModMostrarAddres}></input></p>
+                <div style={{display:'flex', justifyItems: 'center', alignItems: 'center', marginRight:'20px'}}>
+                    <h4 style={{ marginRight:'20px'}}>{bMostrarAddress ? '¿Cuál es la dirección?' : 'Visita a domicilio'}</h4>
+                <label className="switch">
+                    <input type="checkbox" onClick={ModMostrarAddres}/>
+                    <span class="slider round"></span>
+                </label>
+                </div>
                 <div className={bMostrarAddress ? 'businessContainer_Address' : 'businessContainer_Address active'} >
                     <div className='AddressForm-group'>
                         <label>Código postal</label>

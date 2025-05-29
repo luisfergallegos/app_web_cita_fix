@@ -105,12 +105,12 @@ export function Home() {
                     }
                   }}  >
                   {
-                    index['BUS_PHOTO'] === null ? <ClockIcon width={40}
+                    index['BUS_PHOTO'] === null ? <ClockIcon width={80}
                       color={index['ESTATUS'] == '-1' ? '#B71C1C' :
                         index['ESTATUS'] == '1' ? '#32325d' :
                           index['ESTATUS'] == '3' ? '#4472C4' : 'grey'
                       } /> :
-                      <img src={'data:image/jpeg;base64,' + arrayBufferToBase64(index['BUS_PHOTO'].data)} width={40} />
+                      <img id="imgS" src={'data:image/jpeg;base64,' + arrayBufferToBase64(index['BUS_PHOTO'].data)}/>
                   }
                   <div className="grid">
                     <label className="text-2xl font-bold text-black">{index['DORSL']} </label>
