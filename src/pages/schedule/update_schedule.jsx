@@ -1,10 +1,11 @@
 // rrd imports
 import { useState } from "react";
+import { urlApi } from "../../styles/Constants.jsx";
 //librery
 import DatePicker from 'react-datepicker';
 import "react-datepicker/dist/react-datepicker.css";
 
-export function UpdateSchedule({ excludeTimes, horario }) {
+export function UpdateSchedule({ excludeTimes, horario, businessId, setshowAlertConfirmation }) {
     const listIntervaloDes = ['30 min', '45 min', '1 hora', '2 horas'];
     const [valuesDefault, setValuesDefault] = useState(horario);
 
@@ -56,17 +57,42 @@ export function UpdateSchedule({ excludeTimes, horario }) {
         ));
     };
 
-    const btnRegisterSchedule = () => {
+    const btnRegisterSchedule = async (e) => {
         var iCountDiasMal = 0;
         for (var val in valuesDefault) {
             var element = valuesDefault[val];
-            if (element['desdeH'] > element['hastaH'] ) {
+            if (element['desdeH'] > element['hastaH']) {
                 iCountDiasMal = iCountDiasMal + 1;
             }
         }
         if (iCountDiasMal == 0) {
-            console.log(valuesDefault);
-            alert('Es posible que este cambio tarde unos minutos en reflejarse en todos lados');
+            //Enviar por PUT
+            var options = {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(
+                    {
+                        "bussiness_id": businessId,
+                        "data": valuesDefault,
+                    })
+            }
+            try {
+                const response = await fetch(`${urlApi}schedule`, options);
+                const json = await response.json();
+                if (json['sucess']) {
+                    setshowAlertConfirmation(true);
+                    setTimeout(() => setshowAlertConfirmation(false), 3000); // ocultar alerta
+                    setTimeout(() => window.location.reload(), 3000);
+                }
+                else {
+                    console.log(`No se pudo actulizar informacion de la empresa`);
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+            }
+            catch (e) {
+                return;
+            }
         }
         else {
             alert('Es posible que exista un hora incorrecta o no válido');
@@ -74,17 +100,21 @@ export function UpdateSchedule({ excludeTimes, horario }) {
     };
 
     return (
-        <div className='GroupLabel'>
+        <div className='GroupLabel pr-10'>
             <span>Las personas pueden elegir la fecha y la hora de su cita en función del calendario que configures.</span>
             <span>CALENDARIO</span>
             <span>Elige los días y horarios disponibles para realizar citas en tu calendario.</span>
             {
                 valuesDefault.map((valor, index) => (
                     <div >
-                        <label>{valor['day_name']}</label>
-                        <input type="checkbox" defaultChecked={valor['value'] == 0 ? false : true} onClick={(evt) => { handleChangeCheckbox(index, evt); }} />
+                        <div className="flex items-center px-4 border border-gray-300 rounded-sm ">
+                            <label className="w-full py-4 ms-2 text-sm font-medium">{valor['day_name']}</label>
+                            <input className="w-2 h-2 rounded-sm"
+                                type="checkbox" defaultChecked={valor['value'] == 0 ? false : true} onClick={(evt) => { handleChangeCheckbox(index, evt); }} />
+                        </div>
+
                         <div className={valor['value'] == 0 ? 'nameGroup active' : 'nameGroup'}>
-                            <div className='GroupLabel'>
+                            <div className='GroupLabel pr-10'>
                                 <label>Desde</label>
                                 <DatePicker
                                     dateFormat="h:mm aa"
@@ -122,7 +152,7 @@ export function UpdateSchedule({ excludeTimes, horario }) {
                                 }
                             </div>
                         </div>
-                        <div className='businessContainer_Divider'></div>
+                        {/* <div className='businessContainer_Divider'></div> */}
                     </div>
                 ))
             }

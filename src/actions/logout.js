@@ -11,8 +11,7 @@ export async function logoutAction(){
     // delete tha user
     deleteItem({ key: "correo"});
     deleteItem({ key: "pwd"});
-    // deleteItem({ key: "tokenH"});
-    // deleteItem({ key: "BusinessCitaFix"});
+    deleteItem({ key: "dorsl"});
     deleteItem({ key: "UserCitaFix"});
     toast.success("Regresa pronto!");
     // return redirect

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-function AutocompleteInput({data, placeholder, setDireccionDos}) {
+function AutocompleteInput({data, placeholder, setList}) {
   const [inputValue, setInputValue] = useState('');
   const [suggestions, setSuggestions] = useState([]);
 
@@ -16,7 +16,7 @@ function AutocompleteInput({data, placeholder, setDireccionDos}) {
 
   const handleSuggestionClick = (suggestion) => {
     setInputValue(suggestion);
-    setDireccionDos(suggestion);
+    setList(suggestion);
     setSuggestions([]);
   };
 

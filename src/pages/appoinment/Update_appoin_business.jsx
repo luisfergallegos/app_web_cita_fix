@@ -144,35 +144,78 @@ export function UpdateAppoinBusiness() {
 
     }
 
-    const _buildConfirm = () => {
+    const _buildConfirm = async () => {
         if (bAcceder) {
             setbAcceder(false);
-            console.log('_buildConfirm');
-            console.log(cita.APOINMENT_ID);
-            console.log(cita.USER_ID);
-            console.log(cita.BUSSINESS_ID);
-            console.log(cita.USER_ID);
+
             var dateFormat = startDate.getMonth() + 1;
             var _selectedDate = `${startDate.getFullYear()}-${('0' + dateFormat).slice(-2)}-${startDate.getDate()}`;
-            console.log(`selectedDate ${_selectedDate}`);
-            console.log(`_selectedTime ${selectedTime}`);
             var anonimo = cita.ANONIMO.length === 0 ? '' : cita.ANONIMO;
-            console.log(`ANONIMO ${anonimo}`);
-            console.log(message);
-            console.log('1');
-            console.log(cita.DORSL);
-            // getDaysInactive();
-            setbAcceder(true);
+            
+            //Enviar por PUT
+            var options = {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(
+                    {
+                        'apoinment_id': cita.APOINMENT_ID,
+                        'user_id': cita.USER_ID,
+                        'bussiness_id': cita.BUSSINESS_ID,
+                        'usernotification_id': cita.USER_ID,
+                        'appointment_date': _selectedDate,
+                        'appointment_time': selectedTime,
+                        'anonimo': anonimo,
+                        'message': message,
+                        'estatus': '1',
+                        'dorsl': cita.DORSL
+                    })
+            }
+            try {
+                const response = await fetch(`${urlApi}appoin`, options);
+                const json = await response.json();
+                if (json['sucess'] == false) {    
+                    setIsOpenU(false);
+                    setbAcceder(true);
+                    getDaysInactive();                
+                    alert(`Ya no se encuentra disponible Fecha : ${_selectedDate} Hora : ${selectedTime} Corríjalo e inténtelo nuevamente.`);
+                    console.log(`Error al guardar cita.`);
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                else {
+                    navigate("/");
+                }
+            }
+            catch (e) {
+                setIsOpenU(false);
+                setbAcceder(true);
+                return;
+            }
         }
 
     };
 
-    const _buildCancelar = () => {
-        console.log('_buildCancelar');
-        console.log(cita.APOINMENT_ID);
-        console.log(cita.USER_ID);
-        console.log(cita.USER_NAME);
-        console.log('Usr');
+    const _buildCancelar = async () => {
+        //Enviar por DELETE
+        var options = {
+            method: 'DELETE',
+            headers: { 'Content-Type': 'application/json' }
+        }
+        try {
+            const response = await fetch(`${urlApi}appoin?apoinment_id=${cita.APOINMENT_ID}&usernotification_id=${cita.USER_ID}&dorsl=${cita.USER_NAME}&for_who=Usr`, options);
+            const json = await response.json();
+            if (json['sucess'] == false) {
+                setIsOpen(false);
+                console.log(`Error al cancelar cita.`);
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            else {
+                navigate("/");
+            }
+        }
+        catch (e) {
+            setIsOpen(false);
+            return;
+        }
     };
 
     const handleChangeMessage = evt => {
@@ -300,47 +343,69 @@ export function UpdateAppoinBusiness() {
 
             <div className='businessTitleContainer'>
                 <div className='businessTitleContainer--Name'>
-
                     <h4>{cita.ANONIMO == '' ? cita.USER_NAME : cita.ANONIMO.substring(0, cita.ANONIMO.indexOf(","))}</h4>
                     <h4>{cita.ANONIMO == '' ? '' : cita.ANONIMO.substring(cita.ANONIMO.indexOf(",") + 1, cita.ANONIMO.length)}</h4>
                     <p >{ConvertDateTime(cita.APPOINTMENT_DATE, cita.APPOINTMENT_TIME, 1)} -
                         {ConvertDateTime(cita.APPOINTMENT_DATE, cita.APPOINTMENT_TIME, 0)}</p>
-                    {cita.USER_PHONE == '' ?
-                        <div className='businessSubTitleContainer'
-                            style={{
-                                cursor: 'pointer'
-                            }}
-                            onClick={() => {
-                                if (navigator.platform.indexOf('iPhone') !== -1 || navigator.platform.indexOf('iPad') !== -1 || navigator.platform.indexOf('iPod') !== -1) {
-                                    location.href = `mailto:${cita.USER_EMAIL}&subject=Tu cita en ${cita.DORSL}`;
-                                } else {
-                                    window.open(`mailto:${cita.USER_EMAIL}&subject=Tu cita en ${cita.DORSL}`);
-                                }
-                            }}
-                        >
-                            <div className='businessSubTitleIcon'>
-                                <EnvelopeIcon />
+                    {
+                        cita.ANONIMO == '' ?
+                            (
+                                cita.USER_PHONE == '' ?
+                                    <div className='businessSubTitleContainer'
+                                        style={{
+                                            cursor: 'pointer'
+                                        }}
+                                        onClick={() => {
+                                            if (navigator.platform.indexOf('iPhone') !== -1 || navigator.platform.indexOf('iPad') !== -1 || navigator.platform.indexOf('iPod') !== -1) {
+                                                location.href = `mailto:${cita.USER_EMAIL}&subject=Tu cita en ${cita.DORSL}`;
+                                            } else {
+                                                window.open(`mailto:${cita.USER_EMAIL}&subject=Tu cita en ${cita.DORSL}`);
+                                            }
+                                        }}
+                                    >
+                                        <div className='businessSubTitleIcon'>
+                                            <EnvelopeIcon />
+                                        </div>
+                                        <p>{cita.USER_EMAIL}</p>
+                                    </div>
+                                    :
+                                    <div className='businessSubTitleContainer'
+                                        style={{
+                                            cursor: 'pointer'
+                                        }}
+                                        onClick={() => {
+                                            const cleanNumber = cita.USER_PHONE.replace(/\D/g, '');
+                                            if (navigator.platform.indexOf('iPhone') !== -1 || navigator.platform.indexOf('iPad') !== -1 || navigator.platform.indexOf('iPod') !== -1) {
+                                                window.open(`https://api.whatsapp.com/send/?phone=${cleanNumber}&text=Hola, ¿Tengo una duda sobre mi cita?&type=phone_number&app_absent=0`);
+                                            } else {
+                                                window.open(`https://api.whatsapp.com/send/?phone=${cleanNumber}&text=Hola, ¿Tengo una duda sobre mi cita?&type=phone_number&app_absent=0`);
+                                            }
+                                        }}
+                                    >
+                                        <div className='businessSubTitleIcon'>
+                                            <EnvelopeIcon />
+                                        </div>
+                                        <p>{cita.USER_PHONE}</p>
+                                    </div>
+                            )
+                            :
+                            <div className='businessSubTitleContainer'
+                                style={{
+                                    cursor: 'pointer'
+                                }}
+                                onClick={() => {
+                                    if (navigator.platform.indexOf('iPhone') !== -1 || navigator.platform.indexOf('iPad') !== -1 || navigator.platform.indexOf('iPod') !== -1) {
+                                        location.href = `mailto:${cita.ANONIMO.substring(cita.ANONIMO.indexOf(",") + 1, cita.ANONIMO.length)}&subject=Tu cita en ${cita.DORSL}`;
+                                    } else {
+                                        window.open(`mailto:${cita.ANONIMO.substring(cita.ANONIMO.indexOf(",") + 1, cita.ANONIMO.length)}&subject=Tu cita en ${cita.DORSL}`);
+                                    }
+                                }}
+                            >
+                                <div className='businessSubTitleIcon'>
+                                    <EnvelopeIcon />
+                                </div>
+                                <p>{cita.ANONIMO.substring(cita.ANONIMO.indexOf(",") + 1, cita.ANONIMO.length)}</p>
                             </div>
-                            <p>{cita.USER_EMAIL}</p>
-                        </div> :
-                        <div className='businessSubTitleContainer'
-                            style={{
-                                cursor: 'pointer'
-                            }}
-                            onClick={() => {
-                                const cleanNumber = cita.USER_PHONE.replace(/\D/g, '');
-                                if (navigator.platform.indexOf('iPhone') !== -1 || navigator.platform.indexOf('iPad') !== -1 || navigator.platform.indexOf('iPod') !== -1) {
-                                    window.open(`https://api.whatsapp.com/send/?phone=${cleanNumber}&text=Hola, ¿Tengo una duda sobre mi cita?&type=phone_number&app_absent=0`);
-                                } else {
-                                    window.open(`https://api.whatsapp.com/send/?phone=${cleanNumber}&text=Hola, ¿Tengo una duda sobre mi cita?&type=phone_number&app_absent=0`);
-                                }
-                            }}
-                        >
-                            <div className='businessSubTitleIcon'>
-                                <EnvelopeIcon />
-                            </div>
-                            <p>{cita.USER_PHONE}</p>
-                        </div>
                     }
 
                 </div>
@@ -467,10 +532,10 @@ export function UpdateAppoinBusiness() {
                                 var parts = cita.APPOINTMENT_DATE.split('-');
                                 var partsTime = cita.APPOINTMENT_TIME.split(':');
                                 var formattedDate = new Date(parts[0], parts[1] - 1, parts[2], partsTime[0], partsTime[1], partsTime[2]);
-                                if(startDate === ''){
+                                if (startDate === '') {
                                     alert(`Selecciona una fecha`);
                                 }
-                                else if(selectedTime === ''){
+                                else if (selectedTime === '') {
                                     alert(`Selecciona una hora`);
                                 }
                                 else if (selectedTime == cita.APPOINTMENT_TIME.substring(0, 5) && startDate != formattedDate) {

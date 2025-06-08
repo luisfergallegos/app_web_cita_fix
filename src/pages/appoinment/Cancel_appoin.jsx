@@ -54,18 +54,61 @@ export function CancelarAppoin() {
 
     }
 
-    const _buildConfirm = () => {
-        console.log('_buildConfirm');
-        console.log(cita.APOINMENT_ID);
-        setIsOpen(false);
+    const _buildConfirm = async () => {
+        //Enviar por DELETE
+        var options = {
+            method: 'DELETE',
+            headers: { 'Content-Type': 'application/json' }
+        }
+        try {
+            const response = await fetch(`${urlApi}appoin?apoinment_id=${cita.APOINMENT_ID}&usernotification_id=${cita.BUS_USER_ID}&dorsl=${cita.DORSL}&for_who=Bus`, options);
+            const json = await response.json();
+            if (json['sucess'] == false) {
+                setIsOpen(false);
+                console.log(`Error al cancelar cita.`);
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            else {
+                navigate("/");
+            }
+        }
+        catch (e) {
+            setIsOpen(false);
+            return;
+        }
     };
 
-    const _buildCalif = () => {
-        console.log('buildCalif');
-        console.log(cita.APOINMENT_ID);
-        console.log(comentario);
-        console.log(selectedRating);
-        setIsOpenC(false);
+    const _buildCalif = async () => {
+        //Enviar por POST
+        var options = {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(
+                {
+                    'user_id': cita.USER_ID,
+                    'bussiness_id': cita.BUSSINESS_ID,
+                    'apoinment_id': cita.APOINMENT_ID,
+                    'service_level': selectedRating,
+                    'comments': comentario
+                })
+        }
+        try {
+            const response = await fetch(`${urlApi}businessCalif`, options);
+            const json = await response.json();
+            if (json['sucess'] == false) {
+                setIsOpenC(false);
+                console.log(`Error al calificar cita.`);
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            else {
+                navigate("/");
+            }
+        }
+        catch (e) {
+            setIsOpenC(false);
+            return;
+        }
+
     };
 
     const handleRatingChange = (newRating) => {
@@ -117,7 +160,7 @@ export function CancelarAppoin() {
                         {ConvertDateTime(cita.APPOINTMENT_DATE, cita.APPOINTMENT_TIME, 0)}</p>
 
                     {cita.BUS_USER_PHONE &&
-                        <div className='businessSubTitleContainer'
+                        <div className='businessSubTitleContainer inline-flex'
                             style={{
                                 cursor: 'pointer'
                             }}
@@ -130,9 +173,7 @@ export function CancelarAppoin() {
                                 }
                             }}
                         >
-                            <div className='businessSubTitleIcon'>
-                                <EnvelopeIcon />
-                            </div>
+                            <EnvelopeIcon />
                             <p>{cita.BUS_USER_PHONE}</p>
                         </div>
                     }

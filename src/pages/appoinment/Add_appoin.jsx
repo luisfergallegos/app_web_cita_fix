@@ -12,7 +12,6 @@ import { urlApi } from "../../styles/Constants.jsx";
 import { MapPinIcon, PhoneIcon, CalendarDaysIcon, CalendarDateRangeIcon } from '@heroicons/react/24/solid';
 import DatePicker from 'react-datepicker';
 import "react-datepicker/dist/react-datepicker.css";
-import AutocompleteInput from '../../components/AutocompleteInput.jsx';
 //import moment from 'moment';
 
 // loader
@@ -133,7 +132,7 @@ export function AddAppoin() {
             </label>
         ),
     );
-    
+
     function SelectDateTime(date) {
         var tempcita = [];
         for (let index = 0; index < citas.length; index++) {
@@ -155,39 +154,54 @@ export function AddAppoin() {
             if (bAcceder) {
                 setbAcceder(false);
                 if (bMostrarAddress) {
-                    console.log(`userId ${location.state.userId}`);
-                    console.log(`business.id ${BUSSINESS_ID}`);
-                    console.log(`business.userId ${USER_ID}`);
-                    var dateFormat = startDate.getMonth() + 1;
-                    console.log(`selectedDate ${startDate.getFullYear()}-${('0' + dateFormat).slice(-2)}-${startDate.getDate()}`);
-                    console.log(`_selectedTime ${selectedTime}`);
-                    console.log(`  `);
-                    console.log(`sMessage ${message}`);
-                    console.log(`userName ${location.state.userName}`);
-                    console.log(`Bus`);
-                    console.log(`direccionUno ${direccionUno}`);
-                    console.log(`direccionDos ${direccionDos}`);
-                    console.log(`codigoPostal ${codigoPostal}`);
-                    console.log(`ciudad ${ciudad}`);
-                    console.log(`estado ${estado}`);
-                    setbAcceder(true);
-                    setIsOpen(false);
-
-                }
-                else {
-                    /* console.log(`userId ${location.state.userId}`);
-                    console.log(`business.id ${BUSSINESS_ID}`);
-                    console.log(`business.userId ${USER_ID}`); */
                     var dateFormat = startDate.getMonth() + 1;
                     var _selectedDate = `${startDate.getFullYear()}-${('0' + dateFormat).slice(-2)}-${startDate.getDate()}`;
-                    /* console.log(`selectedDate ${_selectedDate}`);
-                    console.log(`_selectedTime ${selectedTime}`);
-                    console.log(`  `);
-                    console.log(`sMessage ${message}`);
-                    console.log(`userName ${location.state.userName}`);
-                    console.log(`Bus`);*/
                     setbAcceder(true);
-
+                    //Enviar por POST
+                    var options = {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(
+                            {
+                                'user_id': location.state.userId,
+                                'bussiness_id': BUSSINESS_ID,
+                                'usernotification_id': USER_ID,
+                                'appointment_date': _selectedDate,
+                                'appointment_time': selectedTime,
+                                'anonimo': '',
+                                'message': message,
+                                'estatus': '0',
+                                'dorsl': location.state.userName,
+                                'for_who': 'Bus',
+                                "address_first": direccionUno,
+                                "address_second": direccionDos,
+                                "postal_code": codigoPostal,
+                                "city": ciudad,
+                                "state": estado
+                            })
+                    }
+                    try {
+                        const response = await fetch(`${urlApi}appoinAddress`, options);
+                        const json = await response.json();
+                        if (json['sucess'] == false) {
+                            setIsOpen(false);
+                            alert(`Ya no se encuentra disponible Fecha : ${_selectedDate} Hora : ${selectedTime} Corríjalo e inténtelo nuevamente.`);
+                            console.log(`Error al guardar cita.`);
+                            throw new Error(`HTTP error! status: ${response.status}`);
+                        }
+                        else {
+                            navigate("/");
+                        }
+                    }
+                    catch (e) {
+                        setIsOpen(false);
+                        return;
+                    }
+                }
+                else {
+                    var dateFormat = startDate.getMonth() + 1;
+                    var _selectedDate = `${startDate.getFullYear()}-${('0' + dateFormat).slice(-2)}-${startDate.getDate()}`;
+                    setbAcceder(true);
                     //Enviar por POST
                     var options = {
                         method: 'POST',
@@ -210,6 +224,7 @@ export function AddAppoin() {
                         const response = await fetch(`${urlApi}appoin`, options);
                         const json = await response.json();
                         if (json['sucess'] == false) {
+                            setIsOpen(false);
                             alert(`Ya no se encuentra disponible Fecha : ${_selectedDate} Hora : ${selectedTime} Corríjalo e inténtelo nuevamente.`);
                             console.log(`Error al guardar cita.`);
                             throw new Error(`HTTP error! status: ${response.status}`);
@@ -217,12 +232,11 @@ export function AddAppoin() {
                         else {
                             navigate("/");
                         }
-
                     }
                     catch (e) {
+                        setIsOpen(false);
                         return;
                     }
-
                 }
             }
         }
@@ -236,7 +250,28 @@ export function AddAppoin() {
         var tempcita = [];
         if (evt.target.value.length === 5) {
             setCodigoPostal(value);
-            const json = fetchData("postalCode") ?? [];
+            //Solicitar por GET
+            try {
+                const response = await fetch(`${urlApi}postalCode?d_codigo=${value}`);
+                if (!response.ok) {
+                    console.log(`Error getting getDaysInactive.`);
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                const json = await response.json();
+                console.log(json['data']);
+                setEstado(json['data'][0].d_estado);
+                setCiudad(json['data'][0].d_ciudad);
+                var tempcita = [];
+                for (let index = 0; index < json['data'][0].d_asentas.length; index++) {
+                    var element = json['data'][0].d_asentas[index];
+                    tempcita.push(element.d_asenta);
+                }
+                setColonias(tempcita);
+            }
+            catch (e) {
+                return;
+            }
+            /* const json = fetchData("postalCode") ?? [];
             setEstado(json['data'][0].d_estado);
             setCiudad(json['data'][0].d_ciudad);
             var tempcita = [];
@@ -244,30 +279,23 @@ export function AddAppoin() {
                 var element = json['data'][0].d_asentas[index];
                 tempcita.push(element.d_asenta);
             }
-            setColonias(tempcita);
+            setColonias(tempcita); */
         }
         else {
             setColonias(tempcita);
             setEstado('');
             setCiudad('');
         }
-        //Solicitar por GET
-        /* try {
-            const response = await fetch(`${urlApi}postalCode?d_codigo=${value}`);
-            if (!response.ok) {
-                console.log(`Error getting getDaysInactive.`);
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-            const json = await response.json();
-        }
-        catch (e) {
-            return;
-        } */
     };
 
     const handleChange = evt => {
         const value = evt.target.value;
         setDireccionUno(value);
+    };
+
+    const handleChangeColonia = evt => {
+        const value = evt.target.value;
+        setDireccionDos(value);
     };
 
     const handleChangeMessage = evt => {
@@ -427,12 +455,12 @@ export function AddAppoin() {
             <div className='businessContainer_Divider'></div>
 
             <div className='businessTitle'>
-                <div style={{display:'flex', justifyItems: 'center', alignItems: 'center', marginRight:'20px'}}>
-                    <h4 style={{ marginRight:'20px'}}>{bMostrarAddress ? '¿Cuál es la dirección?' : 'Visita a domicilio'}</h4>
-                <label className="switch">
-                    <input type="checkbox" onClick={ModMostrarAddres}/>
-                    <span class="slider round"></span>
-                </label>
+                <div style={{ display: 'flex', justifyItems: 'center', alignItems: 'center', marginRight: '20px' }}>
+                    <h4 style={{ marginRight: '20px' }}>{bMostrarAddress ? '¿Cuál es la dirección?' : 'Visita a domicilio'}</h4>
+                    <label className="switch">
+                        <input type="checkbox" onClick={ModMostrarAddres} />
+                        <span class="slider round"></span>
+                    </label>
                 </div>
                 <div className={bMostrarAddress ? 'businessContainer_Address' : 'businessContainer_Address active'} >
                     <div className='AddressForm-group'>
@@ -449,7 +477,14 @@ export function AddAppoin() {
                     </div>
                     <div className='AddressForm-group'>
                         <label>Colonia</label>
-                        <AutocompleteInput data={colonias} placeholder={'Colonia'} setDireccionDos={setDireccionDos} />
+                        <input list="optionsList" type="text" placeholder='Colonia'
+                            disabled={colonias.length == 0 ? true : false}
+                            onChange={handleChangeColonia} required ></input>
+                        <datalist id="optionsList">
+                            {colonias.map((option, index) => (
+                                <option key={index} value={option} />
+                            ))}
+                        </datalist>
                     </div>
                     <div className='AddressForm-group'>
                         <label>Calle / Número externo</label>

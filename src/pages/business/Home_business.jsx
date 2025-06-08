@@ -1,7 +1,7 @@
 // rrd imports
 import { useLoaderData, useNavigate } from 'react-router-dom';
 import { dateSpanish, fetchData } from "../../Wrapper.js";
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState } from "react";
 // assets
 import './Find_business.css';
 import { ChevronRightIcon, UserCircleIcon, UserPlusIcon } from '@heroicons/react/24/solid';

@@ -83,57 +83,54 @@ export function FindUser() {
 
     return (
         <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-orange-600 to-orange-800 px-4">
-            <div className="bg-white rounded-3xl shadow-xl p-10 max-w-2xl w-full text-center animate-fade-in-up">      
-                <div className='searchContainer'>
-                    <div className="searchicon"><MagnifyingGlassIcon /></div>
-                    <input type="text" name="searchText" placeholder="Buscar ..." onChange={handleChange} />
-                </div>
-            {
-                searchText !== '' ? (
-                    <div>
-                        {
-                            usuarios &&
-                            filteredNames.map((index) =>
-                            (
-                                <div className="flex justify-between bg-white-100 rounded-2xl shadow-2xl overflow-hidden scale-95 hover:scale-100 transition-all duration-300"
-                                        key={index['USER_ID']}
-                                        onClick={() => {
-                                            navigate("/addAppoinBusiness", { state: { userCita: index, businessId: sUserCitaFix['BUSSINESS_ID'], dorsl: sUserCitaFix['DORSL']  } });
-                                        }}  >
-                                        {
-                                            index['PHOTO'] === null ? <UserCircleIcon width={80} 
-                                                color={'#fc6500'} /> :
-                                                <img id='imgS' src={'data:image/jpeg;base64,' + arrayBufferToBase64(index['PHOTO'].data)} />
-                                        }
-                                        <div className="grid">
-                                            <label className="text-2xl font-bold text-black">{index['first_name']} {index['last_name']} </label>
-                                            <label className="text-1xl font-bold text-gray-400">{index['email']} </label>
-                                        </div>
-                                        <ChevronRightIcon width={30} color="black" />
-                                    </div>
-                            ))
-                        }
+            <div className="bg-white rounded-3xl shadow-xl p-10 max-w-md w-full text-center animate-fade-in-up">
+                <div className="flex justify-center mb-4 relative">
+                    <input
+                        id='searchInput'
+                        type="text"
+                        onChange={handleChange}
+                        placeholder="Buscar ..."
+                        className="w-full p-2 border border-gray-300 rounded-lg bg-orange-600 text-white"
+                    />
+                    <div className='absolute inset-y-0 right-3 flex items-center text-white'>
+                        <MagnifyingGlassIcon className="w-5 h-5" />
                     </div>
-                )
-                    :
-                    (
-                        <div className="space-y-4">
-                            <button
-                                onClick={() => 
+                </div>
+                {
+                    searchText != '' ? (usuarios &&
+                        filteredNames.map((index) => (
+                            <div className="inline-flex bg-white p-4 border border-gray-300 rounded-md mb-2 scale-95 hover:scale-100"
+                                key={index.USER_ID}
+                                onClick={() => {
+                                    navigate("/addAppoinBusiness", { state: { userCita: index, businessId: sUserCitaFix['BUSSINESS_ID'], dorsl: sUserCitaFix['DORSL'] } });
+                                }}
+                            >
                                 {
+                                    index['PHOTO'] === null ? <UserCircleIcon width={40} color={'#fc6500'} /> :
+                                        <img id='imgS' src={'data:image/jpeg;base64,' + arrayBufferToBase64(index['PHOTO'].data)} />
+                                }
+                                <div>
+                                    <h2 className="font-bold text-black">{index['first_name']} {index.last_name}</h2>
+                                    <p className="text-gray-400">{`${index.email.substring(0, index.email.indexOf("@") + 1)}..`}</p>
+                                </div>
+                            </div>
+                        ))) :
+                        <div className='flex justify-center mb-4'>
+                            <button
+                                onClick={() => {
                                     navigate("/addAppoinBusinessAnon", { state: { userId: sUserCitaFix['USER_ID'], businessId: sUserCitaFix['BUSSINESS_ID'], dorsl: sUserCitaFix['DORSL'] } });
                                 }
                                 }
-                                className="flex bg-orange-500 hover:bg-orange-600 text-white font-semibold py-2 px-6 rounded-md shadow-md transition"
+                                className="bg-orange-500 hover:bg-orange-600 text-white font-semibold px-5 py-2.5 rounded-md shadow-md transition inline-flex items-center me-2 "
                             >
                                 <UserPlusIcon width={40} />
                                 Nuevo cliente
                             </button>
                         </div>
-                    )
-            }
+                }
             </div>
-        </div>);
+        </div>
+    );
 }
 
 export default FindUser;

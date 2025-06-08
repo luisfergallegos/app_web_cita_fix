@@ -119,6 +119,7 @@ export function AddAppoinBusinesss() {
                     const response = await fetch(`${urlApi}appoin`, options);
                     const json = await response.json();
                     if (json['sucess'] == false) {
+                        setIsOpen(false);
                         alert(`Ya no se encuentra disponible Fecha : ${_selectedDate} Hora : ${selectedTime} Corríjalo e inténtelo nuevamente.`);
                         console.log(`Error al guardar cita.`);
                         throw new Error(`HTTP error! status: ${response.status}`);
@@ -129,6 +130,7 @@ export function AddAppoinBusinesss() {
 
                 }
                 catch (e) {
+                    setIsOpen(false);
                     return;
                 }
                 setbAcceder(true);

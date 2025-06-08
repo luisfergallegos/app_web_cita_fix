@@ -108,7 +108,7 @@ export function FindBusiness() {
                 }
                 const json = await response.json();
                 setEmpresas(json['data']);
-                setIndex(Math.floor(Math.random() * empresas.length));
+                setIndex(Math.floor(Math.random() * json['data'].length));
                 setLoading(false);
             }
             catch (e) {
@@ -150,7 +150,7 @@ export function FindBusiness() {
                     (
                         <div className='buildPageFindBusinessContainer'>
                             <img id='search_grey' src={illustration} alt="Planners Day" width={350} />
-                            <p>¿Estás en busca de un servicio nó visita?</p>
+                            <p>¿Estás en busca de un servicio ó visita?</p>
                             <p>Dirígete a la parte superior para iniciar la búsqueda.</p>
                             <p>Al seleccionar alguna de las opciones podrás generar una cita la cuál será notificada al instante.</p>
                             <div className='buildListRandom'>
@@ -199,7 +199,8 @@ export function FindBusiness() {
                     </>
                     : null
             }
-        </div>);
+        </div>
+    );
 }
 
 export default FindBusiness;

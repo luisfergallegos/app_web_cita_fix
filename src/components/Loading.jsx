@@ -5,7 +5,11 @@ import './Loading.css';
 export function Loading() {
     return (
         <div className="LoadingContainer">
-            <h1>Loading....</h1>
+            <div>
+                <div className='circle'>
+                </div>
+                <h1>Cargando...</h1>
+            </div>
         </div>);
 }
 

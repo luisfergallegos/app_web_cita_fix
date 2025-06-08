@@ -1,6 +1,7 @@
 // rrd imports
 import { NavLink, useNavigate, Form } from 'react-router-dom';
 import { fetchData } from "../Wrapper.js";
+import { useState } from 'react';
 // Library
 import { toast } from "react-toastify";
 import { ChevronRightIcon, UserCircleIcon, ChevronLeftIcon, 
@@ -13,47 +14,49 @@ import User from "../assets/e.png";
 import logo from "../assets/icon_white.png";
 import './Sidebar.css';
 
-const sUserCitaFix = fetchData("UserCitaFix") ?? [];
-const bPhotoUser = fetchData("photoUser") ?? [];
-
-const linksArray = [
-    {
-        label: 'Home',
-        sublabel: '',
-        icon: <HomeIcon />,
-        to: "/home"
-    },
-    {
-        label:
-            (sUserCitaFix['first_name'] === "" || sUserCitaFix.length === 0
-                ? 'Agrega tu nombre'
-                : sUserCitaFix['first_name']),
-        sublabel: 'Ver tu perfil',
-        icon: (bPhotoUser['data'] === null || bPhotoUser.length === 0
-            ? <UserCircleIcon />
-            : <img src={User} width={50} height={50} />),
-        to: "viewUpdateUser"
-    },
-    {
-        label: (sUserCitaFix['DORSL'] === '' || sUserCitaFix.length === 0
-            ? 'Agrega tu empresa'
-            : sUserCitaFix['DORSL']),
-        sublabel: (sUserCitaFix['DORSL'] === '' ? '' : 'Ver tu empresa'),
-        icon: <BuildingStorefrontIcon />,
-        to: (sUserCitaFix['DORSL'] === '' || sUserCitaFix.length === 0
-            ? "registerBusiness"
-            : "viewUpdateBusiness") 
-    },
-    {
-        label: "Notificaiones",
-        sublabel: "Ver tus notificaciones",
-        icon: <BellIcon />,
-        to: "notification"
-    }
-
-];
 
 export function Sidebar({ sidebarOpen, setSidebarOpen }) {
+    const sUserCitaFix = fetchData("UserCitaFix") ?? [];
+    const bPhotoUser = fetchData("photoUser") ?? [];
+    const dorsl = fetchData("dorsl") ?? '';
+
+    const [linksArray, setLinksArray] = useState([
+        {
+            label: 'Home',
+            sublabel: '',
+            icon: <HomeIcon />,
+            to: "/home"
+        },
+        {
+            label:
+                (sUserCitaFix['first_name'] === "" || sUserCitaFix.length === 0
+                    ? 'Agrega tu nombre'
+                    : sUserCitaFix['first_name']),
+            sublabel: 'Ver tu perfil',
+            icon: (bPhotoUser['data'] === null || bPhotoUser.length === 0
+                ? <UserCircleIcon />
+                : <img src={User} width={50} height={50} />),
+            to: "viewUpdateUser"
+        },
+        {
+            label: (dorsl == '' || sUserCitaFix.length === 0
+                ? 'Agrega tu empresa'
+                : dorsl),
+            sublabel: (dorsl === '' ? '' : 'Ver tu empresa'),
+            icon: <BuildingStorefrontIcon />,
+            to: (dorsl == '' || sUserCitaFix.length === 0
+                ? "registerBusiness"
+                : "viewUpdateBusiness") 
+        },
+        {
+            label: "Notificaiones",
+            sublabel: "Ver tus notificaciones",
+            icon: <BellIcon />,
+            to: "notification"
+        }
+
+    ]);
+
     const ModSidebaropen = () => {
         setSidebarOpen(!sidebarOpen);
     };
@@ -107,11 +110,7 @@ export function Sidebar({ sidebarOpen, setSidebarOpen }) {
             <div className='Divider' ></div>
             <div className="LogoutContainer">
                 <div className="Logouticon"><ArrowRightStartOnRectangleIcon/></div>
-                {sidebarOpen && <Form method="post" action="/logout" onSubmit={(event) => {
-                        if(!confirm("¿Desea cerrar sesión?")){
-                            event.preventDefault();
-                        }
-                    }}>
+                {sidebarOpen && <Form method="post" action="/logout" >
                         <button type="submit" id="LogoutButton" >
                             Cerrar sesión
                         </button>

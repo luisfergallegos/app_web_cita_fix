@@ -13,3 +13,9 @@
     }
 
 }
+
+@media (max-width: 575px) {
+    .sidebarState {
+        grid-template-columns: 45px auto;
+    }
+}

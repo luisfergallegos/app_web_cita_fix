@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { urlApi } from '../../styles/Constants';
 import {
   LockClosedIcon,
   UserIcon,
@@ -18,48 +19,66 @@ export default function RegisterUser() {
   const [userName, setUserName] = useState('');
   const [userLastName, setUserLastName] = useState('');
   const [errorMsg, setErrorMsg] = useState('');
+  const [showAlert, setShowAlert] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [showAlertConfirmation, setshowAlertConfirmation] = useState(false);
   const navigate = useNavigate();
 
-  const validateAndRegister = (e) => {
+  const validateAndRegister = async (e) => {
     e.preventDefault();
 
     if (!userName || !userLastName || !userEmail || !userPass) {
       setErrorMsg('Completa todos los campos.');
+      setShowAlert(true);
+      setTimeout(() => setShowAlert(false), 3000); // ocultar alerta
       return;
     }
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(userEmail)) {
       setErrorMsg('Correo electrónico inválido.');
+      setShowAlert(true);
+      setTimeout(() => setShowAlert(false), 3000); // ocultar alerta
       return;
     }
 
     if (userPass.length < 6) {
       setErrorMsg('La contraseña debe tener al menos 6 caracteres.');
+      setShowAlert(true);
+      setTimeout(() => setShowAlert(false), 3000); // ocultar alerta
       return;
     }
 
-    setErrorMsg('');
+    //Enviar por POST
+    var options = {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(
+        {
+          'email': userEmail,
+          'first_name': userName,
+          'last_name': userLastName,
+          'firebase_id': 'Web',
+          'session_type': 'user',
+          'password': userPass
+        })
+    }
     try {
-      /* restDatasource.registerUser(
-          <correo>,
-          <name>,
-          <lastName>,
-          'Web',
-          'user',
-          <pwd>); */
-      console.log(`correo ${userEmail}`);
-      console.log("name " + userName);
-      console.log("lastName " + userLastName);
-      console.log("Web ");
-      console.log("user ");
-      console.log("pwd " + userPass);
-      console.log({ userEmail, userPass, userName, userLastName });
-      navigate('/home', { replace: true });
+      const response = await fetch(`${urlApi}user`, options);
+      if (response.status == 500) {
+        setErrorMsg('Dirección de correo electrónico ya existe o no válido. Corríjalo e inténtelo nuevamente.');
+        setShowAlert(true);
+        setTimeout(() => setShowAlert(false), 3000); // ocultar alerta
+      }
+      else if (response.status == 200) {          
+          setshowAlertConfirmation(true);
+          setTimeout(() => setshowAlertConfirmation(false), 3000); // ocultar alerta
+          navigate('/', { replace: true });
+        }
+
     }
     catch (e) {
-      throw new Error("There was a problem creating your account.");
+      return;
     }
   };
 
@@ -72,9 +91,14 @@ export default function RegisterUser() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-orange-600 to-orange-800 flex items-center justify-center px-4 relative overflow-hidden">
       {/* Alerta centrada */}
-      {errorMsg && (
+      {showAlert && (
         <div className="absolute top-6 bg-red-600 text-white px-6 py-3 rounded-lg shadow-lg text-sm animate-bounce z-50">
           {errorMsg}
+        </div>
+      )}
+      {showAlertConfirmation && (
+        <div className="absolute top-6 bg-green-600 text-white px-6 py-3 rounded-lg shadow-lg text-sm animate-bounce z-50">
+          Registro completo
         </div>
       )}
 

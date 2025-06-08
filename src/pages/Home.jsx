@@ -110,7 +110,7 @@ export function Home() {
                         index['ESTATUS'] == '1' ? '#32325d' :
                           index['ESTATUS'] == '3' ? '#4472C4' : 'grey'
                       } /> :
-                      <img id="imgS" src={'data:image/jpeg;base64,' + arrayBufferToBase64(index['BUS_PHOTO'].data)}/>
+                      <img id="imgSH" src={'data:image/jpeg;base64,' + arrayBufferToBase64(index['BUS_PHOTO'].data)}/>
                   }
                   <div className="grid">
                     <label className="text-2xl font-bold text-black">{index['DORSL']} </label>

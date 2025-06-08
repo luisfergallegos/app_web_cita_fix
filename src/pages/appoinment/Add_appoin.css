@@ -7,6 +7,7 @@
         font-weight: bold;
         margin-bottom: 30px;
         color: var(--second);
+        margin-left: 60px;
     }
 }
 
@@ -54,7 +55,7 @@
 .businessSubTitleContainer {
     width: 100%;
     display: grid;
-    grid-template-columns: 3% 97%;
+    grid-template-columns: 6% 94%;
     justify-content: center;
     align-items: center;
 
@@ -62,6 +63,11 @@
         font-size: 15px;
         color: gray;
         margin-left: 10px;
+    }
+
+    svg {
+        width: 40px;
+        color: var(--second);
     }
 }
 
@@ -395,11 +401,15 @@ input:checked+.slider:before {
         display: flex;
 
         #store {
-            width: 100px;
+            width: 400px;
         }
 
         img {
-            width: 100px;
+            width: 300px;
+        }
+
+        svg {
+            width: 130px;
         }
     }
 
@@ -419,9 +429,14 @@ input:checked+.slider:before {
     }
 
     .businessSubTitleContainer {
-        height: 100%;
+        height: 20%;
         width: 100%;
-        grid-template-columns: 10% 90%;
+        grid-template-columns: 3% 97%;
+
+        svg {
+            width: 20px;
+            color: var(--second);
+        }
     }
 
     .businessTitle {

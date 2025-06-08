@@ -33,6 +33,7 @@
     display: flex;
     align-items: center;
     justify-items: center;
+
     width: 100%;
 
 
@@ -124,6 +125,16 @@
         height: 32px;
     }
 
+    input:required:invalid {
+        border: 2px solid red;
+    }
+
+    input:disabled {
+        border: 2px solid salmon;
+        background: #999999;
+        color: #fff;
+    }
+
     span {
         margin-left: 10px;
     }
@@ -146,8 +157,16 @@
         outline: none;
         transition: transform 80ms ease-in;
         color: white;
-        background: var(--eighth);
+        background: #f26422;
         margin-top: 10px;
+    }
+
+    button:disabled,
+    button[disabled] {
+        border: 1px solid #999999;
+        background-color: #616161;
+        color: white;
+        cursor: auto;
     }
 
     .searchicon {
@@ -174,8 +193,12 @@
             width: 90%;
             outline: none;
         }
+
+
     }
 }
+
+
 
 #imgPHOTO {
     object-fit: cover;
@@ -183,6 +206,8 @@
     width: 200px;
     height: 200px;
 }
+
+
 
 @media (max-width: 575px) {
 

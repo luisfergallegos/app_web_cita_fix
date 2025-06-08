@@ -18,12 +18,13 @@ export function mainLoader() {
 function Main() {
   const { sCorreo, sPassword } = useLoaderData();
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  
   return (
     <>
-      { sCorreo && sPassword ? 
-        <div className={sidebarOpen?"sidebarState active":"sidebarState"}>
-              <Sidebar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
-              <Outlet />
+      {sCorreo && sPassword ?
+        <div className={sidebarOpen ? "sidebarState active" : "sidebarState"}>
+          <Sidebar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
+          <Outlet />
         </div> : <Outlet />
       }
     </>

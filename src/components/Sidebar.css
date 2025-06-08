@@ -30,7 +30,7 @@
     cursor: pointer;
 }
 
-.SidebarContainer #sidebar  {
+.SidebarContainer #sidebar {
     position: absolute;
     top: 28px;
     right: -18px;
@@ -158,6 +158,18 @@
     width: 100%;
     background: var(--fourth);
     margin: 24px 0;
+}
+
+@media (max-width: 575px) {
+    .LinkContainer .Links .Linkicon {
+        padding: 4px 8px;
+        width: 30px;
+    }
+
+    .LogoutContainer .Logouticon {
+        padding: 4px 8px;
+        width: 30px;
+    }
 }
 
 /* .Menu {
