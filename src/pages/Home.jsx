@@ -91,7 +91,7 @@ export function Home() {
         {
           citas.length > 0 ? (
             <div>
-              <h2 className="text-5xl font-bold text-orange-600 mb-2">{citas.length == 1
+              <h2 className="text-5xl font-bold text-orange-600 mb-8">{citas.length == 1
                 ? `${citas.length} cita`
                 : `${citas.length} citas`}</h2>
 

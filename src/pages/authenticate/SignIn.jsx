@@ -59,8 +59,8 @@ export default function Login() {
         if (json['sucess']) {
           localStorage.setItem("correo", '');
           localStorage.setItem("pwd", '');
-          localStorage.setItem("tokenH", '');
-          localStorage.setItem("BusinessCitaFix", '');
+          // localStorage.setItem("tokenH", '');
+          // localStorage.setItem("BusinessCitaFix", '');
           localStorage.setItem("UserCitaFix", '');
 
           localStorage.setItem("correo", JSON.stringify(email));
@@ -75,6 +75,8 @@ export default function Login() {
             //obtener nombre
             localStorage.setItem("UserCitaFix", JSON.stringify(json['data']));
             var userName = json['data']['first_name'];
+            var dorsl = json['data']['DORSL'];
+            localStorage.setItem("dorsl", JSON.stringify(dorsl));
             navigate('/', { replace: true }); // <-- redirect
             setLoading(false);
             return toast.success(`Bienvenido, ${userName}`);
