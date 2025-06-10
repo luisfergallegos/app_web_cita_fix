@@ -7,12 +7,18 @@ import {
   EyeIcon,
   EyeSlashIcon,
 } from "@heroicons/react/24/solid";
-import { useNavigate, NavLink } from "react-router-dom";
+import { useLoaderData, useNavigate, NavLink } from "react-router-dom";
 import { fetchData } from "../../Wrapper";
 
+// loader
+export function registerUserLoader() {
+    const sCorreo = fetchData("correo");
+    const sPassword = fetchData("pwd");
+    return { sCorreo, sPassword };
+}
+
 export default function RegisterUser() {
-  const sCorreo = fetchData("correo");
-  const sPassword = fetchData("pwd");
+  const { sCorreo, sPassword } = useLoaderData();
 
   const [userEmail, setUserEmail] = useState('');
   const [userPass, setUserPass] = useState('');

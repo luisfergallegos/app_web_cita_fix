@@ -11,7 +11,7 @@ import ViewUpdateUser, { viewUpdateUserLoader } from "./pages/register_user/View
 import ViewUpdateBusiness, { viewUpdateBusinessLoader } from "./pages/register_business/View_update_business.jsx";
 import FindBusiness, { findBusinessLoader } from "./pages/business/Find_business.jsx";
 import Notification, { notificationLoader } from "./pages/Notification.jsx";
-import RegisterUser from "./pages/register_user/Register_user.jsx";
+import RegisterUser, { registerUserLoader } from "./pages/register_user/Register_user.jsx";
 import LoginForm, { loginFormLoader } from "./pages/Login";
 import Error from "./pages/Error.jsx";
 import AddAppoin, { AddAppoinLoader } from './pages/appoinment/Add_appoin.jsx';
@@ -48,8 +48,8 @@ const router = createBrowserRouter([
       {
         path: "registerUser",
         element: <RegisterUser />,
-        /*loader: registerUserLoader,
-        action: expensesAction, */
+        loader: registerUserLoader,
+        /*action: expensesAction, */
         errorElement: <Error />
       },
 
