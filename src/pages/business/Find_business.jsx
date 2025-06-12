@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { MagnifyingGlassIcon, XMarkIcon as CloseIcon } from "@heroicons/react/24/solid";
 import { CardBusiness } from "../../components/CardBusiness";
-import illustration from "../../assets/schedule_meeting.svg;
+import illustration from "../src/assets/schedule_meeting.svg;
 import Store from "../../assets/business.png";
 
 export default function FindBusiness() {
