@@ -6,7 +6,7 @@ import { createBrowserRouter, RouterProvider, BrowserRouter } from "react-router
 import Main, { mainLoader } from "./layouts/Main.jsx";
 
 //Buscador
-import FindBusiness, { findBusinessLoader } from "./pages/business/Find_business.jsx";
+//import FindBusiness, { findBusinessLoader } from "./pages/business/Find_business.jsx";
 <Route path="/buscador" element={<FindBusiness />} loader={findBusinessLoader} />
 
 
@@ -14,7 +14,7 @@ import FindBusiness, { findBusinessLoader } from "./pages/business/Find_business
 import Home, { homeLoader } from "./pages/Home.jsx";
 import ViewUpdateUser, { viewUpdateUserLoader } from "./pages/register_user/View_update_user.jsx";
 import ViewUpdateBusiness, { viewUpdateBusinessLoader } from "./pages/register_business/View_update_business.jsx";
-//import FindBusiness, { findBusinessLoader } from "./pages/business/Find_business.jsx";
+import FindBusiness, { findBusinessLoader } from "./pages/business/Find_business.jsx";
 import Notification, { notificationLoader } from "./pages/Notification.jsx";
 import RegisterUser from "./pages/register_user/Register_user.jsx";
 import LoginForm, { loginFormLoader } from "./pages/Login";
