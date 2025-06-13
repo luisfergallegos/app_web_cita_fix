@@ -5,6 +5,11 @@ import { createBrowserRouter, RouterProvider, BrowserRouter } from "react-router
 // Layouts
 import Main, { mainLoader } from "./layouts/Main.jsx";
 
+//Buscador
+import FindBusiness, { findBusinessLoader } from "./pages/business/Find_business";
+<Route path="/buscador" element={<FindBusiness />} loader={findBusinessLoader} />
+
+
 // Routers
 import Home, { homeLoader } from "./pages/Home.jsx";
 import ViewUpdateUser, { viewUpdateUserLoader } from "./pages/register_user/View_update_user.jsx";
