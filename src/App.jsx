@@ -6,7 +6,7 @@ import { createBrowserRouter, RouterProvider, BrowserRouter } from "react-router
 import Main, { mainLoader } from "./layouts/Main.jsx";
 
 //Buscador
-import FindBusiness, { findBusinessLoader } from "./pages/business/Find_business";
+import FindBusiness, { findBusinessLoader } from "./pages/business/Find_business.jsx";
 <Route path="/buscador" element={<FindBusiness />} loader={findBusinessLoader} />
 
 
