@@ -1,21 +1,45 @@
 import { useState, useEffect } from "react";
+import { useLoaderData, useNavigate } from "react-router-dom";
 import { MagnifyingGlassIcon, XMarkIcon as CloseIcon } from "@heroicons/react/24/solid";
 import { CardBusiness } from "../../components/CardBusiness";
+import { fetchData } from "../../Wrapper";
 import illustration from "../../assets/schedule_meeting.svg";
 import Store from "../../assets/business.png";
 
+// Loader que se usa en App.jsx
+export function findBusinessLoader() {
+  const correo = fetchData("correo");
+  const pwd = fetchData("pwd");
+  const user = fetchData("UserCitaFix");
+  return { correo, pwd, user };
+}
+
 export default function FindBusiness() {
+  const { correo, pwd, user } = useLoaderData();
+  const navigate = useNavigate();
+
   const [searchText, setSearchText] = useState("");
   const [filteredNames, setFilteredNames] = useState([]);
   const [empresas, setEmpresas] = useState([]);
   const [indexEmp, setIndexEmp] = useState(null);
   const [isOpen, setIsOpen] = useState(false);
   const [qualifications, setQualifications] = useState([]);
-  const [userId, setUserId] = useState("123"); // ajustar según login
-  const [userName, setUserName] = useState("Juan"); // ajustar según login
+  const [userId, setUserId] = useState("");
+  const [userName, setUserName] = useState("");
 
-  // Simular empresas cargadas (reemplazá esto por tu fetch real)
   useEffect(() => {
+    // Redirección si no hay sesión
+    if (!correo || !pwd) {
+      navigate("/");
+    }
+
+    // Cargar user info desde loader
+    if (user) {
+      setUserId(user.user_id ?? "");
+      setUserName(user.first_name ?? "");
+    }
+
+    // Simular empresas (reemplazá con fetch real si querés)
     const mockEmpresas = [
       {
         BUSSINESS_ID: "1",
@@ -32,11 +56,11 @@ export default function FindBusiness() {
         PHOTO: null,
       },
     ];
+
     setEmpresas(mockEmpresas);
     setFilteredNames(mockEmpresas);
   }, []);
 
-  // Buscar empresas por nombre o categoría
   const handleChange = (e) => {
     const value = e.target.value;
     setSearchText(value);
