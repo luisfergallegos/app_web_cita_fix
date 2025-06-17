@@ -105,18 +105,24 @@ export default function FindBusiness() {
 
           {/* Círculo animado */}
           {showIndicator && (
-  <div className="absolute -top-5 right-0 flex flex-col items-end group z-10">
-    {/* Tooltip */}
-    <div className="mb-1 px-3 py-1 bg-gray-800 text-white text-xs rounded-lg shadow-lg opacity-90 group-hover:opacity-100 transition duration-300">
-      Escribe para buscar
-    </div>
+  <>
+    {/* Fondo tipo vidrio */}
+    <div className="fixed inset-0 bg-white/10 backdrop-blur-sm z-30 pointer-events-none" />
 
-    {/* Círculo */}
-    <span className="flex h-4 w-4 relative">
-      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-orange-400 opacity-75"></span>
-      <span className="relative inline-flex rounded-full h-4 w-4 bg-orange-500"></span>
-    </span>
-  </div>
+    {/* Indicador flotante */}
+    <div className="absolute -top-6 right-2 flex flex-col items-end group z-40">
+      {/* Tooltip */}
+      <div className="mb-2 px-4 py-2 bg-gray-900 text-white text-sm rounded-lg shadow-xl opacity-90 group-hover:opacity-100 transition">
+        ✨ Escribe para buscar un negocio
+      </div>
+
+      {/* Círculo animado */}
+      <span className="flex h-6 w-6 relative">
+        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-orange-400 opacity-75"></span>
+        <span className="relative inline-flex rounded-full h-6 w-6 bg-orange-500"></span>
+      </span>
+    </div>
+  </>
 )}
 
           
