@@ -6,7 +6,7 @@ import { fetchData } from "../../Wrapper";
 import illustration from "../../assets/schedule_meeting.svg";
 import Store from "../../assets/business.png";
 
-// Loader que se usa en App.jsx
+// Loader
 export function findBusinessLoader() {
   const correo = fetchData("correo");
   const pwd = fetchData("pwd");
@@ -26,20 +26,18 @@ export default function FindBusiness() {
   const [qualifications, setQualifications] = useState([]);
   const [userId, setUserId] = useState("");
   const [userName, setUserName] = useState("");
+  const [showIndicator, setShowIndicator] = useState(true);
 
   useEffect(() => {
-    // Redirección si no hay sesión
     if (!correo || !pwd) {
       navigate("/");
     }
 
-    // Cargar user info desde loader
     if (user) {
       setUserId(user.user_id ?? "");
       setUserName(user.first_name ?? "");
     }
 
-    // Simular empresas (reemplazá con fetch real si querés)
     const mockEmpresas = [
       {
         BUSSINESS_ID: "1",
@@ -62,8 +60,11 @@ export default function FindBusiness() {
   }, []);
 
   const handleChange = (e) => {
+    if (showIndicator) setShowIndicator(false);
+
     const value = e.target.value;
     setSearchText(value);
+
     if (value === "") {
       setFilteredNames(empresas);
     } else {
@@ -87,7 +88,7 @@ export default function FindBusiness() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-orange-600 to-orange-800 px-4 py-10">
       <div className="max-w-6xl mx-auto">
-        {/* Buscador */}
+        {/* Buscador con indicador */}
         <div className="relative mb-10">
           <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
             <MagnifyingGlassIcon className="h-5 w-5 text-gray-400" />
@@ -97,12 +98,23 @@ export default function FindBusiness() {
             name="searchText"
             value={searchText}
             onChange={handleChange}
+            onFocus={() => setShowIndicator(false)}
             placeholder="Buscar negocios o categorías..."
             className="w-full pl-10 pr-4 py-3 rounded-xl shadow-sm focus:ring-2 focus:ring-orange-400 outline-none text-gray-800 placeholder-gray-400"
           />
+
+          {/* Círculo animado */}
+          {showIndicator && (
+            <div className="absolute -top-3 -right-3">
+              <span className="flex h-4 w-4 relative">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-orange-400 opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-4 w-4 bg-orange-500"></span>
+              </span>
+            </div>
+          )}
         </div>
 
-        {/* Resultados o sugerencias */}
+        {/* Resultados o sugerencia */}
         {searchText !== "" ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {filteredNames.map((empresa) => (
@@ -154,7 +166,6 @@ export default function FindBusiness() {
                 >
                   <CloseIcon className="w-5 h-5" />
                 </button>
-                {/* Imagen */}
                 <div className="flex justify-center mb-4">
                   {indexEmp.PHOTO ? (
                     <img
