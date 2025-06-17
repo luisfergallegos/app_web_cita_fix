@@ -22,7 +22,7 @@ import FindUser, { findUserLoader } from './pages/register_user/Find_user.jsx';
 import AddAppoinBusinesss, { AddAppoinBusinesssLoader } from './pages/appoinment/Add_appoin_business.jsx';
 import AddAppoinBusinesssAnon, { AddAppoinBusinesssAnonLoader } from './pages/appoinment/Add_appoin_business_anon.jsx';
 import UpdateAppoinBusiness, { UpdateAppoinLoader } from './pages/appoinment/Update_appoin_business.jsx';
-
+import ViewBusiness, { ViewBusinessLoader } from './pages/business/View_business.jsx';
 // Actions
 import { logoutAction } from "./actions/logout.js";
 
@@ -138,6 +138,13 @@ const router = createBrowserRouter([
         path: "updateAppoinBusiness/:id",
         element: <UpdateAppoinBusiness />,
         loader: UpdateAppoinLoader,
+        /*action: expensesAction, */
+        errorElement: <Error />
+      },
+      {
+        path: "viewBusiness/:id",
+        element: <ViewBusiness />,
+        loader: ViewBusinessLoader,
         /*action: expensesAction, */
         errorElement: <Error />
       },

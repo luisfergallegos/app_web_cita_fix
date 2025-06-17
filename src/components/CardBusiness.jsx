@@ -7,7 +7,7 @@ import Store from "../assets/business.png";
 import { useNavigate } from 'react-router-dom';
 import { urlApi } from "../styles/Constants.jsx";
 
-function StarRating(maxRating) {
+/* function StarRating(maxRating) {
     const stars = [];
     var colors = 'grey_red_#ffbf00_orange_lightGreen_green'.split('_');
     for (let i = 1; i <= maxRating; i++) {
@@ -15,7 +15,9 @@ function StarRating(maxRating) {
             <StarIcon width={20} color={colors[maxRating - 1]} />);
     }
     return stars;
-}
+} */
+
+const StarRating = (stars) => '⭐'.repeat(stars);
 
 export function CardBusiness({ key, userId, userName, empresa, setIsOpen, setIndexEmp, setQualifications }) {
     const navigate = useNavigate();
@@ -42,12 +44,18 @@ export function CardBusiness({ key, userId, userName, empresa, setIsOpen, setInd
         setIndexEmp(empresa);
         try {
             const response = await fetch(`${urlApi}getBusCalif?bussiness_id=${empresa['BUSSINESS_ID']}`);
+            const json = await response.json();
+            if (json['sucess']) {                
+                setQualifications(json['data']);
+            }
+            else {
+                setQualifications([]);
+            }
             if (!response.ok) {
                 console.log(`Error getting empresas.`);
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
-            const json = await response.json();
-            setQualifications(json['data']);
+
         }
         catch (e) {
             return;
