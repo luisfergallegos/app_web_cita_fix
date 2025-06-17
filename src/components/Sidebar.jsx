@@ -7,7 +7,7 @@ import { toast } from "react-toastify";
 import { ChevronRightIcon, UserCircleIcon, ChevronLeftIcon, 
     BuildingStorefrontIcon, BellIcon, HomeIcon, 
     MagnifyingGlassIcon, ArrowRightStartOnRectangleIcon
- } from '@heroicons/react/24/solid';
+ } from '@heroicons/react/24/outline';
 // assents
 import MenuWhite from "../assets/menu_white.png";
 import User from "../assets/e.png";
