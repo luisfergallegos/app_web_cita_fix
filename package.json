@@ -3,8 +3,8 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
-
-  "homepage": "http://app.plannersday.com/","scripts": {
+  "homepage": "http://app.plannersday.com/",
+  "scripts": {
     "dev": "vite",
     "host": "vite --host",
     "build": "vite build",
