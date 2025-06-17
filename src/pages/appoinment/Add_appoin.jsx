@@ -1,3 +1,7 @@
+export function AddAppoinLoader() {
+  return null; //
+}
+
 import React, { useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import DatePicker from 'react-datepicker';
