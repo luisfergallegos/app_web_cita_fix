@@ -105,22 +105,20 @@ export default function FindBusiness() {
 
           {/* Círculo animado */}
           {showIndicator && (
-  <>
-    {/* Fondo vidrio suave */}
-    <div className="fixed inset-0 bg-white/20 backdrop-blur-sm z-30 pointer-events-none" />
-
-    {/* Indicador flotante con tooltip */}
-    <div className="absolute -top-6 right-2 flex flex-col items-end group z-40">
-      <div className="mb-2 px-4 py-2 bg-gray-900 text-white text-sm rounded-lg shadow-xl opacity-90 group-hover:opacity-100 transition">
-        ✨ Escribe para buscar un negocio
-      </div>
-      <span className="flex h-6 w-6 relative">
-        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-orange-400 opacity-75"></span>
-        <span className="relative inline-flex rounded-full h-6 w-6 bg-orange-500"></span>
-      </span>
+  <div className="absolute -top-5 right-0 flex flex-col items-end group z-10">
+    {/* Tooltip */}
+    <div className="mb-1 px-3 py-1 bg-gray-800 text-white text-xs rounded-lg shadow-lg opacity-90 group-hover:opacity-100 transition duration-300">
+      Escribe para buscar
     </div>
-  </>
+
+    {/* Círculo */}
+    <span className="flex h-4 w-4 relative">
+      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-orange-400 opacity-75"></span>
+      <span className="relative inline-flex rounded-full h-4 w-4 bg-orange-500"></span>
+    </span>
+  </div>
 )}
+
         </div>
 
         {/* Resultados o sugerencia */}
@@ -168,7 +166,7 @@ export default function FindBusiness() {
           <>
             <div className="fixed inset-0 bg-black bg-opacity-50 z-40"></div>
             <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-              <div className="bg-white rounded-2xl shadow-2xl max-w-lg w-full p-6 relative z-50 animate-fade-in-up">
+              <div className="bg-white rounded-2xl shadow-2xl max-w-lg w-full p-6 relative animate-fade-in-up">
                 <button
                   onClick={() => setIsOpen(false)}
                   className="absolute top-3 right-3 text-gray-500 hover:text-orange-500"
