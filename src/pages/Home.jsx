@@ -7,7 +7,7 @@ import { useEffect, useState } from "react";
 import illustration from "../assets/clock_green.svg";
 import Loaging from '../components/Loading.jsx';
 import { urlApi } from "../styles/Constants.jsx";
-import { BuildingStorefrontIcon, ChevronRightIcon, ClockIcon } from '@heroicons/react/24/solid';
+import { BuildingStorefrontIcon, ChevronRightIcon, ClockIcon } from '@heroicons/react/24/outline';
 import './Home.css';
 
 

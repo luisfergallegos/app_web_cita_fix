@@ -24,7 +24,7 @@ export function Sidebar({ sidebarOpen, setSidebarOpen }) {
         {
             label: 'Home',
             sublabel: '',
-            icon: <HomeIcon />,
+            icon: <HomeIcon className='w-8 h-8 md:w-10 md:h-10 lg:w-10 lg:h-10 ms:me-4 md:me-4 lg:me-4' />,
             to: "/home"
         },
         {
@@ -34,7 +34,7 @@ export function Sidebar({ sidebarOpen, setSidebarOpen }) {
                     : sUserCitaFix['first_name']),
             sublabel: 'Ver tu perfil',
             icon: (bPhotoUser['data'] === null || bPhotoUser.length === 0
-                ? <UserCircleIcon />
+                ? <UserCircleIcon className='w-8 h-8 md:w-10 md:h-10 lg:w-10 lg:h-10 ms:me-4 md:me-4 lg:me-4' />
                 : <img src={User} width={50} height={50} />),
             to: "viewUpdateUser"
         },
@@ -43,7 +43,7 @@ export function Sidebar({ sidebarOpen, setSidebarOpen }) {
                 ? 'Agrega tu empresa'
                 : dorsl),
             sublabel: (dorsl === '' ? '' : 'Ver tu empresa'),
-            icon: <BuildingStorefrontIcon />,
+            icon: <BuildingStorefrontIcon className='w-8 h-8 md:w-10 md:h-10 lg:w-10 lg:h-10 ms:me-4 md:me-4 lg:me-4' />,
             to: (dorsl == '' || sUserCitaFix.length === 0
                 ? "registerBusiness"
                 : "viewUpdateBusiness") 
@@ -51,7 +51,7 @@ export function Sidebar({ sidebarOpen, setSidebarOpen }) {
         {
             label: "Notificaiones",
             sublabel: "Ver tus notificaciones",
-            icon: <BellIcon />,
+            icon: <BellIcon className='w-8 h-8 md:w-10 md:h-10 lg:w-10 lg:h-10 ms:me-4 md:me-4 lg:me-4' />,
             to: "notification"
         }
 
@@ -68,9 +68,9 @@ export function Sidebar({ sidebarOpen, setSidebarOpen }) {
     return (
         <div className='SidebarContainer'>
             {sidebarOpen ? <button id="sidebar" onClick={ModSidebaropen}>
-                <ChevronLeftIcon />
+                <ChevronLeftIcon className='w-8 h-8 md:w-10 md:h-10 lg:w-10 lg:h-10' />
             </button> : <button id="sidebar" onClick={ModSidebaropen}>
-                <ChevronRightIcon />
+                <ChevronRightIcon className='w-8 h-8 md:w-10 md:h-10 lg:w-10 lg:h-10' />
             </button>}
             <div className='Logocontent'>
                 <div className="imgcontent">
@@ -85,7 +85,7 @@ export function Sidebar({ sidebarOpen, setSidebarOpen }) {
             <div className='LinkContainer'>
             <NavLink to='findBusiness'
                         className={({ isActive }) => `Links${isActive ? ` active` : ``}`}>
-                        <div className="Linkicon"><MagnifyingGlassIcon/></div>
+                        <MagnifyingGlassIcon className='w-8 h-8 md:w-10 md:h-10 lg:w-10 lg:h-10 ms:me-4 md:me-4 lg:me-4' />
                         <div >
                             {sidebarOpen && <span>Buscar</span>}
                             {sidebarOpen && <div className='LinkSubLabel'><span></span></div>}
@@ -98,10 +98,10 @@ export function Sidebar({ sidebarOpen, setSidebarOpen }) {
                 <div className="LinkContainer" key={label}>
                     <NavLink to={to}
                         className={({ isActive }) => `Links${isActive ? ` active` : ``}`}>
-                        <div className="Linkicon">{icon}</div>
+                        {icon}
                         <div >
                             {sidebarOpen && <span>{label}</span>}
-                            {sidebarOpen && <div className='LinkSubLabel'><span>{sublabel}</span></div>}
+                            {sidebarOpen && <div className='LinkSubLabel '><span>{sublabel}</span></div>}
                         </div>
                     </NavLink>
 
@@ -109,7 +109,7 @@ export function Sidebar({ sidebarOpen, setSidebarOpen }) {
             ))}
             <div className='Divider' ></div>
             <div className="LogoutContainer">
-                <div className="Logouticon"><ArrowRightStartOnRectangleIcon/></div>
+                <ArrowRightStartOnRectangleIcon className='w-8 h-8 md:w-10 md:h-10 lg:w-10 lg:h-10 ms:me-4 md:me-4 lg:me-4'/>
                 {sidebarOpen && <Form method="post" action="/logout" >
                         <button type="submit" id="LogoutButton" >
                             Cerrar sesión
