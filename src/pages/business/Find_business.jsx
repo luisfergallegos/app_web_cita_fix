@@ -191,7 +191,7 @@ export function FindBusiness() {
                         <img src={illustration} alt="Buscar" className="mx-auto w-60" />
                         <h2 className="text-xl font-semibold">¿Estás en busca de un servicio ó visita?</h2>
                         <p>Usa el buscador superior para comenzar.</p>
-                        <p>Seleccioná una opción para generar una cita al instante.</p>
+                        <p>Selecciona una opción para generar una cita al instante.</p>
                         <div className="mt-10">
                             <h3 className="text-lg font-semibold mb-4">Sugerencia para ti</h3>
                             {empresas[0] && (
