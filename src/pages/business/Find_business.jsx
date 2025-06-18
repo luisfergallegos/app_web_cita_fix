@@ -26,7 +26,10 @@ export default function FindBusiness() {
   const [qualifications, setQualifications] = useState([]);
   const [userId, setUserId] = useState("");
   const [userName, setUserName] = useState("");
-  const [showIndicator, setShowIndicator] = useState(true);
+  const [showIndicator, setShowIndicator] = useState(() => {
+  const visto = localStorage.getItem("hasSeenSearchIndicator");
+  return !visto; // Mostrar solo si NO se ha visto antes
+});
 
   useEffect(() => {
     if (!correo || !pwd) {
@@ -98,7 +101,12 @@ export default function FindBusiness() {
             name="searchText"
             value={searchText}
             onChange={handleChange}
-            onFocus={() => setShowIndicator(false)}
+            onFocus={() => {
+    if (showIndicator) {
+      setShowIndicator(false);
+      localStorage.setItem("hasSeenSearchIndicator", "true");
+    }
+  }}
             placeholder="Buscar negocios o categorías..."
             className="w-full pl-10 pr-4 py-3 rounded-xl shadow-sm focus:ring-2 focus:ring-orange-400 outline-none text-gray-800 placeholder-gray-400"
           />
@@ -106,17 +114,14 @@ export default function FindBusiness() {
           {/* Círculo animado */}
           {showIndicator && (
   <>
-    {/* Fondo tipo vidrio */}
-    <div className="fixed inset-0 bg-white/10 backdrop-blur-sm z-30 pointer-events-none" />
+    {/* Fondo vidrio suave */}
+    <div className="fixed inset-0 bg-white/20 backdrop-blur-sm z-30 pointer-events-none" />
 
-    {/* Indicador flotante */}
+    {/* Indicador flotante con tooltip */}
     <div className="absolute -top-6 right-2 flex flex-col items-end group z-40">
-      {/* Tooltip */}
       <div className="mb-2 px-4 py-2 bg-gray-900 text-white text-sm rounded-lg shadow-xl opacity-90 group-hover:opacity-100 transition">
         ✨ Escribe para buscar un negocio
       </div>
-
-      {/* Círculo animado */}
       <span className="flex h-6 w-6 relative">
         <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-orange-400 opacity-75"></span>
         <span className="relative inline-flex rounded-full h-6 w-6 bg-orange-500"></span>
@@ -145,12 +150,10 @@ export default function FindBusiness() {
           </div>
         ) : (
           <div className="text-center text-white space-y-4">
-            <img src={illustration} alt="Buscar" className="mx-auto w-60" />
             <h2 className="text-xl font-semibold">¿Estás en busca de un servicio?</h2>
-            <p>Usa el buscador superior para comenzar.</p>
+            /*<img src={illustration} alt="Buscar" className="mx-auto w-60" />*/
             <p>Seleccioná una opción para generar una cita al instante.</p>
             <div className="mt-10">
-              <h3 className="text-lg font-semibold mb-4">Sugerencia para ti</h3>
               {empresas[0] && (
                 <div className="flex justify-center">
                   <CardBusiness
