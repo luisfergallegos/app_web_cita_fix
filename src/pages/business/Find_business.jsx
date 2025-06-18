@@ -91,6 +91,7 @@ export default function FindBusiness() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-orange-600 to-orange-800 px-4 py-10">
       <div className="max-w-6xl mx-auto">
+        <h2 className="text-xl font-semibold">¿Estás en busca de un servicio?</h2>
         {/* Buscador con indicador */}
         <div className="relative mb-10">
           <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -150,8 +151,8 @@ export default function FindBusiness() {
           </div>
         ) : (
           <div className="text-center text-white space-y-4">
-            <h2 className="text-xl font-semibold">¿Estás en busca de un servicio?</h2>
-            /*<img src={illustration} alt="Buscar" className="mx-auto w-60" />*/
+            
+            //<img src={illustration} alt="Buscar" className="mx-auto w-60" />
             <p>Seleccioná una opción para generar una cita al instante.</p>
             <div className="mt-10">
               {empresas[0] && (
