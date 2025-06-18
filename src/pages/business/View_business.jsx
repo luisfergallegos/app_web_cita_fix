@@ -9,18 +9,21 @@ import Loaging from '../../components/Loading.jsx';
 import { useLoaderData, useNavigate } from 'react-router-dom';
 import { urlApi } from "../../styles/Constants.jsx";
 import { useEffect, useState } from "react";
+import { fetchData } from '../../Wrapper.js';
 
 const StarRating = (stars) => '⭐'.repeat(stars);
 
 // loader
 export async function ViewBusinessLoader({ params }) {
+    const sCorreo = fetchData("correo");
+    const sPassword = fetchData("pwd");
     const businessId = params.id;
-    return { businessId };
+    return { sCorreo, sPassword, businessId };
 }
 
 export function ViewBusiness() {
     const navigate = useNavigate();
-    const { businessId } = useLoaderData();
+    const { sCorreo, sPassword, businessId } = useLoaderData();
     const [loading, setLoading] = useState(true);
     const [qualifications, setQualifications] = useState([]);
     const [horario, setHorario] = useState([]);
@@ -131,10 +134,13 @@ export function ViewBusiness() {
 
     return (
         <div>
-            <div className="flex justify-between items-center w-full bg-gradient-to-br from-orange-600 to-orange-800">
-                <a href="https://www.plannersday.com/"><img className='w-58 h-14' src={Logo} alt="" /></a>
-                <a href="https://app.plannersday.com/"><span className='me-6 text-white text-xl'>Iniciar sesión</span></a>
-            </div>
+
+            {
+                sCorreo == null & sPassword == null ? <div className="flex justify-between items-center w-full bg-gradient-to-br from-orange-600 to-orange-800">
+                    <a href="https://www.plannersday.com/"><img className='w-58 h-14' src={Logo} alt="" /></a>
+                    <a href="https://app.plannersday.com/"><span className='me-6 text-white text-xl'>Iniciar sesión</span></a>
+                </div> : <div></div>
+            }
             <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-orange-600 to-orange-800 px-4">
 
                 <div className="bg-white rounded-3xl shadow-xl p-10 max-w-2xl w-full text-center animate-fade-in-up">
