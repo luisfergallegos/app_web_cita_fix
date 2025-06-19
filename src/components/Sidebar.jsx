@@ -25,18 +25,18 @@ export function Sidebar({ sidebarOpen, setSidebarOpen }) {
             label: 'Home',
             sublabel: '',
             icon: <HomeIcon className='w-8 h-8 md:w-10 md:h-10 lg:w-10 lg:h-10 ms:me-4 md:me-4 lg:me-4' />,
-            to: "/home"
+            to: "/findBusiness"
         },
         {
             label:
                 (sUserCitaFix['first_name'] === "" || sUserCitaFix.length === 0
                     ? 'Agrega tu nombre'
                     : sUserCitaFix['first_name']),
-            sublabel: 'Ver tu perfil',
+            sublabel: 'Ver tus citas',
             icon: (bPhotoUser['data'] === null || bPhotoUser.length === 0
                 ? <UserCircleIcon className='w-8 h-8 md:w-10 md:h-10 lg:w-10 lg:h-10 ms:me-4 md:me-4 lg:me-4' />
                 : <img src={User} width={50} height={50} />),
-            to: "viewUpdateUser"
+            to: "home"
         },
         {
             label: (dorsl == '' || sUserCitaFix.length === 0
@@ -46,7 +46,7 @@ export function Sidebar({ sidebarOpen, setSidebarOpen }) {
             icon: <BuildingStorefrontIcon className='w-8 h-8 md:w-10 md:h-10 lg:w-10 lg:h-10 ms:me-4 md:me-4 lg:me-4' />,
             to: (dorsl == '' || sUserCitaFix.length === 0
                 ? "registerBusiness"
-                : "viewUpdateBusiness") 
+                : "homeBusiness") 
         },
         {
             label: "Notificaiones",
@@ -82,7 +82,7 @@ export function Sidebar({ sidebarOpen, setSidebarOpen }) {
                 </div>
             </div>
             <div className='Divider' ></div>
-            <div className='LinkContainer'>
+            {/* <div className='LinkContainer'>
             <NavLink to='findBusiness'
                         className={({ isActive }) => `Links${isActive ? ` active` : ``}`}>
                         <MagnifyingGlassIcon className='w-8 h-8 md:w-10 md:h-10 lg:w-10 lg:h-10 ms:me-4 md:me-4 lg:me-4' />
@@ -91,9 +91,8 @@ export function Sidebar({ sidebarOpen, setSidebarOpen }) {
                             {sidebarOpen && <div className='LinkSubLabel'><span></span></div>}
                         </div>
                     </NavLink>
-            </div>
-            
-            <div className='Divider' ></div>
+            </div>            
+            <div className='Divider' ></div> */}
             {linksArray.map(({ icon, label, to, sublabel }) => (
                 <div className="LinkContainer" key={label}>
                     <NavLink to={to}

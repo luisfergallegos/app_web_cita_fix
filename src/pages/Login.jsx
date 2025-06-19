@@ -6,7 +6,8 @@ import SingIn from './authenticate/SignIn.jsx';
 import Logo from "../assets/menu.png";
 
 // Routes
-import Home from "../pages/Home.jsx";
+// import Home from "../pages/Home.jsx";
+import FindBusiness from "../pages/business/Find_business.jsx";
 
 // helper funtions
 import { fetchData } from "../Wrapper.js";
@@ -22,7 +23,7 @@ export function LoginForm() {
     const { sCorreo, sPassword } = useLoaderData();
     return (
         <>
-            {sCorreo && sPassword ? <Home /> :
+            {sCorreo && sPassword ? <FindBusiness /> :
                 <div id="containerLogin">
                     <div className="containerLogin">
                         <SingIn />

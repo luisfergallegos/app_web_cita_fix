@@ -40,6 +40,13 @@ const router = createBrowserRouter([
         errorElement: <Error />
       },
       {
+        path: "findBusiness",
+        element: <FindBusiness />,
+        loader: findBusinessLoader,
+        /* action: findBusinessAction, */
+        errorElement: <Error />
+      },
+      {
         path: "home",
         element: <Home />,
         loader: homeLoader,
@@ -68,13 +75,7 @@ const router = createBrowserRouter([
         errorElement: <Error />
       },
 
-      {
-        path: "findBusiness",
-        element: <FindBusiness />,
-        loader: findBusinessLoader,
-        /* action: findBusinessAction, */
-        errorElement: <Error />
-      },
+      
 
       {
         path: "homeBusiness",

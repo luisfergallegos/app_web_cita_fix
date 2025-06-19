@@ -159,7 +159,7 @@ export function ViewBusiness() {
                     <hr className="mb-4" />
                     <div className='CardContainer_Detalle'>
                         <div className='CardContainer_DetalleIcon'>
-                            <MapPinIcon />
+                            <MapPinIcon className='w-10 h-10 md:w-10 md:h-10 lg:w-10 lg:h-10'/>
                         </div>
                         <div onClick={handleADDRESS}>
                             <p>{empresa.ADDRESS_FIRST}, {empresa.ADDRESS_SECOND}, {empresa.POSTAL_CODE} {empresa.CITY}, {empresa.STATE}, Mexico</p>
@@ -167,7 +167,7 @@ export function ViewBusiness() {
                     </div>
                     {empresa.phone && <div className='CardContainer_Detalle'>
                         <div className='CardContainer_DetalleIcon'>
-                            <PhoneIcon />
+                            <PhoneIcon className='w-10 h-10 md:w-10 md:h-10 lg:w-10 lg:h-10'/>
                         </div>
 
                         {empresa.phone}
@@ -175,7 +175,7 @@ export function ViewBusiness() {
 
                     <div className='CardContainer_Detalle'>
                         <div className='CardContainer_DetalleIcon'>
-                            <CalendarDaysIcon />
+                            <CalendarDaysIcon className='w-10 h-10 md:w-10 md:h-10 lg:w-10 lg:h-10' />
                         </div>
                         <div className="space-y-3 max-h-200 overflow-y-auto">
                             {horario.length > 0 ? (

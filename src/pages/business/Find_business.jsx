@@ -113,13 +113,14 @@ export function FindBusiness() {
             navigate("/");
         }
         // Cargar user info desde loader
-        if (user) {
-            setUserId(user['USER_ID'] ?? "");
-            var auxName = `${user['first_name'] ?? ""} ${user['last_name'] ?? ""}`;
+        var auxUser = fetchData("UserCitaFix");
+        if (auxUser) {
+            setUserId(auxUser['USER_ID'] ?? "");
+            var auxName = `${auxUser['first_name'] ?? ""} ${auxUser['last_name'] ?? ""}`;
             setUserName(auxName);
         }
         const fData = async () => {
-            const userId = user['USER_ID'];
+            const userId = auxUser['USER_ID'];
             //Solicitar por GET
             var options = {
                 method: 'GET',
@@ -156,6 +157,7 @@ export function FindBusiness() {
     return (
         <div className="min-h-screen bg-gradient-to-br from-orange-600 to-orange-800 px-4 py-10">
             <div className="max-w-6xl mx-auto">
+                <h2 className="text-xl font-semibold">¿Estás en busca de un servicio o visita?</h2>
                 {/* Buscador */}
                 <div className="relative mb-10">
                     <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -188,8 +190,6 @@ export function FindBusiness() {
                     </div>
                 ) : (
                     <div className="text-center text-white space-y-4">
-                        <img src={illustration} alt="Buscar" className="mx-auto w-60" />
-                        <h2 className="text-xl font-semibold">¿Estás en busca de un servicio ó visita?</h2>
                         <p>Usa el buscador superior para comenzar.</p>
                         <p>Selecciona una opción para generar una cita al instante.</p>
                         <div className="mt-10">

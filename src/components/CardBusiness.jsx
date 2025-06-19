@@ -88,7 +88,7 @@ export function CardBusiness({ key, userId, userName, empresa, setIsOpen, setInd
             <div className='CardContainer_Divider' ></div>
             <div className='CardContainer_Detalle'>
                 <div className='CardContainer_DetalleIcon'>
-                    <MapPinIcon />
+                    <MapPinIcon  className='w-8 h-8 md:w-10 md:h-10 lg:w-10 lg:h-10' />
                 </div>
                 <div onClick={handleADDRESS}>
                     <p>{ADDRESS_FIRST}, {ADDRESS_SECOND}, {POSTAL_CODE} {CITY}, {STATE}, Mexico</p>
@@ -96,7 +96,7 @@ export function CardBusiness({ key, userId, userName, empresa, setIsOpen, setInd
             </div>
             {phone && <div className='CardContainer_Detalle'>
                 <div className='CardContainer_DetalleIcon'>
-                    <PhoneIcon />
+                    <PhoneIcon className='w-8 h-8 md:w-10 md:h-10 lg:w-10 lg:h-10' />
                 </div>
 
                 {phone}
@@ -104,7 +104,7 @@ export function CardBusiness({ key, userId, userName, empresa, setIsOpen, setInd
 
             <div className='CardContainer_Detalle'>
                 <div className='CardContainer_DetalleIcon'>
-                    <CalendarDaysIcon />
+                    <CalendarDaysIcon className='w-8 h-8 md:w-10 md:h-10 lg:w-10 lg:h-10' />
                 </div>
                 {Horario}
             </div>

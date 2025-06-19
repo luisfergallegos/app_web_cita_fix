@@ -7,7 +7,7 @@ import { useEffect, useState } from "react";
 import illustration from "../assets/clock_green.svg";
 import Loaging from '../components/Loading.jsx';
 import { urlApi } from "../styles/Constants.jsx";
-import { BuildingStorefrontIcon, ChevronRightIcon, ClockIcon } from '@heroicons/react/24/outline';
+import { ChevronRightIcon, ClockIcon, Cog6ToothIcon } from '@heroicons/react/24/outline';
 import './Home.css';
 
 
@@ -110,7 +110,7 @@ export function Home() {
                         index['ESTATUS'] == '1' ? '#32325d' :
                           index['ESTATUS'] == '3' ? '#4472C4' : 'grey'
                       } /> :
-                      <img id="imgSH" src={'data:image/jpeg;base64,' + arrayBufferToBase64(index['BUS_PHOTO'].data)}/>
+                      <img id="imgSH" src={'data:image/jpeg;base64,' + arrayBufferToBase64(index['BUS_PHOTO'].data)} />
                   }
                   <div className="grid">
                     <label className="text-2xl font-bold text-black">{index['DORSL']} </label>
@@ -142,19 +142,16 @@ export function Home() {
         }
 
       </div>
-      {
-        dorsl == '' ? <div></div> :
-          <div class="fab-container">
-            <div class="button iconbutton">
-              <button
-                onClick={() => navigate("/homeBusiness")}
-                class="fa-solid fa-plus"
-              >
-                <BuildingStorefrontIcon width={40} />
-              </button>
-            </div>
-          </div>
-      }
+      <div class="fab-container">
+        <div class="button iconbutton">
+          <button
+            onClick={() => navigate("/viewUpdateUser")}
+            class="fa-solid fa-plus"
+          >
+            <Cog6ToothIcon width={40} />
+          </button>
+        </div>
+      </div>
     </div>
   );
 }

@@ -4,10 +4,11 @@ import { dateSpanish, fetchData } from "../../Wrapper.js";
 import { useEffect, useState } from "react";
 // assets
 import './Find_business.css';
-import { ChevronRightIcon, UserCircleIcon, UserPlusIcon } from '@heroicons/react/24/solid';
+import { ChevronRightIcon, ShareIcon, UserCircleIcon, UserPlusIcon } from '@heroicons/react/24/solid';
 import Pagination from '../../components/Pagination.jsx';
 import Loaging from '../../components/Loading.jsx';
 import { urlApi } from "../../styles/Constants.jsx";
+import { Cog6ToothIcon } from '@heroicons/react/24/outline';
 
 // loader
 export function HomeBusinessLoader() {
@@ -119,12 +120,12 @@ export function HomeBusiness() {
                                         }}  >
                                         {
                                             index['PHOTO'] === null ?
-                                                <UserCircleIcon  width={80} 
+                                                <UserCircleIcon width={80}
                                                     color={index['ESTATUS'] == '-1' ? '#B71C1C' :
                                                         index['ESTATUS'] == '1' ? '#32325d' :
                                                             index['ESTATUS'] == '3' ? '#4472C4' : '#fc6500'
                                                     } /> :
-                                                <img id='imgS' src={'data:image/jpeg;base64,' + arrayBufferToBase64(index['PHOTO'].data)}  />
+                                                <img id='imgS' src={'data:image/jpeg;base64,' + arrayBufferToBase64(index['PHOTO'].data)} />
 
                                         }
                                         <div className="grid">
@@ -167,7 +168,20 @@ export function HomeBusiness() {
             }
             {
                 dorsl == '' ? <div></div> :
-                    <div class="fab-container">
+                    <div class="fab-container3">
+                        <div class="button iconbutton">
+                            <button
+                                onClick={() => (console.log('clic'))}
+                                class="fa-solid fa-plus"
+                            >
+                                <ShareIcon width={40} />
+                            </button>
+                        </div>
+                    </div>
+            }
+            {
+                dorsl == '' ? <div></div> :
+                    <div class="fab-container2">
                         <div class="button iconbutton">
                             <button
                                 onClick={() => navigate("/findUser")}
@@ -178,6 +192,20 @@ export function HomeBusiness() {
                         </div>
                     </div>
             }
+            {
+                dorsl == '' ? <div></div> :
+                    <div class="fab-container">
+                        <div class="button iconbutton">
+                            <button
+                                onClick={() => navigate("/viewUpdateBusiness")}
+                                class="fa-solid fa-plus"
+                            >
+                                <Cog6ToothIcon width={40} />
+                            </button>
+                        </div>
+                    </div>
+            }
+
 
         </div>
     );
