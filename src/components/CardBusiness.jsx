@@ -17,7 +17,8 @@ function StarRating(maxRating) {
     return stars;
 }
 
-export function CardBusiness({ key, userId, userName, empresa, setIsOpen, setIndexEmp, setQualifications }) {
+export function CardBusiness({ id, userId, userName, empresa, setIsOpen, setIndexEmp, setQualifications }) {
+     console.log("ID del negocio:", id);
     const navigate = useNavigate();
     // Function to convert Base64 string to binary data
     const arrayBufferToBase64 = (buffer) => {
