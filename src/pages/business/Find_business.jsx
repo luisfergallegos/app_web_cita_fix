@@ -151,8 +151,6 @@ export default function FindBusiness() {
           </div>
         ) : (
           <div className="text-center text-white space-y-4">
-            
-            //<img src={illustration} alt="Buscar" className="mx-auto w-60" />
             <p>Seleccioná una opción para generar una cita al instante.</p>
             <div className="mt-10">
               {empresas[0] && (
