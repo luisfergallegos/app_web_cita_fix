@@ -139,7 +139,7 @@ export default function FindBusiness() {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {filteredNames.map((empresa) => (
               <CardBusiness
-                key={empresa.BUSSINESS_ID}
+                id={empresa.BUSSINESS_ID}
                 userId={userId}
                 userName={userName}
                 empresa={empresa}
@@ -156,7 +156,7 @@ export default function FindBusiness() {
               {empresas[0] && (
                 <div className="flex justify-center">
                   <CardBusiness
-                    key={empresas[0].BUSSINESS_ID}
+                    id={empresas[0].BUSSINESS_ID}
                     userId={userId}
                     userName={userName}
                     empresa={empresas[0]}
