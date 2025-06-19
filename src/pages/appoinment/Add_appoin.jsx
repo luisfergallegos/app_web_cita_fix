@@ -1,8 +1,4 @@
-export function AddAppoinLoader() {
-  return null; // 
-}
-
-    import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
@@ -164,3 +160,5 @@ export default function AddAppoin() {
     </div>
   );
 }
+
+     
