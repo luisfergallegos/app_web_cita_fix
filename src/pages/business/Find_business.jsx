@@ -190,7 +190,6 @@ export function FindBusiness() {
                     </div>
                 ) : (
                     <div className="text-center text-white space-y-4">
-                        <p>Usa el buscador superior para comenzar.</p>
                         <p>Selecciona una opción para generar una cita al instante.</p>
                         <div className="mt-10">
                             <h3 className="text-lg font-semibold mb-4">Sugerencia para ti</h3>
