@@ -364,7 +364,8 @@ export function AddAppoin() {
     }
 
     return (
-        <div className="AddAppoinContainer">
+        <div className="min-h-screen grid items-center justify-center bg-gradient-to-br from-orange-600 to-orange-800 px-4">
+        <div className="bg-white rounded-3xl shadow-xl mt-10 mb-10 animate-fade-in-up">
             <div className='businessTitleContainer'>
                 <div className='businessTitleContainer--Name'>
                     <h4>{DORSL}</h4>
@@ -493,7 +494,7 @@ export function AddAppoin() {
                     </div>
                 </div>
             </div>
-            <div className='businessBtn'><button onClick={() => {
+            <div className='businessBtn'><button className='mb-10' onClick={() => {
                 if (selectedTime !== '') {
                     setIsOpen(true);
                 }
@@ -519,7 +520,8 @@ export function AddAppoin() {
                     : null
             }
 
-        </div>);
+        </div>
+    </div>);
 }
 
 export default AddAppoin;

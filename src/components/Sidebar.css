@@ -1,6 +1,6 @@
 .SidebarContainer {
-    color: white;
-    background: var(--second);
+    color: var(--second);
+    background: #F5F5F5;
     position: sticky;
     padding-top: 10px;
 }
@@ -37,7 +37,7 @@
     width: 32px;
     height: 32px;
     border-radius: 50%;
-    background: var(--second);
+    background: var(--fourth);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -71,13 +71,13 @@
     align-items: center;
     text-decoration: none;
     padding: calc(8px - 2px) 0;
-    color: var(--fourth);
+    color: var(--second);
 
     &.active {
-        color: var(--primary);
+        color: var(--sixth);
 
         .Linkicon {
-            color: var(--primary);
+            color: var(--second);
         }
     }
 }
@@ -139,9 +139,9 @@
     display: flex;
     border: none;
     border-radius: 5px;
-    color: white;
+    color: var(--nineth);
     cursor: pointer;
-    background: var(--nineth);
+    background: #F5F5F5;
     font-size: 14px;
     letter-spacing: 0;
     align-items: center;
@@ -152,11 +152,17 @@
 
 }
 
+.LogoutContainer #LogoutButton:hover {
+    background: var(--nineth);
+    color: var(--fourth);
+
+}
+
 
 .Divider {
     height: 1px;
     width: 100%;
-    background: var(--fourth);
+    background: var(--second);
     margin: 24px 0;
 }
 

@@ -10,6 +10,7 @@ import { useLoaderData, useNavigate } from 'react-router-dom';
 import { urlApi } from "../../styles/Constants.jsx";
 import { useEffect, useState } from "react";
 import { fetchData } from '../../Wrapper.js';
+import { toast } from "react-toastify";
 
 const StarRating = (stars) => '⭐'.repeat(stars);
 
@@ -27,6 +28,8 @@ export function ViewBusiness() {
     const [loading, setLoading] = useState(true);
     const [qualifications, setQualifications] = useState([]);
     const [horario, setHorario] = useState([]);
+
+    const [sURL, setURL] = useState();
     // Function to convert Base64 string to binary data
     const arrayBufferToBase64 = (buffer) => {
         var binary = '';
@@ -81,6 +84,7 @@ export function ViewBusiness() {
                 if (response.status == 200) {
                     const json = await response.json();
                     SetEmpresa(json['data']);
+                    setURL(`https://app.plannersday.com/viewBusiness/${businessId}`);
                     try {
                         const response = await fetch(`${urlApi}getBusCalif?bussiness_id=${businessId}`);
                         const json = await response.json();
@@ -141,7 +145,7 @@ export function ViewBusiness() {
                     <a href="https://app.plannersday.com/"><span className='me-6 text-white text-xl'>Iniciar sesión</span></a>
                 </div> : <div></div>
             }
-            <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-orange-600 to-orange-800 px-4">
+            <div className="min-h-screen grid items-center justify-center bg-gradient-to-br from-orange-600 to-orange-800 px-4">
 
                 <div className="bg-white rounded-3xl shadow-xl p-10 max-w-2xl w-full text-center animate-fade-in-up">
                     <div className='flex justify-center mb-4'>
@@ -159,7 +163,7 @@ export function ViewBusiness() {
                     <hr className="mb-4" />
                     <div className='CardContainer_Detalle'>
                         <div className='CardContainer_DetalleIcon'>
-                            <MapPinIcon className='w-10 h-10 md:w-10 md:h-10 lg:w-10 lg:h-10'/>
+                            <MapPinIcon className='w-10 h-10 md:w-10 md:h-10 lg:w-10 lg:h-10' />
                         </div>
                         <div onClick={handleADDRESS}>
                             <p>{empresa.ADDRESS_FIRST}, {empresa.ADDRESS_SECOND}, {empresa.POSTAL_CODE} {empresa.CITY}, {empresa.STATE}, Mexico</p>
@@ -167,7 +171,7 @@ export function ViewBusiness() {
                     </div>
                     {empresa.phone && <div className='CardContainer_Detalle'>
                         <div className='CardContainer_DetalleIcon'>
-                            <PhoneIcon className='w-10 h-10 md:w-10 md:h-10 lg:w-10 lg:h-10'/>
+                            <PhoneIcon className='w-10 h-10 md:w-10 md:h-10 lg:w-10 lg:h-10' />
                         </div>
 
                         {empresa.phone}
@@ -220,6 +224,17 @@ export function ViewBusiness() {
                         </div>
                     </div>
                 </div>
+
+
+                <div className="flex items-center justify-center py-1">
+                    <input type="text" className="w-full text-black border px-4 py-2 rounded-md me-4" value={sURL} disabled />
+                    <button className="bg-orange-500 text-white px-4 py-2 rounded-md hover:bg-orange-600"
+                        onClick={() => {
+                            navigator.clipboard.writeText(sURL);
+                            return toast.success(`El enlace se ha copiado en el portapapeles`);
+                        }}>Copiar</button>
+                </div>
+
             </div>
         </div>
     );
