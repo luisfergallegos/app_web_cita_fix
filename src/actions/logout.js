@@ -13,6 +13,7 @@ export async function logoutAction(){
     deleteItem({ key: "pwd"});
     deleteItem({ key: "dorsl"});
     deleteItem({ key: "UserCitaFix"});
+    localStorage.setItem("hasSeenSearchIndicator", JSON.stringify("Indicator"));
     toast.success("Regresa pronto!");
     // return redirect
     return redirect("/");

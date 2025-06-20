@@ -28,7 +28,6 @@ export function ViewUpdateUser() {
     const { sCorreo, sPassword } = useLoaderData();
     const [loading, setLoading] = useState(true);
     const [userRestApi, setUserRestApi] = useState();
-    const [indexEmp, setIndexEmp] = useState('');
     const [nameGroup, setNameGroup] = useState(true);
     const [infGroup, setInfGroup] = useState(true);
     const [mailGroup, setMailGroup] = useState(true);
@@ -47,6 +46,12 @@ export function ViewUpdateUser() {
         var bytes = [].slice.call(new Uint8Array(buffer));
         bytes.forEach((b) => binary += String.fromCharCode(b));
         return btoa(binary);
+    };
+
+    const toggle = (setter) => setter((prev) => !prev);
+    const togglePassView = () => {
+        setPassView(!passView);
+        setPassType(passView ? 'text' : 'password');
     };
 
     const ModNameGroupOpen = async (e) => {
@@ -243,21 +248,6 @@ export function ViewUpdateUser() {
         setContraseña(value);
     };
 
-    const ModDesAccGroupOpen = () => {
-        setDesAccGroup(!desAccGroup);
-    };
-
-    const ModPassViewOpen = () => {
-        if (passView) {
-            setPassView(false);
-            setPassType('text');
-        }
-        else {
-            setPassView(true);
-            setPassType('password');
-        }
-    };
-
     const getUser = async () => {
         const auxCorreo = fetchData("correo");
         const auxPassword = fetchData("pwd");
@@ -328,106 +318,142 @@ export function ViewUpdateUser() {
 
     return (
         <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-orange-600 to-orange-800 px-4">
-            <div className="ViewUpdateUserContainer rounded-b-lg rounded-t-lg shadow-xl  w-full animate-fade-in-up">
-                <div className='UpdateUserContainerPHOTO_bkg rounded-t-lg'>
-                    <div className='UpdateUserContainerPHOTO'>
-                        {
-                            userRestApi.PHOTO.data.length == 0 ? <UserCircleIcon /> :
-                                <img src={'data:image/jpeg;base64,' + arrayBufferToBase64(userRestApi.PHOTO.data)} />
-                        }
-                    </div>
+            <div className="max-w-3xl mx-auto p-6 space-y-6 text-gray-800">
+                {/* Imagen usuario */}
+                <div className="flex justify-center mb-6">
+                    {userRestApi.PHOTO.data.length == 0 ? (
+                        <UserCircleIcon className="h-32 w-32 text-orange-400" />
+                    ) : (
+                        <img className="w-32 h-32 rounded-full object-cover border"
+                            src={'data:image/jpeg;base64,' + arrayBufferToBase64(userRestApi.PHOTO.data)} />
+                    )}
                 </div>
-                <div className='UpdateUserContainerGroupClic'>
-                    <img src={UserIcon} /><label>Nombre</label>
-                    {nameGroup ? <ChevronDownIcon onClick={() => { setNameGroup(!nameGroup); }} /> :
-                        <ChevronUpIcon onClick={() => { setNameGroup(!nameGroup); }} />}
-                </div>
-                <div className={nameGroup ? 'nameGroup active' : 'nameGroup'}>
-                    <div className='GroupLabel'>
-                        <label>Nombre</label>
-                        <input type="text" placeholder='Ingresa tu nombre' value={name} onChange={handleChangeName} required />
-                    </div>
-                    <div className='GroupLabel'>
-                        <label>Apellido</label>
-                        <input type="text" placeholder='Ingresa tu apellido' value={lastname} onChange={handleChangeLastName} required />
-                        <div class="bt-btn">
-                            <button disabled={userRestApi.first_name != name || userRestApi.last_name != lastname ? false : true} onClick={ModNameGroupOpen}>Guardar</button>
+                {/* Grupo Nombre */}
+                <div className="bg-white text-black shadow rounded-xl p-4">
+                    <div
+                        className="flex items-center justify-between cursor-pointer"
+                        onClick={() => toggle(setNameGroup)}
+                    >
+                        <div className="flex items-center gap-2">
+                            <img src={UserIcon} alt="icon" className="w-5 h-5" />
+                            <span className="font-semibold">Nombre</span>
                         </div>
+                        {nameGroup ? <ChevronDownIcon className="w-5 h-5" /> : <ChevronUpIcon className="w-5 h-5" />}
                     </div>
-
-                </div>
-                <div className='UpdateUserContainerGroupClic'>
-                    <img src={PhoneIcon} />
-                    <label>Información de contacto</label>
-                    {infGroup ? <ChevronDownIcon onClick={() => { setInfGroup(!infGroup); }} /> :
-                        <ChevronUpIcon onClick={() => { setInfGroup(!infGroup); }} />}
-                </div>
-                <div className={infGroup ? 'infGroup active' : 'infGroup'}>
-                    <div className='GroupLabel'>
-                        <label>Agrega un número de celular</label>
-                        <input type="tel" placeholder='Ingresa tu número de teléfono' pattern="([0-9]{3}) [0-9]{3}-[0-9]{4}" value={phone} onChange={handleChangePhone} />
-                        <span>{`Mexico (+52)`}</span>
-                        <div class="bt-btn">
-                            <button disabled={userRestApi.phone != phone ? false : true} onClick={ModInfGroupOpen}>Guardar</button>
+                    {!nameGroup && (
+                        <div className="mt-4 space-y-4">
+                            <div>
+                                <label className="block text-sm font-medium mb-1">Nombre</label>
+                                <input className="w-full border px-4 py-2 rounded-md" type="text" placeholder='Ingresa tu nombre' value={name} onChange={handleChangeName} required />
+                            </div>
+                            <div>
+                                <label className="block text-sm font-medium mb-1">Apellido</label>
+                                <input className="w-full border px-4 py-2 rounded-md" type="text" placeholder='Ingresa tu apellido' value={lastname} onChange={handleChangeLastName} required />
+                            </div>
+                            <button className="mt-2 bg-orange-500 text-white px-4 py-2 rounded-md hover:bg-orange-600 disabled:border-gray-50 disabled:bg-gray-200 disabled:text-gray-500"
+                                disabled={userRestApi.first_name != name || userRestApi.last_name != lastname ? false : true}
+                                onClick={ModNameGroupOpen}>Guardar</button>
                         </div>
+                    )}
+                </div>
+                {/* Grupo Teléfono */}
+                <div className="bg-white text-black shadow rounded-xl p-4">
+                    <div
+                        className="flex items-center justify-between cursor-pointer"
+                        onClick={() => toggle(setInfGroup)}
+                    >
+                        <div className="flex items-center gap-2">
+                            <img src={PhoneIcon} alt="icon" className="w-5 h-5" />
+                            <span className="font-semibold">Información de contacto</span>
+                        </div>
+                        {infGroup ? <ChevronDownIcon className="w-5 h-5" /> : <ChevronUpIcon className="w-5 h-5" />}
                     </div>
-                </div>
-                <div className='UpdateUserContainerGroupClic'>
-                    <img src={MailIcon} />
-                    <label>Correo electrónico</label>
-                    {mailGroup ? <ChevronDownIcon onClick={() => { setMailGroup(!mailGroup); }} /> :
-                        <ChevronUpIcon onClick={() => { setMailGroup(!mailGroup); }} />}
-                </div>
-                <div className={mailGroup ? 'mailGroup active' : 'mailGroup'}>
-                    <div className='GroupLabel'>
-                        <label>Confirma tu correo electrónico</label>
-                        <input type="mail" placeholder='Usarás este dato cuando entres' value={correo} onChange={handleChangeCorreo} required />
-                        <div class="bt-btn">
-                            <button disabled={userRestApi.email != correo ? false : true} onClick={ModMailGroupOpen}>Guardar</button>
+                    {!infGroup && (
+                        <div className="mt-4 space-y-4">
+                            <label className="block text-sm font-medium mb-1">Número celular</label>
+                            <input type="tel" className="w-full border px-4 py-2 rounded-md" placeholder='+52...' pattern="([0-9]{3}) [0-9]{3}-[0-9]{4}" value={phone} onChange={handleChangePhone} />
+                            <button className="mt-2 bg-orange-500 text-white px-4 py-2 rounded-md hover:bg-orange-600 disabled:border-gray-50 disabled:bg-gray-200 disabled:text-gray-500"
+                                disabled={userRestApi.phone != phone ? false : true} onClick={ModInfGroupOpen}>Guardar</button>
                         </div>
+                    )}
+                </div>
+                {/* Grupo Correo */}
+                <div className="bg-white text-black shadow rounded-xl p-4">
+                    <div
+                        className="flex items-center justify-between cursor-pointer"
+                        onClick={() => toggle(setMailGroup)}
+                    >
+                        <div className="flex items-center gap-2">
+                            <img src={MailIcon} alt="icon" className="w-5 h-5" />
+                            <span className="font-semibold">Correo electrónico</span>
+                        </div>
+                        {mailGroup ? <ChevronDownIcon className="w-5 h-5" /> : <ChevronUpIcon className="w-5 h-5" />}
                     </div>
-                </div>
-                <div className='UpdateUserContainerGroupClic'>
-                    <img src={LockIcon} />
-                    <label>Contraseña</label>
-                    {passGroup ? <ChevronDownIcon onClick={() => { setPassGroup(!passGroup); }} /> :
-                        <ChevronUpIcon onClick={() => { setPassGroup(!passGroup); }} />}
-                </div>
-                <div className={passGroup ? 'passGroup active' : 'passGroup'}>
-                    <div className='GroupLabel'>
-                        <label>Confirma tu contraseña</label>
-                        <div className="searchicon">
-                            <input type={passType} placeholder='La contraseña debe tener al menos 6 caracteres' value={contraseña} onChange={handleChangeContraseña} required />
-                            {passView ? <EyeSlashIcon onClick={ModPassViewOpen} /> :
-                                <EyeIcon onClick={ModPassViewOpen} />}
+                    {!mailGroup && (
+                        <div className="mt-4">
+                            <label className="block text-sm font-medium mb-1">Confirma tu correo</label>
+                            <input type="email" className="w-full border px-4 py-2 rounded-md" placeholder='Usarás este dato cuando entres' value={correo} onChange={handleChangeCorreo} required />
+                            <button className="mt-2 bg-orange-500 text-white px-4 py-2 rounded-md hover:bg-orange-600 disabled:border-gray-50 disabled:bg-gray-200 disabled:text-gray-500"
+                                disabled={userRestApi.email != correo ? false : true} onClick={ModMailGroupOpen}>Guardar</button>
                         </div>
-                        <div class="bt-btn">
-                            <button disabled={userRestApi.password != contraseña && contraseña.length >= 6 ? false : true} onClick={ModPassGroupOpen}>Guardar</button>
+                    )}
+                </div>
+                {/* Grupo Contraseña */}
+                <div className="bg-white text-black shadow rounded-xl p-4">
+                    <div
+                        className="flex items-center justify-between cursor-pointer"
+                        onClick={() => toggle(setPassGroup)}
+                    >
+                        <div className="flex items-center gap-2">
+                            <img src={LockIcon} alt="icon" className="w-5 h-5" />
+                            <span className="font-semibold">Contraseña</span>
                         </div>
+                        {passGroup ? <ChevronDownIcon className="w-5 h-5" /> : <ChevronUpIcon className="w-5 h-5" />}
                     </div>
-                </div>
-                <div className='UpdateUserContainerGroupClic'>
-                    <img src={CardMemberIcon} />
-                    <label>Desactivación</label>
-                    {desAccGroup ? <ChevronDownIcon onClick={ModDesAccGroupOpen} /> :
-                        <ChevronUpIcon onClick={ModDesAccGroupOpen} />}
-                </div>
-                <div className={desAccGroup ? 'desAccGroup active' : 'desAccGroup'}>
-                    <div className='GroupLabel'>
-                        <label>Desactiva tu cuenta durante un tiempo</label>
-                        <div class="bt-btn">
-                            <button onClick={() => {
-                                localStorage.removeItem("correo");
-                                localStorage.removeItem("pwd");
-                                window.open('https://www.plannersday.com/borrar-cuenta');
-                                window.location.reload();
-                            }} >Borrar</button>
+                    {!passGroup && (
+                        <div className="mt-4">
+                            <label className="block text-sm font-medium mb-1">Confirma tu contraseña</label>
+                            <div className="flex items-center border rounded-md px-2 py-1">
+                                <input type={passType} className="flex-grow px-2 py-1 outline-none" placeholder='La contraseña debe tener al menos 6 caracteres' value={contraseña} onChange={handleChangeContraseña} required />
+                                {passView ? (
+                                    <EyeSlashIcon className="w-5 h-5 text-gray-500 cursor-pointer" onClick={togglePassView} />
+                                ) : (
+                                    <EyeIcon className="w-5 h-5 text-gray-500 cursor-pointer" onClick={togglePassView} />
+                                )}
+                            </div>
+                            <button className="mt-2 bg-orange-500 text-white px-4 py-2 rounded-md hover:bg-orange-600 disabled:border-gray-50 disabled:bg-gray-200 disabled:text-gray-500"
+                                disabled={userRestApi.password != contraseña && contraseña.length >= 6 ? false : true} onClick={ModPassGroupOpen}>Guardar</button>
                         </div>
-
+                    )}
+                </div>
+                {/* Grupo Desactivación */}
+                <div className="bg-white text-black shadow rounded-xl p-4">
+                    <div
+                        className="flex items-center justify-between cursor-pointer"
+                        onClick={() => toggle(setDesAccGroup)}
+                    >
+                        <div className="flex items-center gap-2">
+                            <img src={CardMemberIcon} alt="icon" className="w-5 h-5" />
+                            <span className="font-semibold">Desactivación</span>
+                        </div>
+                        {desAccGroup ? <ChevronDownIcon className="w-5 h-5" /> : <ChevronUpIcon className="w-5 h-5" />}
                     </div>
+                    {!desAccGroup && (
+                        <div className="mt-4">
+                            <label className="block text-sm text-red-600">Tu cuenta ha sido marcada para desactivarse temporalmente.</label>
+                            <button className="mt-2 bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600"
+                                onClick={() => {
+                                    localStorage.removeItem("correo");
+                                    localStorage.removeItem("pwd");
+                                    window.open('https://www.plannersday.com/borrar-cuenta');
+                                    window.location.reload();
+                                }} >Confirmar</button>
+                        </div>
+                    )}
                 </div>
             </div>
-        </div>);
+        </div>
+    );
 }
 
 export default ViewUpdateUser;

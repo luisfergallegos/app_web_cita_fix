@@ -9,7 +9,7 @@ const Error = () => {
   const navigate = useNavigate();
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-orange-600 to-orange-800 px-4">
-      <div className="bg-white rounded-3xl shadow-xl p-10 max-w-2xl w-full text-center animate-fade-in-up">
+      <div className="bg-white text-black rounded-3xl shadow-xl p-10 max-w-2xl w-full text-center animate-fade-in-up">
         <h1 className="text-3xl font-bold mb-4">Uh oh! We’ve got a problem.</h1>
         <p className="text-lg mb-4">La página que estás buscando no existe.</p>
         <p className="text-lg mb-4">{error.message || error.statusText}</p>

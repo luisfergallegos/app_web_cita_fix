@@ -16,8 +16,8 @@ import Loaging from '../../components/Loading.jsx';
 export function findBusinessLoader() {
     const correo = fetchData("correo");
     const pwd = fetchData("pwd");
-    const user = fetchData("UserCitaFix");
-    return { correo, pwd, user };
+    // const user = fetchData("UserCitaFix");
+    return { correo, pwd };
 }
 
 /* function StarRating(maxRating) {
@@ -51,7 +51,7 @@ export function findBusinessLoader() {
 
 export function FindBusiness() {
     const navigate = useNavigate();
-    const { correo, pwd, user } = useLoaderData();
+    const { correo, pwd } = useLoaderData();
     const [loading, setLoading] = useState(true);
     const [empresas, setEmpresas] = useState([]);
     const [index, setIndex] = useState();
@@ -71,6 +71,8 @@ export function FindBusiness() {
     const [indexEmp, setIndexEmp] = useState();
     const [qualifications, setQualifications] = useState([]);
 
+    const [showIndicator, setShowIndicator] = useState(JSON.parse(localStorage.getItem("hasSeenSearchIndicator")));
+
     const arrayBufferToBase64 = (buffer) => {
         var binary = '';
         var bytes = [].slice.call(new Uint8Array(buffer));
@@ -81,6 +83,7 @@ export function FindBusiness() {
     const StarRating = (stars) => '⭐'.repeat(stars);
 
     const handleChange = evt => {
+        // if (showIndicator) setShowIndicator("");
         const value = evt.target.value;
         setSearchText(value);
         if (value === "") {
@@ -168,9 +171,33 @@ export function FindBusiness() {
                         name="searchText"
                         value={searchText}
                         onChange={handleChange}
+                        onFocus={() => {
+                            if (showIndicator == "Indicator") {
+                                setShowIndicator("Nop");
+                                localStorage.setItem("hasSeenSearchIndicator", JSON.stringify("Nop"));
+                            }
+                        }}
                         placeholder="Buscar negocios o categorías..."
                         className="w-full pl-10 pr-4 py-3 rounded-xl shadow-sm focus:ring-2 focus:ring-orange-400 outline-none text-gray-800 placeholder-gray-400"
                     />
+                    {/* Círculo animado */}
+                    {showIndicator == "Indicator" ? 
+                        <>
+                            {/* Fondo vidrio suave */}
+                            <div className="fixed inset-0 bg-white/20 backdrop-blur-sm z-30 pointer-events-none" />
+
+                            {/* Indicador flotante con tooltip */}
+                            <div className="absolute -top-6 right-2 flex flex-col items-end group z-40">
+                                <div className="mb-2 px-4 py-2 bg-gray-900 text-white text-sm rounded-lg shadow-xl opacity-90 group-hover:opacity-100 transition">
+                                    ✨ Escribe para buscar un negocio
+                                </div>
+                                <span className="flex h-6 w-6 relative">
+                                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-orange-400 opacity-75"></span>
+                                    <span className="relative inline-flex rounded-full h-6 w-6 bg-orange-500"></span>
+                                </span>
+                            </div>
+                        </>
+                    :<></>}
                 </div>
 
                 {/* Resultados o sugerencias */}
