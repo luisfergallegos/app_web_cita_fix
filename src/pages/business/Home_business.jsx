@@ -171,7 +171,7 @@ export function HomeBusiness() {
                     <div class="fab-container3">
                         <div class="button iconbutton">
                             <button
-                                onClick={() => (console.log('clic'))}
+                                onClick={() => navigate(`/viewBusiness/${sUserCitaFix['BUSSINESS_ID']}`)}
                                 class="fa-solid fa-plus"
                             >
                                 <ShareIcon width={40} />
