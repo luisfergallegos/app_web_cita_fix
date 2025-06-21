@@ -39,30 +39,6 @@ export function ViewBusiness() {
     };
     const [empresa, SetEmpresa] = useState([]);
 
-    const handleButtonIcon = async (e) => {
-        e.stopPropagation();
-        setIsOpen(true);
-        setIndexEmp(empresa);
-        try {
-            const response = await fetch(`${urlApi}getBusCalif?bussiness_id=${empresa['BUSSINESS_ID']}`);
-            const json = await response.json();
-            if (json['sucess']) {
-                setQualifications(json['data']);
-            }
-            else {
-                setQualifications([]);
-            }
-            if (!response.ok) {
-                console.log(`Error getting empresas.`);
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-
-        }
-        catch (e) {
-            return;
-        }
-    }
-
     const handleADDRESS = (e) => {
         e.stopPropagation();
         if (navigator.platform.indexOf('iPhone') !== -1 || navigator.platform.indexOf('iPad') !== -1 || navigator.platform.indexOf('iPod') !== -1) {

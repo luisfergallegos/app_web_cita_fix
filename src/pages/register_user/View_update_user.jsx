@@ -442,12 +442,7 @@ export function ViewUpdateUser() {
                         <div className="mt-4">
                             <label className="block text-sm text-red-600">Tu cuenta ha sido marcada para desactivarse temporalmente.</label>
                             <button className="mt-2 bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600"
-                                onClick={() => {
-                                    localStorage.removeItem("correo");
-                                    localStorage.removeItem("pwd");
-                                    window.open('https://www.plannersday.com/borrar-cuenta');
-                                    window.location.reload();
-                                }} >Confirmar</button>
+                                onClick={() => navigate("/deleteUser", { state: { userId: userRestApi.USER_ID } })} >Confirmar</button>
                         </div>
                     )}
                 </div>

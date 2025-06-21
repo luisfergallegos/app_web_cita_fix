@@ -23,6 +23,7 @@ import AddAppoinBusinesss, { AddAppoinBusinesssLoader } from './pages/appoinment
 import AddAppoinBusinesssAnon, { AddAppoinBusinesssAnonLoader } from './pages/appoinment/Add_appoin_business_anon.jsx';
 import UpdateAppoinBusiness, { UpdateAppoinLoader } from './pages/appoinment/Update_appoin_business.jsx';
 import ViewBusiness, { ViewBusinessLoader } from './pages/business/View_business.jsx';
+import DeleteUser, { DeleteUserLoader } from './pages/register_user/Delete_user.jsx';
 // Actions
 import { logoutAction } from "./actions/logout.js";
 
@@ -146,6 +147,13 @@ const router = createBrowserRouter([
         path: "viewBusiness/:id",
         element: <ViewBusiness />,
         loader: ViewBusinessLoader,
+        /*action: expensesAction, */
+        errorElement: <Error />
+      },
+      {
+        path: "deleteUser",
+        element: <DeleteUser />,
+        loader: DeleteUserLoader,
         /*action: expensesAction, */
         errorElement: <Error />
       },

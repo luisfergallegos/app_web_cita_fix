@@ -370,7 +370,6 @@ export function AddAppoin() {
                     {
                         PHOTO == null ? <img className="w-40 h-40 object-cover rounded-full border mt-8 bg-gray-300" src={Store} />:
                             <img className="w-40 h-40 object-cover rounded-full border mt-8" src={'data:image/jpeg;base64,' + arrayBufferToBase64(PHOTO.data)} />
-                     
                         }
                 </div>
                 <div>
@@ -387,7 +386,6 @@ export function AddAppoin() {
                         <PhoneIcon className='w-8 h-8 md:w-10 md:h-10 lg:w-10 lg:h-10 mx-4 text-orange-500' />
                         <div>
                             { phone != '' ? <p className='text-gray-400'>{phone}</p> : <p className='text-gray-400'>Sin información de contacto</p> }  
-                            
                         </div>
                     </div>
                     <div className='flex justify-start items-center ms-4'>
