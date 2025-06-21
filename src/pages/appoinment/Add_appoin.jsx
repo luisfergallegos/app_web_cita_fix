@@ -9,7 +9,7 @@ import Store from "../../assets/business.png";
 import Loaging from '../../components/Loading.jsx';
 import { urlApi } from "../../styles/Constants.jsx";
 // Library
-import { MapPinIcon, PhoneIcon, CalendarDaysIcon, CalendarDateRangeIcon } from '@heroicons/react/24/solid';
+import { MapPinIcon, PhoneIcon, CalendarDaysIcon, CalendarDateRangeIcon, XMarkIcon as CloseIcon } from '@heroicons/react/24/solid';
 import DatePicker from 'react-datepicker';
 import "react-datepicker/dist/react-datepicker.css";
 //import moment from 'moment';
@@ -365,61 +365,53 @@ export function AddAppoin() {
 
     return (
         <div className="min-h-screen grid items-center justify-center bg-gradient-to-br from-orange-600 to-orange-800 px-4">
-        <div className="bg-white rounded-3xl shadow-xl mt-10 mb-10 animate-fade-in-up">
-            <div className='businessTitleContainer'>
-                <div className='businessTitleContainer--Name'>
-                    <h4>{DORSL}</h4>
-                    <p >{CATEGORY}</p>
-                </div>
-                <div >
+            <div className="bg-white rounded-3xl shadow-xl mt-5 mb-10 text-center animate-fade-in-up">
+                <div className="flex justify-center mb-4">
                     {
-                        PHOTO === null ? <img id='store' src={Store} /> :
-                            <img src={'data:image/jpeg;base64,' + arrayBufferToBase64(PHOTO.data)} />
+                        PHOTO === null ? <img className="w-40 h-40 object-cover rounded-full border mt-8" src={Store} /> :
+                            <img className="w-40 h-40 object-cover rounded-full border mt-8" src={'data:image/jpeg;base64,' + arrayBufferToBase64(PHOTO.data)} />
                     }
                 </div>
-            </div>
-
-            <div className='businessSubTitle'>
-                <div className='businessSubTitleContainer'>
-                    <div className='businessSubTitleIcon'>
-                        <MapPinIcon />
-                    </div>
-                    <p>{ADDRESS_FIRST} {ADDRESS_SECOND} CP {POSTAL_CODE} {CITY}, {STATE}</p>
-                </div>
-
-                {phone &&
-                    <div className='businessSubTitleContainer'>
-                        <div className='businessSubTitleIcon'>
-                            <PhoneIcon />
+                <div>
+                    <h4 className='text-2xl font-bold text-black mb-1'>{DORSL}</h4>
+                    <p className='w-full text-gray-400 mb-4'>{CATEGORY}</p>
+                    <div className='flex justify-start rmal items-center ms-4'>
+                        <MapPinIcon className='w-8 h-8 md:w-10 md:h-10 lg:w-10 lg:h-10 mx-4 text-orange-500' />
+                        <div className='text-left'>
+                            <p className='text-gray-400'>{ADDRESS_FIRST} {ADDRESS_SECOND} CP {POSTAL_CODE}</p>
+                            <p className='text-gray-400'>{CITY}, {STATE}</p>
                         </div>
-                        <p>{phone}</p>
                     </div>
-                }
-
-                <div className='businessSubTitleContainer'>
-                    <div className='businessSubTitleIcon'>
-                        <CalendarDaysIcon />
+                    {phone && <div className='flex justify-start items-center ms-4'>
+                        <PhoneIcon className='w-8 h-8 md:w-10 md:h-10 lg:w-10 lg:h-10 mx-4 text-orange-500' />
+                        <div>
+                            <p className='text-gray-400'>{phone}</p>
+                        </div>
+                    </div>}
+                    <div className='flex justify-start items-center ms-4'>
+                        <CalendarDaysIcon className='w-8 h-8 md:w-10 md:h-10 lg:w-10 lg:h-10 mx-4 text-orange-500' />
+                        <div>
+                            <p className='text-gray-400'>{Horario}</p>
+                        </div>
                     </div>
-                    <p>{Horario}</p>
                 </div>
-            </div>
-
-            <div className='businessContainer_Divider'></div>
-            <div className='businessTitle'>
-                <h4>Información de contacto</h4>
-                <p>{location.state.userName}</p>
-            </div>
-            <div className='businessContainer_Divider'></div>
-            <div className='businessTitle'>
-                <h4>Agendar</h4>
-            </div>
-            <div className='businessSubTitle'>
-                <div className='businessSubTitleContainer'>
-                    <div className='businessSubTitleIcon'>
-                        <CalendarDateRangeIcon />
+                <hr className="mb-4 mt-4" />
+                <div className='businessTitle'>
+                    <h4>Información de contacto</h4>
+                    <div className='flex justify-start items-center ms-4 mt-4'>                        
+                        <div>
+                            <p className='text-black'>{location.state.userName}</p>
+                        </div>
                     </div>
+                </div>
+                <hr className="mb-4 mt-4" />
+                <div className='businessTitle'>
+                    <h4>Agendar</h4>
+                </div>
+                <div className='flex justify-start items-center ms-4 mt-4'>
+                    <CalendarDateRangeIcon className='w-8 h-8 md:w-10 md:h-10 lg:w-10 lg:h-10 mx-4 text-orange-500' />
                     <div>
-                        <DatePicker
+                        <DatePicker className='text-gray-400'
                             dateFormat="dd/MM/yyyy"
                             excludeDates={_excludeDates}
                             selected={startDate}
@@ -429,99 +421,108 @@ export function AddAppoin() {
                             customInput={<ExampleCustomInput className="example-custom-input" />}
                         />
                     </div>
-                </div>
-            </div>
-            <div className='businessAppointmentTimeContainer' >
-                {cita[0] &&
-                    cita[0].map(({ APPOINTMENT_TIME, STATUS }, index) =>
-                    (
-                        <div className={STATUS === 'No' ? 'businessAppointmentTime active' : 'businessAppointmentTime'}
-                            key={index}
-                            style={{
-                                backgroundColor: index === selectedIndex ? 'white' : STATUS === 'No' ? 'grey' : '#e0e0e0',
-                                color: index === selectedIndex ? '#fc6500' : 'black'
-                            }}
-                            onClick={() => {
-                                if (STATUS === 'free') {
-                                    setselectedTime(APPOINTMENT_TIME);
-                                    setselectedIndex(index);
-                                }
-                            }}  >
-                            <label>{APPOINTMENT_TIME} </label>
-                        </div>
-                    ))
-                }
-            </div>
 
-            <div className='businessContainer_Divider'></div>
-
-            <div className='businessTitle'>
-                <div style={{ display: 'flex', justifyItems: 'center', alignItems: 'center', marginRight: '20px' }}>
-                    <h4 style={{ marginRight: '20px' }}>{bMostrarAddress ? '¿Cuál es la dirección?' : 'Visita a domicilio'}</h4>
-                    <label className="switch">
-                        <input type="checkbox" onClick={ModMostrarAddres} />
-                        <span class="slider round"></span>
-                    </label>
                 </div>
-                <div className={bMostrarAddress ? 'businessContainer_Address' : 'businessContainer_Address active'} >
-                    <div className='AddressForm-group'>
-                        <label>Código postal</label>
-                        <input type="text" placeholder='Código postal' maxLength={5} onChange={getCodigoPostal} />
-                    </div>
-                    <div className='AddressForm-group'>
-                        <label>Estado</label>
-                        <input type="text" placeholder='Estado' value={estado} disabled />
-                    </div>
-                    <div className='AddressForm-group'>
-                        <label>Municipio/Ciudad</label>
-                        <input type="text" placeholder='Municipio/Ciudad' value={ciudad} disabled />
-                    </div>
-                    <div className='AddressForm-group'>
-                        <label>Colonia</label>
-                        <input list="optionsList" type="text" placeholder='Colonia'
-                            disabled={colonias.length == 0 ? true : false}
-                            onChange={handleChangeColonia} required ></input>
-                        <datalist id="optionsList">
-                            {colonias.map((option, index) => (
-                                <option key={index} value={option} />
-                            ))}
-                        </datalist>
-                    </div>
-                    <div className='AddressForm-group'>
-                        <label>Calle / Número externo</label>
-                        <input type="text" placeholder='Calle / Número externo'
-                            onChange={handleChange} />
-                    </div>
-                </div>
-            </div>
-            <div className='businessBtn'><button className='mb-10' onClick={() => {
-                if (selectedTime !== '') {
-                    setIsOpen(true);
-                }
-            }}>Guardar</button></div>
-            {
-                isOpen ?
-                    <>
-                        <div className="backdropDialog" ></div>
-                        <div className="dialogDialog">
-                            <h2>Confirmar</h2>
-                            <span>¿Deseas guardar tu cita?</span>
-                            <label>Motivo de la visita/Servicio</label>
-                            <textarea type="text" placeholder='Opcional' rows="4" cols="50" onChange={handleChangeMessage}></textarea>
-                            <div className='buttonDialog'>
-                                <button className='primaryBkg' onClick={() => { setIsOpen(false); setMessage(''); }}>Cancelar</button>
-                                <button className='secondBkg' onClick={() => {
-                                    _buildConfirm();
-                                }}>Confirmar</button>
+                <div className='businessAppointmentTimeContainer' >
+                    {cita[0] &&
+                        cita[0].map(({ APPOINTMENT_TIME, STATUS }, index) =>
+                        (
+                            <div className={STATUS === 'No' ? 'businessAppointmentTime active' : 'businessAppointmentTime'}
+                                key={index}
+                                style={{
+                                    backgroundColor: index === selectedIndex ? 'white' : STATUS === 'No' ? 'grey' : '#e0e0e0',
+                                    color: index === selectedIndex ? '#fc6500' : 'black'
+                                }}
+                                onClick={() => {
+                                    if (STATUS === 'free') {
+                                        setselectedTime(APPOINTMENT_TIME);
+                                        setselectedIndex(index);
+                                    }
+                                }}  >
+                                <label>{APPOINTMENT_TIME} </label>
                             </div>
+                        ))
+                    }
+                </div>
 
+                <hr className="mb-4 mt-4" />
+                <div className='businessTitle'>
+                    <div style={{ display: 'flex', justifyItems: 'center', alignItems: 'center', marginRight: '20px' }}>
+                        <h4 style={{ marginRight: '20px' }}>{bMostrarAddress ? '¿Cuál es la dirección?' : 'Visita a domicilio'}</h4>
+                        <label className="switch">
+                            <input type="checkbox" onClick={ModMostrarAddres} />
+                            <span class="slider round"></span>
+                        </label>
+                    </div>
+                    <div className={bMostrarAddress ? 'businessContainer_Address' : 'businessContainer_Address active'} >
+                        <div className='AddressForm-group'>
+                            <label>Código postal</label>
+                            <input type="text" placeholder='Código postal' maxLength={5} onChange={getCodigoPostal} />
+                        </div>
+                        <div className='AddressForm-group'>
+                            <label>Estado</label>
+                            <input type="text" placeholder='Estado' value={estado} disabled />
+                        </div>
+                        <div className='AddressForm-group'>
+                            <label>Municipio/Ciudad</label>
+                            <input type="text" placeholder='Municipio/Ciudad' value={ciudad} disabled />
+                        </div>
+                        <div className='AddressForm-group'>
+                            <label>Colonia</label>
+                            <input list="optionsList" type="text" placeholder='Colonia'
+                                disabled={colonias.length == 0 ? true : false}
+                                onChange={handleChangeColonia} required ></input>
+                            <datalist id="optionsList">
+                                {colonias.map((option, index) => (
+                                    <option key={index} value={option} />
+                                ))}
+                            </datalist>
+                        </div>
+                        <div className='AddressForm-group'>
+                            <label>Calle / Número externo</label>
+                            <input type="text" placeholder='Calle / Número externo'
+                                onChange={handleChange} />
+                        </div>
+                    </div>
+                </div>
+                <div className='businessBtn'>
+                    <button className='mb-10' onClick={() => {
+                        if (selectedTime !== '') {
+                            setIsOpen(true);
+                        }
+                    }}>Guardar</button>
+                </div>
+
+                {/* Modal */}
+                {isOpen && (
+                    <>
+                        <div className="fixed inset-0 bg-black bg-opacity-50 z-40"></div>
+                        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+                            <div className="bg-white rounded-2xl shadow-2xl max-w-lg w-full p-6 relative animate-fade-in-up">
+                                <button
+                                    onClick={() => setIsOpen(false)}
+                                    className="absolute top-3 right-3 text-gray-500 hover:text-orange-500"
+                                >
+                                    <CloseIcon className="w-5 h-5 text-gray-900" />
+                                </button>
+                                <h4 className="text-xl font-bold text-center text-black mb-1">Confirmar</h4>
+                                <p className="text-center text-yellow-500 mb-1">¿Deseas guardar tu cita?</p>
+                                <p className="text-center text-gray-500 mb-4">Motivo de la visita/Servicio</p>
+                                <hr className="mb-4" />
+                                <textarea type="text" className='w-full text-black border px-4 py-2 rounded-md' placeholder='Opcional' rows="4" cols="50" onChange={handleChangeMessage}></textarea>
+                                <div className='flex justify-end mt-2'>
+                                    <button className='bg-gray-500 text-white px-4 py-2 rounded-md hover:bg-gray-600 mx-2' onClick={() => { setIsOpen(false); setMessage(''); }}>Cancelar</button>
+                                    <button className='bg-orange-500 text-white px-4 py-2 rounded-md hover:bg-orange-600' onClick={() => {
+                                        _buildConfirm();
+                                    }}>Confirmar</button>
+                                </div>
+                            </div>
                         </div>
                     </>
-                    : null
-            }
-
+                )}
+            </div>
         </div>
-    </div>);
+    );
 }
 
 export default AddAppoin;

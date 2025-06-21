@@ -142,10 +142,9 @@
 
 
 .businessBtn {
-    display: block;
+    /* display: block;
     margin-top: 10px;
-    margin-left: 70px;
-
+    margin-left: 70px; */
 
     button {
         justify-content: center;
