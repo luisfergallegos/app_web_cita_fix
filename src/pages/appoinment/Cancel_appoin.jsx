@@ -154,7 +154,7 @@ export function CancelarAppoin() {
             <div className="bg-white rounded-3xl shadow-xl mt-5 mb-10 text-center animate-fade-in-up">
                 <div className="flex justify-center mb-4">
                     {
-                        cita.BUS_PHOTO === null ? <img className="w-40 h-40 object-cover rounded-full border mt-8" src={Store} /> :
+                        cita.BUS_PHOTO === null ? <img className="w-40 h-40 object-cover rounded-full border mt-8" src={User} /> :
                             <img className="w-40 h-40 object-cover rounded-full border mt-8" src={'data:image/jpeg;base64,' + arrayBufferToBase64(cita.BUS_PHOTO.data)} />
                     }
                 </div>

@@ -368,9 +368,10 @@ export function AddAppoin() {
             <div className="bg-white rounded-3xl shadow-xl mt-5 mb-10 text-center animate-fade-in-up">
                 <div className="flex justify-center mb-4">
                     {
-                        PHOTO === null ? <img className="w-40 h-40 object-cover rounded-full border mt-8" src={Store} /> :
+                        PHOTO == null ? <img className="w-40 h-40 object-cover rounded-full border mt-8 bg-gray-300" src={Store} />:
                             <img className="w-40 h-40 object-cover rounded-full border mt-8" src={'data:image/jpeg;base64,' + arrayBufferToBase64(PHOTO.data)} />
-                    }
+                     
+                        }
                 </div>
                 <div>
                     <h4 className='text-2xl font-bold text-black mb-1'>{DORSL}</h4>
