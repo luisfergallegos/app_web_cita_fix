@@ -94,13 +94,12 @@ export function CardBusiness({ key, userId, userName, empresa, setIsOpen, setInd
                     <p>{ADDRESS_FIRST}, {ADDRESS_SECOND}, {POSTAL_CODE} {CITY}, {STATE}, Mexico</p>
                 </div>
             </div>
-            {phone && <div className='CardContainer_Detalle'>
+             <div className='CardContainer_Detalle'>
                 <div className='CardContainer_DetalleIcon'>
                     <PhoneIcon className='w-8 h-8 md:w-10 md:h-10 lg:w-10 lg:h-10' />
                 </div>
-
-                {phone}
-            </div>}
+                { phone != '' ? <p>{phone}</p> : <p>Sin información de contacto</p> }               
+            </div>
 
             <div className='CardContainer_Detalle'>
                 <div className='CardContainer_DetalleIcon'>

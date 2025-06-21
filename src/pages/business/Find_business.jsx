@@ -220,13 +220,13 @@ export function FindBusiness() {
                         <p>Selecciona una opción para generar una cita al instante.</p>
                         <div className="mt-10">
                             <h3 className="text-lg font-semibold mb-4">Sugerencia para ti</h3>
-                            {empresas[0] && (
+                            {empresas[index] && (
                                 <div className="flex justify-center">
                                     <CardBusiness
-                                        key={empresas[0].BUSSINESS_ID}
+                                        key={empresas[index].BUSSINESS_ID}
                                         userId={userId}
                                         userName={userName}
-                                        empresa={empresas[0]}
+                                        empresa={empresas[index]}
                                         setIsOpen={setIsOpen}
                                         setIndexEmp={setIndexEmp}
                                         setQualifications={setQualifications}

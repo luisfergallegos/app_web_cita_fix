@@ -383,12 +383,13 @@ export function AddAppoin() {
                             <p className='text-gray-400'>{CITY}, {STATE}</p>
                         </div>
                     </div>
-                    {phone && <div className='flex justify-start items-center ms-4'>
+                    <div className='flex justify-start items-center ms-4'>
                         <PhoneIcon className='w-8 h-8 md:w-10 md:h-10 lg:w-10 lg:h-10 mx-4 text-orange-500' />
                         <div>
-                            <p className='text-gray-400'>{phone}</p>
+                            { phone != '' ? <p className='text-gray-400'>{phone}</p> : <p className='text-gray-400'>Sin información de contacto</p> }  
+                            
                         </div>
-                    </div>}
+                    </div>
                     <div className='flex justify-start items-center ms-4'>
                         <CalendarDaysIcon className='w-8 h-8 md:w-10 md:h-10 lg:w-10 lg:h-10 mx-4 text-orange-500' />
                         <div>
