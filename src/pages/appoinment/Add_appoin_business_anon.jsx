@@ -51,7 +51,9 @@ export function AddAppoinBusinesssAnon() {
     const [message, setMessage] = useState('');
     const [nombre, setNombre] = useState('');
     const [correo, setCorreo] = useState('');
+    const [phone, setPhone] = useState('');
     const [errorCorreo, setErrorCorreo] = useState('');
+    const [errorPhone, setErrorPhone] = useState('');
 
     const [loading, setLoading] = useState(true);
     const [isOpen, setIsOpen] = useState(false);
@@ -62,6 +64,9 @@ export function AddAppoinBusinesssAnon() {
     var _today = new Date();
     const initialDate = new Date(_today);
     const lastDate = new Date(_today.setDate(_today.getDate() + 31));
+    const [bSwitchPhoneEmail, setbSwitchPhoneEmail] = useState(false);
+    const [showAlert, setShowAlert] = useState(false);
+    const [errorMsg, setErrorMsg] = useState('');
 
     const ExampleCustomInput = forwardRef(
         ({ onClick, className }, ref) => (
@@ -85,11 +90,15 @@ export function AddAppoinBusinesssAnon() {
         setcita(tempcita);
     }
 
+    const ModSwitchPhoneEmail = () => {
+        setbSwitchPhoneEmail(!bSwitchPhoneEmail);
+    };
+
     const _buildConfirm = async () => {
         if (selectedTime !== '') {
             if (bAcceder) {
                 setbAcceder(false);
-                var anonimo = `${nombre},${correo}`;
+                var anonimo = bSwitchPhoneEmail ? `${nombre},+52 ${phone}` : `${nombre},${correo}`;
                 var dateFormat = startDate.getMonth() + 1;
                 var _selectedDate = `${startDate.getFullYear()}-${('0' + dateFormat).slice(-2)}-${startDate.getDate()}`;
                 //Enviar por POST
@@ -111,7 +120,8 @@ export function AddAppoinBusinesssAnon() {
                         })
                 }
                 try {
-                    const response = await fetch(`${urlApi}appoin`, options);
+                    var url = bSwitchPhoneEmail ? `${urlApi}appoinW` : `${urlApi}appoin`;
+                    const response = await fetch(url, options);
                     const json = await response.json();
                     if (json['sucess'] == false) {
                         setIsOpen(false);
@@ -149,12 +159,27 @@ export function AddAppoinBusinesssAnon() {
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (!emailRegex.test(value)) {
             setErrorCorreo('Correo electrónico inválido.');
+            setCorreo(value);
             return;
-        }else{
+        } else {
             setErrorCorreo('');
             setCorreo(value);
         }
-        
+
+    };
+
+    const handleChangePhone = evt => {
+        const value = evt.target.value;
+        const isValidPhone = value.replace(/\D/g, '');
+        if (isValidPhone.length != 10) {
+            setPhone(isValidPhone);
+            setErrorPhone('Número de teléfono inválido.');
+            return;
+        }
+        else {
+            setPhone(`(${value.slice(0, 3)}) ${value.slice(3, 6)}-${value.slice(6, 10)}`);
+            setErrorPhone('');
+        }
     };
 
     useEffect(() => {
@@ -204,6 +229,12 @@ export function AddAppoinBusinesssAnon() {
 
     return (
         <div className="AddAppoinContainer">
+            {/* Alerta centrada */}
+            {showAlert && (
+                <div className="absolute top-6 bg-red-600 text-white px-6 py-3 rounded-lg shadow-lg text-sm animate-bounce z-50">
+                    {errorMsg}
+                </div>
+            )}
             <div className='businessTitleContainer'>
                 <div className='businessTitleContainer--Name'>
                     <h4>Usuario no registrado.</h4>
@@ -223,10 +254,36 @@ export function AddAppoinBusinesssAnon() {
                         <input type="text" placeholder='Ingresa el nombre' onChange={handleChangeName} required />
                     </div>
                     <div className='AddressForm-group'>
-                        <input type="email" placeholder='Correo electrónico' onChange={handleChangeEmail} required />
-                        { errorCorreo != '' ? <label htmlFor="" style={{color:'red'}}>{errorCorreo}</label>: <></> }
+                        <div style={{ display: 'flex', justifyItems: 'center', alignItems: 'center', marginRight: '20px' }}>
+                            <h4 style={{ marginRight: '20px' }}>{bSwitchPhoneEmail ? '¿Cuál es el número de teléfono?' : '¿Cuál es el correo electrónico?'}</h4>
+                            <label className="switch">
+                                <input type="checkbox" onClick={ModSwitchPhoneEmail} />
+                                <span class="slider round"></span>
+                            </label>
+                        </div>
                     </div>
-                    <span>En este correo electrónico recibirá un recordatorio de su vista.</span>
+
+
+                    {bSwitchPhoneEmail ?
+                        <div className='AddressForm-group'>
+                            <input type="tel" placeholder="Número de teléfono" value={phone} onChange={handleChangePhone} required />
+                            {errorPhone != '' ? <label htmlFor="" style={{ color: 'red' }}>{errorPhone}</label> : <></>}
+                            <span>En este número de teléfono recibirá un recordatorio de su vista.</span>
+                        </div> :
+                        <></>
+                    }
+
+                    {!bSwitchPhoneEmail ?
+                        <div className='AddressForm-group'>
+                            <input type="email" placeholder='Correo electrónico' value={correo} onChange={handleChangeEmail} required />
+                            {errorCorreo != '' ? <label htmlFor="" style={{ color: 'red' }}>{errorCorreo}</label> : <></>}
+                            <span>En este correo electrónico recibirá un recordatorio de su vista.</span>
+                        </div>
+                        :
+                        <></>
+                    }
+
+
                 </div>
 
 
@@ -277,6 +334,21 @@ export function AddAppoinBusinesssAnon() {
 
             <div className='businessBtn'><button onClick={() => {
                 if (selectedTime !== '') {
+                    if (bSwitchPhoneEmail) {
+                        if (!nombre || !phone) {
+                            setErrorMsg('Completa todos los campos.');
+                            setShowAlert(true);
+                            setTimeout(() => setShowAlert(false), 3000); // ocultar alerta
+                            return;
+                        }
+                    } else {
+                        if (!nombre || !correo) {
+                            setErrorMsg('Completa todos los campos.');
+                            setShowAlert(true);
+                            setTimeout(() => setShowAlert(false), 3000); // ocultar alerta
+                            return;
+                        }
+                    }
                     setIsOpen(true);
                 }
             }}>Guardar</button></div>

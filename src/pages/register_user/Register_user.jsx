@@ -12,9 +12,9 @@ import { fetchData } from "../../Wrapper";
 
 // loader
 export function registerUserLoader() {
-    const sCorreo = fetchData("correo");
-    const sPassword = fetchData("pwd");
-    return { sCorreo, sPassword };
+  const sCorreo = fetchData("correo");
+  const sPassword = fetchData("pwd");
+  return { sCorreo, sPassword };
 }
 
 export default function RegisterUser() {
@@ -24,6 +24,7 @@ export default function RegisterUser() {
   const [userPass, setUserPass] = useState('');
   const [userName, setUserName] = useState('');
   const [userLastName, setUserLastName] = useState('');
+  const [userPhone, setUserPhone] = useState('');
   const [errorMsg, setErrorMsg] = useState('');
   const [showAlert, setShowAlert] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
@@ -33,7 +34,7 @@ export default function RegisterUser() {
   const validateAndRegister = async (e) => {
     e.preventDefault();
 
-    if (!userName || !userLastName || !userEmail || !userPass) {
+    if (!userName || !userLastName || !userEmail || !userPhone || !userPass) {
       setErrorMsg('Completa todos los campos.');
       setShowAlert(true);
       setTimeout(() => setShowAlert(false), 3000); // ocultar alerta
@@ -43,6 +44,14 @@ export default function RegisterUser() {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(userEmail)) {
       setErrorMsg('Correo electrónico inválido.');
+      setShowAlert(true);
+      setTimeout(() => setShowAlert(false), 3000); // ocultar alerta
+      return;
+    }
+
+    const isValidPhone = userPhone.replace(/\D/g, '');
+    if (isValidPhone.length != 10) {
+      setErrorMsg('Número de teléfono inválido.');
       setShowAlert(true);
       setTimeout(() => setShowAlert(false), 3000); // ocultar alerta
       return;
@@ -66,7 +75,8 @@ export default function RegisterUser() {
           'last_name': userLastName,
           'firebase_id': 'Web',
           'session_type': 'user',
-          'password': userPass
+          'password': userPass,
+          "phone": `+52 ${userPhone}`,
         })
     }
     try {
@@ -76,11 +86,11 @@ export default function RegisterUser() {
         setShowAlert(true);
         setTimeout(() => setShowAlert(false), 3000); // ocultar alerta
       }
-      else if (response.status == 200) {          
-          setshowAlertConfirmation(true);
-          setTimeout(() => setshowAlertConfirmation(false), 3000); // ocultar alerta
-          navigate('/', { replace: true });
-        }
+      else if (response.status == 200) {
+        setshowAlertConfirmation(true);
+        setTimeout(() => setshowAlertConfirmation(false), 3000); // ocultar alerta
+        navigate('/', { replace: true });
+      }
 
     }
     catch (e) {
@@ -137,6 +147,23 @@ export default function RegisterUser() {
               placeholder="Correo electrónico"
               className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-orange-500 focus:outline-none"
               onChange={(e) => setUserEmail(e.target.value)}
+            />
+            <input
+              type="tel"
+              placeholder="Número de teléfono"
+              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-orange-500 focus:outline-none"
+              value={userPhone}
+              onChange={(e) => {
+                const isValidPhone = e.target.value.replace(/\D/g, '');
+                if (isValidPhone.length != 10) {
+                  setUserPhone(isValidPhone);
+                }
+                else {
+                  setUserPhone(`(${e.target.value.slice(0, 3)}) ${e.target.value.slice(3, 6)}-${e.target.value.slice(6, 10)}`);
+                }
+
+              }
+              }
             />
 
             {/* Campo de contraseña con icono */}
