@@ -25,9 +25,12 @@ export function RegisterBusiness() {
     const [sName, setName] = useState('');
     const [sNameError, setsNameError] = useState();
     const [categorias, setCategorias] = useState([]);
-    const [categoriaId, setCategoriaId] = useState('');
+    const [subCategorias, setsubCategorias] = useState([]);
+    const [categoriaId, setSubCategoriaId] = useState('');
     const [sCategoriaName, setCategoriaName] = useState('');
     const [sCategoriaNameError, setCategoriaNameError] = useState();
+    const [sSubCategoriaName, setSubCategoriaName] = useState('');
+    const [sSubCategoriaNameError, setSubCategoriaNameError] = useState();
     const [codigoPostal, setCodigoPostal] = useState('');
     const [estado, setEstado] = useState();
     const [ciudad, setCiudad] = useState();
@@ -50,15 +53,23 @@ export function RegisterBusiness() {
 
         //ValidateCategoria
         if (sCategoriaName === "") {
-            setCategoriaNameError("Ingresa tu categoría comercial");
+            setCategoriaNameError("Ingresa un giro de empresa");
+            return;
+        } else {
+            setCategoriaNameError("");
+        }
+
+        //ValidateSubCategoria
+        if (sSubCategoriaName === "") {
+            setSubCategoriaNameError("Ingresa tu categoría comercial");
             return;
         }
         else {
-            setCategoriaNameError("");
-            for (var filName in categorias) {
-                if (categorias[filName].NAME.toLowerCase() == sCategoriaName.toLowerCase()) {
-                    setCategoriaName(categorias[filName].NAME);
-                    setCategoriaId(categorias[filName].BUSSINESS_BRANCH_ID);
+            setSubCategoriaNameError("");
+            for (var filName in subCategorias) {
+                if (subCategorias[filName].subname.toLowerCase() == sSubCategoriaName.toLowerCase()) {
+                    setSubCategoriaName(subCategorias[filName].subname);
+                    setSubCategoriaId(subCategorias[filName].id);
                 }
             }
         }
@@ -170,6 +181,17 @@ export function RegisterBusiness() {
     const handleChangeCategoria = evt => {
         const value = evt.target.value;
         setCategoriaName(value);
+        for (var filName in categorias) {
+                if (categorias[filName].name.toLowerCase() == value.toLowerCase()) {
+                    setsubCategorias(categorias[filName].subcategoria);
+                }
+            }
+
+    };
+
+    const handleChangeSubCategoria = evt => {
+        const value = evt.target.value;
+        setSubCategoriaName(value);
     };
 
     const handleChangeColonia = evt => {
@@ -214,7 +236,25 @@ export function RegisterBusiness() {
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
                 const json = await response.json();
-                setCategorias(json['data']);
+                var tempCategoria = [];
+                for (const key in json['data']) {
+                    if (json['data'].hasOwnProperty(key)) {
+                        const element = json['data'][key];
+                        const values = Object.values(element.subcategoria);
+                        var tempSub = [];
+                        values.map((subCat) => {
+                            tempSub.push({
+                                id: subCat.id,
+                                subname: subCat.subname ?? ''
+                            });
+                        });
+                        tempCategoria.push({
+                            name: element.name,
+                            subcategoria: tempSub
+                        });
+                    }
+                }
+                setCategorias(tempCategoria);
                 setLoading(false);
             }
             catch (e) {
@@ -246,15 +286,26 @@ export function RegisterBusiness() {
                         {sNameError ? <label className='errorlabel' name="userNameError">{sNameError}</label> : <></>}
                     </div>
                     <div className="registerForm-group text-black">
-                        <label>Elige la categoría que describa mejor tu empresa</label>
+                        <label>Elige el giro de tu empresa</label>
                         {/*  <input type="text" name="sCategoriaName" placeholder="Categoría comercial" required onChange={(e) => setCategoriaName(e.target.value)} /> */}
-                        <input list="optionsListCat" type="text" placeholder='Categoría comercial' onChange={handleChangeCategoria} required ></input>
+                        <input list="optionsListCat" type="text" placeholder='Giro de empresa' onChange={handleChangeCategoria} required ></input>
                         <datalist id="optionsListCat">
                             {categorias.map((option, index) => (
-                                <option key={index} value={option['NAME']} />
+                                <option key={index} value={option.name} />
                             ))}
                         </datalist>
                         {sCategoriaNameError ? <label className='errorlabel' name="sCategoriaNameError"> {sCategoriaNameError}</label> : <></>}
+                    </div>
+                    <div className="registerForm-group text-black">
+                        <label>Elige la categoría que describa mejor tu empresa</label>
+                        {/*  <input type="text" name="sCategoriaName" placeholder="Categoría comercial" required onChange={(e) => setCategoriaName(e.target.value)} /> */}
+                        <input list="optionsListSubCat" type="text" placeholder='Categoría comercial' onChange={handleChangeSubCategoria} required ></input>
+                        <datalist id="optionsListSubCat">
+                            {subCategorias.map((option, index) => (
+                                <option key={index} value={option.subname} />
+                            ))}
+                        </datalist>
+                        {sSubCategoriaNameError ? <label className='errorlabel' name="sSubCategoriaNameError"> {sSubCategoriaNameError}</label> : <></>}
                     </div>
                     <div className="registerForm-group text-black">
                         <label>Código postal</label>
