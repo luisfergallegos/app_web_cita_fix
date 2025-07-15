@@ -91,7 +91,7 @@ export function FindBusiness() {
         } else {
             const results = empresas.filter((emp) =>
                 emp.DORSL.toLowerCase().includes(value.toLowerCase()) ||
-                emp.CATEGORY.toLowerCase().includes(value.toLowerCase())
+                emp.SUBCATEGORY.toLowerCase().includes(value.toLowerCase())
             );
             setFilteredNames(results);
         }
@@ -262,7 +262,7 @@ export function FindBusiness() {
                                 </div>
                                 <h4 className="text-xl font-bold text-center mb-1">{indexEmp.DORSL}</h4>
                                 <p className="text-center text-yellow-500 mb-1">{StarRating(indexEmp.SERVICE_LEVEL)}</p>
-                                <p className="text-center text-gray-500 mb-4">{indexEmp.CATEGORY}</p>
+                                <p className="text-center text-gray-500 mb-4">{indexEmp.SUBCATEGORY}</p>
                                 <hr className="mb-4" />
                                 <div>
                                     <h5 className="text-sm font-semibold mb-2">Calificaciones</h5>

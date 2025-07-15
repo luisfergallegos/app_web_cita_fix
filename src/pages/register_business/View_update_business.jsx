@@ -42,8 +42,10 @@ export function ViewUpdateBusiness() {
     const [direccionUno, setDireccionUno] = useState('');
     const [name, setName] = useState();
     const [categorias, setCategorias] = useState([]);
+    const [subCategorias, setsubCategorias] = useState([]);
     const [categoriaId, setCategoriaId] = useState('');
     const [sCategoriaName, setCategoriaName] = useState('');
+    const [sSubCategoriaName, setSubCategoriaName] = useState('');
 
     const [showAlertConfirmation, setshowAlertConfirmation] = useState(false);
 
@@ -84,8 +86,8 @@ export function ViewUpdateBusiness() {
                     localStorage.setItem("dorsl", JSON.stringify(name));
                     setshowAlertConfirmation(true);
                     setTimeout(() => setshowAlertConfirmation(false), 3000); // ocultar alerta
-                    setTimeout(() => window.location.reload(), 3000); 
-                    
+                    setTimeout(() => window.location.reload(), 3000);
+
                 }
                 else {
                     console.log(`No se pudo actulizar informacion de la empresa`);
@@ -128,7 +130,7 @@ export function ViewUpdateBusiness() {
                 if (json['sucess']) {
                     setshowAlertConfirmation(true);
                     setTimeout(() => setshowAlertConfirmation(false), 3000); // ocultar alerta
-                    setTimeout(() => window.location.reload(), 3000); 
+                    setTimeout(() => window.location.reload(), 3000);
                 }
                 else {
                     console.log(`No se pudo actulizar informacion de la empresa`);
@@ -179,7 +181,7 @@ export function ViewUpdateBusiness() {
                 if (json['sucess']) {
                     setshowAlertConfirmation(true);
                     setTimeout(() => setshowAlertConfirmation(false), 3000); // ocultar alerta
-                    setTimeout(() => window.location.reload(), 3000); 
+                    setTimeout(() => window.location.reload(), 3000);
                 }
                 else {
                     console.log(`No se pudo actulizar informacion de la empresa`);
@@ -273,12 +275,23 @@ export function ViewUpdateBusiness() {
     const handleChangeCategoria = evt => {
         const value = evt.target.value;
         setCategoriaName(value);
+        for (var filName in categorias) {
+            if (categorias[filName].name.toLowerCase() == value.toLowerCase()) {
+                setsubCategorias(categorias[filName].subcategoria);
+            }
+        }
+    };
+
+    const handleChangeSubCategoria = evt => {
+        const value = evt.target.value;
+        setSubCategoriaName(value);
     };
 
     const searchIdCategoria = () => {
-        for (var filName in categorias) {
-            if (categorias[filName].NAME.toLowerCase() == sCategoriaName.toLowerCase()) {
-                return categorias[filName].BUSSINESS_BRANCH_ID
+        for (var filName in subCategorias) {
+            if (subCategorias[filName].subname.toLowerCase() == sSubCategoriaName.toLowerCase()) {
+                setSubCategoriaName(subCategorias[filName].subname);
+                setCategoriaId(subCategorias[filName].id);
             }
         }
     }
@@ -293,6 +306,7 @@ export function ViewUpdateBusiness() {
                     setBussiness(json['data']);
                     setName(json['data']['DORSL']);
                     setCategoriaName(json['data']['CATEGORY']);
+                    setSubCategoriaName(json['data']['SUBCATEGORY']);
                     setCategoriaId(json['data']['BUSSINESS_BRANCH_ID']);
                     setDireccionUno(json['data']['ADDRESS_FIRST']);
                     setDireccionDos(json['data']['ADDRESS_SECOND']);
@@ -314,7 +328,25 @@ export function ViewUpdateBusiness() {
                                     throw new Error(`HTTP error! status: ${response.status}`);
                                 }
                                 const json = await response.json();
-                                setCategorias(json['data']);
+                                var tempCategoria = [];
+                                for (const key in json['data']) {
+                                    if (json['data'].hasOwnProperty(key)) {
+                                        const element = json['data'][key];
+                                        const values = Object.values(element.subcategoria);
+                                        var tempSub = [];
+                                        values.map((subCat) => {
+                                            tempSub.push({
+                                                id: subCat.id,
+                                                subname: subCat.subname ?? ''
+                                            });
+                                        });
+                                        tempCategoria.push({
+                                            name: element.name,
+                                            subcategoria: tempSub
+                                        });
+                                    }
+                                }
+                                setCategorias(tempCategoria);
                                 setLoading(false);
                             }
                             catch (e) {
@@ -392,11 +424,20 @@ export function ViewUpdateBusiness() {
                 </div>
                 <div className={categoriaGroup ? 'nameGroup active' : 'nameGroup'}>
                     <div className='GroupLabel'>
-                        <label>Categoría comercial</label>
-                        <input list="optionsListCat" type="text" placeholder='Elige la categoría que describa mejor tu empresa' value={sCategoriaName} onChange={handleChangeCategoria} required />
+                        <label>Giro de tu empresa</label>
+                        <input list="optionsListCat" type="text" placeholder='Giro de empresa'
+                            value={sCategoriaName} onChange={handleChangeCategoria} required ></input>
                         <datalist id="optionsListCat">
                             {categorias.map((option, index) => (
-                                <option key={index} value={option['NAME']} />
+                                <option key={index} value={option.name} />
+                            ))}
+                        </datalist>
+                        <label>Categoría comercial</label>
+                        <input list="optionsListSubCat" type="text" placeholder='Categoría comercial'
+                            value={sSubCategoriaName} onChange={handleChangeSubCategoria} required ></input>
+                        <datalist id="optionsListSubCat">
+                            {subCategorias.map((option, index) => (
+                                <option key={index} value={option.subname} />
                             ))}
                         </datalist>
                         <span>Esto ayuda a que los clientes te encuentren si están buscando una empresa como la tuya.</span>

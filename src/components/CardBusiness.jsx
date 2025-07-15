@@ -29,7 +29,7 @@ export function CardBusiness({ key, userId, userName, empresa, setIsOpen, setInd
         return btoa(binary);
     };
 
-    const { BUSSINESS_ID, USER_ID, DORSL, PHOTO, CATEGORY, SERVICE_LEVEL,
+    const { BUSSINESS_ID, USER_ID, DORSL, PHOTO, SUBCATEGORY, SERVICE_LEVEL,
         ADDRESS_FIRST, ADDRESS_SECOND, POSTAL_CODE, CITY, STATE,
         phone, Horario } = empresa;
     //console.log(PHOTO.data);
@@ -82,7 +82,7 @@ export function CardBusiness({ key, userId, userName, empresa, setIsOpen, setInd
             </div>
             <div className='CardContainer_Titulo'>
                 <h4><b>{DORSL}</b></h4>
-                <p className='eighth'>{CATEGORY}</p>
+                <p className='eighth'>{SUBCATEGORY}</p>
                 <p>{StarRating(SERVICE_LEVEL)}</p>
             </div>
             <div className='CardContainer_Divider' ></div>
