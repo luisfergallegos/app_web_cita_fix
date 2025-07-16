@@ -255,7 +255,7 @@ export function AddAppoinBusinesssAnon() {
                     </div>
                     <div className='AddressForm-group'>
                         <div style={{ display: 'flex', justifyItems: 'center', alignItems: 'center', marginRight: '20px' }}>
-                            <h4 style={{ marginRight: '20px' }}>{bSwitchPhoneEmail ? '¿Cuál es el número de teléfono?' : '¿Cuál es el correo electrónico?'}</h4>
+                            <h4 style={{ marginRight: '20px' }}>¿Deseas que sea por número de teléfono?</h4>
                             <label className="switch">
                                 <input type="checkbox" onClick={ModSwitchPhoneEmail} />
                                 <span class="slider round"></span>
@@ -266,6 +266,7 @@ export function AddAppoinBusinesssAnon() {
 
                     {bSwitchPhoneEmail ?
                         <div className='AddressForm-group'>
+                            <h4 style={{ marginRight: '20px' }}>{bSwitchPhoneEmail ? '¿Cuál es el número de teléfono?' : '¿Cuál es el correo electrónico?'}</h4>
                             <input type="tel" placeholder="Número de teléfono" value={phone} onChange={handleChangePhone} required />
                             {errorPhone != '' ? <label htmlFor="" style={{ color: 'red' }}>{errorPhone}</label> : <></>}
                             <span>En este número de teléfono recibirá un recordatorio de su vista.</span>
@@ -275,6 +276,7 @@ export function AddAppoinBusinesssAnon() {
 
                     {!bSwitchPhoneEmail ?
                         <div className='AddressForm-group'>
+                            <h4 style={{ marginRight: '20px' }}>{bSwitchPhoneEmail ? '¿Cuál es el número de teléfono?' : '¿Cuál es el correo electrónico?'}</h4>
                             <input type="email" placeholder='Correo electrónico' value={correo} onChange={handleChangeEmail} required />
                             {errorCorreo != '' ? <label htmlFor="" style={{ color: 'red' }}>{errorCorreo}</label> : <></>}
                             <span>En este correo electrónico recibirá un recordatorio de su vista.</span>

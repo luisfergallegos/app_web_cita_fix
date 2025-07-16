@@ -82,23 +82,29 @@ export function FindUser() {
 
 
     return (
-        <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-orange-600 to-orange-800 px-4">
-            <div className="bg-white rounded-3xl shadow-xl p-10 max-w-md w-full text-center animate-fade-in-up">
-                <div className="flex justify-center mb-4 relative">
+        <div className="min-h-screen bg-gradient-to-br from-orange-600 to-orange-800 px-4 py-10">
+            <div className="max-w-6xl mx-auto">
+                <h2 className="text-xl font-semibold">¿Estás en busca de un cliente?</h2>
+                {/* Buscador */}
+                <div className="relative mb-10">
+                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                        <MagnifyingGlassIcon className="h-5 w-5 text-gray-400" />
+                    </div>
                     <input
                         id='searchInput'
                         type="text"
+                        name="searchText"
+                        value={searchText}
                         onChange={handleChange}
-                        placeholder="Buscar ..."
-                        className="w-full p-2 border border-gray-300 rounded-lg bg-orange-600 text-white"
+                        placeholder="Buscar cliente..."
+                        className="w-full pl-10 pr-4 py-3 rounded-xl shadow-sm focus:ring-2 focus:ring-orange-400 outline-none text-gray-800 placeholder-gray-400"
                     />
-                    <div className='absolute inset-y-0 right-3 flex items-center text-white'>
-                        <MagnifyingGlassIcon className="w-5 h-5" />
-                    </div>
                 </div>
-                {
-                    searchText != '' ? (usuarios &&
-                        filteredNames.map((index) => (
+
+                {/* Resultados o sugerencias */}
+                {searchText !== "" ? (usuarios &&
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                        {filteredNames.map((index) => (
                             <div className="inline-flex bg-white p-4 border border-gray-300 rounded-md mb-2 scale-95 hover:scale-100"
                                 key={index.USER_ID}
                                 onClick={() => {
@@ -114,22 +120,21 @@ export function FindUser() {
                                     <p className="text-gray-400">{`${index.email.substring(0, index.email.indexOf("@") + 1)}..`}</p>
                                 </div>
                             </div>
-                        ))) :
-                        <div className='flex justify-center mb-4'>
-                            <button
-                                onClick={() => {
-                                    navigate("/addAppoinBusinessAnon", { state: { userId: sUserCitaFix['USER_ID'], businessId: sUserCitaFix['BUSSINESS_ID'], dorsl: sUserCitaFix['DORSL'] } });
-                                }
-                                }
-                                className="bg-orange-500 hover:bg-orange-600 text-white font-semibold px-5 py-2.5 rounded-md shadow-md transition inline-flex items-center me-2 "
-                            >
-                                <UserPlusIcon width={40} />
-                                Nuevo cliente
-                            </button>
+                        ))}
+                    </div>
+                ) : (
+                    <div className="text-center text-white space-y-4">
+                        <p>Selecciona una opción para generar una cita al instante.</p>
+                        <div className="mt-10">
+                            <h3 className="text-lg font-semibold mb-4">Sugerencia para ti</h3>
+                            
                         </div>
-                }
+                    </div>
+                )}
             </div>
         </div>
+        
+        
     );
 }
 

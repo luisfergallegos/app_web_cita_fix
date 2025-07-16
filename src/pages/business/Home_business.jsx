@@ -4,7 +4,7 @@ import { dateSpanish, fetchData } from "../../Wrapper.js";
 import { useEffect, useState } from "react";
 // assets
 import './Find_business.css';
-import { ChevronRightIcon, ShareIcon, UserCircleIcon, UserPlusIcon } from '@heroicons/react/24/solid';
+import { ChevronRightIcon, MagnifyingGlassPlusIcon, ShareIcon, UserCircleIcon, UserPlusIcon } from '@heroicons/react/24/solid';
 import Pagination from '../../components/Pagination.jsx';
 import Loaging from '../../components/Loading.jsx';
 import { urlApi } from "../../styles/Constants.jsx";
@@ -153,7 +153,7 @@ export function HomeBusiness() {
                     :
                     <div className="bg-white rounded-3xl shadow-xl p-10 max-w-2xl w-full text-center animate-fade-in-up">
                         <div className="space-y-4">
-                            <div className="mx-auto w-56" ><UserPlusIcon color='#fc6500' /></div>
+                            <div className="mx-auto w-56" ><MagnifyingGlassPlusIcon color='#fc6500' /></div>
                             <p className="text-gray-600">No olvides guardar tus citas!</p>
                             <p className="text-gray-600">Guarda tus proximas citas de manera fácil y al instante. </p>
                             <p className="text-gray-600 mb-4">Dirígete al buscador de cliente</p>
@@ -168,7 +168,33 @@ export function HomeBusiness() {
             }
             {
                 dorsl == '' ? <div></div> :
+                    <div class="fab-container4">
+                        <div class="button iconbutton">
+                            <button
+                                onClick={() => navigate("/addAppoinBusinessAnon", { state: { userId: sUserCitaFix['USER_ID'], businessId: sUserCitaFix['BUSSINESS_ID'], dorsl: sUserCitaFix['DORSL'] } })}
+                                class="fa-solid fa-plus"
+                            >
+                                <UserPlusIcon width={40} />
+                            </button>
+                        </div>
+                    </div>
+            }
+            {
+                dorsl == '' ? <div></div> :
                     <div class="fab-container3">
+                        <div class="button iconbutton">
+                            <button
+                                onClick={() => navigate("/findUser")}
+                                class="fa-solid fa-plus"
+                            >
+                                <MagnifyingGlassPlusIcon width={40} />
+                            </button>
+                        </div>
+                    </div>
+            }
+            {
+                dorsl == '' ? <div></div> :
+                    <div class="fab-container2">
                         <div class="button iconbutton">
                             <button
                                 onClick={() => navigate(`/viewBusiness/${sUserCitaFix['BUSSINESS_ID']}`)}
@@ -179,19 +205,7 @@ export function HomeBusiness() {
                         </div>
                     </div>
             }
-            {
-                dorsl == '' ? <div></div> :
-                    <div class="fab-container2">
-                        <div class="button iconbutton">
-                            <button
-                                onClick={() => navigate("/findUser")}
-                                class="fa-solid fa-plus"
-                            >
-                                <UserPlusIcon width={40} />
-                            </button>
-                        </div>
-                    </div>
-            }
+            
             {
                 dorsl == '' ? <div></div> :
                     <div class="fab-container">
