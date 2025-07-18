@@ -1,238 +1,44 @@
-// rrd imports
-import { NavLink, useNavigate, Form } from 'react-router-dom';
-import { fetchData } from "../Wrapper.js";
-// Library
-import { toast } from "react-toastify";
-import { ChevronRightIcon, UserCircleIcon, ChevronLeftIcon, 
-    BuildingStorefrontIcon, BellIcon, HomeIcon, 
-    MagnifyingGlassIcon, ArrowRightStartOnRectangleIcon
- } from '@heroicons/react/24/solid';
-// assents
-import MenuWhite from "../assets/menu_white.png";
-import User from "../assets/e.png";
-import logo from "../assets/icon_white.png";
-import './Sidebar.css';
+import { useState } from "react";
+import { HomeIcon, UserIcon, Cog6ToothIcon, ChevronDoubleRightIcon } from "@heroicons/react/24/solid";
+import { Link } from "react-router-dom";
 
-const sUserCitaFix = fetchData("UserCitaFix") ?? [];
-const bPhotoUser = fetchData("photoUser") ?? [];
+export default function Sidebar() {
+  const [open, setOpen] = useState(true);
 
-const linksArray = [
-    {
-        label: 'Home',
-        sublabel: '',
-        icon: <HomeIcon />,
-        to: "/home"
-    },
-    {
-        label:
-            (sUserCitaFix['first_name'] === "" || sUserCitaFix.length === 0
-                ? 'Agrega tu nombre'
-                : sUserCitaFix['first_name']),
-        sublabel: 'Ver tu perfil',
-        icon: (bPhotoUser['data'] === null || bPhotoUser.length === 0
-            ? <UserCircleIcon />
-            : <img src={User} width={50} height={50} />),
-        to: "viewUpdateUser"
-    },
-    {
-        label: (sUserCitaFix['DORSL'] === '' || sUserCitaFix.length === 0
-            ? 'Agrega tu empresa'
-            : sUserCitaFix['DORSL']),
-        sublabel: (sUserCitaFix['DORSL'] === '' ? '' : 'Ver tu empresa'),
-        icon: <BuildingStorefrontIcon />,
-        to: (sUserCitaFix['DORSL'] === '' || sUserCitaFix.length === 0
-            ? "registerBusiness"
-            : "viewUpdateBusiness") 
-    },
-    {
-        label: "Notificaiones",
-        sublabel: "Ver tus notificaciones",
-        icon: <BellIcon />,
-        to: "notification"
-    }
+  const toggleSidebar = () => setOpen(!open);
 
-];
+  return (
+    <aside
+      className={`h-screen bg-[#2c2c2c] text-white fixed top-0 left-0 transition-all duration-300 z-50 ${
+        open ? "w-64" : "w-16"
+      }`}
+    >
+      <div className="flex items-center justify-between px-4 py-4">
+        <h1 className={`text-xl font-bold text-orange-500 transition-all ${open ? "block" : "hidden"}`}>MiApp</h1>
+        <button onClick={toggleSidebar} className="text-orange-500">
+          <ChevronDoubleRightIcon className={`w-6 h-6 transform ${!open && "rotate-180"}`} />
+        </button>
+      </div>
 
-export function Sidebar({ sidebarOpen, setSidebarOpen }) {
-    const ModSidebaropen = () => {
-        setSidebarOpen(!sidebarOpen);
-    };
-    /* const onLogout=()=>{
-        // delete tha user
-        localStorage.removeItem("correo");
-        localStorage.removeItem("pwd");
-    } */
-    return (
-        <div className='SidebarContainer'>
-            {sidebarOpen ? <button id="sidebar" onClick={ModSidebaropen}>
-                <ChevronLeftIcon />
-            </button> : <button id="sidebar" onClick={ModSidebaropen}>
-                <ChevronRightIcon />
-            </button>}
-            <div className='Logocontent'>
-                <div className="imgcontent">
-                    {
-                        sidebarOpen ?
-                            <a className='OpenMenu' href="https://www.plannersday.com/"><img  id='logo' src={MenuWhite} /></a>
-                            : <img id='logo' src={logo} />
-                    }
-                </div>
-            </div>
-            <div className='Divider' ></div>
-            <div className='LinkContainer'>
-            <NavLink to='findBusiness'
-                        className={({ isActive }) => `Links${isActive ? ` active` : ``}`}>
-                        <div className="Linkicon"><MagnifyingGlassIcon/></div>
-                        <div >
-                            {sidebarOpen && <span>Buscar</span>}
-                            {sidebarOpen && <div className='LinkSubLabel'><span></span></div>}
-                        </div>
-                    </NavLink>
-            </div>
-            
-            <div className='Divider' ></div>
-            {linksArray.map(({ icon, label, to, sublabel }) => (
-                <div className="LinkContainer" key={label}>
-                    <NavLink to={to}
-                        className={({ isActive }) => `Links${isActive ? ` active` : ``}`}>
-                        <div className="Linkicon">{icon}</div>
-                        <div >
-                            {sidebarOpen && <span>{label}</span>}
-                            {sidebarOpen && <div className='LinkSubLabel'><span>{sublabel}</span></div>}
-                        </div>
-                    </NavLink>
-
-                </div>
-            ))}
-            <div className='Divider' ></div>
-            <div className="LogoutContainer">
-                <div className="Logouticon"><ArrowRightStartOnRectangleIcon/></div>
-                {sidebarOpen && <Form method="post" action="/logout" onSubmit={(event) => {
-                        if(!confirm("¿Desea cerrar sesión?")){
-                            event.preventDefault();
-                        }
-                    }}>
-                        <button type="submit" id="LogoutButton" >
-                            Cerrar sesión
-                        </button>
-                        
-                    </Form>}
-                {/* {sidebarOpen && <button id="LogoutButton" onClick={onLogout}>  Cerrar sesión </button>} */}
-            </div>
-            <div className='Divider' ></div>
-
-        </div>
-
-    );
+      <nav className="mt-4 space-y-2 px-2">
+        <SidebarItem to="/" icon={<HomeIcon className="w-6 h-6" />} label="Inicio" open={open} />
+        <SidebarItem to="/perfil" icon={<UserIcon className="w-6 h-6" />} label="Perfil" open={open} />
+        <SidebarItem to="/ajustes" icon={<Cog6ToothIcon className="w-6 h-6" />} label="Ajustes" open={open} />
+      </nav>
+    </aside>
+  );
 }
 
-export default Sidebar;
-// // rrd imports
-// import { NavLink, useNavigate } from 'react-router-dom';
-// import { fetchData } from "../Wrapper";
-// // Library
-// import { toast } from "react-toastify";
-// import { Bars3Icon, UserCircleIcon, XMarkIcon, BuildingStorefrontIcon, BellIcon } from '@heroicons/react/24/solid';
-
-// import './Sidebar.css';
-// // assents
-// import MenuWhite from "../assets/menu_white.png";
-// import Logout from "../assets/exit.png";
-// import User from "../assets/e.png";
-
-// const sUserCitaFix = fetchData("UserCitaFix") ?? [];
-// const bPhotoUser = fetchData("photoUser") ?? [];
-
-// const linksArray=[
-//     {
-//         label:
-//         (sUserCitaFix['first_name'] === "" || sUserCitaFix.length === 0
-//             ? 'Agrega tu nombre'
-//             : sUserCitaFix['first_name']),
-//         sublabel:'Ver tu perfil',
-//         icon:(bPhotoUser['data'] === null || bPhotoUser.length === 0
-//             ? <UserCircleIcon width={50} height={50}/>
-//             : <img src={User} width={50} height={50}/> ) ,
-//         to:"viewUpdateUser"
-//     },
-//     {
-//         label: (sUserCitaFix['DORSL'] === '' || sUserCitaFix.length === 0
-//             ? 'Agrega tu empresa'
-//             : sUserCitaFix['DORSL']),
-//         sublabel:(sUserCitaFix['DORSL'] ===  '' ? '' : 'Ver tu empresa'),
-//         icon:<BuildingStorefrontIcon width={50} height={50}/>,
-//         to:"viewUpdateBusiness"
-//     },
-//     {
-//         label:"Notificaiones",
-//         sublabel:"Ver tus notificaciones",
-//         icon:<BellIcon width={50} height={50}/>,
-//         to:"notification"
-//     }
-
-// ];
-
-// function Sidebar({ sidebarOpen, setsidebarOpen, header, setheader }) {
-//     const navigate = useNavigate();
-//     const openDrawerMenu=()=>{
-//         setsidebarOpen(!sidebarOpen);
-//         setheader(!header);
-//         navigate(`/`, { replace: true }); // <-- redirect
-//     }
-
-//     const onLogout=()=>{
-//         setsidebarOpen(false);
-//         setheader(true);
-//         // delete tha user
-//         localStorage.removeItem("correo");
-//         localStorage.removeItem("pwd");
-//         navigate(`/`, { replace: true }); // <-- redirect
-//         toast.success('Regresa pronto!');
-//     }
-//     return (
-//         <>
-//             {   sidebarOpen ?
-//                     <div className={sidebarOpen ? "Menu active" : "Menu"} >
-//                         <button onClick={openDrawerMenu}
-//                         className={sidebarOpen ? "closeMenu active" : "closeMenu"}>
-//                             <XMarkIcon />
-//                         </button>
-//                         <div className="Logocontent">
-//                             <div className='imgcontent'>
-//                                 <img src={MenuWhite} />
-//                             </div>
-//                         </div>
-//                         <div className="Divider"></div>
-//                         {
-//                             linksArray.map(({icon, label, sublabel, to})=>(
-//                                 <div>
-//                                 <div className="LinkContainer" key={label}>
-//                                     <NavLink to={to} className={({isActive})=>`Links${isActive?` active`:``}`}>
-//                                     <div  className="Linkicon">
-//                                         {icon} 
-//                                         <div className="LinkLabel">
-//                                             <span>{label}</span>
-//                                             <p>{sublabel}</p>
-//                                         </div>
-//                                     </div>
-//                                     </NavLink>
-//                                 </div>
-//                                 <div className="Divider"></div>
-//                                 </div>  
-//                             ))
-//                         }
-//                         <div className="Logocontent">
-//                             <button className="Logout" onClick={onLogout}> <img src={Logout} /> Cerrar sesión </button>
-//                         </div>
-                        
-//                     </div> :
-//                     <div onClick={openDrawerMenu} className={sidebarOpen ? "closeMenu active" : "closeMenu"}>
-//                         <Bars3Icon />
-//                     </div>
-//             }
-//         </>
-
-//     );
-// }
-
-// export default Sidebar;
+function SidebarItem({ to, icon, label, open }) {
+  return (
+    <Link
+      to={to}
+      className="flex items-center gap-3 px-4 py-3 hover:bg-orange-500 rounded-md transition-all"
+    >
+      {icon}
+      <span className={`whitespace-nowrap transition-opacity duration-300 ${open ? "opacity-100" : "opacity-0 hidden"}`}>
+        {label}
+      </span>
+    </Link>
+  );
+}
