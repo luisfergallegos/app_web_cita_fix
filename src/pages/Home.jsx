@@ -97,7 +97,7 @@ export function Home() {
 
               {citas.map((index) =>
               (
-                <div className="flex justify-between bg-white-100 rounded-2xl shadow-2xl overflow-hidden scale-95 hover:scale-100 transition-all duration-300"
+                <div className="flex justify-between items-center bg-white rounded-2xl shadow-2xl overflow-hidden scale-95 hover:scale-100 transition-all duration-300 hover:ring-2 hover:ring-white cursor-pointer"
                   key={index['APOINMENT_ID']}
                   onClick={() => {
                     if (index['ESTATUS'] !== '-1' && index['ESTATUS'] !== '2') {
