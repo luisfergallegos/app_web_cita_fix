@@ -6,18 +6,6 @@ import { createBrowserRouter, RouterProvider, BrowserRouter } from "react-router
 import Main, { mainLoader } from "./layouts/Main.jsx";
 
 
-import Sidebar from './components/Sidebar';
-
-function App() {
-  return (
-    <div className="flex">
-      <Sidebar />
-      <div className="ml-16 md:ml-64 w-full pt-4 p-6">
-      </div>
-    </div>
-  );
-}
-
 
 
 // Routers
