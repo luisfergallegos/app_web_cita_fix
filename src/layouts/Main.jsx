@@ -4,7 +4,7 @@ import { useState } from "react";
 // helper functions
 import { fetchData } from "../Wrapper.js";
 // components
-import { Sidebar } from "../components/Sidebar.jsx";
+import  Sidebar  from "../components/Sidebar.jsx";
 import "./Main.css";
 
 // loader
