@@ -1,55 +1,59 @@
 import { useState } from "react";
-import { Bars3Icon, XMarkIcon, HomeIcon, UserIcon, Cog6ToothIcon } from "@heroicons/react/24/solid";
-import { Link } from "react-router-dom";
+import {
+  BellIcon,
+  ChevronDownIcon,
+  ArrowRightOnRectangleIcon,
+  UserCircleIcon,
+} from "@heroicons/react/24/solid";
+import avatar from "../assets/avatar.png"; // Asegúrate de tener este archivo
 
 export default function Topbar() {
-  const [menuOpen, setMenuOpen] = useState(false);
-
-  const toggleMenu = () => setMenuOpen(!menuOpen);
+  const [dropdownOpen, setDropdownOpen] = useState(false);
 
   return (
-    <>
-      {/* Topbar fija */}
-      <header className="w-full bg-[#2c2c2c] text-white shadow-md fixed top-0 z-50">
-        <div className="flex justify-between items-center px-6 py-4 max-w-7xl mx-auto">
-          <h1 className="text-2xl font-bold text-orange-500">MiApp</h1>
+    <header className="w-full fixed top-0 left-0 z-50 backdrop-blur-md bg-white/30 border-b border-white/20 shadow-md transition-all duration-500 animate-fade-in-down">
+      <div className="flex justify-between items-center px-6 py-3">
+        {/* Logo o título */}
+        <h1 className="text-xl font-bold text-orange-500 tracking-wide">MiApp</h1>
 
-          <nav className="hidden md:flex gap-6">
-            <Link className="hover:text-orange-500 transition" to="/">Inicio</Link>
-            <Link className="hover:text-orange-500 transition" to="/perfil">Perfil</Link>
-            <Link className="hover:text-orange-500 transition" to="/ajustes">Ajustes</Link>
-          </nav>
+        {/* Íconos y usuario */}
+        <div className="flex items-center gap-6 relative">
+          <BellIcon className="w-6 h-6 text-orange-600 cursor-pointer hover:text-orange-400 transition" />
 
-          {/* Botón menú hamburguesa */}
-          <button onClick={toggleMenu} className="md:hidden focus:outline-none">
-            {menuOpen ? <XMarkIcon className="w-6 h-6 text-orange-500" /> : <Bars3Icon className="w-6 h-6" />}
-          </button>
-        </div>
-      </header>
+          {/* Avatar y dropdown */}
+          <div className="relative">
+            <button
+              onClick={() => setDropdownOpen(!dropdownOpen)}
+              className="flex items-center gap-2 focus:outline-none"
+            >
+              <img
+                src={avatar}
+                alt="Usuario"
+                className="w-10 h-10 rounded-full border-2 border-orange-500 shadow"
+              />
+              <ChevronDownIcon className="w-5 h-5 text-orange-600" />
+            </button>
 
-      {/* Menú desplegable mobile */}
-      {menuOpen && (
-        <div className="md:hidden fixed top-16 left-0 w-full bg-white shadow-xl z-40">
-          <div className="flex flex-col px-6 py-4 text-[#2c2c2c]">
-            <MobileLink icon={<HomeIcon className="w-5 h-5" />} to="/" label="Inicio" toggle={toggleMenu} />
-            <MobileLink icon={<UserIcon className="w-5 h-5" />} to="/perfil" label="Perfil" toggle={toggleMenu} />
-            <MobileLink icon={<Cog6ToothIcon className="w-5 h-5" />} to="/ajustes" label="Ajustes" toggle={toggleMenu} />
+            {/* Dropdown */}
+            {dropdownOpen && (
+              <div className="absolute right-0 mt-2 w-48 bg-white text-gray-800 rounded-lg shadow-lg border border-gray-200 z-50 animate-slide-in">
+                <div className="px-4 py-2 border-b">
+                  <p className="text-sm font-medium">Usuario</p>
+                  <span className="text-xs text-gray-500">correo@ejemplo.com</span>
+                </div>
+                <ul>
+                  <li className="px-4 py-2 hover:bg-orange-100 flex items-center gap-2 cursor-pointer">
+                    <UserCircleIcon className="w-5 h-5 text-orange-500" /> Perfil
+                  </li>
+                  <li className="px-4 py-2 hover:bg-orange-100 flex items-center gap-2 cursor-pointer">
+                    <ArrowRightOnRectangleIcon className="w-5 h-5 text-orange-500" /> Cerrar sesión
+                  </li>
+                </ul>
+              </div>
+            )}
           </div>
         </div>
-      )}
-    </>
-  );
-}
-
-function MobileLink({ to, icon, label, toggle }) {
-  return (
-    <Link
-      to={to}
-      onClick={toggle}
-      className="flex items-center gap-2 py-3 border-b border-gray-200 hover:text-orange-500 transition"
-    >
-      {icon}
-      <span>{label}</span>
-    </Link>
+      </div>
+    </header>
   );
 }
