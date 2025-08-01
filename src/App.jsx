@@ -75,9 +75,6 @@ const router = createBrowserRouter([
         /* action: findBusinessAction, */
         errorElement: <Error />
       },
-
-      
-
       {
         path: "homeBusiness",
         element: <HomeBusiness />,
@@ -115,7 +112,7 @@ const router = createBrowserRouter([
         /*action: expensesAction, */
         errorElement: <Error />
       },
-       {
+      {
         path: "cancelAppoin/:id",
         element: <CancelarAppoin />,
         loader: CancelarAppoinLoader,

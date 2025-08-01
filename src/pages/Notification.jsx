@@ -52,7 +52,7 @@ export function Notification() {
         <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-orange-600 to-orange-800 px-4">
             {
                 notification.length > 0 ?
-                    <div className="gap-2 bg-white rounded-3xl shadow-xl p-10 max-w-md w-full text-center animate-fade-in-up">
+                    <div className="gap-2 bg-white rounded-3xl shadow-xl mt-20 p-10 max-w-md w-full text-center animate-fade-in-up">
                         {
                             notification.map((index) => (
                                 <div className="flex justify-between bg-white-100 rounded-2xl shadow-2xl overflow-hidden scale-95 hover:scale-100 transition-all duration-300"

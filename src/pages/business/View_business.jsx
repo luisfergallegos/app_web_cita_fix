@@ -123,7 +123,7 @@ export function ViewBusiness() {
             }
             <div className="min-h-screen grid items-center justify-center bg-gradient-to-br from-orange-600 to-orange-800 px-4">
 
-                <div className="bg-white rounded-3xl shadow-xl p-10 max-w-2xl w-full text-center animate-fade-in-up">
+                <div className="bg-white rounded-3xl shadow-xl mt-20 p-10 max-w-2xl w-full text-center animate-fade-in-up">
                     <div className='flex justify-center mb-4'>
                         {
                             empresa.PHOTO === null ?

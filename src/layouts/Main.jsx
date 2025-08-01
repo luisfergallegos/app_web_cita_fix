@@ -1,12 +1,14 @@
 // rrd imports
 import { useLoaderData } from "react-router-dom";
 import { Outlet } from "react-router-dom";
-import { useState } from 'react';
+// import { useState } from 'react';
 // helper funtions
 import { fetchData } from "../Wrapper.js";
 // components
-import { Sidebar } from '../components/Sidebar.jsx';
-import './Main.css';
+// import { Sidebar } from '../components/Sidebar.jsx';
+
+// import './Main.css';
+import Navbar from "../components/Navbar.jsx";
 
 // loader
 export function mainLoader() {
@@ -17,15 +19,15 @@ export function mainLoader() {
 
 function Main() {
   const { sCorreo, sPassword } = useLoaderData();
-  const [sidebarOpen, setSidebarOpen] = useState(false);
+  // const [sidebarOpen, setSidebarOpen] = useState(false);
   
   return (
     <>
       {sCorreo && sPassword ?
-        <div className={sidebarOpen ? "sidebarState active" : "sidebarState"}>
-          <Sidebar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
-          <Outlet />
-        </div> : <Outlet />
+        <div>
+          <Navbar /> <Outlet />
+        </div>
+         : <Outlet />
       }
     </>
   )

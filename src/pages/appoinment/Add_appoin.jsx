@@ -365,7 +365,7 @@ export function AddAppoin() {
 
     return (
         <div className="min-h-screen grid items-center justify-center bg-gradient-to-br from-orange-600 to-orange-800 px-4">
-            <div className="bg-white rounded-3xl shadow-xl mt-5 mb-10 text-center animate-fade-in-up">
+            <div className="bg-white rounded-3xl shadow-xl mt-20 mb-10 text-center animate-fade-in-up">
                 <div className="flex justify-center mb-4">
                     {
                         PHOTO == null ? <img className="w-40 h-40 object-cover rounded-full border mt-8 bg-gray-300" src={Store} />:

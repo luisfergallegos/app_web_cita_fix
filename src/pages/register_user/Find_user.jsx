@@ -83,8 +83,8 @@ export function FindUser() {
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-orange-600 to-orange-800 px-4 py-10">
-            <div className="max-w-6xl mx-auto">
-                <h2 className="text-xl font-semibold">¿Estás en busca de un cliente?</h2>
+            <div className="max-w-6xl mt-8 mx-auto">
+                <h2 className="text-xl text-white font-semibold">¿Estás en busca de un cliente?</h2>
                 {/* Buscador */}
                 <div className="relative mb-10">
                     <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
