@@ -9,7 +9,7 @@ import {
 } from '@heroicons/react/24/solid';
 
 // assents
-import logo from "../assets/icon.png";
+import logo from "../assets/splash.png";
 
 
 export function Navbar() {
@@ -28,7 +28,7 @@ export function Navbar() {
             to: "/findBusiness"
         },
         {
-            label: 'Ver tus citas',
+            label: 'Citas',
             sublabel:
                 (sUserCitaFix['first_name'] === "" || sUserCitaFix.length === 0
                     ? 'Agrega tu nombre'
@@ -61,9 +61,9 @@ export function Navbar() {
     return (
         <nav className="bg-white shadow-md fixed top-0 left-0 right-0 z-50">
             <div className="max-w-7xl mx-auto px-4 py-3 flex justify-between items-center">
-                {/* logo */}
-                <img src={logo} className='h-10 w-auto' />
-
+                {/* logo */} 
+                <a href="https://www.plannersday.com/"><img src={logo} className='h-10 w-auto' /></a>
+                         
                 {/* Botón para móvil */}
                 <button className="md:hidden" onClick={toggleMenu}>
                     {isOpen ? <XMarkIcon width={24} /> : <Bars3Icon width={24} />}
