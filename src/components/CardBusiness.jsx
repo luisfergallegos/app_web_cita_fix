@@ -80,12 +80,12 @@ export function CardBusiness({ key, userId, userName, empresa, setIsOpen, setInd
                         <img src={'data:image/jpeg;base64,' + arrayBufferToBase64(PHOTO.data)} />
                 }
             </div>
-            <div className='CardContainer_Titulo'>
-                <h4><b>{DORSL}</b></h4>
-                <p className='eighth'>{SUBCATEGORY}</p>
+            <div className='justify-center'>
+                <h4 className="text-xl font-bold text-center text-black mt-4 mb-1">{DORSL}</h4>
+                <p className="text-center text-gray-500 mb-4">{SUBCATEGORY}</p>
                 <p>{StarRating(SERVICE_LEVEL)}</p>
             </div>
-            <div className='CardContainer_Divider' ></div>
+             <hr className="mb-4" />
             <div className='CardContainer_Detalle'>
                 <div className='CardContainer_DetalleIcon'>
                     <MapPinIcon  className='w-8 h-8 md:w-10 md:h-10 lg:w-10 lg:h-10' />

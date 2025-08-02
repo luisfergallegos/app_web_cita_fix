@@ -9,7 +9,7 @@ import Store from "../../assets/business.png";
 import Loaging from '../../components/Loading.jsx';
 import { urlApi } from "../../styles/Constants.jsx";
 // Library
-import { CalendarDateRangeIcon } from '@heroicons/react/24/solid';
+import { CalendarDateRangeIcon, XMarkIcon as CloseIcon } from '@heroicons/react/24/solid';
 import DatePicker from 'react-datepicker';
 import "react-datepicker/dist/react-datepicker.css";
 
@@ -190,30 +190,26 @@ export function AddAppoinBusinesss() {
     }
 
     return (
-        <div className="AddAppoinContainer">
-            <div className='businessTitleContainer'>
-                <div className='businessTitleContainer--Name'>
-                    <h4>{first_name} {last_name}</h4>
-                    <p >Este usuario recibirá un recordatorio de su vista.</p>
-                </div>
-                <div >
+        <div className="min-h-screen grid items-center justify-center bg-gradient-to-br from-orange-600 to-orange-800 px-4">
+            <div className="bg-white rounded-3xl shadow-xl mt-20 mb-10 text-center animate-fade-in-up w-[410px] max-w-md">
+                <div className="flex justify-center mb-4">
                     {
-                        PHOTO === null ? <img id='store' src={Store} /> :
-                            <img src={'data:image/jpeg;base64,' + arrayBufferToBase64(PHOTO.data)} />
+                        PHOTO == null ? <img className="w-40 h-40 object-cover rounded-full border mt-8 bg-gray-300" src={Store} /> :
+                            <img className="w-40 h-40 object-cover rounded-full border mt-8" src={'data:image/jpeg;base64,' + arrayBufferToBase64(PHOTO.data)} />
                     }
                 </div>
-            </div>
-            <div className='businessContainer_Divider'></div>
-            <div className='businessTitle'>
-                <h4>Agendar</h4>
-            </div>
-            <div className='businessSubTitle'>
-                <div className='businessSubTitleContainer'>
-                    <div className='businessSubTitleIcon'>
-                        <CalendarDateRangeIcon />
-                    </div>
+                <div>
+                    <h4 className='text-2xl font-bold text-black mb-1'>{first_name} {last_name}</h4>
+                    <p className='w-full text-gray-400 mb-4'>Este usuario recibirá un recordatorio de su vista.</p>
+                </div>
+                <hr className="mb-4 mt-4" />
+                <div className='businessTitle'>
+                    <h4>Agendar</h4>
+                </div>
+                <div className='flex justify-start items-center ms-4 mt-4'>
+                    <CalendarDateRangeIcon className='w-8 h-8 md:w-10 md:h-10 lg:w-10 lg:h-10 mx-4 text-orange-500' />
                     <div>
-                        <DatePicker
+                        <DatePicker className='text-gray-400'
                             dateFormat="dd/MM/yyyy"
                             excludeDates={_excludeDates}
                             selected={startDate}
@@ -223,57 +219,68 @@ export function AddAppoinBusinesss() {
                             customInput={<ExampleCustomInput className="example-custom-input" />}
                         />
                     </div>
+
                 </div>
-            </div>
-            <div className='businessAppointmentTimeContainer' >
-                {cita[0] &&
-                    cita[0].map(({ APPOINTMENT_TIME, STATUS }, index) =>
-                    (
-                        <div className={STATUS === 'No' ? 'businessAppointmentTime active' : 'businessAppointmentTime'}
-                            key={index}
-                            style={{
-                                backgroundColor: index === selectedIndex ? 'white' : STATUS === 'No' ? 'grey' : '#e0e0e0',
-                                color: index === selectedIndex ? '#fc6500' : 'black'
-                            }}
-                            onClick={() => {
-                                if (STATUS === 'free') {
-                                    setselectedTime(APPOINTMENT_TIME);
-                                    setselectedIndex(index);
-                                }
-                            }}  >
-                            <label>{APPOINTMENT_TIME} </label>
-                        </div>
-                    ))
-                }
-            </div>
-
-            <div className='businessBtn'><button onClick={() => {
-                if (selectedTime !== '') {
-                    setIsOpen(true);
-                }
-            }}>Guardar</button></div>
-            {
-                isOpen ?
-                    <>
-                        <div className="backdropDialog" ></div>
-                        <div className="dialogDialog">
-                            <h2>Confirmar</h2>
-                            <span>¿Deseas guardar tu cita?</span>
-                            <label>Motivo de la visita/Servicio</label>
-                            <textarea type="text" placeholder='Opcional' rows="4" cols="50" onChange={handleChangeMessage}></textarea>
-                            <div className='buttonDialog'>
-                                <button className='primaryBkg' onClick={() => { setIsOpen(false); setMessage(''); }}>Cancelar</button>
-                                <button className='secondBkg' onClick={() => {
-                                    _buildConfirm();
-                                }}>Confirmar</button>
+                <div className='grid grid-cols-3 gap-3 p-10' >
+                    {cita[0] &&
+                        cita[0].map(({ APPOINTMENT_TIME, STATUS }, index) =>
+                        (
+                            <div className={STATUS === 'No' ? 'businessAppointmentTime active' : 'businessAppointmentTime'}
+                                key={index}
+                                style={{
+                                    backgroundColor: index === selectedIndex ? 'white' : STATUS === 'No' ? 'grey' : '#e0e0e0',
+                                    color: index === selectedIndex ? '#fc6500' : 'black'
+                                }}
+                                onClick={() => {
+                                    if (STATUS === 'free') {
+                                        setselectedTime(APPOINTMENT_TIME);
+                                        setselectedIndex(index);
+                                    }
+                                }}  >
+                                <label>{APPOINTMENT_TIME} </label>
                             </div>
+                        ))
+                    }
+                </div>
 
+                <div className='businessBtn'>
+                    <button className='mb-10' onClick={() => {
+                        if (selectedTime !== '') {
+                            setIsOpen(true);
+                        }
+                    }}>Guardar</button>
+                </div>
+
+                {/* Modal */}
+                {isOpen && (
+                    <>
+                        <div className="fixed inset-0 bg-black bg-opacity-50 z-40"></div>
+                        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+                            <div className="bg-white rounded-2xl shadow-2xl max-w-lg w-full p-6 relative animate-fade-in-up">
+                                <button
+                                    onClick={() => setIsOpen(false)}
+                                    className="absolute top-3 right-3 text-gray-500 hover:text-orange-500"
+                                >
+                                    <CloseIcon className="w-5 h-5 text-gray-900" />
+                                </button>
+                                <h4 className="text-xl font-bold text-center text-black mb-1">Confirmar</h4>
+                                <p className="text-center text-yellow-500 mb-1">¿Deseas guardar tu cita?</p>
+                                <p className="text-center text-gray-500 mb-4">Motivo de la visita/Servicio</p>
+                                <hr className="mb-4" />
+                                <textarea type="text" className='w-full text-black border px-4 py-2 rounded-md' placeholder='Opcional' rows="4" cols="50" onChange={handleChangeMessage}></textarea>
+                                <div className='flex justify-end mt-2'>
+                                    <button className='bg-gray-500 text-white px-4 py-2 rounded-md hover:bg-gray-600 mx-2' onClick={() => { setIsOpen(false); setMessage(''); }}>Cancelar</button>
+                                    <button className='bg-orange-500 text-white px-4 py-2 rounded-md hover:bg-orange-600' onClick={() => {
+                                        _buildConfirm();
+                                    }}>Confirmar</button>
+                                </div>
+                            </div>
                         </div>
                     </>
-                    : null
-            }
-
-        </div>);
+                )}
+            </div>
+        </div>
+    );
 }
 
 export default AddAppoinBusinesss;

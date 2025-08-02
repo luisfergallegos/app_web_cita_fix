@@ -151,7 +151,7 @@ export function CancelarAppoin() {
     }
     return (
         <div className="min-h-screen grid items-center justify-center bg-gradient-to-br from-orange-600 to-orange-800 px-4">
-            <div className="bg-white rounded-3xl shadow-xl mt-5 mb-10 text-center animate-fade-in-up">
+            <div className="bg-white rounded-3xl shadow-xl mt-20 mb-10 text-center animate-fade-in-up w-[400px] max-w-md">
                 <div className="flex justify-center mb-4">
                     {
                         cita.BUS_PHOTO === null ? <img className="w-40 h-40 object-cover rounded-full border mt-8" src={User} /> :
@@ -262,14 +262,15 @@ export function CancelarAppoin() {
                     </div>
                     <hr className="mb-4 mt-4" />
                     <div className='businessBtn'>
-                        <button className='mb-10' onClick={() => {
+                        {cita.ESTATUS == '-1' ? <></> : <button className='mb-10' onClick={() => {
                             if (cita.ESTATUS == '2' && cita.FLAG_SERVICE_LEVEL == '0') {
                                 setIsOpenC(true);
                             } else {
                                 setIsOpen(true);
                             }
                         }}>{cita.ESTATUS == '2' && cita.FLAG_SERVICE_LEVEL == '0' ? 'Calificar'
-                            : 'Cancelar'}</button>
+                            : 'Cancelar'}</button>}
+
                     </div>
                 </div>
                 {/* Modal */}
@@ -328,17 +329,17 @@ export function CancelarAppoin() {
                                 <p className="text-center text-gray-500 mb-2">Comentario para el lugar (Opcional)</p>
                                 <hr className="mb-4" />
                                 <textarea type="text" className='w-full text-black border px-4 py-2 rounded-md' rows="4" cols="50" placeholder='Puedes añadir cualquier comentario que sea de interés para el lugar' onChange={handleChangeComentario} />
-                                
+
                                 <div className='flex justify-end mt-2'>
                                     <button className='bg-gray-500 text-white px-4 py-2 rounded-md hover:bg-gray-600 mx-2' onClick={() => { setIsOpenC(false); }}>Cancelar</button>
                                     <button className='bg-orange-500 text-white px-4 py-2 rounded-md hover:bg-orange-600' onClick={() => {
-                                            _buildCalif();
-                                        }}>Calificar</button>
+                                        _buildCalif();
+                                    }}>Calificar</button>
                                 </div>
                             </div>
                         </div>
                     </>
-                ) : null }
+                ) : null}
             </div>
         </div>);
 }

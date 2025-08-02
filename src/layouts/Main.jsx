@@ -25,7 +25,8 @@ function Main() {
     <>
       {sCorreo && sPassword ?
         <div>
-          <Navbar /> <Outlet />
+          <Navbar /> 
+          <Outlet />
         </div>
          : <Outlet />
       }
