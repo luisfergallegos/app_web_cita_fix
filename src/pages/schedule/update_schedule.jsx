@@ -100,64 +100,75 @@ export function UpdateSchedule({ excludeTimes, horario, businessId, setshowAlert
     };
 
     return (
-        <div className='GroupLabel pr-10'>
-            <span>Las personas pueden elegir la fecha y la hora de su cita en función del calendario que configures.</span>
-            <span>CALENDARIO</span>
-            <span>Elige los días y horarios disponibles para realizar citas en tu calendario.</span>
+        <div>
+            <div className="grid">
+                <span>Las personas pueden elegir la fecha y la hora de su cita en función del calendario que configures.</span>
+                <span>CALENDARIO</span>
+                <span>Elige los días y horarios disponibles para realizar citas en tu calendario.</span>
+            </div>
             {
                 valuesDefault.map((valor, index) => (
-                    <div >
+                    <div className='GroupLabel pr-10 mt-2'>
                         <div className="flex items-center px-4 border border-gray-300 rounded-sm ">
                             <label className="w-full py-4 ms-2 text-sm font-medium">{valor['day_name']}</label>
                             <input className="w-2 h-2 rounded-sm"
                                 type="checkbox" defaultChecked={valor['value'] == 0 ? false : true} onClick={(evt) => { handleChangeCheckbox(index, evt); }} />
                         </div>
-
-                        <div className={valor['value'] == 0 ? 'nameGroup active' : 'nameGroup'}>
-                            <div className='GroupLabel pr-10'>
-                                <label>Desde</label>
-                                <DatePicker
-                                    dateFormat="h:mm aa"
-                                    selected={new Date(new Date().getFullYear(), new Date().getMonth(), new Date().getDay(), valor['desdeH'], valor['desdeM'], '00')}
-                                    onChange={(date) => { handleChangeDesde(date, index); }}
-                                    showTimeSelect
-                                    showTimeSelectOnly
-                                    timeIntervals={60}
-                                    showTimeCaption={false}
-                                    excludeTimes={excludeTimes}
-                                />
-                                <label>Hasta</label>
-                                <DatePicker
-                                    dateFormat="h:mm aa"
-                                    selected={new Date(new Date().getFullYear(), new Date().getMonth(), new Date().getDay(), valor['hastaH'], valor['hastaM'], '00')}
-                                    onChange={(date) => { handleChangeHasta(date, index); }}
-                                    showTimeSelect
-                                    showTimeSelectOnly
-                                    timeIntervals={60}
-                                    showTimeCaption={false}
-                                    excludeTimes={excludeTimes}
-                                />
-                                <label>Intervalo de tiempo</label>
-                                {
-                                    <select name="" id="">
+                        {
+                            valor['value'] == 1 && (
+                                <div>
+                                    <div className="flex">
+                                        <div className="grid">
+                                            <label>Abrir</label>
+                                            <DatePicker
+                                                dateFormat="h:mm aa"
+                                                selected={new Date(new Date().getFullYear(), new Date().getMonth(), new Date().getDay(), valor['desdeH'], valor['desdeM'], '00')}
+                                                onChange={(date) => { handleChangeDesde(date, index); }}
+                                                showTimeSelect
+                                                showTimeSelectOnly
+                                                timeIntervals={60}
+                                                showTimeCaption={false}
+                                                excludeTimes={excludeTimes}
+                                            />
+                                        </div>
+                                        <div className="grid">
+                                            <label>Cerrar</label>
+                                            <DatePicker
+                                                dateFormat="h:mm aa"
+                                                selected={new Date(new Date().getFullYear(), new Date().getMonth(), new Date().getDay(), valor['hastaH'], valor['hastaM'], '00')}
+                                                onChange={(date) => { handleChangeHasta(date, index); }}
+                                                showTimeSelect
+                                                showTimeSelectOnly
+                                                timeIntervals={60}
+                                                showTimeCaption={false}
+                                                excludeTimes={excludeTimes}
+                                            />
+                                        </div>
+                                    </div>
+                                    <div className="flex mt-2 mb-2">
+                                        <label className="mr-2">Intervalo de tiempo</label>
                                         {
-                                            listIntervaloDes.map((Intervalo, indexIntervalo) => (
-                                                Intervalo == valor['intervaloDes'] ?
-                                                    <option value={Intervalo} selected onClick={() => (handleChangeIntervalo(indexIntervalo, index))}>{Intervalo}</option> :
-                                                    <option value={Intervalo} onClick={() => (handleChangeIntervalo(indexIntervalo, index))} >{Intervalo}</option>
-                                            )
-                                            )
+                                            <select name="" id="">
+                                                {
+                                                    listIntervaloDes.map((Intervalo, indexIntervalo) => (
+                                                        Intervalo == valor['intervaloDes'] ?
+                                                            <option value={Intervalo} selected onClick={() => (handleChangeIntervalo(indexIntervalo, index))}>{Intervalo}</option> :
+                                                            <option value={Intervalo} onClick={() => (handleChangeIntervalo(indexIntervalo, index))} >{Intervalo}</option>
+                                                    )
+                                                    )
+                                                }
+                                            </select>
                                         }
-                                    </select>
-                                }
-                            </div>
-                        </div>
+                                    </div>
+                                </div>
+                            )
+                        }
                         {/* <div className='businessContainer_Divider'></div> */}
                     </div>
                 ))
             }
-            <div class="bt-btn">
-                <button onClick={() => (btnRegisterSchedule())} >Guardar</button>
+            <div>
+                <button className="mt-2 bg-orange-500 text-white px-4 py-2 rounded-md hover:bg-orange-600" onClick={() => (btnRegisterSchedule())} >Guardar</button>
             </div>
         </div>);
 }

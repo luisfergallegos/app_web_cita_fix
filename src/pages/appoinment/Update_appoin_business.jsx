@@ -11,8 +11,7 @@ import "react-datepicker/dist/react-datepicker.css";
 import User from "../../assets/e.png";
 import {
     BarsArrowUpIcon,
-    CalendarDateRangeIcon,
-    EllipsisVerticalIcon, EnvelopeIcon, InformationCircleIcon, MapPinIcon, PhoneIcon,
+    CalendarDateRangeIcon, EnvelopeIcon, InformationCircleIcon, MapPinIcon, PhoneIcon,
     TrashIcon,
     XMarkIcon as CloseIcon
 } from '@heroicons/react/24/solid';
@@ -61,8 +60,11 @@ export function UpdateAppoinBusiness() {
     const ExampleCustomInput = forwardRef(
         ({ onClick, className }, ref) => (
             <label className={className} onClick={onClick} ref={ref}>
-                {startDate ? <p>{dateSpanish(startDate)} ‒ {selectedTime ? selectedTime : 'Selecciona una hora'} </p> :
-                    <p>Selecciona una fecha ‒ Selecciona una hora</p>
+                {startDate ? <p>{dateSpanish(startDate)}</p> :
+                    <p>Selecciona una fecha</p>
+                }
+                {selectedTime ? <p>{selectedTime}</p> :
+                    <p>Selecciona una hora</p>
                 }
             </label>
         ),
@@ -318,7 +320,7 @@ export function UpdateAppoinBusiness() {
                 <div>
                     <h4 className='text-2xl font-bold text-black mb-1'>{cita.ANONIMO == '' ? cita.USER_NAME : cita.ANONIMO.substring(0, cita.ANONIMO.indexOf(","))}</h4>
                     <h4 className='text-black mb-1'>{cita.ANONIMO == '' ? '' : cita.ANONIMO.substring(cita.ANONIMO.indexOf(",") + 1, cita.ANONIMO.length)}</h4>
-                    <p className='w-full text-gray-400 mb-4'>{ConvertDateTime(cita.APPOINTMENT_DATE, cita.APPOINTMENT_TIME, 1)} -
+                    <p className='ml-10 mr-10 text-gray-400 mb-4'>{ConvertDateTime(cita.APPOINTMENT_DATE, cita.APPOINTMENT_TIME, 1)} -
                         {ConvertDateTime(cita.APPOINTMENT_DATE, cita.APPOINTMENT_TIME, 0)}</p>
                 </div>
                 {flagAnonPhone != '' ?
@@ -407,14 +409,13 @@ export function UpdateAppoinBusiness() {
                         {
                             citaDetalle &&
                             citaDetalle.map((index) => (
-                                <div className="flex justify-start items-center space-x-6" >
+                                <div className="flex justify-start items-center" >
                                     <InformationCircleIcon className='w-8 h-8 md:w-10 md:h-10 lg:w-10 lg:h-10 mx-4'
                                         color={index['STATUS_DETAIL'] == 'Cancelada' ? '#B71C1C' :
                                             index['STATUS_DETAIL'] == 'Actual' ? '#448AFF' :
                                                 index['STATUS_DETAIL'] == 'Finalizada' || index['STATUS_DETAIL'] == 'Finalizada por baja' ? '#9E9E9E' : '#FF9800'
                                         } />
                                     <p>{index['STATUS_DETAIL']}</p>
-                                    <p>{index['APPOINTMENT_DATE_DETAIL']}</p>
                                 </div>
                             )
                             )
@@ -473,10 +474,10 @@ export function UpdateAppoinBusiness() {
                         <div className='businessTitle'>
                             <h4>Reagendar</h4>
                         </div>
-                        <div className='flex justify-start items-center ms-4 mt-4'>
+                        <div className='flex justify-start items-center ms-4'>
                             <CalendarDateRangeIcon className='w-8 h-8 md:w-10 md:h-10 lg:w-10 lg:h-10 mx-4 text-orange-500' />
                             <div>
-                                <DatePicker className='text-gray-400'
+                                <DatePicker className='text-gray-400 text-left'
                                     dateFormat="dd/MM/yyyy"
                                     excludeDates={_excludeDates}
                                     selected={startDate}
@@ -487,7 +488,7 @@ export function UpdateAppoinBusiness() {
                                 />
                             </div>
                         </div>
-                        <div className='grid grid-cols-3 gap-3 p-10' >
+                        <div className='grid grid-cols-4 gap-5 p-10' >
                             {citaDate[0] &&
                                 citaDate[0].map(({ APPOINTMENT_TIME, STATUS }, index) =>
                                 (

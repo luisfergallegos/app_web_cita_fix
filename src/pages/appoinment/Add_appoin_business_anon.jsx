@@ -5,7 +5,6 @@ import { forwardRef, useEffect, useState } from "react";
 import { useLocation } from 'react-router-dom';
 // assets
 import './Add_appoin.css';
-import Store from "../../assets/business.png";
 import Loaging from '../../components/Loading.jsx';
 import { urlApi } from "../../styles/Constants.jsx";
 // Library
@@ -71,8 +70,11 @@ export function AddAppoinBusinesssAnon() {
     const ExampleCustomInput = forwardRef(
         ({ onClick, className }, ref) => (
             <label className={className} onClick={onClick} ref={ref}>
-                {startDate ? <p>{dateSpanish(startDate)} ‒ {selectedTime ? selectedTime : 'Selecciona una hora'} </p> :
-                    <p>Selecciona una fecha ‒ Selecciona una hora</p>
+                {startDate ? <p>{dateSpanish(startDate)}</p> :
+                    <p>Selecciona una fecha</p>
+                }
+                {selectedTime ? <p>{selectedTime}</p> :
+                    <p>Selecciona una hora</p>
                 }
             </label>
         ),
@@ -229,7 +231,7 @@ export function AddAppoinBusinesssAnon() {
 
     return (
         <div className="min-h-screen grid items-center justify-center bg-gradient-to-br from-orange-600 to-orange-800 px-4">
-            <div className="relative bg-white rounded-3xl shadow-xl mt-20 mb-10 text-center animate-fade-in-up w-[410px] max-w-md">
+            <div className="relative bg-white rounded-3xl shadow-xl mt-20 mb-10 text-center animate-fade-in-up w-full max-w-md">
                 {showAlert && (
                     <div className="absolute top-8 left-1/2 -translate-x-1/2 bg-red-600 text-white px-6 py-3 rounded-lg shadow-lg text-sm animate-bounce z-50">
                         {errorMsg}
@@ -242,17 +244,17 @@ export function AddAppoinBusinesssAnon() {
                 </div>
                 <div>
                     <h4 className='text-2xl font-bold text-black mb-1'>Usuario no registrado.</h4>
-                    <p className='w-full text-gray-400 mb-4'>{dorsl}</p>
+                    <p className='ml-10 mr-10 text-gray-400 mb-4'>{dorsl}</p>
                 </div>
                 <hr className="mb-4 mt-4" />
                 <div className='businessTitle'>
                     <h4>Información de contacto</h4>
-                    <div className='block ms-4 mt-4'>
+                    <div className='block ms-4 mt-4 mr-5'>
                         <div>
                             <input
                                 type="text"
                                 placeholder="Ingresa el nombre"
-                                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-orange-500 focus:outline-none"
+                                className="w-full  px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-orange-500 focus:outline-none"
                                 onChange={handleChangeName} required
                             />
                         </div>
@@ -269,7 +271,7 @@ export function AddAppoinBusinesssAnon() {
                                 <input
                                     type="tel"
                                     placeholder="Número de teléfono"
-                                    className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-orange-500 focus:outline-none"
+                                    className="px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-orange-500 focus:outline-none"
                                     value={phone}
                                     onChange={handleChangePhone} required
                                 />
@@ -284,7 +286,7 @@ export function AddAppoinBusinesssAnon() {
                                 <input
                                     type="email"
                                     placeholder="Correo electrónico"
-                                    className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-orange-500 focus:outline-none"
+                                    className="px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-orange-500 focus:outline-none"
                                     value={correo}
                                     onChange={handleChangeEmail} required
                                 />
@@ -300,10 +302,10 @@ export function AddAppoinBusinesssAnon() {
                 <div className='businessTitle'>
                     <h4>Agendar</h4>
                 </div>
-                <div className='flex justify-start items-center ms-4 mt-4'>
+                <div className='flex justify-start items-center ms-4'>
                     <CalendarDateRangeIcon className='w-8 h-8 md:w-10 md:h-10 lg:w-10 lg:h-10 mx-4 text-orange-500' />
                     <div>
-                        <DatePicker className='text-gray-400'
+                        <DatePicker className='text-gray-400 text-left'
                             dateFormat="dd/MM/yyyy"
                             excludeDates={_excludeDates}
                             selected={startDate}
@@ -315,7 +317,7 @@ export function AddAppoinBusinesssAnon() {
                     </div>
 
                 </div>
-                <div className='grid grid-cols-3 gap-3 p-10' >
+                <div className='grid grid-cols-4 gap-5 p-10' >
                     {cita[0] &&
                         cita[0].map(({ APPOINTMENT_TIME, STATUS }, index) =>
                         (

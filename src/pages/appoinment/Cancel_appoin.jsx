@@ -151,7 +151,7 @@ export function CancelarAppoin() {
     }
     return (
         <div className="min-h-screen grid items-center justify-center bg-gradient-to-br from-orange-600 to-orange-800 px-4">
-            <div className="bg-white rounded-3xl shadow-xl mt-20 mb-10 text-center animate-fade-in-up w-[400px] max-w-md">
+            <div className="bg-white rounded-3xl shadow-xl mt-20 mb-10 text-center animate-fade-in-up w-full max-w-md">
                 <div className="flex justify-center mb-4">
                     {
                         cita.BUS_PHOTO === null ? <img className="w-40 h-40 object-cover rounded-full border mt-8" src={User} /> :
@@ -193,44 +193,44 @@ export function CancelarAppoin() {
                 <div>
                     <h1 className='font-bold text-black mb-1'>Información de la cita</h1>
                     <div className='flex justify-start items-center ms-4'>
-                        <InformationCircleIcon className='w-8 h-8 md:w-10 md:h-10 lg:w-10 lg:h-10 mx-4 text-orange-500' />
+                        <InformationCircleIcon className='w-8 h-8 md:w-10 md:h-10 lg:w-10 lg:h-10 mx-4' color='#fc6500' />
                         <div>
-                            <p className='text-gray-400'>Cita reservada</p>
+                            <p className='text-gray-400'>Reservada</p>
                         </div>
                     </div>
                     {
                         cita.ESTATUS == '1' ?
                             <div className='flex justify-start items-center ms-4'>
-                                <InformationCircleIcon className='w-8 h-8 md:w-10 md:h-10 lg:w-10 lg:h-10 mx-4 text-orange-500' />
+                                <InformationCircleIcon className='w-8 h-8 md:w-10 md:h-10 lg:w-10 lg:h-10 mx-4' color='#fc6500' />
                                 <div>
-                                    <p className='text-gray-400'>Cita modificada por la empresa</p>
+                                    <p className='text-gray-400'>Modificada por la empresa</p>
                                 </div>
                             </div> : <div></div>
                     }
                     {
                         cita.ESTATUS == '-1' ? <div className='flex justify-start items-center ms-4'>
-                            <InformationCircleIcon className='w-8 h-8 md:w-10 md:h-10 lg:w-10 lg:h-10 mx-4 text-red-500' />
+                            <InformationCircleIcon className='w-8 h-8 md:w-10 md:h-10 lg:w-10 lg:h-10 mx-4' color='#B71C1C' />
                             <div>
-                                <p className='text-gray-400'>Cita cancelada</p>
+                                <p className='text-gray-400'>Cancelada</p>
                             </div>
                         </div> :
                             cita.ESTATUS == '3' ?
                                 <div className='flex justify-start items-center ms-4'>
-                                    <InformationCircleIcon className='w-8 h-8 md:w-10 md:h-10 lg:w-10 lg:h-10 mx-4 text-blue-500' />
+                                    <InformationCircleIcon className='w-8 h-8 md:w-10 md:h-10 lg:w-10 lg:h-10 mx-4' color='#448AFF' />
                                     <div>
                                         <p className='text-gray-400'>En cita</p>
                                     </div>
                                 </div> :
                                 cita.ESTATUS == '0' || cita.ESTATUS == '1' ?
                                     <div className='flex justify-start items-center ms-4'>
-                                        <InformationCircleIcon className='w-8 h-8 md:w-10 md:h-10 lg:w-10 lg:h-10 mx-4 text-gray-500' />
+                                        <InformationCircleIcon className='w-8 h-8 md:w-10 md:h-10 lg:w-10 lg:h-10 mx-4' color='#727272' />
                                         <div>
-                                            <p className='text-gray-400'>Cita pendiente</p>
+                                            <p className='text-gray-400'>Pendiente</p>
                                         </div>
                                     </div> : <div className='flex justify-start items-center ms-4'>
-                                        <InformationCircleIcon className='w-8 h-8 md:w-10 md:h-10 lg:w-10 lg:h-10 mx-4 text-orange-500' />
+                                        <InformationCircleIcon className='w-8 h-8 md:w-10 md:h-10 lg:w-10 lg:h-10 mx-4' color='#9E9E9E' />
                                         <div>
-                                            <p className='text-gray-400'>Cita finalizada</p>
+                                            <p className='text-gray-400'>Finalizada</p>
                                         </div>
                                     </div>
                     }

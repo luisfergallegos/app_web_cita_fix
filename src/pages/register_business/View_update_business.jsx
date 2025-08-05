@@ -7,7 +7,7 @@ import '../register_user/View_update_user.css';
 import Loaging from '../../components/Loading.jsx';
 import { urlApi } from "../../styles/Constants.jsx";
 
-import { BuildingStorefrontIcon, ChevronDownIcon, ChevronUpIcon, ClockIcon, MapPinIcon, Squares2X2Icon, UserCircleIcon } from '@heroicons/react/24/solid';
+import { BuildingOfficeIcon, ChevronDownIcon, ChevronUpIcon, ClockIcon, MapPinIcon, Squares2X2Icon, UserCircleIcon } from '@heroicons/react/24/solid';
 import RegisterSchedule from '../schedule/register_schedule.jsx';
 import UpdateSchedule from '../schedule/update_schedule.jsx';
 
@@ -56,6 +56,8 @@ export function ViewUpdateBusiness() {
         bytes.forEach((b) => binary += String.fromCharCode(b));
         return btoa(binary);
     };
+
+    const toggle = (setter) => setter((prev) => !prev);
 
     const ModNameGroupOpen = async (e) => {
         e.stopPropagation();
@@ -393,106 +395,142 @@ export function ViewUpdateBusiness() {
                     Es posible que este cambio tarde unos minutos en reflejarse en todos lados.
                 </div>
             )}
-            <div className="ViewUpdateUserContainer rounded-b-lg rounded-t-lg shadow-xl  w-full animate-fade-in-up">
-                <div className='UpdateUserContainerPHOTO_bkg rounded-t-lg'>
-                    <div className='UpdateUserContainerPHOTO'>
-                        {
-                            bussiness.PHOTO == null ? <UserCircleIcon /> :
-                                <img id='imgPHOTO' src={'data:image/jpeg;base64,' + arrayBufferToBase64(bussiness.PHOTO['data'])} />
-                        }
-                    </div>
+            <div className="max-w-3xl mx-auto mt-20 p-6 space-y-6 text-gray-800">
+                {/* Imagen usuario */}
+                <div className="flex justify-center mb-6">
+                    {bussiness.PHOTO == null ? (
+                        <UserCircleIcon className="h-32 w-32 text-orange-400" />
+                    ) : (
+                        <img className="w-32 h-32 rounded-full object-cover border"
+                            src={'data:image/jpeg;base64,' + arrayBufferToBase64(bussiness.PHOTO['data'])} />
+                    )}
                 </div>
-                <div className='UpdateUserContainerGroupClic'>
-                    <BuildingStorefrontIcon className='_color' />
-                    <label>Nombre</label>
-                    {nameGroup ? <ChevronDownIcon onClick={() => { setNameGroup(!nameGroup); }} /> :
-                        <ChevronUpIcon onClick={() => { setNameGroup(!nameGroup); }} />}
-                </div>
-                <div className={nameGroup ? 'nameGroup active' : 'nameGroup'}>
-                    <div className='GroupLabel'>
-                        <label>Nombre de la empresa</label>
-                        <input type="text" placeholder='Ingresa el nuevo nombre de tu empresa' value={name} onChange={handleChangeName} required />
-                        <div class="bt-btn">
-                            <button disabled={bussiness.DORSL != name ? false : true} onClick={ModNameGroupOpen}>Guardar</button>
+                {/* Grupo Nombre */}
+                <div className="bg-white text-black shadow rounded-xl p-4">
+                    <div
+                        className="flex items-center justify-between cursor-pointer"
+                        onClick={() => toggle(setNameGroup)}
+                    >
+                        <div className="flex items-center gap-2">
+                            <BuildingOfficeIcon className='w-5 h-5 text-orange-600' />
+                            <span className="font-semibold">Nombre</span>
                         </div>
+                        {nameGroup ? <ChevronDownIcon className="w-5 h-5" /> : <ChevronUpIcon className="w-5 h-5" />}
                     </div>
-                </div>
-                <div className='UpdateUserContainerGroupClic'>
-                    <Squares2X2Icon className='_color' /><label>Categoria</label>
-                    {categoriaGroup ? <ChevronDownIcon onClick={() => { setCategoriaGroup(!categoriaGroup); }} /> :
-                        <ChevronUpIcon onClick={() => { setCategoriaGroup(!categoriaGroup); }} />}
-                </div>
-                <div className={categoriaGroup ? 'nameGroup active' : 'nameGroup'}>
-                    <div className='GroupLabel'>
-                        <label>Giro de tu empresa</label>
-                        <input list="optionsListCat" type="text" placeholder='Giro de empresa'
-                            value={sCategoriaName} onChange={handleChangeCategoria} required ></input>
-                        <datalist id="optionsListCat">
-                            {categorias.map((option, index) => (
-                                <option key={index} value={option.name} />
-                            ))}
-                        </datalist>
-                        <label>Categoría comercial</label>
-                        <input list="optionsListSubCat" type="text" placeholder='Categoría comercial'
-                            value={sSubCategoriaName} onChange={handleChangeSubCategoria} required ></input>
-                        <datalist id="optionsListSubCat">
-                            {subCategorias.map((option, index) => (
-                                <option key={index} value={option.subname} />
-                            ))}
-                        </datalist>
-                        <span>Esto ayuda a que los clientes te encuentren si están buscando una empresa como la tuya.</span>
-                        <div class="bt-btn">
-                            <button disabled={bussiness.CATEGORY != sCategoriaName ? false : true} onClick={ModCategoriaGroupOpen}>Guardar</button>
+                    {!nameGroup && (
+                        <div className="mt-4 space-y-4">
+                            <div>
+                                <label className="block text-sm font-medium mb-1">Nombre de la empresa</label>
+                                <input className="w-full border px-4 py-2 rounded-md" type="text" placeholder='Ingresa el nuevo nombre de tu empresa' value={name} onChange={handleChangeName} required />
+                            </div>
+                            <button className="mt-2 bg-orange-500 text-white px-4 py-2 rounded-md hover:bg-orange-600 disabled:border-gray-50 disabled:bg-gray-200 disabled:text-gray-500"
+                                disabled={bussiness.DORSL != name ? false : true}
+                                onClick={ModNameGroupOpen}>Guardar</button>
                         </div>
+                    )}
+                </div>
+                {/* Grupo Categoria */}
+                <div className="bg-white text-black shadow rounded-xl p-4">
+                    <div
+                        className="flex items-center justify-between cursor-pointer"
+                        onClick={() => toggle(setCategoriaGroup)}
+                    >
+                        <div className="flex items-center gap-2">
+                            <Squares2X2Icon className='w-5 h-5 text-orange-600' />
+                            <span className="font-semibold">Categoria</span>
+                        </div>
+                        {categoriaGroup ? <ChevronDownIcon className="w-5 h-5" /> : <ChevronUpIcon className="w-5 h-5" />}
                     </div>
+                    {!categoriaGroup && (
+                        <div className="mt-4 space-y-4">
+                            <div>
+                                <label className="block text-sm font-medium mb-1">Giro de tu empresa</label>
+                                <input className="w-full border px-4 py-2 rounded-md" list="optionsListCat" type="text" placeholder='Giro de empresa'
+                                    value={sCategoriaName} onChange={handleChangeCategoria} required ></input>
+                                <datalist id="optionsListCat">
+                                    {categorias.map((option, index) => (
+                                        <option key={index} value={option.name} />
+                                    ))}
+                                </datalist>
+                                <label className="block text-sm font-medium mb-1">Categoría comercial</label>
+                                <input className="w-full border px-4 py-2 rounded-md" list="optionsListSubCat" type="text" placeholder='Categoría comercial'
+                                    value={sSubCategoriaName} onChange={handleChangeSubCategoria} required ></input>
+                                <datalist id="optionsListSubCat">
+                                    {subCategorias.map((option, index) => (
+                                        <option key={index} value={option.subname} />
+                                    ))}
+                                </datalist>
+                                <span>Esto ayuda a que los clientes te encuentren si están buscando una empresa como la tuya.</span>
+                            </div>
+                            <button className="mt-2 bg-orange-500 text-white px-4 py-2 rounded-md hover:bg-orange-600 disabled:border-gray-50 disabled:bg-gray-200 disabled:text-gray-500"
+                                disabled={bussiness.CATEGORY != sCategoriaName ? false : true}
+                                onClick={ModCategoriaGroupOpen}>Guardar</button>
+                        </div>
+                    )}
                 </div>
-                <div className='UpdateUserContainerGroupClic'>
-                    <ClockIcon className='_color' />
-                    {horario.length == 0 ? <label>Agrega tu horario</label> : <label>Actualización de horario</label>}
-                    {horarioGroup ? <ChevronDownIcon onClick={ModHorarioGroupOpen} /> :
-                        <ChevronUpIcon onClick={ModHorarioGroupOpen} />}
-                </div>
-                <div className={horarioGroup ? 'nameGroup active' : 'nameGroup'}>
-                    {
+                {/* Grupo Horario */}
+                <div className="bg-white text-black shadow rounded-xl p-4">
+                    <div
+                        className="flex items-center justify-between cursor-pointer"
+                        onClick={() => toggle(ModHorarioGroupOpen)}
+                    >
+                        <div className="flex items-center gap-2">
+                            <ClockIcon className='w-5 h-5 text-orange-600' />
+                            {horario.length == 0 ? <span className="font-semibold">Agrega tu horario</span> : <span className="font-semibold">Actualización de horario</span>}
+                        </div>
+                        {horarioGroup ? <ChevronDownIcon className="w-5 h-5" /> : <ChevronUpIcon className="w-5 h-5" />}
+                    </div>
+                    {!horarioGroup && (
                         horario.length == 0 ?
                             <RegisterSchedule excludeTimes={_excludeTimes} businessId={bussiness.BUSSINESS_ID} setshowAlertConfirmation={setshowAlertConfirmation} /> :
                             <UpdateSchedule excludeTimes={_excludeTimes} horario={horario} businessId={bussiness.BUSSINESS_ID} setshowAlertConfirmation={setshowAlertConfirmation} />
-                    }
+
+                    )}
                 </div>
-                <div className='UpdateUserContainerGroupClic'>
-                    <MapPinIcon className='_color' /><label>Dirección</label>
-                    {addressGroup ? <ChevronDownIcon onClick={() => { setAddressGroup(!addressGroup); }} /> :
-                        <ChevronUpIcon onClick={() => { setAddressGroup(!addressGroup); }} />}
-                </div>
-                <div className={addressGroup ? 'nameGroup active' : 'nameGroup'}>
-                    <div className='GroupLabel'>
-                        <label>Código postal</label>
-                        <input type="text" placeholder='Código postal' maxLength={5} value={codigoPostal} onChange={getCodigoPostal} />
-                        <label className='sublabel' name="countCodigoPostal">{countCodigoPostal} / 5 </label>
-                        <label>Estado</label>
-                        <input className='--placeholder' type="text" placeholder='Estado' value={estado} disabled />
-                        <label>Municipio/Ciudad</label>
-                        <input className='--placeholder' type="text" placeholder='Municipio/Ciudad' value={ciudad} disabled />
-                        <label>Colonia</label>
-                        <input list="optionsList" type="text" placeholder='Colonia'
-                            disabled={colonias.length == 0 ? true : false}
-                            onChange={handleChangeColonia} value={direccionDos} required ></input>
-                        <datalist id="optionsList">
-                            {colonias.map((option, index) => (
-                                <option key={index} value={option} />
-                            ))}
-                        </datalist>
-                        <label>Calle / Número externo</label>
-                        <input type="text" placeholder='Calle / Número externo' value={direccionUno} onChange={handleChange} />
-                        <div class="bt-btn">
-                            <button disabled={
-                                bussiness.ADDRESS_FIRST != direccionUno
-                                    || bussiness.ADDRESS_SECOND != direccionDos
-                                    || bussiness.POSTAL_CODE != codigoPostal
-                                    || bussiness.CITY != ciudad
-                                    || bussiness.STATE != estado ? false : true} onClick={ModAddressGroupOpen}>Guardar</button>
+                {/* Grupo Direccion */}
+                <div className="bg-white text-black shadow rounded-xl p-4">
+                    <div
+                        className="flex items-center justify-between cursor-pointer"
+                        onClick={() => toggle(setAddressGroup)}
+                    >
+                        <div className="flex items-center gap-2">
+                            <MapPinIcon className='w-5 h-5 text-orange-600' />
+                            <span className="font-semibold">Dirección</span>
                         </div>
+                        {addressGroup ? <ChevronDownIcon className="w-5 h-5" /> : <ChevronUpIcon className="w-5 h-5" />}
                     </div>
+                    {!addressGroup && (
+                        <div className="mt-4 space-y-4">
+                            <div>
+                                <label className="block text-sm font-medium mb-1">Código postal</label>
+                                <input className="w-full border px-4 py-2 rounded-md" type="text" placeholder='Código postal' maxLength={5} value={codigoPostal} onChange={getCodigoPostal} />
+                                <label className='sublabel' name="countCodigoPostal">{countCodigoPostal} / 5 </label>
+                                <label className="block text-sm font-medium mb-1">Estado</label>
+                                <input className="w-full border px-4 py-2 rounded-md --placeholder" type="text" placeholder='Estado' value={estado} disabled />
+                                <label className="block text-sm font-medium mb-1">Municipio/Ciudad</label>
+                                <input className="w-full border px-4 py-2 rounded-md --placeholder" type="text" placeholder='Municipio/Ciudad' value={ciudad} disabled />
+                                <label className="block text-sm font-medium mb-1">Colonia</label>
+                                <input className="w-full border px-4 py-2 rounded-md" list="optionsList" type="text" placeholder='Colonia'
+                                    disabled={colonias.length == 0 ? true : false}
+                                    onChange={handleChangeColonia} value={direccionDos} required ></input>
+                                <datalist id="optionsList">
+                                    {colonias.map((option, index) => (
+                                        <option key={index} value={option} />
+                                    ))}
+                                </datalist>
+                                <label className="block text-sm font-medium mb-1">Calle / Número externo</label>
+                                <input className="w-full border px-4 py-2 rounded-md" type="text" placeholder='Calle / Número externo' value={direccionUno} onChange={handleChange} />
+                            </div>
+
+                            <button className="mt-2 bg-orange-500 text-white px-4 py-2 rounded-md hover:bg-orange-600 disabled:border-gray-50 disabled:bg-gray-200 disabled:text-gray-500"
+                                disabled={
+                                    bussiness.ADDRESS_FIRST != direccionUno
+                                        || bussiness.ADDRESS_SECOND != direccionDos
+                                        || bussiness.POSTAL_CODE != codigoPostal
+                                        || bussiness.CITY != ciudad
+                                        || bussiness.STATE != estado ? false : true} onClick={ModAddressGroupOpen}>Guardar</button>
+                        </div>
+                    )}
                 </div>
             </div>
         </div>);

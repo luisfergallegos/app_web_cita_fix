@@ -55,19 +55,19 @@ export function Notification() {
                     <div className="gap-2 bg-white rounded-3xl shadow-xl mt-20 p-10 max-w-md w-full text-center animate-fade-in-up">
                         {
                             notification.map((index) => (
-                                <div className="flex justify-between bg-white-100 rounded-2xl shadow-2xl overflow-hidden scale-95 hover:scale-100 transition-all duration-300"
+                                <div className="flex justify-center items-center bg-gray-100 shadow-lg rounded-lg overflow-hidden scale-95 hover:scale-100 transition-all duration-300"
                                     key={index['APOINMENT_ID']}
                                     onClick={() => {
                                         if (index['STATUS_DETAIL'] !== 'Cancelada') {
                                             navigate(`/cancelAppoin/${index['APOINMENT_ID']}`);
                                         }
                                     }}  >
-                                    <BellAlertIcon width={40}
+                                    <BellAlertIcon width={40} className='ml-2'
                                         color={index['STATUS_DETAIL'] == 'Cancelada' ? '#B71C1C' :
                                             index['STATUS_DETAIL'] == 'Creada' ? '#424242' :
                                                 index['STATUS_DETAIL'] == 'Actual' ? '#4472C4' : '#fc6500'
                                         } />
-                                    <div className="grid">
+                                    <div className="grid mb-4 mt-4 ml-2 mr-2">
                                         <label className="text-1xl font-bold text-black">
                                             {
                                                 index['STATUS_DETAIL'] == 'Finalizada' ?
@@ -89,7 +89,7 @@ export function Notification() {
                                                     `${index['DIF_DIAS']} ${index['DIF_DIAS'] == '1' ? 'dia' : 'dias'}, ${index['DIF_HORAS']} h ${index['DIF_MINUTOS']} min`
                                             } </label>
                                     </div>
-                                    <ChevronRightIcon width={30} color="black" />
+                                    <ChevronRightIcon width={30} className='mr-2' color="black" />
                                 </div>
                             ))
                         }

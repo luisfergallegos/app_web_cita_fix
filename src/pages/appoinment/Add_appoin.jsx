@@ -126,8 +126,11 @@ export function AddAppoin() {
     const ExampleCustomInput = forwardRef(
         ({ onClick, className }, ref) => (
             <label className={className} onClick={onClick} ref={ref}>
-                {startDate ? <p>{dateSpanish(startDate)} ‒ {selectedTime ? selectedTime : 'Selecciona una hora'} </p> :
-                    <p>Selecciona una fecha ‒ Selecciona una hora</p>
+                {startDate ? <p>{dateSpanish(startDate)}</p> :
+                    <p>Selecciona una fecha</p>
+                }
+                {selectedTime ? <p>{selectedTime}</p> :
+                    <p>Selecciona una hora</p>
                 }
             </label>
         ),
@@ -378,20 +381,20 @@ export function AddAppoin() {
                     <div className='flex justify-start rmal items-center ms-4'>
                         <MapPinIcon className='w-8 h-8 md:w-10 md:h-10 lg:w-10 lg:h-10 mx-4 text-orange-500' />
                         <div className='text-left'>
-                            <p className='text-gray-400'>{ADDRESS_FIRST} {ADDRESS_SECOND} CP {POSTAL_CODE}</p>
-                            <p className='text-gray-400'>{CITY}, {STATE}</p>
+                            <p className='mr-10 text-gray-400'>{ADDRESS_FIRST} {ADDRESS_SECOND} CP {POSTAL_CODE}</p>
+                            <p className='mr-10 text-gray-400'>{CITY}, {STATE}</p>
                         </div>
                     </div>
                     <div className='flex justify-start items-center ms-4'>
                         <PhoneIcon className='w-8 h-8 md:w-10 md:h-10 lg:w-10 lg:h-10 mx-4 text-orange-500' />
                         <div>
-                            { phone != '' ? <p className='text-gray-400'>{phone}</p> : <p className='text-gray-400'>Sin información de contacto</p> }  
+                            { phone != '' ? <p className='mr-10 text-gray-400'>{phone}</p> : <p className='mr-10 text-gray-400'>Sin información de contacto</p> }  
                         </div>
                     </div>
                     <div className='flex justify-start items-center ms-4'>
                         <CalendarDaysIcon className='w-8 h-8 md:w-10 md:h-10 lg:w-10 lg:h-10 mx-4 text-orange-500' />
                         <div>
-                            <p className='text-gray-400'>{Horario}</p>
+                            <p className='mr-10 text-gray-400'>{Horario}</p>
                         </div>
                     </div>
                 </div>
@@ -400,7 +403,7 @@ export function AddAppoin() {
                     <h4>Información de contacto</h4>
                     <div className='flex justify-start items-center ms-4 mt-4'>                        
                         <div>
-                            <p className='text-black'>{location.state.userName}</p>
+                            <p className='ml-4 text-black'>{location.state.userName}</p>
                         </div>
                     </div>
                 </div>
@@ -408,10 +411,10 @@ export function AddAppoin() {
                 <div className='businessTitle'>
                     <h4>Agendar</h4>
                 </div>
-                <div className='flex justify-start items-center ms-4 mt-4'>
+                <div className='flex justify-start items-center ms-4'>
                     <CalendarDateRangeIcon className='w-8 h-8 md:w-10 md:h-10 lg:w-10 lg:h-10 mx-4 text-orange-500' />
                     <div>
-                        <DatePicker className='text-gray-400'
+                        <DatePicker className='text-gray-400 text-left'
                             dateFormat="dd/MM/yyyy"
                             excludeDates={_excludeDates}
                             selected={startDate}
@@ -423,7 +426,7 @@ export function AddAppoin() {
                     </div>
 
                 </div>
-                <div className='grid grid-cols-3 gap-3 p-10' >
+                <div className='grid grid-cols-4 gap-5 p-10' >
                     {cita[0] &&
                         cita[0].map(({ APPOINTMENT_TIME, STATUS }, index) =>
                         (

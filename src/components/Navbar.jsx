@@ -103,7 +103,7 @@ export function Navbar() {
                         <li><a href={to} className="flex items-center hover:text-orange-800">{icon}{label}</a></li>
                     ))} */}
                     {linksArray.map(({ icon, label, to, sublabel }) => (
-                        <NavLink to={to}
+                        <NavLink to={to} onClick={toggleMenu}
                             className={({ isActive }) => `${isActive ? `flex items-center text-orange-800 hover:text-orange-600` : `flex items-center hover:text-orange-800`}`}
                         >
                             {icon}
