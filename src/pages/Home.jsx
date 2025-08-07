@@ -173,7 +173,7 @@ export function Home() {
                         : index['APPOINTMENT_CONFIRM'] == 0 ?
                           <button className="px-4 py-2 rounded-lg bg-blue-500 text-white hover:bg-blue-600 transition"
                             onClick={() => { indexConfirm(index) }}>Confirmar</button> : <></>}
-                      <button className="px-4 py-2 rounded-lg bg-red-500 text-white hover:bg-red-600 transition" onClick={() => {
+                      <button className="px-4 py-2 rounded-lg bg-orange-500 text-white hover:bg-orange-600 transition" onClick={() => {
                         if (index['ESTATUS'] !== '-1' && index['ESTATUS'] !== '2') {
                           navigate(`/cancelAppoin/${index['APOINMENT_ID']}`);
                         }

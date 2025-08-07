@@ -123,7 +123,7 @@ export function HomeBusiness() {
                                                 <UserCircleIcon width={80}
                                                     color={index['ESTATUS'] == '-1' ? '#B71C1C' :
                                                         index['ESTATUS'] == '1' ? '#32325d' :
-                                                            index['ESTATUS'] == '3' || index['APPOINTMENT_CONFIRM'] ? '#4472C4' : '#fc6500'
+                                                            index['ESTATUS'] == '3' || index['APPOINTMENT_CONFIRM'] == '1' ? '#4472C4' : '#fc6500'
                                                     } /> :
                                                 <img id='imgS' src={'data:image/jpeg;base64,' + arrayBufferToBase64(index['PHOTO'].data)} />
 
