@@ -71,7 +71,6 @@ export function HomeBusiness() {
                 const response = await fetch(`${urlApi}appoinBussiness?bussiness_id=${businessId}`, options);
                 if (response.status == 200) {
                     const json = await response.json();
-                    console.log(json['data']);
                     setCitas(json['data']);
                 } else if (response.status == 404) {
                     setCitas([]);
