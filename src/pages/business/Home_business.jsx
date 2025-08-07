@@ -71,6 +71,7 @@ export function HomeBusiness() {
                 const response = await fetch(`${urlApi}appoinBussiness?bussiness_id=${businessId}`, options);
                 if (response.status == 200) {
                     const json = await response.json();
+                    console.log(json['data']);
                     setCitas(json['data']);
                 } else if (response.status == 404) {
                     setCitas([]);
@@ -111,7 +112,7 @@ export function HomeBusiness() {
                             <p className="text-gray-600">{ConvertDateTime(citas[currentPage - 1]['APPOINTMENT_DATE'], '00:00:00', 0)}</p>
                             {
                                 citas[currentPage - 1]['APPOINTMENT'].map((index) => (
-                                    <div className="flex justify-between bg-white-100 rounded-2xl shadow-2xl overflow-hidden scale-95 hover:scale-100 transition-all duration-300"
+                                    <div className="flex justify-between bg-gray-100 shadow-lg rounded-lg overflow-hidden scale-95 hover:scale-100 transition-all duration-300"
                                         key={index['APOINMENT_ID']}
                                         onClick={() => {
                                             if (index['ESTATUS'] !== '-1' && index['ESTATUS'] !== '2') {
@@ -123,16 +124,17 @@ export function HomeBusiness() {
                                                 <UserCircleIcon width={80}
                                                     color={index['ESTATUS'] == '-1' ? '#B71C1C' :
                                                         index['ESTATUS'] == '1' ? '#32325d' :
-                                                            index['ESTATUS'] == '3' ? '#4472C4' : '#fc6500'
+                                                            index['ESTATUS'] == '3' || index['APPOINTMENT_CONFIRM'] ? '#4472C4' : '#fc6500'
                                                     } /> :
                                                 <img id='imgS' src={'data:image/jpeg;base64,' + arrayBufferToBase64(index['PHOTO'].data)} />
 
                                         }
                                         <div className="grid">
                                             <label className="text-2xl font-bold text-black">{ConvertDateTime(citas[currentPage - 1]['APPOINTMENT_DATE'], index['APPOINTMENT_TIME'], 1)} </label>
-                                            <label className="text-1xl font-bold text-gray-400">{index['ANONIMO'] == '' ? index['COMPLET_NAME'] : index['ANONIMO'].substring(0, index['ANONIMO'].indexOf(","))} </label>
-                                            <label className="text-1xl font-bold text-gray-400">{index['ANONIMO'] != '' ? index['ANONIMO'].substring(index['ANONIMO'].indexOf(",") + 1, index['ANONIMO'].length) : ''} </label>
-                                            <label className="text-1xl font-bold text-gray-400">{index['ESTATUS'] == '1' ? 'Cita modificada.' : ''} </label>
+                                            <label className="text-2xl font-bold text-gray-400">{index['ANONIMO'] == '' ? index['COMPLET_NAME'] : index['ANONIMO'].substring(0, index['ANONIMO'].indexOf(","))} </label>
+                                            <label className="text-2xl font-bold text-gray-400">{index['ANONIMO'] != '' ? index['ANONIMO'].substring(index['ANONIMO'].indexOf(",") + 1, index['ANONIMO'].length) : ''} </label>
+                                            <label className="text-1xl font-bold text-gray-500">{index['ESTATUS'] == '1' ? 'Cita modificada' : ''} </label>
+                                            <label className="text-1xl font-bold text-gray-400">{index['APPOINTMENT_CONFIRM'] == '1' ? 'Confirmada' : ''} </label>
                                         </div>
                                         <ChevronRightIcon width={30} color="black" />
                                     </div>
