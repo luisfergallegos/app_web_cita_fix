@@ -4,6 +4,7 @@ import { dateSpanish, fetchData } from "../../Wrapper.js";
 import { useEffect, useState } from "react";
 // assets
 import './Add_appoin.css';
+import '../../components/Loading.css';
 import Loaging from '../../components/Loading.jsx';
 import { urlApi } from "../../styles/Constants.jsx";
 import RatingBar from "../../components/RatingBar.jsx";
@@ -27,6 +28,7 @@ export function CancelarAppoin() {
     const [isOpenC, setIsOpenC] = useState(false);
     const [selectedRating, setSelectedRating] = useState(0);
     const [comentario, setComentario] = useState('');
+    const [bAcceder, setbAcceder] = useState(true);
 
     // Function to convert Base64 string to binary data
     const arrayBufferToBase64 = (buffer) => {
@@ -55,26 +57,31 @@ export function CancelarAppoin() {
     }
 
     const _buildConfirm = async () => {
-        //Enviar por DELETE
-        var options = {
-            method: 'DELETE',
-            headers: { 'Content-Type': 'application/json' }
-        }
-        try {
-            const response = await fetch(`${urlApi}appoin?apoinment_id=${cita.APOINMENT_ID}&usernotification_id=${cita.BUS_USER_ID}&dorsl=${cita.DORSL}&for_who=Bus`, options);
-            const json = await response.json();
-            if (json['sucess'] == false) {
-                setIsOpen(false);
-                console.log(`Error al cancelar cita.`);
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-            else {
-                navigate("/");
-            }
-        }
-        catch (e) {
+        if (bAcceder) {
+            setbAcceder(false);
             setIsOpen(false);
-            return;
+            //Enviar por DELETE
+            var options = {
+                method: 'DELETE',
+                headers: { 'Content-Type': 'application/json' }
+            }
+            try {
+                const response = await fetch(`${urlApi}appoin?apoinment_id=${cita.APOINMENT_ID}&usernotification_id=${cita.BUS_USER_ID}&dorsl=${cita.DORSL}&for_who=Bus`, options);
+                const json = await response.json();
+                if (json['sucess'] == false) {
+                    setbAcceder(true);
+                    // console.log(`Error al cancelar cita.`);
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                else {
+                    navigate("/");
+                }
+            }
+            catch (e) {
+                setbAcceder(true);
+                return;
+            }
+
         }
     };
 
@@ -97,7 +104,7 @@ export function CancelarAppoin() {
             const json = await response.json();
             if (json['sucess'] == false) {
                 setIsOpenC(false);
-                console.log(`Error al calificar cita.`);
+                // console.log(`Error al calificar cita.`);
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
             else {
@@ -198,6 +205,14 @@ export function CancelarAppoin() {
                             <p className='text-gray-400'>Reservada</p>
                         </div>
                     </div>
+                    {cita.APPOINTMENT_CONFIRM == '1' ?
+                        <div className='flex justify-start items-center ms-4'>
+                        <InformationCircleIcon className='w-8 h-8 md:w-10 md:h-10 lg:w-10 lg:h-10 mx-4' color='#fc6500' />
+                        <div>
+                            <p className='text-gray-400'>Confirmada</p>
+                        </div>
+                    </div> : <></>
+                    }
                     {
                         cita.ESTATUS == '1' ?
                             <div className='flex justify-start items-center ms-4'>
@@ -228,7 +243,7 @@ export function CancelarAppoin() {
                                             <p className='text-gray-400'>Pendiente</p>
                                         </div>
                                     </div> : <div className='flex justify-start items-center ms-4'>
-                                        <InformationCircleIcon className='w-8 h-8 md:w-10 md:h-10 lg:w-10 lg:h-10 mx-4' color='#9E9E9E' />
+                                        <InformationCircleIcon className='w-8 h-8 md:w-10 md:h-10 lg:w-10 lg:h-10 mx-4' color='#fc6500' />
                                         <div>
                                             <p className='text-gray-400'>Finalizada</p>
                                         </div>
@@ -255,13 +270,14 @@ export function CancelarAppoin() {
                             }
                         }}>
                         <MapPinIcon className='w-8 h-8 md:w-10 md:h-10 lg:w-10 lg:h-10 mx-4 text-orange-500' />
-                        <div className='text-left'>
+                        <div className='text-left mr-5'>
                             <p className='text-gray-400'>{cita.ADDRESS_FIRST}, {cita.ADDRESS_SECOND}, {cita.POSTAL_CODE}</p>
                             <p className='text-gray-400'>{cita.CITY}, {cita.STATE}, Mexico</p>
                         </div>
                     </div>
                     <hr className="mb-4 mt-4" />
-                    <div className='businessBtn'>
+                    
+                    {bAcceder ? <div className='businessBtn'>
                         {cita.ESTATUS == '-1' ? <></> : <button className='mb-10' onClick={() => {
                             if (cita.ESTATUS == '2' && cita.FLAG_SERVICE_LEVEL == '0') {
                                 setIsOpenC(true);
@@ -271,7 +287,9 @@ export function CancelarAppoin() {
                         }}>{cita.ESTATUS == '2' && cita.FLAG_SERVICE_LEVEL == '0' ? 'Calificar'
                             : 'Cancelar'}</button>}
 
-                    </div>
+                    </div> : <div className='businessBtn'>
+                        <button className='mb-10'><div className='circle' ></div></button>
+                    </div>}
                 </div>
                 {/* Modal */}
                 {isOpen ? (

@@ -5,6 +5,7 @@ import { forwardRef, useEffect, useState } from "react";
 import { useLocation } from 'react-router-dom';
 // assets
 import './Add_appoin.css';
+import '../../components/Loading.css';
 import Store from "../../assets/business.png";
 import Loaging from '../../components/Loading.jsx';
 import { urlApi } from "../../styles/Constants.jsx";
@@ -156,10 +157,11 @@ export function AddAppoin() {
         if (selectedTime !== '') {
             if (bAcceder) {
                 setbAcceder(false);
+                setIsOpen(false);
                 if (bMostrarAddress) {
                     var dateFormat = startDate.getMonth() + 1;
                     var _selectedDate = `${startDate.getFullYear()}-${('0' + dateFormat).slice(-2)}-${startDate.getDate()}`;
-                    setbAcceder(true);
+
                     //Enviar por POST
                     var options = {
                         method: 'POST',
@@ -187,9 +189,9 @@ export function AddAppoin() {
                         const response = await fetch(`${urlApi}appoinAddress`, options);
                         const json = await response.json();
                         if (json['sucess'] == false) {
-                            setIsOpen(false);
+                            setbAcceder(true);
                             alert(`Ya no se encuentra disponible Fecha : ${_selectedDate} Hora : ${selectedTime} Corríjalo e inténtelo nuevamente.`);
-                            console.log(`Error al guardar cita.`);
+                            // console.log(`Error al guardar cita.`);
                             throw new Error(`HTTP error! status: ${response.status}`);
                         }
                         else {
@@ -197,14 +199,14 @@ export function AddAppoin() {
                         }
                     }
                     catch (e) {
-                        setIsOpen(false);
+                        setbAcceder(true);
                         return;
                     }
                 }
                 else {
                     var dateFormat = startDate.getMonth() + 1;
                     var _selectedDate = `${startDate.getFullYear()}-${('0' + dateFormat).slice(-2)}-${startDate.getDate()}`;
-                    setbAcceder(true);
+                    
                     //Enviar por POST
                     var options = {
                         method: 'POST',
@@ -227,7 +229,7 @@ export function AddAppoin() {
                         const response = await fetch(`${urlApi}appoin`, options);
                         const json = await response.json();
                         if (json['sucess'] == false) {
-                            setIsOpen(false);
+                            setbAcceder(true);
                             alert(`Ya no se encuentra disponible Fecha : ${_selectedDate} Hora : ${selectedTime} Corríjalo e inténtelo nuevamente.`);
                             console.log(`Error al guardar cita.`);
                             throw new Error(`HTTP error! status: ${response.status}`);
@@ -237,7 +239,7 @@ export function AddAppoin() {
                         }
                     }
                     catch (e) {
-                        setIsOpen(false);
+                        setbAcceder(true);
                         return;
                     }
                 }
@@ -371,9 +373,9 @@ export function AddAppoin() {
             <div className="bg-white rounded-3xl shadow-xl mt-20 mb-10 text-center animate-fade-in-up w-full max-w-md">
                 <div className="flex justify-center mb-4">
                     {
-                        PHOTO == null ? <img className="w-40 h-40 object-cover rounded-full border mt-8 bg-gray-300" src={Store} />:
+                        PHOTO == null ? <img className="w-40 h-40 object-cover rounded-full border mt-8 bg-gray-300" src={Store} /> :
                             <img className="w-40 h-40 object-cover rounded-full border mt-8" src={'data:image/jpeg;base64,' + arrayBufferToBase64(PHOTO.data)} />
-                        }
+                    }
                 </div>
                 <div>
                     <h4 className='text-2xl font-bold text-black mb-1'>{DORSL}</h4>
@@ -388,7 +390,7 @@ export function AddAppoin() {
                     <div className='flex justify-start items-center ms-4'>
                         <PhoneIcon className='w-8 h-8 md:w-10 md:h-10 lg:w-10 lg:h-10 mx-4 text-orange-500' />
                         <div>
-                            { phone != '' ? <p className='mr-10 text-gray-400'>{phone}</p> : <p className='mr-10 text-gray-400'>Sin información de contacto</p> }  
+                            {phone != '' ? <p className='mr-10 text-gray-400'>{phone}</p> : <p className='mr-10 text-gray-400'>Sin información de contacto</p>}
                         </div>
                     </div>
                     <div className='flex justify-start items-center ms-4'>
@@ -401,7 +403,7 @@ export function AddAppoin() {
                 <hr className="mb-4 mt-4" />
                 <div className='businessTitle'>
                     <h4>Información de contacto</h4>
-                    <div className='flex justify-start items-center ms-4 mt-4'>                        
+                    <div className='flex justify-start items-center ms-4 mt-4'>
                         <div>
                             <p className='ml-4 text-black'>{location.state.userName}</p>
                         </div>
@@ -488,13 +490,16 @@ export function AddAppoin() {
                         </div>
                     </div>
                 </div>
-                <div className='businessBtn'>
+
+                {bAcceder ? <div className='businessBtn'>
                     <button className='mb-10' onClick={() => {
                         if (selectedTime !== '') {
                             setIsOpen(true);
                         }
                     }}>Guardar</button>
-                </div>
+                </div> : <div className='businessBtn'>
+                    <button className='mb-10'><div className='circle' ></div></button>
+                </div>}
 
                 {/* Modal */}
                 {isOpen && (
@@ -516,8 +521,8 @@ export function AddAppoin() {
                                 <div className='flex justify-end mt-2'>
                                     <button className='bg-gray-500 text-white px-4 py-2 rounded-md hover:bg-gray-600 mx-2' onClick={() => { setIsOpen(false); setMessage(''); }}>Cancelar</button>
                                     <button className='bg-orange-500 text-white px-4 py-2 rounded-md hover:bg-orange-600' onClick={() => {
-                                        _buildConfirm();
-                                    }}>Confirmar</button>
+                                            _buildConfirm();
+                                        }}>Confirmar</button>
                                 </div>
                             </div>
                         </div>

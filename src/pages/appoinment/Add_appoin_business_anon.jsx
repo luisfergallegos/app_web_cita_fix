@@ -5,6 +5,7 @@ import { forwardRef, useEffect, useState } from "react";
 import { useLocation } from 'react-router-dom';
 // assets
 import './Add_appoin.css';
+import '../../components/Loading.css';
 import Loaging from '../../components/Loading.jsx';
 import { urlApi } from "../../styles/Constants.jsx";
 // Library
@@ -100,6 +101,8 @@ export function AddAppoinBusinesssAnon() {
         if (selectedTime !== '') {
             if (bAcceder) {
                 setbAcceder(false);
+                setIsOpen(false);
+
                 var anonimo = bSwitchPhoneEmail ? `${nombre},+52 ${phone}` : `${nombre},${correo}`;
                 var dateFormat = startDate.getMonth() + 1;
                 var _selectedDate = `${startDate.getFullYear()}-${('0' + dateFormat).slice(-2)}-${startDate.getDate()}`;
@@ -126,9 +129,9 @@ export function AddAppoinBusinesssAnon() {
                     const response = await fetch(url, options);
                     const json = await response.json();
                     if (json['sucess'] == false) {
-                        setIsOpen(false);
+                        setbAcceder(true);
                         alert(`Ya no se encuentra disponible Fecha : ${_selectedDate} Hora : ${selectedTime} Corríjalo e inténtelo nuevamente.`);
-                        console.log(`Error al guardar cita.`);
+                        // console.log(`Error al guardar cita.`);
                         throw new Error(`HTTP error! status: ${response.status}`);
                     }
                     else {
@@ -137,11 +140,9 @@ export function AddAppoinBusinesssAnon() {
 
                 }
                 catch (e) {
-                    setIsOpen(false);
+                    setbAcceder(true);
                     return;
                 }
-                setbAcceder(true);
-
             }
         }
     };
@@ -339,7 +340,7 @@ export function AddAppoinBusinesssAnon() {
                     }
                 </div>
 
-                <div className='businessBtn'>
+                {bAcceder ? <div className='businessBtn'>
                     <button className='mb-10' onClick={() => {
                         if (selectedTime !== '') {
                             if (bSwitchPhoneEmail) {
@@ -360,7 +361,9 @@ export function AddAppoinBusinesssAnon() {
                             setIsOpen(true);
                         }
                     }}>Guardar</button>
-                </div>
+                </div> : <div className='businessBtn'>
+                    <button className='mb-10'><div className='circle' ></div></button>
+                </div>}
 
                 {/* Modal */}
                 {isOpen && (

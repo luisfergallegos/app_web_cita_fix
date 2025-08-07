@@ -5,6 +5,7 @@ import { forwardRef, useEffect, useState } from "react";
 import { useLocation } from 'react-router-dom';
 // assets
 import './Add_appoin.css';
+import '../../components/Loading.css';
 import Store from "../../assets/business.png";
 import Loaging from '../../components/Loading.jsx';
 import { urlApi } from "../../styles/Constants.jsx";
@@ -98,6 +99,7 @@ export function AddAppoinBusinesss() {
         if (selectedTime !== '') {
             if (bAcceder) {
                 setbAcceder(false);
+                setIsOpen(false);
                 var dateFormat = startDate.getMonth() + 1;
                 var _selectedDate = `${startDate.getFullYear()}-${('0' + dateFormat).slice(-2)}-${startDate.getDate()}`;
                 //Enviar por POST
@@ -122,22 +124,19 @@ export function AddAppoinBusinesss() {
                     const response = await fetch(`${urlApi}appoin`, options);
                     const json = await response.json();
                     if (json['sucess'] == false) {
-                        setIsOpen(false);
+                        setbAcceder(true);
                         alert(`Ya no se encuentra disponible Fecha : ${_selectedDate} Hora : ${selectedTime} Corríjalo e inténtelo nuevamente.`);
-                        console.log(`Error al guardar cita.`);
+                        // console.log(`Error al guardar cita.`);
                         throw new Error(`HTTP error! status: ${response.status}`);
                     }
                     else {
                         navigate("/");
                     }
-
                 }
                 catch (e) {
-                    setIsOpen(false);
+                    setbAcceder(true);
                     return;
                 }
-                setbAcceder(true);
-
             }
         }
     };
@@ -246,13 +245,15 @@ export function AddAppoinBusinesss() {
                     }
                 </div>
 
-                <div className='businessBtn'>
+                {bAcceder ? <div className='businessBtn'>
                     <button className='mb-10' onClick={() => {
                         if (selectedTime !== '') {
                             setIsOpen(true);
                         }
                     }}>Guardar</button>
-                </div>
+                </div> : <div className='businessBtn'>
+                    <button className='mb-10'><div className='circle' ></div></button>
+                </div>}
 
                 {/* Modal */}
                 {isOpen && (

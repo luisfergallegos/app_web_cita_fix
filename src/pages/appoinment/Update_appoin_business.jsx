@@ -4,6 +4,7 @@ import { dateSpanish, fetchData } from "../../Wrapper.js";
 import { forwardRef, useEffect, useState } from "react";
 // assets
 import './Add_appoin.css';
+import '../../components/Loading.css';
 import Loaging from '../../components/Loading.jsx';
 import { urlApi } from "../../styles/Constants.jsx";
 import DatePicker from 'react-datepicker';
@@ -156,6 +157,7 @@ export function UpdateAppoinBusiness() {
     const _buildConfirm = async () => {
         if (bAcceder) {
             setbAcceder(false);
+            setIsOpenU(false);
 
             var dateFormat = startDate.getMonth() + 1;
             var _selectedDate = `${startDate.getFullYear()}-${('0' + dateFormat).slice(-2)}-${startDate.getDate()}`;
@@ -183,11 +185,10 @@ export function UpdateAppoinBusiness() {
                 const response = await fetch(`${urlApi}appoin`, options);
                 const json = await response.json();
                 if (json['sucess'] == false) {
-                    setIsOpenU(false);
                     setbAcceder(true);
                     getDaysInactive();
                     alert(`Ya no se encuentra disponible Fecha : ${_selectedDate} Hora : ${selectedTime} Corríjalo e inténtelo nuevamente.`);
-                    console.log(`Error al guardar cita.`);
+                    // console.log(`Error al guardar cita.`);
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
                 else {
@@ -195,7 +196,6 @@ export function UpdateAppoinBusiness() {
                 }
             }
             catch (e) {
-                setIsOpenU(false);
                 setbAcceder(true);
                 return;
             }
@@ -510,8 +510,7 @@ export function UpdateAppoinBusiness() {
                             }
                         </div>
                         <hr className="mb-4 mt-4" />
-
-                        <div className='businessBtn'>
+                        {bAcceder ? <div className='businessBtn'>
                             <button
                                 onClick={() => {
                                     var parts = cita.APPOINTMENT_DATE.split('-');
@@ -534,7 +533,10 @@ export function UpdateAppoinBusiness() {
                                     }
 
                                 }}>Guardar</button>
-                        </div>
+                        </div> : <div className='businessBtn'>
+                            <button className='mb-10'><div className='circle' ></div></button>
+                        </div>}
+
                         <div className="mb-4 mt-4" />
                     </> : <div></div>}
                 {/* Modal */}

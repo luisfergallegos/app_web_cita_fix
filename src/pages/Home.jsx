@@ -30,6 +30,8 @@ export function Home() {
   const userId = sUserCitaFix['USER_ID'] ?? "";
   const dorsl = sUserCitaFix['DORSL'] ?? "";
 
+  const [bAccederIndex, setbAccederIndex] = useState('');
+
   const arrayBufferToBase64 = (buffer) => {
     var binary = '';
     var bytes = [].slice.call(new Uint8Array(buffer));
@@ -54,6 +56,54 @@ export function Home() {
     }
 
   }
+
+  const indexConfirm = async (cita) => {
+    setbAccederIndex(cita['APOINMENT_ID']);
+
+    //Enviar por UPDATE
+    var options = {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(
+        {
+          'apoinment_id': `${cita['APOINMENT_ID']}`,
+          'usernotification_id': `${cita['USER_ID']}`,
+          'username': firstName
+        })
+    }
+    try {
+      const response = await fetch(`${urlApi}appoinConfirm`, options);
+      const json = await response.json();
+      if (json['sucess'] == false) {
+        setbAccederIndex('');
+        // console.log(`Error al cancelar cita.`);
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      else {
+         setbAccederIndex('');
+        //Solicitar por GET
+        try {
+          const response = await fetch(`${urlApi}appoin?userid=${userId}`);
+          if (response.status == 200) {
+            const json = await response.json();
+            setCitas(json['data']);
+          } else if (response.status == 404) {
+            setCitas([]);
+          } else {
+            throw new Error(`HTTP error! status: ${response.status}`);
+          }
+          setLoading(false);
+        }
+        catch (e) {
+          return;
+        }
+      }
+    }
+    catch (e) {
+      setbAccederIndex('');
+      return;
+    }
+  };
 
   useEffect(() => {
     const fData = async () => {
@@ -98,7 +148,7 @@ export function Home() {
               <div className="p-3 flex flex-col space-y-4 items-center">
                 {citas.map((index) =>
                 (
-                  <div className="bg-white-100 rounded-2xl shadow-2xl overflow-hidden scale-95 hover:scale-100 transition-all duration-300"
+                  <div className="bg-gray-100 shadow-lg rounded-lg overflow-hidden scale-95 hover:scale-100 transition-all duration-300"
                     key={index['APOINMENT_ID']}
                   >
                     <div className="flex items-center space-x-4 mr-20 mt-5" >
@@ -116,10 +166,13 @@ export function Home() {
                         <label className="text-1xl text-gray-400">{ConvertDateTime(index['APPOINTMENT_DATE'], index['APPOINTMENT_TIME'], 1)} </label>
                         <label className="text-1xl text-gray-400">{index['ESTATUS'] == '1' ? 'Cita modificada por la empresa.' : ''} </label>
                       </div>
-
                     </div>
                     <div className="mt-6 flex justify-end space-x-3 mr-2 mb-2">
-                      {/* <button className="px-4 py-2 rounded-lg bg-blue-500 text-white hover:bg-blue-600 transition">Confirmar</button> */}
+                      {bAccederIndex == index['APOINMENT_ID'] ?
+                        <button className="px-4 py-2 rounded-lg bg-blue-500 text-white"><div className='circleWhite'></div></button>
+                        : index['APPOINTMENT_CONFIRM'] == 0 ?
+                          <button className="px-4 py-2 rounded-lg bg-blue-500 text-white hover:bg-blue-600 transition"
+                            onClick={() => { indexConfirm(index) }}>Confirmar</button> : <></>}
                       <button className="px-4 py-2 rounded-lg bg-red-500 text-white hover:bg-red-600 transition" onClick={() => {
                         if (index['ESTATUS'] !== '-1' && index['ESTATUS'] !== '2') {
                           navigate(`/cancelAppoin/${index['APOINMENT_ID']}`);
