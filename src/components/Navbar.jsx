@@ -65,7 +65,7 @@ export function Navbar() {
                 <a href="https://www.plannersday.com/"><img src={logo} className='h-10 w-auto' /></a>
                          
                 {/* Botón para móvil */}
-                <button className="md:hidden" onClick={toggleMenu}>
+                <button className="lg:hidden" onClick={toggleMenu}>
                     {isOpen ? <XMarkIcon width={24} /> : <Bars3Icon width={24} />}
                 </button>
 
@@ -75,7 +75,7 @@ export function Navbar() {
                         <li><a href={to} className="flex items-center hover:text-orange-800">{icon}{label}</a></li>
                     ))}
                 </ul> */}
-                <ul className="hidden md:flex space-x-6 text-orange-600 font-medium">
+                <ul className="hidden lg:flex space-x-6 text-orange-600 font-medium">
                     {linksArray.map(({ icon, label, to, sublabel }) => (
                         <NavLink to={to}
                             className={({ isActive }) => `${isActive ? `flex items-center text-orange-800 hover:text-orange-600` : `flex items-center hover:text-orange-800`}`}
@@ -98,7 +98,7 @@ export function Navbar() {
 
             {/* Menú móvil */}
             {isOpen && (
-                <ul className="md:hidden bg-white px-4 pt-2 pb-4 space-y-2 text-orange-600 font-medium shadow-md">
+                <ul className="lg:hidden bg-white px-4 pt-2 pb-4 space-y-2 text-orange-600 font-medium shadow-md">
                     {/* {linksArray.map(({ icon, label, to }) => (
                         <li><a href={to} className="flex items-center hover:text-orange-800">{icon}{label}</a></li>
                     ))} */}
