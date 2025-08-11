@@ -24,7 +24,7 @@ export function Navbar() {
         {
             label: 'Inicio',
             sublabel: 'Home',
-            icon: <HomeIcon className='w-8 h-8 mx-1 md:w-10 md:h-10 lg:w-10 lg:h-10 ms:mx-2 md:mx-2 lg:mx-2' />,
+            icon: <HomeIcon className='w-8 h-8 mx-1 md:w-5 md:h-5 lg:w-10 lg:h-10 ms:mx-2 md:mx-2 lg:mx-2' />,
             to: "/findBusiness"
         },
         {
@@ -35,7 +35,7 @@ export function Navbar() {
                     : sUserCitaFix['first_name']),
 
             icon: (bPhotoUser['data'] === null || bPhotoUser.length === 0
-                ? <UserCircleIcon className='w-8 h-8 mx-1 md:w-10 md:h-10 lg:w-10 lg:h-10 ms:mx-2 md:mx-2 lg:mx-2' />
+                ? <UserCircleIcon className='w-8 h-8 mx-1 md:w-5 md:h-5 lg:w-10 lg:h-10 ms:mx-2 md:mx-2 lg:mx-2' />
                 : <img src={User} width={50} height={50} />),
             to: "home"
         },
@@ -44,7 +44,7 @@ export function Navbar() {
             sublabel: (dorsl == '' || sUserCitaFix.length === 0
                 ? 'Agrega tu empresa'
                 : dorsl),
-            icon: <BuildingOfficeIcon className='w-8 h-8 mx-1 md:w-10 md:h-10 lg:w-10 lg:h-10 ms:mx-2 md:mx-2 lg:mx-2' />,
+            icon: <BuildingOfficeIcon className='w-8 h-8 mx-1 md:w-5 md:h-5 lg:w-10 lg:h-10 ms:mx-2 md:mx-2 lg:mx-2' />,
             to: (dorsl == '' || sUserCitaFix.length === 0
                 ? "registerBusiness"
                 : "homeBusiness")
@@ -52,7 +52,7 @@ export function Navbar() {
         {
             label: "Notificaciones",
             sublabel: "Ver tus Notificaciones",
-            icon: <BellIcon className='w-8 h-8 mx-1 md:w-10 md:h-10 lg:w-10 lg:h-10 ms:mx-2 md:mx-2 lg:mx-2' />,
+            icon: <BellIcon className='w-8 h-8 mx-1 md:w-5 md:h-5 lg:w-10 lg:h-10 ms:mx-2 md:mx-2 lg:mx-2' />,
             to: "notification"
         },
 
@@ -65,7 +65,7 @@ export function Navbar() {
                 <a href="https://www.plannersday.com/"><img src={logo} className='h-10 w-auto' /></a>
                          
                 {/* Botón para móvil */}
-                <button className="lg:hidden" onClick={toggleMenu}>
+                <button className="md:hidden" onClick={toggleMenu}>
                     {isOpen ? <XMarkIcon width={24} /> : <Bars3Icon width={24} />}
                 </button>
 
@@ -75,7 +75,7 @@ export function Navbar() {
                         <li><a href={to} className="flex items-center hover:text-orange-800">{icon}{label}</a></li>
                     ))}
                 </ul> */}
-                <ul className="hidden lg:flex space-x-6 text-orange-600 font-medium">
+                <ul className="hidden md:flex space-x-6 text-orange-600 font-medium">
                     {linksArray.map(({ icon, label, to, sublabel }) => (
                         <NavLink to={to}
                             className={({ isActive }) => `${isActive ? `flex items-center text-orange-800 hover:text-orange-600` : `flex items-center hover:text-orange-800`}`}
@@ -85,7 +85,7 @@ export function Navbar() {
                         </NavLink>
                     ))}
                     <div className='flex items-center hover:text-orange-800'>
-                        <ArrowRightStartOnRectangleIcon className='w-8 h-8 mx-1 md:w-10 md:h-10 lg:w-10 lg:h-10 ms:mx-2 md:mx-2 lg:mx-2' />
+                        <ArrowRightStartOnRectangleIcon className='w-8 h-8 mx-1 md:w-5 md:h-5 lg:w-10 lg:h-10 ms:mx-2 md:mx-2 lg:mx-2' />
                         <Form method="post" action="/logout" >
                             <button type="submit" >
                                 Cerrar sesión
@@ -98,7 +98,7 @@ export function Navbar() {
 
             {/* Menú móvil */}
             {isOpen && (
-                <ul className="lg:hidden bg-white px-4 pt-2 pb-4 space-y-2 text-orange-600 font-medium shadow-md">
+                <ul className="md:hidden bg-white px-4 pt-2 pb-4 space-y-2 text-orange-600 font-medium shadow-md">
                     {/* {linksArray.map(({ icon, label, to }) => (
                         <li><a href={to} className="flex items-center hover:text-orange-800">{icon}{label}</a></li>
                     ))} */}
@@ -111,7 +111,7 @@ export function Navbar() {
                         </NavLink>
                     ))}
                     <div className='flex items-center hover:text-orange-800'>
-                        <ArrowRightStartOnRectangleIcon className='w-8 h-8 mx-1 md:w-10 md:h-10 lg:w-10 lg:h-10 ms:mx-2 md:mx-2 lg:mx-2' />
+                        <ArrowRightStartOnRectangleIcon className='w-8 h-8 mx-1 md:w-5 md:h-5 lg:w-10 lg:h-10 ms:mx-2 md:mx-2 lg:mx-2' />
                         <Form method="post" action="/logout" >
                             <button type="submit" >
                                 Cerrar sesión
