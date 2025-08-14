@@ -5,7 +5,9 @@ import { NavLink, Form } from 'react-router-dom';
 
 // Library
 import {
-    Bars3Icon, XMarkIcon, HomeIcon, UserCircleIcon, BuildingOfficeIcon, BellIcon, ArrowRightStartOnRectangleIcon
+    Bars3Icon, XMarkIcon, HomeIcon, UserCircleIcon, 
+    BuildingOfficeIcon, BellIcon, ArrowRightStartOnRectangleIcon,
+    MagnifyingGlassIcon
 } from '@heroicons/react/24/solid';
 
 // assents
@@ -22,20 +24,20 @@ export function Navbar() {
 
     const [linksArray, setLinksArray] = useState([
         {
-            label: 'Inicio',
+            label: 'Buscar',
             sublabel: 'Home',
-            icon: <HomeIcon className='w-8 h-8 mx-1 md:w-5 md:h-5 lg:w-10 lg:h-10 ms:mx-2 md:mx-2 lg:mx-2' />,
+            icon: <MagnifyingGlassIcon className='w-8 h-8 mx-1 md:w-5 md:h-5 lg:w-10 lg:h-10 ms:mx-2 md:mx-2 lg:mx-2' />,
             to: "/findBusiness"
         },
         {
-            label: 'Citas',
+            label: 'Inicio',
             sublabel:
                 (sUserCitaFix['first_name'] === "" || sUserCitaFix.length === 0
                     ? 'Agrega tu nombre'
                     : sUserCitaFix['first_name']),
 
             icon: (bPhotoUser['data'] === null || bPhotoUser.length === 0
-                ? <UserCircleIcon className='w-8 h-8 mx-1 md:w-5 md:h-5 lg:w-10 lg:h-10 ms:mx-2 md:mx-2 lg:mx-2' />
+                ? <HomeIcon className='w-8 h-8 mx-1 md:w-5 md:h-5 lg:w-10 lg:h-10 ms:mx-2 md:mx-2 lg:mx-2' />
                 : <img src={User} width={50} height={50} />),
             to: "home"
         },

@@ -7,7 +7,7 @@ import '../register_user/View_update_user.css';
 import Loaging from '../../components/Loading.jsx';
 import { urlApi } from "../../styles/Constants.jsx";
 
-import { BuildingOfficeIcon, ChevronDownIcon, ChevronUpIcon, ClockIcon, MapPinIcon, Squares2X2Icon, UserCircleIcon } from '@heroicons/react/24/solid';
+import { BuildingOfficeIcon, ChevronDownIcon, ChevronUpIcon, ClockIcon, MapPinIcon, Squares2X2Icon, UserCircleIcon, CameraIcon, CheckCircleIcon } from '@heroicons/react/24/solid';
 import RegisterSchedule from '../schedule/register_schedule.jsx';
 import UpdateSchedule from '../schedule/update_schedule.jsx';
 
@@ -48,6 +48,10 @@ export function ViewUpdateBusiness() {
     const [sSubCategoriaName, setSubCategoriaName] = useState('');
 
     const [showAlertConfirmation, setshowAlertConfirmation] = useState(false);
+     const [imagen, setImagen] = useState(null);
+    const [imagenFile, setImagenFile] = useState(null);
+    const [bimagen, setbImagen] = useState(true);
+    const [bAcceder, setbAcceder] = useState(true);
 
 
     const arrayBufferToBase64 = (buffer) => {
@@ -298,6 +302,50 @@ export function ViewUpdateBusiness() {
         }
     }
 
+    const handleChangeImagen = evt => {
+        const file = evt.target.files[0];
+        if (file) {
+            setImagenFile(file);
+            setImagen(URL.createObjectURL(file));
+            setbImagen(false);
+        }
+    }
+
+    const handleSendImagen = async evt => {
+        if (bAcceder) {
+            setbAcceder(false);
+            //Enviar al backend
+            var options = new FormData();
+            options.append('bussiness_id',bussiness.BUSSINESS_ID);
+            options.append('image', imagenFile);
+            try {
+                const response = await fetch(`${urlApi}photoBussiness`, {
+                    method: "PUT",
+                    body: options,
+                });
+                const json = await response.json();
+                if (json['sucess'] == false) {
+                    setbAcceder(true);
+                    setbImagen(true);
+                    setImagenFile(null);
+                    setImagen(null);
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                else {
+                    setbAcceder(true);
+                    setbImagen(true);
+                }
+            }
+            catch (e) {
+                setbAcceder(true);
+                setbImagen(true);
+                setImagenFile(null);
+                setImagen(null);
+                return;
+            }
+        }
+    }
+
     useEffect(() => {
         const fData = async () => {
             //Solicitar por GET
@@ -401,8 +449,24 @@ export function ViewUpdateBusiness() {
                     {bussiness.PHOTO == null ? (
                         <UserCircleIcon className="h-32 w-32 text-orange-400" />
                     ) : (
-                        <img className="w-32 h-32 rounded-full object-cover border"
-                            src={'data:image/jpeg;base64,' + arrayBufferToBase64(bussiness.PHOTO['data'])} />
+                        <div className='relative inline-block'>
+                            <img className="w-32 h-32 rounded-full object-cover border"
+                                src={ imagen || 'data:image/jpeg;base64,' + arrayBufferToBase64(bussiness.PHOTO['data'])} />
+                            {/* Icono de la imagen */}
+                            {bimagen ?
+                                <label className='absolute bottom-1 right-1 bg-orange-500 rounded-full p-2 cursor-pointer hover:bg-orange-600 transition'>
+                                    <CameraIcon className="h-5 w-5 text-white" />
+                                    <input type="file" accept="image/*" className='hidden' onChange={handleChangeImagen} />
+                                </label> : bAcceder ?
+                                    <label className='absolute bottom-1 right-1 bg-orange-500 rounded-full p-2 cursor-pointer hover:bg-orange-600 transition'
+                                        onClick={handleSendImagen}>
+                                        <CheckCircleIcon className="h-5 w-5 text-white" />
+                                    </label> :
+                                    <label className='absolute bottom-1 right-1 bg-orange-500 rounded-full p-2'>
+                                        <div className='circlePh' ></div>
+                                    </label>}
+
+                        </div>
                     )}
                 </div>
                 {/* Grupo Nombre */}
