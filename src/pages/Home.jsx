@@ -7,7 +7,10 @@ import { useEffect, useState } from "react";
 import illustration from "../assets/clock_green.svg";
 import Loaging from '../components/Loading.jsx';
 import { urlApi } from "../styles/Constants.jsx";
-import { ClockIcon, Cog6ToothIcon, PlusCircleIcon } from '@heroicons/react/24/outline';
+import { ClockIcon, Cog6ToothIcon, PlusCircleIcon, ChevronDownIcon, ChevronUpIcon, Bars3Icon } from '@heroicons/react/24/outline';
+import {
+  BuildingOfficeIcon
+} from '@heroicons/react/24/solid';
 import './Home.css';
 
 
@@ -27,10 +30,12 @@ export function Home() {
   const sUserCitaFix = fetchData("UserCitaFix") ?? [];
   const [citas, setCitas] = useState([]);
   const firstName = sUserCitaFix['first_name'] ?? "Usuario";
+  const lastName = sUserCitaFix['last_name'] ?? "Usuario";
   const userId = sUserCitaFix['USER_ID'] ?? "";
   const dorsl = sUserCitaFix['DORSL'] ?? "";
 
   const [bAccederIndex, setbAccederIndex] = useState('');
+  const [userGroup, setUserGroup] = useState(true);
 
   const arrayBufferToBase64 = (buffer) => {
     var binary = '';
@@ -38,6 +43,8 @@ export function Home() {
     bytes.forEach((b) => binary += String.fromCharCode(b));
     return btoa(binary);
   };
+
+  const toggle = (setter) => setter((prev) => !prev);
 
   function ConvertDateTime(date, time, flag) {
     var parts = date.split('-');
@@ -139,8 +146,36 @@ export function Home() {
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-orange-600 to-orange-800 px-4">
       <div className="max-w-3xl mx-auto mt-20 p-6 space-y-6 text-gray-800">
         <div className="bg-white text-black shadow rounded-xl p-4">
-          <h2 className="text-2xl font-bold text-gray-800">¡Hola {firstName}!</h2>
+          <div className="cursor-pointer flex items-center justify-between"
+            onClick={() => toggle(setUserGroup)}>
+            <div className="flex items-center gap-2">
+              <h2 className="text-2xl font-bold text-gray-800">Hola</h2>
+            </div>
+            <button onClick={() => navigate("/viewUpdateUser")} >
+              <Cog6ToothIcon width={24} />
+            </button>
+          </div>
+          <div className="cursor-pointer flex items-center justify-between"
+            onClick={() => toggle(setUserGroup)}>
+            <div className="flex items-center gap-2">
+              <h2 className="text-2xl font-bold text-gray-800">{firstName.charAt(0).toUpperCase() + firstName.slice(1)+ ' '+ lastName.charAt(0).toUpperCase() + lastName.slice(1)}</h2>
+            </div>
+            {userGroup ? <ChevronDownIcon className="w-5 h-5" /> : <ChevronUpIcon className="w-5 h-5" />}
+            
+          </div>
+          {!userGroup && (
+            <div className="mt-4 space-y-4">
+              <button
+                onClick={() => { dorsl == '' ? navigate("/registerBusiness") : navigate("/homeBusiness") }}
+                className="bg-orange-500 hover:bg-orange-600 text-white font-semibold py-2 px-2 rounded-md shadow-md transition flex items-center"
+              >
+                <BuildingOfficeIcon className='w-8 h-8 mx-1 md:w-5 md:h-5 lg:w-10 lg:h-10 ms:mx-2 md:mx-2 lg:mx-2' />
+                <label className="mr-4">{dorsl == '' ? 'Crear empresa' : dorsl.charAt(0).toUpperCase() + dorsl.slice(1)}</label>
+              </button>
+            </div>
+          )}
         </div>
+
         <div className="bg-white rounded-3xl shadow-xl mt-20 p-10 max-w-2xl w-full text-center animate-fade-in-up">
           {
             citas.length > 0 ? (
@@ -209,7 +244,7 @@ export function Home() {
 
         </div>
       </div>
-      <div class="fab-container2">
+      <div class="fab-container">
         <div class="button iconbutton">
           <button
             onClick={() => navigate("/findBusiness")}
@@ -220,7 +255,7 @@ export function Home() {
         </div>
       </div>
 
-      <div class="fab-container">
+      {/* <div class="fab-container">
         <div class="button iconbutton">
           <button
             onClick={() => navigate("/viewUpdateUser")}
@@ -229,7 +264,7 @@ export function Home() {
             <Cog6ToothIcon width={40} />
           </button>
         </div>
-      </div>
+      </div> */}
     </div>
   );
 }

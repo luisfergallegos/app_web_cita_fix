@@ -103,7 +103,20 @@ export function HomeBusiness() {
         <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-600 to-gray-800 px-4">
             <div className="max-w-3xl mx-auto mt-20 p-6 space-y-6 text-gray-800">
                 <div className="bg-white text-black shadow rounded-xl p-4">
-                    <h2 className="text-2xl font-bold text-gray-800">{sUserCitaFix['DORSL']}</h2>
+                    <div className="cursor-pointer flex items-center justify-between"
+                    >
+                        <div className="flex items-center gap-2">
+                            <h2 className="text-2xl font-bold text-gray-800">{sUserCitaFix['DORSL']}</h2>
+                        </div>
+                        <div className='flex items-center justify-between'>
+                            <button className='mr-2' onClick={() => navigate("/viewUpdateBusiness")} >
+                                <Cog6ToothIcon width={24} />
+                            </button>
+                            <button onClick={() => navigate(`/viewBusiness/${sUserCitaFix['BUSSINESS_ID']}`)} >
+                                <ShareIcon width={24} />
+                            </button>
+                        </div>
+                    </div>
                 </div>
                 {
                     citas.length > 0 ?
@@ -174,7 +187,7 @@ export function HomeBusiness() {
             </div>
             {
                 dorsl == '' ? <div></div> :
-                    <div class="fab-container4">
+                    <div class="fab-container2">
                         <div class="button iconbutton">
                             <button
                                 onClick={() => navigate("/addAppoinBusinessAnon", { state: { userId: sUserCitaFix['USER_ID'], businessId: sUserCitaFix['BUSSINESS_ID'], dorsl: sUserCitaFix['DORSL'] } })}
@@ -187,7 +200,7 @@ export function HomeBusiness() {
             }
             {
                 dorsl == '' ? <div></div> :
-                    <div class="fab-container3">
+                    <div class="fab-container">
                         <div class="button iconbutton">
                             <button
                                 onClick={() => navigate("/findUser")}
@@ -198,9 +211,9 @@ export function HomeBusiness() {
                         </div>
                     </div>
             }
-            {
+            {/* {
                 dorsl == '' ? <div></div> :
-                    <div class="fab-container2">
+                    <div class="fab-container">
                         <div class="button iconbutton">
                             <button
                                 onClick={() => navigate(`/viewBusiness/${sUserCitaFix['BUSSINESS_ID']}`)}
@@ -210,9 +223,9 @@ export function HomeBusiness() {
                             </button>
                         </div>
                     </div>
-            }
+            } */}
 
-            {
+            {/* {
                 dorsl == '' ? <div></div> :
                     <div class="fab-container">
                         <div class="button iconbutton">
@@ -224,7 +237,7 @@ export function HomeBusiness() {
                             </button>
                         </div>
                     </div>
-            }
+            } */}
 
 
         </div>

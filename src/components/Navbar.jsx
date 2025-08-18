@@ -24,12 +24,6 @@ export function Navbar() {
 
     const [linksArray, setLinksArray] = useState([
         {
-            label: 'Buscar',
-            sublabel: 'Home',
-            icon: <MagnifyingGlassIcon className='w-8 h-8 mx-1 md:w-5 md:h-5 lg:w-10 lg:h-10 ms:mx-2 md:mx-2 lg:mx-2' />,
-            to: "/findBusiness"
-        },
-        {
             label: 'Inicio',
             sublabel:
                 (sUserCitaFix['first_name'] === "" || sUserCitaFix.length === 0
@@ -42,6 +36,12 @@ export function Navbar() {
             to: "home"
         },
         {
+            label: 'Buscar',
+            sublabel: 'Home',
+            icon: <MagnifyingGlassIcon className='w-8 h-8 mx-1 md:w-5 md:h-5 lg:w-10 lg:h-10 ms:mx-2 md:mx-2 lg:mx-2' />,
+            to: "/findBusiness"
+        },
+        /* {
             label: (dorsl == '' || sUserCitaFix.length === 0 ? 'Agrega tu empresa' : 'Empresa'),
             sublabel: (dorsl == '' || sUserCitaFix.length === 0
                 ? 'Agrega tu empresa'
@@ -50,7 +50,7 @@ export function Navbar() {
             to: (dorsl == '' || sUserCitaFix.length === 0
                 ? "registerBusiness"
                 : "homeBusiness")
-        },
+        }, */
         {
             label: "Notificaciones",
             sublabel: "Ver tus Notificaciones",
@@ -86,14 +86,14 @@ export function Navbar() {
                             <span>{label}</span>
                         </NavLink>
                     ))}
-                    <div className='flex items-center hover:text-orange-800'>
+                    {/* <div className='flex items-center hover:text-orange-800'>
                         <ArrowRightStartOnRectangleIcon className='w-8 h-8 mx-1 md:w-5 md:h-5 lg:w-10 lg:h-10 ms:mx-2 md:mx-2 lg:mx-2' />
                         <Form method="post" action="/logout" >
                             <button type="submit" >
                                 Cerrar sesión
                             </button>
                         </Form>
-                    </div>
+                    </div> */}
                 </ul>
 
             </div>
@@ -112,14 +112,14 @@ export function Navbar() {
                             <span>{label}</span>
                         </NavLink>
                     ))}
-                    <div className='flex items-center hover:text-orange-800'>
+                    {/* <div className='flex items-center hover:text-orange-800'>
                         <ArrowRightStartOnRectangleIcon className='w-8 h-8 mx-1 md:w-5 md:h-5 lg:w-10 lg:h-10 ms:mx-2 md:mx-2 lg:mx-2' />
                         <Form method="post" action="/logout" >
                             <button type="submit" >
                                 Cerrar sesión
                             </button>
                         </Form>
-                    </div>
+                    </div> */}
                 </ul>
             )}
 

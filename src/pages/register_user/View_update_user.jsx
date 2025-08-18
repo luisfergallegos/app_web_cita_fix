@@ -1,6 +1,6 @@
 
 // rrd imports
-import { useLoaderData, useNavigate } from 'react-router-dom';
+import { Form, useLoaderData, useNavigate } from 'react-router-dom';
 import { fetchData } from "../../Wrapper.js";
 import { useEffect, useState } from "react";
 import { urlApi } from '../../styles/Constants.jsx';
@@ -8,12 +8,14 @@ import { toast } from "react-toastify";
 // assets
 import './View_update_user.css';
 import UserIcon from "../../assets/e.png";
+import PersonIcon from "../../assets/person.png";
 import PhoneIcon from "../../assets/phone.png";
 import MailIcon from "../../assets/mail.png";
 import LockIcon from "../../assets/lock.png";
 import CardMemberIcon from "../../assets/card_membership.png";
+import Logout from "../../assets/exit.png";
 import Loaging from '../../components/Loading.jsx';
-import { ChevronDownIcon, ChevronUpIcon, EyeIcon, EyeSlashIcon, UserCircleIcon, CameraIcon, CheckCircleIcon } from '@heroicons/react/24/solid';
+import { ChevronDownIcon, ChevronUpIcon, EyeIcon, EyeSlashIcon, CameraIcon, CheckCircleIcon, ArrowRightStartOnRectangleIcon } from '@heroicons/react/24/solid';
 
 // loader
 export function viewUpdateUserLoader() {
@@ -33,6 +35,7 @@ export function ViewUpdateUser() {
     const [mailGroup, setMailGroup] = useState(true);
     const [passGroup, setPassGroup] = useState(true);
     const [desAccGroup, setDesAccGroup] = useState(true);
+    const [logoutGroup, setLogoutGroup] = useState(true);
     const [passView, setPassView] = useState(true);
     const [passType, setPassType] = useState('password');
     const [name, setName] = useState();
@@ -292,7 +295,7 @@ export function ViewUpdateUser() {
             setbAcceder(false);
             //Enviar al backend
             var options = new FormData();
-            options.append('user_id',userRestApi.USER_ID);
+            options.append('user_id', userRestApi.USER_ID);
             options.append('image', imagenFile);
             try {
                 const response = await fetch(`${urlApi}photo`, {
@@ -370,7 +373,25 @@ export function ViewUpdateUser() {
                 {/* Imagen usuario */}
                 <div className="flex justify-center mb-6">
                     {userRestApi.PHOTO.data.length == 0 ? (
-                        <UserCircleIcon className="h-32 w-32 text-orange-400" />
+                        <div className='relative inline-block'>
+                            {imagen ? <img className="w-32 h-32 rounded-full object-cover border"
+                                    src={imagen} /> :
+                                <img className="w-32 h-32 rounded-full object-cover border bg-white"
+                                    src={PersonIcon} />}
+                            {/* Icono de la imagen */}
+                            {bimagen ?
+                                <label className='absolute bottom-1 right-1 bg-orange-500 rounded-full p-2 cursor-pointer hover:bg-orange-600 transition'>
+                                    <CameraIcon className="h-5 w-5 text-white" />
+                                    <input type="file" accept="image/*" className='hidden' onChange={handleChangeImagen} />
+                                </label> : bAcceder ?
+                                    <label className='absolute bottom-1 right-1 bg-orange-500 rounded-full p-2 cursor-pointer hover:bg-orange-600 transition'
+                                        onClick={handleSendImagen}>
+                                        <CheckCircleIcon className="h-5 w-5 text-white" />
+                                    </label> :
+                                    <label className='absolute bottom-1 right-1 bg-orange-500 rounded-full p-2'>
+                                        <div className='circlePh' ></div>
+                                    </label>}
+                        </div>
                     ) : (
                         <div className='relative inline-block'>
                             <img className="w-32 h-32 rounded-full object-cover border"
@@ -507,6 +528,29 @@ export function ViewUpdateUser() {
                             <label className="block text-sm text-red-600">Tu cuenta ha sido marcada para desactivarse temporalmente.</label>
                             <button className="mt-2 bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600"
                                 onClick={() => navigate("/deleteUser", { state: { userId: userRestApi.USER_ID } })} >Confirmar</button>
+                        </div>
+                    )}
+                </div>
+                {/* Grupo Cerrar sesión */}
+                <div className="bg-white text-black shadow rounded-xl p-4">
+                    <div
+                        className="flex items-center justify-between cursor-pointer"
+                        onClick={() => toggle(setLogoutGroup)}
+                    >
+                        <div className="flex items-center gap-2">
+                            {/* <img src={Logout} alt="icon" className="w-5 h-5" /> */}
+                            <ArrowRightStartOnRectangleIcon className='w-5 h-5 text-orange-600' />
+                            <span className="font-semibold">Cerrar sesión</span>
+                        </div>
+                        {logoutGroup ? <ChevronDownIcon className="w-5 h-5" /> : <ChevronUpIcon className="w-5 h-5" />}
+                    </div>
+                    {!logoutGroup && (
+                        <div className="mt-4">
+                            <Form method="post" action="/logout" >
+                                <button type="submit" className="mt-2 bg-orange-500 text-white px-4 py-2 rounded-md hover:bg-orange-600">
+                                    Confirmar
+                                </button>
+                            </Form>
                         </div>
                     )}
                 </div>

@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import '../register_user/View_update_user.css';
 import Loaging from '../../components/Loading.jsx';
 import { urlApi } from "../../styles/Constants.jsx";
+import PersonIcon from "../../assets/business.png";
 
 import { BuildingOfficeIcon, ChevronDownIcon, ChevronUpIcon, ClockIcon, MapPinIcon, Squares2X2Icon, UserCircleIcon, CameraIcon, CheckCircleIcon } from '@heroicons/react/24/solid';
 import RegisterSchedule from '../schedule/register_schedule.jsx';
@@ -48,7 +49,7 @@ export function ViewUpdateBusiness() {
     const [sSubCategoriaName, setSubCategoriaName] = useState('');
 
     const [showAlertConfirmation, setshowAlertConfirmation] = useState(false);
-     const [imagen, setImagen] = useState(null);
+    const [imagen, setImagen] = useState(null);
     const [imagenFile, setImagenFile] = useState(null);
     const [bimagen, setbImagen] = useState(true);
     const [bAcceder, setbAcceder] = useState(true);
@@ -316,7 +317,7 @@ export function ViewUpdateBusiness() {
             setbAcceder(false);
             //Enviar al backend
             var options = new FormData();
-            options.append('bussiness_id',bussiness.BUSSINESS_ID);
+            options.append('bussiness_id', bussiness.BUSSINESS_ID);
             options.append('image', imagenFile);
             try {
                 const response = await fetch(`${urlApi}photoBussiness`, {
@@ -447,11 +448,29 @@ export function ViewUpdateBusiness() {
                 {/* Imagen usuario */}
                 <div className="flex justify-center mb-6">
                     {bussiness.PHOTO == null ? (
-                        <UserCircleIcon className="h-32 w-32 text-orange-400" />
+                        <div className='relative inline-block'>
+                            {imagen ? <img className="w-32 h-32 rounded-full object-cover border"
+                                src={imagen} /> :
+                                <img className="w-32 h-32 rounded-full object-cover border"
+                                    src={PersonIcon} />}
+                            {/* Icono de la imagen */}
+                            {bimagen ?
+                                <label className='absolute bottom-1 right-1 bg-orange-500 rounded-full p-2 cursor-pointer hover:bg-orange-600 transition'>
+                                    <CameraIcon className="h-5 w-5 text-white" />
+                                    <input type="file" accept="image/*" className='hidden' onChange={handleChangeImagen} />
+                                </label> : bAcceder ?
+                                    <label className='absolute bottom-1 right-1 bg-orange-500 rounded-full p-2 cursor-pointer hover:bg-orange-600 transition'
+                                        onClick={handleSendImagen}>
+                                        <CheckCircleIcon className="h-5 w-5 text-white" />
+                                    </label> :
+                                    <label className='absolute bottom-1 right-1 bg-orange-500 rounded-full p-2'>
+                                        <div className='circlePh' ></div>
+                                    </label>}
+                        </div>
                     ) : (
                         <div className='relative inline-block'>
                             <img className="w-32 h-32 rounded-full object-cover border"
-                                src={ imagen || 'data:image/jpeg;base64,' + arrayBufferToBase64(bussiness.PHOTO['data'])} />
+                                src={imagen || 'data:image/jpeg;base64,' + arrayBufferToBase64(bussiness.PHOTO['data'])} />
                             {/* Icono de la imagen */}
                             {bimagen ?
                                 <label className='absolute bottom-1 right-1 bg-orange-500 rounded-full p-2 cursor-pointer hover:bg-orange-600 transition'>

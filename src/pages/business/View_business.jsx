@@ -3,7 +3,7 @@ import { BuildingStorefrontIcon, MapPinIcon, PhoneIcon, CalendarDaysIcon, StarIc
 import '../../components/CardBusiness.css';
 // assents
 import Store from "../../assets/business.png";
-import Logo from "../../assets/splash_white.png";
+import Logo from "../../assets/splash.png";
 import Loaging from '../../components/Loading.jsx';
 // rrd imports
 import { useLoaderData, useNavigate } from 'react-router-dom';
@@ -116,9 +116,9 @@ export function ViewBusiness() {
         <div>
 
             {
-                sCorreo == null & sPassword == null ? <div className="flex justify-between items-center w-full bg-gradient-to-br from-orange-600 to-orange-800">
-                    <a href="https://www.plannersday.com/"><img className='w-58 h-14' src={Logo} alt="" /></a>
-                    <a href="https://app.plannersday.com/"><span className='me-6 text-white text-xl'>Iniciar sesión</span></a>
+                sCorreo == null & sPassword == null ? <div className="flex justify-between items-center w-full bg-white">
+                    <a href="https://www.plannersday.com/"><img className='h-10 w-auto' src={Logo} alt="" /></a>
+                    <a href="https://app.plannersday.com/"><span className='mr-10 text-orange-600 text-auto'>Iniciar sesión</span></a>
                 </div> : <div></div>
             }
             <div className="min-h-screen grid items-center justify-center bg-gradient-to-br from-orange-600 to-orange-800 px-4">

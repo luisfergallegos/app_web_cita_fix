@@ -339,7 +339,7 @@ export function RegisterBusiness() {
                         {direccionUnoError ? <label className='errorlabel' name="direccionUnoError">{direccionUnoError}</label> : <></>}
                     </div>
                     <div className="registerForm-button">
-                        <button type="submit" onClick={register} > <span>Finalizar</span></button>
+                        <button type="submit" onClick={register} > <span>Crear empresa</span></button>
                     </div>
                 </div>
             </div>
