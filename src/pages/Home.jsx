@@ -30,7 +30,6 @@ export function Home() {
   const sUserCitaFix = fetchData("UserCitaFix") ?? [];
   const [citas, setCitas] = useState([]);
   const firstName = sUserCitaFix['first_name'] ?? "Usuario";
-  const lastName = sUserCitaFix['last_name'] ?? "Usuario";
   const userId = sUserCitaFix['USER_ID'] ?? "";
   const dorsl = sUserCitaFix['DORSL'] ?? "";
 
@@ -149,19 +148,14 @@ export function Home() {
           <div className="cursor-pointer flex items-center justify-between"
             onClick={() => toggle(setUserGroup)}>
             <div className="flex items-center gap-2">
-              <h2 className="text-2xl font-bold text-gray-800">Hola</h2>
+              <h2 className="text-2xl font-bold text-gray-800">{firstName.charAt(0).toUpperCase() + firstName.slice(1)}</h2>
             </div>
-            <button onClick={() => navigate("/viewUpdateUser")} >
-              <Cog6ToothIcon width={24} />
-            </button>
-          </div>
-          <div className="cursor-pointer flex items-center justify-between"
-            onClick={() => toggle(setUserGroup)}>
-            <div className="flex items-center gap-2">
-              <h2 className="text-2xl font-bold text-gray-800">{firstName.charAt(0).toUpperCase() + firstName.slice(1)+ ' '+ lastName.charAt(0).toUpperCase() + lastName.slice(1)}</h2>
+            <div className='flex items-center justify-between'>
+              <button className='mr-2' onClick={() => navigate("/viewUpdateUser")} >
+                <Cog6ToothIcon width={24} />
+              </button>
+              {userGroup ? <ChevronDownIcon className="w-5 h-5" /> : <ChevronUpIcon className="w-5 h-5" />}
             </div>
-            {userGroup ? <ChevronDownIcon className="w-5 h-5" /> : <ChevronUpIcon className="w-5 h-5" />}
-            
           </div>
           {!userGroup && (
             <div className="mt-4 space-y-4">

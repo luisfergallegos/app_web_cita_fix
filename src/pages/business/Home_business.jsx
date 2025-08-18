@@ -103,8 +103,7 @@ export function HomeBusiness() {
         <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-600 to-gray-800 px-4">
             <div className="max-w-3xl mx-auto mt-20 p-6 space-y-6 text-gray-800">
                 <div className="bg-white text-black shadow rounded-xl p-4">
-                    <div className="cursor-pointer flex items-center justify-between"
-                    >
+                    <div className="cursor-pointer flex items-center justify-between">
                         <div className="flex items-center gap-2">
                             <h2 className="text-2xl font-bold text-gray-800">{sUserCitaFix['DORSL']}</h2>
                         </div>
