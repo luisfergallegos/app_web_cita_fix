@@ -371,7 +371,7 @@ export function ViewUpdateUser() {
         <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-orange-600 to-orange-800 px-4">
             <div className="max-w-3xl mx-auto p-6 space-y-6 text-gray-800">
                 {/* Imagen usuario */}
-                <div className="flex justify-center mb-6">
+                <div className="flex justify-center mb-6 mt-10">
                     {userRestApi.PHOTO.data.length == 0 ? (
                         <div className='relative inline-block'>
                             {imagen ? <img className="w-32 h-32 rounded-full object-cover border"
