@@ -438,7 +438,7 @@ export function ViewUpdateBusiness() {
     }
 
     return (
-        <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-orange-600 to-orange-800 px-4">
+        <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-600 to-gray-800 px-4">
             {showAlertConfirmation && (
                 <div className="absolute top-6 bg-green-600 text-white px-6 py-3 rounded-lg shadow-lg text-sm animate-bounce z-50">
                     Es posible que este cambio tarde unos minutos en reflejarse en todos lados.

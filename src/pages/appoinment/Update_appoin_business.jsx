@@ -309,7 +309,7 @@ export function UpdateAppoinBusiness() {
         return <Loaging />;
     }
     return (
-        <div className="min-h-screen grid items-center justify-center bg-gradient-to-br from-orange-600 to-orange-800 px-4">
+        <div className="min-h-screen grid items-center justify-center bg-gradient-to-br from-gray-600 to-gray-800 px-4">
             <div className="bg-white rounded-3xl shadow-xl mt-20 mb-10 text-center animate-fade-in-up w-full max-w-md">
                 <div className="flex justify-center mb-4">
                     {
