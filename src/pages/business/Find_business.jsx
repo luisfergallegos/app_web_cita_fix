@@ -115,7 +115,7 @@ export function FindBusiness() {
         if (!correo || !pwd) {
             navigate("/");
         }
-        // Cargar user info desde loader
+        // Cargar user info desde loader        
         var auxUser = fetchData("UserCitaFix");
         if (auxUser) {
             setUserId(auxUser['USER_ID'] ?? "");
@@ -146,8 +146,6 @@ export function FindBusiness() {
             catch (e) {
                 return;
             }
-
-
         };
         fData();
     }, []);
@@ -181,7 +179,7 @@ export function FindBusiness() {
                         className="w-full pl-10 pr-4 py-3 rounded-xl shadow-sm focus:ring-2 focus:ring-orange-400 outline-none text-gray-800 placeholder-gray-400"
                     />
                     {/* Círculo animado */}
-                    {showIndicator == "Indicator" ? 
+                    {showIndicator == "Indicator" ?
                         <>
                             {/* Fondo vidrio suave */}
                             <div className="fixed inset-0 bg-white/20 backdrop-blur-sm z-30 pointer-events-none" />
@@ -197,7 +195,7 @@ export function FindBusiness() {
                                 </span>
                             </div>
                         </>
-                    :<></>}
+                        : <></>}
                 </div>
 
                 {/* Resultados o sugerencias */}
