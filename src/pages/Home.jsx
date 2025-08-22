@@ -32,6 +32,7 @@ export function Home() {
   const firstName = sUserCitaFix['first_name'] ?? "Usuario";
   const userId = sUserCitaFix['USER_ID'] ?? "";
   const dorsl = sUserCitaFix['DORSL'] ?? "";
+  const PhotoDorsl = sUserCitaFix['PHOTO_DORSL'] ?? "";
 
   const [bAccederIndex, setbAccederIndex] = useState('');
   const [userGroup, setUserGroup] = useState(true);
@@ -161,9 +162,14 @@ export function Home() {
             <div className="mt-4 space-y-4">
               <button
                 onClick={() => { dorsl == '' ? navigate("/registerBusiness") : navigate("/homeBusiness") }}
-                className="bg-orange-500 hover:bg-orange-600 text-white font-semibold py-2 px-2 rounded-md shadow-md transition flex items-center"
+                className="hover:bg-gray-200 text-orange-500 font-semibold py-2 px-2 rounded-md shadow-md transition flex items-center"
               >
-                <BuildingOfficeIcon className='w-8 h-8 mx-1 md:w-5 md:h-5 lg:w-10 lg:h-10 ms:mx-2 md:mx-2 lg:mx-2' />
+                {
+                  PhotoDorsl.data.length == 0 ?
+                    <BuildingOfficeIcon className='w-8 h-8 mx-1 md:w-5 md:h-5 lg:w-10 lg:h-10 ms:mx-2 md:mx-2 lg:mx-2' />
+                    : <img className="w-8 h-8 mx-1 md:w-5 md:h-5 lg:w-10 lg:h-10 ms:mx-2 md:mx-2 lg:mx-2 rounded-full object-cover border"
+                      src={'data:image/jpeg;base64,' + arrayBufferToBase64(PhotoDorsl.data)} />
+                }
                 <label className="mr-4">{dorsl == '' ? 'Crear empresa' : dorsl.charAt(0).toUpperCase() + dorsl.slice(1)}</label>
               </button>
             </div>
