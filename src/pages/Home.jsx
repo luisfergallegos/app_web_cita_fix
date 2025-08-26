@@ -35,7 +35,7 @@ export function Home() {
   const PhotoDorsl = sUserCitaFix['PHOTO_DORSL'] ?? "";
 
   const [bAccederIndex, setbAccederIndex] = useState('');
-  const [userGroup, setUserGroup] = useState(true);
+  const [userGroup, setUserGroup] = useState(false);
 
   const arrayBufferToBase64 = (buffer) => {
     var binary = '';
