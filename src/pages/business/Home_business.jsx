@@ -111,7 +111,7 @@ export function HomeBusiness() {
                             <button className='mr-2' onClick={() => navigate("/viewUpdateBusiness")} >
                                 <Cog6ToothIcon width={24} />
                             </button>
-                            <button onClick={() => navigate(`/viewBusiness/${sUserCitaFix['BUSSINESS_ID']}`)} >
+                            <button onClick={() => navigate(`/viewBusiness?n=${sUserCitaFix['DORSL']}&i=${sUserCitaFix['BUSSINESS_ID']}`)} >
                                 <ShareIcon width={24} />
                             </button>
                         </div>

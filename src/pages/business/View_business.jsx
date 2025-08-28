@@ -6,7 +6,7 @@ import Store from "../../assets/business.png";
 import Logo from "../../assets/splash.png";
 import Loaging from '../../components/Loading.jsx';
 // rrd imports
-import { useLoaderData, useNavigate } from 'react-router-dom';
+import { useLoaderData, useNavigate, useSearchParams } from 'react-router-dom';
 import { urlApi } from "../../styles/Constants.jsx";
 import { useEffect, useState } from "react";
 import { fetchData } from '../../Wrapper.js';
@@ -15,19 +15,22 @@ import { toast } from "react-toastify";
 const StarRating = (stars) => '⭐'.repeat(stars);
 
 // loader
-export async function ViewBusinessLoader({ params }) {
+export async function ViewBusinessLoader() {
     const sCorreo = fetchData("correo");
-    const sPassword = fetchData("pwd");
-    const businessId = params.id;
-    return { sCorreo, sPassword, businessId };
+    const sPassword = fetchData("pwd");    
+    return { sCorreo, sPassword };
 }
 
 export function ViewBusiness() {
     const navigate = useNavigate();
-    const { sCorreo, sPassword, businessId } = useLoaderData();
+    const { sCorreo, sPassword } = useLoaderData();
     const [loading, setLoading] = useState(true);
     const [qualifications, setQualifications] = useState([]);
     const [horario, setHorario] = useState([]);
+
+    const [searchParams] = useSearchParams();
+    const businessId = searchParams.get("i");
+    const businessDORSL = searchParams.get("n");
 
     const [sURL, setURL] = useState();
     // Function to convert Base64 string to binary data
@@ -60,7 +63,7 @@ export function ViewBusiness() {
                 if (response.status == 200) {
                     const json = await response.json();
                     SetEmpresa(json['data']);
-                    setURL(`https://app.plannersday.com/viewBusiness/${businessId}`);
+                    setURL(`https://app.plannersday.com/viewBusiness?n=${businessDORSL}&i=${businessId}`);
                     try {
                         const response = await fetch(`${urlApi}getBusCalif?bussiness_id=${businessId}`);
                         const json = await response.json();

@@ -141,7 +141,7 @@ const router = createBrowserRouter([
         errorElement: <Error />
       },
       {
-        path: "viewBusiness/:id",
+        path: "viewBusiness",
         element: <ViewBusiness />,
         loader: ViewBusinessLoader,
         /*action: expensesAction, */
