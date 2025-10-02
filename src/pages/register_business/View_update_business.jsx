@@ -8,7 +8,7 @@ import Loaging from '../../components/Loading.jsx';
 import { urlApi } from "../../styles/Constants.jsx";
 import PersonIcon from "../../assets/business.png";
 
-import { BuildingOfficeIcon, ChevronDownIcon, ChevronUpIcon, ClockIcon, MapPinIcon, Squares2X2Icon, UserCircleIcon, CameraIcon, CheckCircleIcon } from '@heroicons/react/24/solid';
+import { BuildingOfficeIcon, ChevronDownIcon, ChevronUpIcon, ClockIcon, MapPinIcon, Squares2X2Icon, UserCircleIcon, CameraIcon, CheckCircleIcon, HomeIcon } from '@heroicons/react/24/solid';
 import RegisterSchedule from '../schedule/register_schedule.jsx';
 import UpdateSchedule from '../schedule/update_schedule.jsx';
 
@@ -34,6 +34,7 @@ export function ViewUpdateBusiness() {
     const [categoriaGroup, setCategoriaGroup] = useState(true);
     const [horarioGroup, setHorarioGroup] = useState(true);
     const [addressGroup, setAddressGroup] = useState(true);
+    const [homeServiceGroup, sethomeServiceGroup] = useState(true);
     const [codigoPostal, setCodigoPostal] = useState('');
     const [countCodigoPostal, setCountCodigoPostal] = useState(0);
     const [estado, setEstado] = useState();
@@ -53,6 +54,8 @@ export function ViewUpdateBusiness() {
     const [imagenFile, setImagenFile] = useState(null);
     const [bimagen, setbImagen] = useState(true);
     const [bAcceder, setbAcceder] = useState(true);
+    const [bAccederHS, setbAccederHS] = useState(true);
+    const [bAccederName, setbAccederName] = useState(true);
 
 
     const arrayBufferToBase64 = (buffer) => {
@@ -67,6 +70,60 @@ export function ViewUpdateBusiness() {
     const ModNameGroupOpen = async (e) => {
         e.stopPropagation();
         if (bussiness.DORSL != name) {
+            if (bAccederName) {
+                setbAccederName(false);
+                //Enviar por PUT
+                var options = {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(
+                        {
+                            'user_id': bussiness.USER_ID,
+                            "bussiness_id": bussiness.BUSSINESS_ID,
+                            'name': name,
+                            'latitude': bussiness.LATITUDE,
+                            'longitude': bussiness.LONGITUDE,
+                            'bussiness_branch_id': bussiness.BUSSINESS_BRANCH_ID,
+                            'address_first': bussiness.ADDRESS_FIRST,
+                            'address_second': bussiness.ADDRESS_SECOND,
+                            'postal_code': bussiness.POSTAL_CODE,
+                            'city': bussiness.CITY,
+                            'state': bussiness.STATE,
+                            "home_service": bussiness.HOME_SERVICE
+                        })
+                }
+                try {
+                    const response = await fetch(`${urlApi}bussiness`, options);
+                    const json = await response.json();
+                    if (json['sucess']) {
+                        localStorage.setItem("dorsl", JSON.stringify(name));
+                        setshowAlertConfirmation(true);
+                        setTimeout(() => setshowAlertConfirmation(false), 3000); // ocultar alerta
+                        setTimeout(() => window.location.reload(), 3000);
+                    }
+                    else {
+                        console.log(`No se pudo actulizar informacion de la empresa`);
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+
+                }
+                catch (e) {
+                    setbAccederName(true);
+                    return;
+                }
+                setbAccederName(true);
+            }
+        }
+    };
+
+    const ModHomeServiceGroupOpen = async (e) => {
+        e.stopPropagation();
+        if (bAccederHS) {
+            setbAccederHS(false);
+            const hs = bussiness.HOME_SERVICE ==
+                '1'
+                ? '0'
+                : '1';
             //Enviar por PUT
             var options = {
                 method: 'PUT',
@@ -83,7 +140,8 @@ export function ViewUpdateBusiness() {
                         'address_second': bussiness.ADDRESS_SECOND,
                         'postal_code': bussiness.POSTAL_CODE,
                         'city': bussiness.CITY,
-                        'state': bussiness.STATE
+                        'state': bussiness.STATE,
+                        "home_service": hs
                     })
             }
             try {
@@ -94,7 +152,6 @@ export function ViewUpdateBusiness() {
                     setshowAlertConfirmation(true);
                     setTimeout(() => setshowAlertConfirmation(false), 3000); // ocultar alerta
                     setTimeout(() => window.location.reload(), 3000);
-
                 }
                 else {
                     console.log(`No se pudo actulizar informacion de la empresa`);
@@ -103,8 +160,10 @@ export function ViewUpdateBusiness() {
 
             }
             catch (e) {
+                setbAccederHS(true);
                 return;
             }
+            setbAccederHS(true);
         }
     };
 
@@ -128,7 +187,8 @@ export function ViewUpdateBusiness() {
                         'address_second': bussiness.ADDRESS_SECOND,
                         'postal_code': bussiness.POSTAL_CODE,
                         'city': bussiness.CITY,
-                        'state': bussiness.STATE
+                        'state': bussiness.STATE,
+                        "home_service": bussiness.HOME_SERVICE
                     })
             }
             try {
@@ -179,7 +239,8 @@ export function ViewUpdateBusiness() {
                         'address_second': direccionDos,
                         'postal_code': codigoPostal,
                         'city': ciudad,
-                        'state': estado
+                        'state': estado,
+                        "home_service": bussiness.HOME_SERVICE
                     })
             }
             try {
@@ -500,7 +561,7 @@ export function ViewUpdateBusiness() {
                         </div>
                         {nameGroup ? <ChevronDownIcon className="w-5 h-5" /> : <ChevronUpIcon className="w-5 h-5" />}
                     </div>
-                    {!nameGroup && (
+                    {bAccederName ? (!nameGroup && (
                         <div className="mt-4 space-y-4">
                             <div>
                                 <label className="block text-sm font-medium mb-1">Nombre de la empresa</label>
@@ -510,7 +571,9 @@ export function ViewUpdateBusiness() {
                                 disabled={bussiness.DORSL != name ? false : true}
                                 onClick={ModNameGroupOpen}>Guardar</button>
                         </div>
-                    )}
+                    )) : <div className="mt-4 space-y-4">
+                        <div className='circle' ></div>
+                    </div>}
                 </div>
                 {/* Grupo Categoria */}
                 <div className="bg-white text-black shadow rounded-xl p-4">
@@ -614,6 +677,37 @@ export function ViewUpdateBusiness() {
                                         || bussiness.STATE != estado ? false : true} onClick={ModAddressGroupOpen}>Guardar</button>
                         </div>
                     )}
+                </div>
+                {/* Grupo Home Services */}
+                <div className="bg-white text-black shadow rounded-xl p-4">
+                    <div
+                        className="flex items-center justify-between cursor-pointer"
+                        onClick={() => toggle(sethomeServiceGroup)}
+                    >
+                        <div className="flex items-center gap-2">
+                            <HomeIcon className='w-5 h-5 text-orange-600' />
+                            <span className="font-semibold">Servicio a domicilio</span>
+                        </div>
+                        {homeServiceGroup ? <ChevronDownIcon className="w-5 h-5" /> : <ChevronUpIcon className="w-5 h-5" />}
+                    </div>
+                    {bAccederHS ? (!homeServiceGroup && (
+                        <div className="mt-4 space-y-4">
+                            <div className='flex'>
+                                <label className="block text-sm font-medium mb-1 mr-4">¿Quieres aceptar citas a domicilio?</label>
+                                <label className="switch">
+                                <input type="checkbox" onClick={ModHomeServiceGroupOpen}
+                                    checked={bussiness.HOME_SERVICE ==
+                                        '1'
+                                        ? true
+                                        : false} />
+                                <span class="slider round"></span>
+                            </label>
+                            </div>                            
+                        </div>
+                    )) : <div className="mt-4 space-y-4">
+                        <div className='circle' ></div>
+                    </div>}
+
                 </div>
             </div>
         </div>);

@@ -2,6 +2,7 @@
 import { useLoaderData, useNavigate } from "react-router-dom";
 import { fetchData } from "../Wrapper.js";
 import { useEffect, useState } from "react";
+import CountUp from "react-countup";
 
 // assets
 import illustration from "../assets/clock_green.svg";
@@ -9,7 +10,9 @@ import Loaging from '../components/Loading.jsx';
 import { urlApi } from "../styles/Constants.jsx";
 import { ClockIcon, Cog6ToothIcon, PlusCircleIcon, ChevronDownIcon, ChevronUpIcon, Bars3Icon } from '@heroicons/react/24/outline';
 import {
-  BuildingOfficeIcon
+  BuildingOffice2Icon,
+  BuildingOfficeIcon,
+  CalendarDaysIcon
 } from '@heroicons/react/24/solid';
 import './Home.css';
 
@@ -29,6 +32,7 @@ export function Home() {
 
   const sUserCitaFix = fetchData("UserCitaFix") ?? [];
   const [citas, setCitas] = useState([]);
+  const [userAdditInf, setUserAdditInf] = useState([]);
   const firstName = sUserCitaFix['first_name'] ?? "Usuario";
   const userId = sUserCitaFix['USER_ID'] ?? "";
   const dorsl = sUserCitaFix['DORSL'] ?? "";
@@ -126,16 +130,53 @@ export function Home() {
           console.log(`Error getting appoin.`);
           throw new Error(`HTTP error! status: ${response.status}`);
         }
+        try {
+          const response = await fetch(`${urlApi}usrInf?user_id=${userId}`);
+          if (response.status == 200) {
+            const json = await response.json();
+            setUserAdditInf(json['data'][0]);
+          } else {
+            console.log(`Error getting setUserAdditInf.`);
+            throw new Error(`HTTP error! status: ${response.status}`);
+          }
+        }
+        catch (e) {
+          return;
+        }
         setLoading(false);
       }
       catch (e) {
         return;
       }
+
     };
     if (sCorreo === null && sPassword === null) {
       navigate("/");
     }
+    
     fData();
+    
+    
+
+    /* const TweenAnimationBuilder = async () => {
+      let start = 0;
+      const end = lugaresVisitados;
+      const duration = 2000;
+      const stepTime = Math.abs(Math.floor(duration / end));
+      const timer = setInterval(() => {
+        start += 1;
+        setCountL(start);
+        console.log(end);
+        console.log(start);
+        if (start === end) clearInterval(timer);
+      }, stepTime);
+
+      // return () => clearInterval(timer);
+
+    }; */
+    // TweenAnimationBuilder();
+
+
   }, []);
 
   if (loading) {
@@ -156,6 +197,20 @@ export function Home() {
                 <Cog6ToothIcon width={24} />
               </button>
               {userGroup ? <ChevronDownIcon className="w-5 h-5" /> : <ChevronUpIcon className="w-5 h-5" />}
+            </div>
+          </div>
+          <div className='flex items-center justify-between mt-2 mb-2'>
+            <BuildingOffice2Icon className="w-8 h-8 ml-2" color={'#fc6500'} /> 
+            <div className='grid text-center'>
+              <h1 className="text-1xl font-bold text-black">
+                <CountUp start={0} end={userAdditInf.amount_business} duration={2} /></h1>
+              <h1>Lugares visitados</h1>
+            </div>
+            <CalendarDaysIcon className="w-8 h-8" color={'#fc6500'} />
+            <div className='grid text-center mr-4'>
+              <h1 className="text-1xl font-bold text-black">
+                <CountUp start={0} end={userAdditInf.amount_appointment} duration={2} /></h1>
+              <h1 >Citas totales</h1>
             </div>
           </div>
           {!userGroup && (

@@ -234,7 +234,7 @@ export function AddAppoinBusinesssAnon() {
         <div className="min-h-screen grid items-center justify-center bg-gradient-to-br from-gray-600 to-gray-800 px-4">
             <div className="relative bg-white rounded-3xl shadow-xl mt-20 mb-10 text-center animate-fade-in-up w-full max-w-md">
                 {showAlert && (
-                    <div className="absolute top-8 left-1/2 -translate-x-1/2 bg-red-600 text-white px-6 py-3 rounded-lg shadow-lg text-sm animate-bounce z-50">
+                    <div className="absolute top-8 justify-center bg-red-600 text-white px-6 py-3 rounded-lg shadow-lg text-sm animate-bounce z-50">
                         {errorMsg}
                     </div>
                 )}

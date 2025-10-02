@@ -31,7 +31,7 @@ export function CardBusiness({ key, userId, userName, empresa, setIsOpen, setInd
 
     const { BUSSINESS_ID, USER_ID, DORSL, PHOTO, SUBCATEGORY, SERVICE_LEVEL,
         ADDRESS_FIRST, ADDRESS_SECOND, POSTAL_CODE, CITY, STATE,
-        phone, Horario } = empresa;
+        phone, Horario, HOME_SERVICE } = empresa;
     //console.log(PHOTO.data);
 
     const desplegarPantallaAddAppoin = () => {

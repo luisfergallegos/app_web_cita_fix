@@ -10,9 +10,10 @@ import Store from "../../assets/business.png";
 import Loaging from '../../components/Loading.jsx';
 import { urlApi } from "../../styles/Constants.jsx";
 // Library
-import { CalendarDateRangeIcon, XMarkIcon as CloseIcon } from '@heroicons/react/24/solid';
+import { CalendarDateRangeIcon, XMarkIcon as CloseIcon, StarIcon } from '@heroicons/react/24/solid';
 import DatePicker from 'react-datepicker';
 import "react-datepicker/dist/react-datepicker.css";
+import { StarIcon as StarIcon_Outline } from '@heroicons/react/24/outline';
 
 // loader
 export function AddAppoinBusinesssLoader() {
@@ -49,13 +50,19 @@ export function AddAppoinBusinesss() {
     const [_excludeDates, setExcludeDates] = useState([]);
     const [citas, setCitas] = useState([]);
     const [bAcceder, setbAcceder] = useState(true);
+    const [bAccederFav, setbAccederFav] = useState(true);
     const [message, setMessage] = useState('');
-
+    const [showAlert, setShowAlert] = useState(false);
+    const [showAlertError, setShowAlertError] = useState(false);
+    const [errorMsg, setErrorMsg] = useState('');
+    const [confirmMsg, setConfirmMsg] = useState('');    
     const [loading, setLoading] = useState(true);
     const [isOpen, setIsOpen] = useState(false);
 
+
     const { USER_ID, first_name, last_name,
-        PHOTO } = location.state.userCita;
+        PHOTO, FAVORITE, FAVORITES_ID } = location.state.userCita;
+    const [bFavorite, setbFav] = useState(FAVORITE == 1 ? false : true);
     const businessId = location.state.businessId;
     const dorsl = location.state.dorsl;
     var _today = new Date();
@@ -141,6 +148,82 @@ export function AddAppoinBusinesss() {
         }
     };
 
+    const buildFavorite = async () => {
+        if (bAccederFav) {
+            setbAccederFav(false);
+            const fav = bFavorite ? '1' : '0';
+            if (bFavorite) {
+                //Enviar por POST
+                var options = {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(
+                        {
+                            'favorites_id': FAVORITES_ID,
+                            'bussiness_id': businessId,
+                            'user_id': USER_ID,
+                            'is_active': fav,
+                        })
+                }
+                try {
+                    const response = await fetch(`${urlApi}userFavorite`, options);
+                    const json = await response.json();
+                    if (json['sucess'] == true) {
+                        setConfirmMsg('✅ ' + first_name + ' ' + last_name + ' ha sido añadida a tu lista de favoritos.');
+                        setShowAlert(true);
+                        setTimeout(() => setShowAlert(false), 3000); // ocultar alerta
+                        setbFav(!bFavorite);
+                    }
+                    else {
+                        setErrorMsg('⚠️ No se ha podido añadir a tu lista de favoritos.');
+                        setShowAlertError(true);
+                        setTimeout(() => setShowAlertError(false), 3000); // ocultar alerta
+                    }
+                }
+                catch (e) {
+                    setbAccederFav(true);
+                    return;
+                }
+
+            } else {
+                //Enviar por POST
+                var options = {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(
+                        {
+                            'favorites_id': FAVORITES_ID,
+                            'bussiness_id': businessId,
+                            'user_id': USER_ID,
+                            'is_active': fav,
+                        })
+                }
+                try {
+                    const response = await fetch(`${urlApi}userFavorite`, options);
+                    const json = await response.json();
+                    if (json['sucess'] == true) {
+                        setConfirmMsg('❌ ' + first_name + ' ' + last_name + ' ha sido eliminada de tu lista de favoritos.');
+                        setShowAlert(true);
+                        setTimeout(() => setShowAlert(false), 3000); // ocultar alerta                
+                        setbFav(!bFavorite);
+                    }
+                    else {
+                        setErrorMsg('⚠️ No se ha podido eliminar a tu lista de favoritos.');
+                        setShowAlertError(true);
+                        setTimeout(() => setShowAlertError(false), 3000); // ocultar alerta
+                    }
+                }
+                catch (e) {
+                    setbAccederFav(true);
+                    return;
+                }
+
+            }
+            setbAccederFav(true);
+        }
+    };
+
+
     const handleChangeMessage = evt => {
         const value = evt.target.value;
         setMessage(value);
@@ -194,6 +277,26 @@ export function AddAppoinBusinesss() {
     return (
         <div className="min-h-screen grid items-center justify-center bg-gradient-to-br from-gray-600 to-gray-800 px-4">
             <div className="bg-white rounded-3xl shadow-xl mt-20 mb-10  text-center animate-fade-in-up w-full max-w-md">
+                {showAlert && (
+                    <div className="absolute top-8 justify-center bg-green-600 text-white px-6 py-3 rounded-lg shadow-lg text-sm animate-bounce z-50">
+                        {confirmMsg}
+                    </div>
+                )}
+                {showAlertError && (
+                    <div className="absolute top-8 justify-center bg-red-600 text-white px-6 py-3 rounded-lg shadow-lg text-sm animate-bounce z-50">
+                        {errorMsg}
+                    </div>
+                )}
+                {bAccederFav ? <div className="flex justify-end mr-4 mt-4"
+                    onClick={() => { buildFavorite(); }}>
+                    {bFavorite ?
+                        <StarIcon_Outline className="w-5 h-5 text-orange-500" />
+                        : <StarIcon className="w-5 h-5 text-orange-500" />
+                    }
+                </div> : <div className="flex justify-end mr-4 mt-4">
+                    <button className='mb-10'><div className='circlesm' ></div></button>
+                </div>}
+
                 <div className="flex justify-center mb-4">
                     {
                         PHOTO == null ? <img className="w-40 h-40 object-cover rounded-full border mt-8 bg-gray-300" src={Store} /> :

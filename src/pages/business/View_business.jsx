@@ -63,7 +63,12 @@ export function ViewBusiness() {
                 if (response.status == 200) {
                     const json = await response.json();
                     SetEmpresa(json['data']);
-                    setURL(`https://app.plannersday.com/viewBusiness?n=${businessDORSL}&i=${businessId}`);
+                    const baseUrl = 'https://app.plannersday.com/viewBusiness'; 
+                    const params = new URLSearchParams({
+                        n: businessDORSL,
+                        i: businessId
+                    });
+                    setURL(`${baseUrl}?${params.toString()}`);
                     try {
                         const response = await fetch(`${urlApi}getBusCalif?bussiness_id=${businessId}`);
                         const json = await response.json();

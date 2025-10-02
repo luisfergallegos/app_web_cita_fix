@@ -111,7 +111,7 @@ export function AddAppoin() {
 
     const { BUSSINESS_ID, USER_ID, DORSL, PHOTO, CATEGORY, SERVICE_LEVEL,
         ADDRESS_FIRST, ADDRESS_SECOND, POSTAL_CODE, CITY, STATE,
-        phone, Horario } = location.state.business;
+        phone, Horario, HOME_SERVICE } = location.state.business;
     var _today = new Date();
     const initialDate = new Date(_today);
     const lastDate = new Date(_today.setDate(_today.getDate() + 31));
@@ -449,9 +449,9 @@ export function AddAppoin() {
                         ))
                     }
                 </div>
-
                 <hr className="mb-4 mt-4" />
-                <div className='businessTitle'>
+                {
+                    HOME_SERVICE == '1' && <div className='businessTitle'>
                     <div style={{ display: 'flex', justifyItems: 'center', alignItems: 'center', marginRight: '20px' }}>
                         <h4 style={{ marginRight: '20px' }}>{bMostrarAddress ? '¿Cuál es la dirección?' : 'Visita a domicilio'}</h4>
                         <label className="switch">
@@ -490,6 +490,10 @@ export function AddAppoin() {
                         </div>
                     </div>
                 </div>
+                }
+
+                
+                
 
                 {bAcceder ? <div className='businessBtn'>
                     <button className='mb-10' onClick={() => {

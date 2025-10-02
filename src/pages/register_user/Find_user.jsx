@@ -6,7 +6,7 @@ import { useEffect, useState } from "react";
 // assets
 import '../business/Find_business.css';
 import { urlApi } from "../../styles/Constants.jsx";
-import { ChevronRightIcon, MagnifyingGlassIcon, UserCircleIcon, UserPlusIcon } from '@heroicons/react/24/solid';
+import { ChevronRightIcon, MagnifyingGlassIcon, StarIcon, UserCircleIcon, UserPlusIcon } from '@heroicons/react/24/solid';
 import Loaging from '../../components/Loading.jsx';
 
 // loader
@@ -17,6 +17,18 @@ export function findUserLoader() {
     return { sCorreo, sPassword, sUserCitaFix };
 }
 
+function selectableFavorites(_usuarios) {
+    var temp = [];
+    if (_usuarios.length !== 0) {
+        for (let index = 0; index < _usuarios.length; index++) {
+            if (_usuarios[index].FAVORITE == 1) {
+                temp.push(_usuarios[index]);
+            }
+        }
+    }
+    return temp;
+}
+
 export function FindUser() {
     const navigate = useNavigate();
     const { sCorreo, sPassword, sUserCitaFix } = useLoaderData();
@@ -25,6 +37,7 @@ export function FindUser() {
 
     const [searchText, setsearchText] = useState('');
     const [filteredNames, setfilteredNames] = useState([]);
+    const [favoritesNames, setFavoritesNames] = useState([]);
 
     const arrayBufferToBase64 = (buffer) => {
         var binary = '';
@@ -62,6 +75,9 @@ export function FindUser() {
                 }
                 const json = await response.json();
                 setUsuarios(json['data']);
+                setFavoritesNames(selectableFavorites(json['data']));
+
+
                 setLoading(false);
             }
             catch (e) {
@@ -125,16 +141,40 @@ export function FindUser() {
                 ) : (
                     <div className="text-center text-white space-y-4">
                         <p>Selecciona una opción para generar una cita al instante.</p>
-                        <div className="mt-10">
-                            <h3 className="text-lg font-semibold mb-4">Sugerencia para ti</h3>
-                            
-                        </div>
+                        {favoritesNames.length != 0 && <div className="mt-10">
+                            <div className='flex '>
+                                <StarIcon className="w-6 h-6 mr-4" color={'#fc6500'} />
+                                <h3 className="text-lg font-semibold mb-4">Favoritos</h3>
+                            </div>
+                        </div>}
+                        {favoritesNames && <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                            {
+                                favoritesNames.map((favo) => (
+                                    <div className="inline-flex bg-white p-4 border border-gray-300 rounded-md mb-2 scale-95 hover:scale-100"
+                                        key={favo.USER_ID}
+                                        onClick={() => {
+                                            navigate("/addAppoinBusiness", { state: { userCita: favo, businessId: sUserCitaFix['BUSSINESS_ID'], dorsl: sUserCitaFix['DORSL'] } });
+                                        }}
+                                    >
+                                        {
+                                            favo['PHOTO'] === null ? <UserCircleIcon width={40} color={'#fc6500'} /> :
+                                                <img id='imgS' src={'data:image/jpeg;base64,' + arrayBufferToBase64(favo['PHOTO'].data)} />
+                                        }
+                                        <div>
+                                            <h2 className="font-bold text-black">{favo['first_name']} {favo.last_name}</h2>
+                                            <p className="text-gray-400">{`${favo.email.substring(0, favo.email.indexOf("@") + 1)}..`}</p>
+                                        </div>
+                                    </div>
+                                )
+                                )}
+                        </div>}
+
                     </div>
                 )}
             </div>
         </div>
-        
-        
+
+
     );
 }
 

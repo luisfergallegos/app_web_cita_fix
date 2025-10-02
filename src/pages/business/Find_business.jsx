@@ -82,6 +82,10 @@ export function FindBusiness() {
 
     const StarRating = (stars) => '⭐'.repeat(stars);
 
+    function quitarAcentos(texto) {
+        return texto.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+    }
+
     const handleChange = evt => {
         // if (showIndicator) setShowIndicator("");
         const value = evt.target.value;
@@ -90,8 +94,10 @@ export function FindBusiness() {
             setFilteredNames(empresas);
         } else {
             const results = empresas.filter((emp) =>
-                emp.DORSL.toLowerCase().includes(value.toLowerCase()) ||
-                emp.SUBCATEGORY.toLowerCase().includes(value.toLowerCase())
+                quitarAcentos(emp.DORSL.toLowerCase())
+                    .includes(value.toLowerCase()) ||
+                quitarAcentos(emp.SUBCATEGORY.toLowerCase())
+                    .includes(value.toLowerCase())
             );
             setFilteredNames(results);
         }
@@ -109,6 +115,8 @@ export function FindBusiness() {
         }
         setfilteredNames(tempList); */
     };
+
+
 
     useEffect(() => {
         // Redirección si no hay sesión

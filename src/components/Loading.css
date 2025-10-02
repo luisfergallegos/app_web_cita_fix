@@ -20,6 +20,16 @@
     animation: spin 0.8s linear infinite;
 }
 
+.circlesm{
+    margin: 7px auto;
+    width: 20px;
+    height: 20px;
+    border: 5px solid #fc6500;
+    border-radius: 50%;
+    border-top-color: #2c2c2c;
+    animation: spin 0.8s linear infinite;
+}
+
 @keyframes spin {
     0% {
         transform: rotate(0deg);

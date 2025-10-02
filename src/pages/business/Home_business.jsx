@@ -111,7 +111,17 @@ export function HomeBusiness() {
                             <button className='mr-2' onClick={() => navigate("/viewUpdateBusiness")} >
                                 <Cog6ToothIcon width={24} />
                             </button>
-                            <button onClick={() => navigate(`/viewBusiness?n=${sUserCitaFix['DORSL']}&i=${sUserCitaFix['BUSSINESS_ID']}`)} >
+                            <button onClick={() => {
+                                const baseUrl = '/viewBusiness';
+                                const params = new URLSearchParams({
+                                    n: sUserCitaFix['DORSL'],
+                                    i: sUserCitaFix['BUSSINESS_ID']
+                                });
+                                navigate(`${baseUrl}?${params.toString()}`);
+
+                            }
+
+                            } >
                                 <ShareIcon width={24} />
                             </button>
                         </div>
