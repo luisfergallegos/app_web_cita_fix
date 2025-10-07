@@ -187,8 +187,7 @@ export function Home() {
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-orange-600 to-orange-800 px-4">
       <div className="max-w-3xl mx-auto mt-20 p-6 space-y-6 text-gray-800">
         <div className="bg-white text-black shadow rounded-xl p-4">
-          <div className="cursor-pointer flex items-center justify-between"
-            onClick={() => toggle(setUserGroup)}>
+          <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <h2 className="text-2xl font-bold text-gray-800">{firstName.charAt(0).toUpperCase() + firstName.slice(1)}</h2>
             </div>
@@ -196,7 +195,7 @@ export function Home() {
               <button className='mr-2' onClick={() => navigate("/viewUpdateUser")} >
                 <Cog6ToothIcon width={24} />
               </button>
-              {userGroup ? <ChevronDownIcon className="w-5 h-5" /> : <ChevronUpIcon className="w-5 h-5" />}
+              
             </div>
           </div>
           <div className='flex items-center justify-between mt-2 mb-2'>
@@ -207,11 +206,15 @@ export function Home() {
               <h1>Lugares visitados</h1>
             </div>
             <CalendarDaysIcon className="w-8 h-8" color={'#fc6500'} />
-            <div className='grid text-center mr-4'>
+            <div className='grid text-center mr-4' >
               <h1 className="text-1xl font-bold text-black">
                 <CountUp start={0} end={userAdditInf.amount_appointment} duration={2} /></h1>
               <h1 >Citas totales</h1>
             </div>
+          </div>
+          <div className='cursor-pointer flex items-center' onClick={() => toggle(setUserGroup)}>
+            <h1 className='mr-2 text-gray-800'>Perfiles de negocio</h1>
+            {userGroup ? <ChevronDownIcon className="w-5 h-5 text-gray-800" /> : <ChevronUpIcon className="w-5 h-5 text-gray-800" />}
           </div>
           {!userGroup && (
             <div className="mt-4 space-y-4">

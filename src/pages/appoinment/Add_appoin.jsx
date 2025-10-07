@@ -400,7 +400,7 @@ export function AddAppoin() {
                         </div>
                     </div>
                 </div>
-                <hr className="mb-4 mt-4" />
+                {/* <hr className="mb-4 mt-4" />
                 <div className='businessTitle'>
                     <h4>Información de contacto</h4>
                     <div className='flex justify-start items-center ms-4 mt-4'>
@@ -408,7 +408,7 @@ export function AddAppoin() {
                             <p className='ml-4 text-black'>{location.state.userName}</p>
                         </div>
                     </div>
-                </div>
+                </div> */}
                 <hr className="mb-4 mt-4" />
                 <div className='businessTitle'>
                     <h4>Agendar</h4>

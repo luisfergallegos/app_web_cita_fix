@@ -9,7 +9,7 @@ import Loaging from '../../components/Loading.jsx';
 import { urlApi } from "../../styles/Constants.jsx";
 import RatingBar from "../../components/RatingBar.jsx";
 import User from "../../assets/e.png";
-import { BuildingStorefrontIcon, EnvelopeIcon, InformationCircleIcon, MapPinIcon, XMarkIcon as CloseIcon } from '@heroicons/react/24/solid';
+import { BuildingStorefrontIcon, EnvelopeIcon, InformationCircleIcon, MapPinIcon, XMarkIcon as CloseIcon, ChatBubbleLeftEllipsisIcon } from '@heroicons/react/24/solid';
 
 // loader
 export async function CancelarAppoinLoader({ params }) {
@@ -254,6 +254,13 @@ export function CancelarAppoin() {
                         <BuildingStorefrontIcon className='w-8 h-8 md:w-10 md:h-10 lg:w-10 lg:h-10 mx-4 text-orange-500' />
                         <div>
                             <p className='text-gray-400'>{cita.CATEGORIA}</p>
+                        </div>
+                        
+                    </div>
+                    <div className='flex justify-start items-center ms-4 mt-2'>
+                        <ChatBubbleLeftEllipsisIcon className='w-8 h-8 md:w-10 md:h-10 lg:w-10 lg:h-10 mx-4 text-orange-500' />
+                        <div className='text-left mr-5'>
+                            <p className='text-gray-400'>{cita.MENSSAGE ? cita.MENSSAGE : 'Sin Motivo de la visita/Servicio'}</p>
                         </div>
                     </div>
                     <hr className="mb-4 mt-4" />

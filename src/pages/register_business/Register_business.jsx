@@ -2,6 +2,7 @@
 import { useLoaderData, useNavigate } from 'react-router-dom';
 import { fetchData } from "../../Wrapper.js";
 import { useEffect, useState } from "react";
+import Select from "react-select";
 // assets
 import './Register_business.css';
 import Loaging from '../../components/Loading.jsx';
@@ -52,15 +53,15 @@ export function RegisterBusiness() {
         }
 
         //ValidateCategoria
-        if (sCategoriaName === "") {
-            setCategoriaNameError("Ingresa un giro de empresa");
+        if (sSubCategoriaName.label === "") {
+            setSubCategoriaNameError("Ingresa tu categoría comercial");
             return;
         } else {
-            setCategoriaNameError("");
+            setSubCategoriaNameError("");
         }
 
         //ValidateSubCategoria
-        if (sSubCategoriaName === "") {
+        /* if (sSubCategoriaName === "") {
             setSubCategoriaNameError("Ingresa tu categoría comercial");
             return;
         }
@@ -72,7 +73,7 @@ export function RegisterBusiness() {
                     setSubCategoriaId(subCategorias[filName].id);
                 }
             }
-        }
+        } */
 
         //ValidateCalle/Numero
         if (direccionUno === "") {
@@ -103,7 +104,7 @@ export function RegisterBusiness() {
                     'name': sName,
                     'latitude': '0',
                     'longitude': '0',
-                    'bussiness_branch_id': categoriaId,
+                    'bussiness_branch_id': sSubCategoriaName.value,
                     'address_first': direccionUno,
                     'address_second': direccionDos,
                     'postal_code': codigoPostal,
@@ -143,7 +144,7 @@ export function RegisterBusiness() {
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
                 const json = await response.json();
-                console.log(json['data']);
+                // console.log(json['data']);
                 setEstado(json['data'][0].d_estado);
                 setCiudad(json['data'][0].d_ciudad);
                 var tempcita = [];
@@ -178,7 +179,7 @@ export function RegisterBusiness() {
         setDireccionUno(value);
     };
 
-    const handleChangeCategoria = evt => {
+    /* const handleChangeCategoria = evt => {
         const value = evt.target.value;
         setCategoriaName(value);
         for (var filName in categorias) {
@@ -187,12 +188,12 @@ export function RegisterBusiness() {
                 }
             }
 
-    };
+    }; */
 
-    const handleChangeSubCategoria = evt => {
+    /* const handleChangeSubCategoria = evt => {
         const value = evt.target.value;
         setSubCategoriaName(value);
-    };
+    }; */
 
     const handleChangeColonia = evt => {
         const value = evt.target.value;
@@ -236,25 +237,31 @@ export function RegisterBusiness() {
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
                 const json = await response.json();
-                var tempCategoria = [];
+                // var tempCategoria = [];
+                var tempSubCategoria = [];
                 for (const key in json['data']) {
                     if (json['data'].hasOwnProperty(key)) {
                         const element = json['data'][key];
                         const values = Object.values(element.subcategoria);
-                        var tempSub = [];
+                        // var tempSub = [];
                         values.map((subCat) => {
-                            tempSub.push({
+                            /* tempSub.push({
                                 id: subCat.id,
                                 subname: subCat.subname ?? ''
-                            });
+                            }); */
+                            tempSubCategoria.push({
+                                                value: subCat.id,
+                                                label: subCat.subname ?? ''
+                                            });
                         });
-                        tempCategoria.push({
+                        /* tempCategoria.push({
                             name: element.name,
                             subcategoria: tempSub
-                        });
+                        }); */
                     }
                 }
-                setCategorias(tempCategoria);
+                // setCategorias(tempCategoria);
+                setsubCategorias(tempSubCategoria);
                 setLoading(false);
             }
             catch (e) {
@@ -275,7 +282,7 @@ export function RegisterBusiness() {
     }
     return (
         <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-orange-600 to-orange-800 px-4">
-            <div className="container rounded-3xl shadow-xl  w-full text-center animate-fade-in-up">
+            <div className="container mt-20 rounded-3xl shadow-xl  w-full text-center animate-fade-in-up">
                 <div className="title">
                     Agrega tu empresa <span>Es rápido y fácil</span>
                 </div>
@@ -286,19 +293,26 @@ export function RegisterBusiness() {
                         {sNameError ? <label className='errorlabel' name="userNameError">{sNameError}</label> : <></>}
                     </div>
                     <div className="registerForm-group text-black">
-                        <label>Elige el giro de tu empresa</label>
+                        <label>¿Que tipo de negocio tienes?</label>
+                        <Select
+                                    value={sSubCategoriaName}
+                                    onChange={setSubCategoriaName}
+                                    options={subCategorias}
+                                    placeholder='Selecciona una opción'
+                                    isSearchable={false}
+                                />
                         {/*  <input type="text" name="sCategoriaName" placeholder="Categoría comercial" required onChange={(e) => setCategoriaName(e.target.value)} /> */}
-                        <input list="optionsListCat" type="text" placeholder='Giro de empresa' onChange={handleChangeCategoria} required ></input>
+                        {/* <input list="optionsListCat" type="text" placeholder='Giro de empresa' onChange={handleChangeCategoria} required ></input>
                         <datalist id="optionsListCat">
                             {categorias.map((option, index) => (
                                 <option key={index} value={option.name} />
                             ))}
-                        </datalist>
-                        {sCategoriaNameError ? <label className='errorlabel' name="sCategoriaNameError"> {sCategoriaNameError}</label> : <></>}
+                        </datalist> */}
+                        {sSubCategoriaNameError ? <label className='errorlabel' name="sSubCategoriaNameError"> {sSubCategoriaNameError}</label> : <></>}
+                        {/* {sCategoriaNameError ? <label className='errorlabel' name="sCategoriaNameError"> {sCategoriaNameError}</label> : <></>} */}
                     </div>
-                    <div className="registerForm-group text-black">
+                    {/* <div className="registerForm-group text-black">
                         <label>Elige la categoría que describa mejor tu empresa</label>
-                        {/*  <input type="text" name="sCategoriaName" placeholder="Categoría comercial" required onChange={(e) => setCategoriaName(e.target.value)} /> */}
                         <input list="optionsListSubCat" type="text" placeholder='Categoría comercial' onChange={handleChangeSubCategoria} required ></input>
                         <datalist id="optionsListSubCat">
                             {subCategorias.map((option, index) => (
@@ -306,7 +320,7 @@ export function RegisterBusiness() {
                             ))}
                         </datalist>
                         {sSubCategoriaNameError ? <label className='errorlabel' name="sSubCategoriaNameError"> {sSubCategoriaNameError}</label> : <></>}
-                    </div>
+                    </div> */}
                     <div className="registerForm-group text-black">
                         <label>Código postal</label>
                         <input type="text" placeholder='Código postal' maxLength={5} onChange={getCodigoPostal} />

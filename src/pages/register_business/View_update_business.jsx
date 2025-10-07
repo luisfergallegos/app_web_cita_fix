@@ -2,6 +2,7 @@
 import { useLoaderData, useNavigate } from 'react-router-dom';
 import { fetchData } from "../../Wrapper.js";
 import { useEffect, useState } from "react";
+import Select from "react-select";
 // assets
 import '../register_user/View_update_user.css';
 import Loaging from '../../components/Loading.jsx';
@@ -43,11 +44,11 @@ export function ViewUpdateBusiness() {
     const [direccionDos, setDireccionDos] = useState('');
     const [direccionUno, setDireccionUno] = useState('');
     const [name, setName] = useState();
-    const [categorias, setCategorias] = useState([]);
+    // const [categorias, setCategorias] = useState([]);
     const [subCategorias, setsubCategorias] = useState([]);
     const [categoriaId, setCategoriaId] = useState('');
     const [sCategoriaName, setCategoriaName] = useState('');
-    const [sSubCategoriaName, setSubCategoriaName] = useState('');
+    const [sSubCategoriaName, setSubCategoriaName] = useState(null);
 
     const [showAlertConfirmation, setshowAlertConfirmation] = useState(false);
     const [imagen, setImagen] = useState(null);
@@ -56,6 +57,7 @@ export function ViewUpdateBusiness() {
     const [bAcceder, setbAcceder] = useState(true);
     const [bAccederHS, setbAccederHS] = useState(true);
     const [bAccederName, setbAccederName] = useState(true);
+    const [bAccederCategoria, setbAccederCategoria] = useState(true);
 
 
     const arrayBufferToBase64 = (buffer) => {
@@ -132,7 +134,7 @@ export function ViewUpdateBusiness() {
                     {
                         'user_id': bussiness.USER_ID,
                         "bussiness_id": bussiness.BUSSINESS_ID,
-                        'name': name,
+                        'name': bussiness.DORSL,
                         'latitude': bussiness.LATITUDE,
                         'longitude': bussiness.LONGITUDE,
                         'bussiness_branch_id': bussiness.BUSSINESS_BRANCH_ID,
@@ -169,44 +171,50 @@ export function ViewUpdateBusiness() {
 
     const ModCategoriaGroupOpen = async (e) => {
         e.stopPropagation();
-        if (bussiness.CATEGORY != sCategoriaName) {
-            var auxIdC = searchIdCategoria();
-            //Enviar por PUT
-            var options = {
-                method: 'PUT',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(
-                    {
-                        'user_id': bussiness.USER_ID,
-                        "bussiness_id": bussiness.BUSSINESS_ID,
-                        'name': bussiness.DORSL,
-                        'latitude': bussiness.LATITUDE,
-                        'longitude': bussiness.LONGITUDE,
-                        'bussiness_branch_id': auxIdC,
-                        'address_first': bussiness.ADDRESS_FIRST,
-                        'address_second': bussiness.ADDRESS_SECOND,
-                        'postal_code': bussiness.POSTAL_CODE,
-                        'city': bussiness.CITY,
-                        'state': bussiness.STATE,
-                        "home_service": bussiness.HOME_SERVICE
-                    })
-            }
-            try {
-                const response = await fetch(`${urlApi}bussiness`, options);
-                const json = await response.json();
-                if (json['sucess']) {
-                    setshowAlertConfirmation(true);
-                    setTimeout(() => setshowAlertConfirmation(false), 3000); // ocultar alerta
-                    setTimeout(() => window.location.reload(), 3000);
+        if (bussiness.SUBCATEGORY != sSubCategoriaName.label) {
+            if (bAccederCategoria) {
+                setbAccederCategoria(false);
+                // searchIdCategoria();
+                var auxIdC = sSubCategoriaName.value;
+                //Enviar por PUT
+                var options = {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(
+                        {
+                            'user_id': bussiness.USER_ID,
+                            "bussiness_id": bussiness.BUSSINESS_ID,
+                            'name': bussiness.DORSL,
+                            'latitude': bussiness.LATITUDE,
+                            'longitude': bussiness.LONGITUDE,
+                            'bussiness_branch_id': auxIdC,
+                            'address_first': bussiness.ADDRESS_FIRST,
+                            'address_second': bussiness.ADDRESS_SECOND,
+                            'postal_code': bussiness.POSTAL_CODE,
+                            'city': bussiness.CITY,
+                            'state': bussiness.STATE,
+                            "home_service": bussiness.HOME_SERVICE
+                        })
                 }
-                else {
-                    console.log(`No se pudo actulizar informacion de la empresa`);
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
+                try {
+                    const response = await fetch(`${urlApi}bussiness`, options);
+                    const json = await response.json();
+                    if (json['sucess']) {
+                        setshowAlertConfirmation(true);
+                        setTimeout(() => setshowAlertConfirmation(false), 3000); // ocultar alerta
+                        setTimeout(() => window.location.reload(), 3000);
+                    }
+                    else {
+                        console.log(`No se pudo actulizar informacion de la empresa`);
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
 
-            }
-            catch (e) {
-                return;
+                }
+                catch (e) {
+                    setbAccederCategoria(true);
+                    return;
+                }
+                setbAccederCategoria(true);
             }
         }
     };
@@ -278,11 +286,11 @@ export function ViewUpdateBusiness() {
         var _dia = new Date();
         var tempHoras = [];
         for (let index = 0; index < 24; index++) {
-            if (index < 9) {
+            if (index < 7) {
                 var Aux = new Date(_dia.getFullYear(), _dia.getMonth(), _dia.getDay(), index, '00', '00');
                 tempHoras.push(Aux);
             }
-            else if (index > 18 && index < 24) {
+            else if (index > 22 && index < 24) {
                 var Aux = new Date(_dia.getFullYear(), _dia.getMonth(), _dia.getDay(), index, '00', '00');
                 tempHoras.push(Aux);
             }
@@ -340,7 +348,7 @@ export function ViewUpdateBusiness() {
         setName(value);
     };
 
-    const handleChangeCategoria = evt => {
+    /* const handleChangeCategoria = evt => {
         const value = evt.target.value;
         setCategoriaName(value);
         for (var filName in categorias) {
@@ -348,21 +356,21 @@ export function ViewUpdateBusiness() {
                 setsubCategorias(categorias[filName].subcategoria);
             }
         }
-    };
+    }; */
 
-    const handleChangeSubCategoria = evt => {
-        const value = evt.target.value;
-        setSubCategoriaName(value);
-    };
+    /*  const handleChangeSubCategoria = evt => {
+         const value = evt.target.value;
+         setSubCategoriaName(value);
+     }; */
 
-    const searchIdCategoria = () => {
-        for (var filName in subCategorias) {
-            if (subCategorias[filName].subname.toLowerCase() == sSubCategoriaName.toLowerCase()) {
-                setSubCategoriaName(subCategorias[filName].subname);
-                setCategoriaId(subCategorias[filName].id);
-            }
-        }
-    }
+    /*  const searchIdCategoria = () => {
+         for (var filName in subCategorias) {
+             if (subCategorias[filName].label.toLowerCase() == sSubCategoriaName.label.toLowerCase()) {
+                 setSubCategoriaName(subCategorias[filName].label);
+                 setCategoriaId(subCategorias[filName].value);
+             }
+         }
+     } */
 
     const handleChangeImagen = evt => {
         const file = evt.target.files[0];
@@ -418,7 +426,11 @@ export function ViewUpdateBusiness() {
                     setBussiness(json['data']);
                     setName(json['data']['DORSL']);
                     setCategoriaName(json['data']['CATEGORY']);
-                    setSubCategoriaName(json['data']['SUBCATEGORY']);
+                    setSubCategoriaName({
+                        value: json['data']['BUSSINESS_BRANCH_ID'],
+                        label: json['data']['SUBCATEGORY'] ?? ''
+                    }
+                    );
                     setCategoriaId(json['data']['BUSSINESS_BRANCH_ID']);
                     setDireccionUno(json['data']['ADDRESS_FIRST']);
                     setDireccionDos(json['data']['ADDRESS_SECOND']);
@@ -440,25 +452,32 @@ export function ViewUpdateBusiness() {
                                     throw new Error(`HTTP error! status: ${response.status}`);
                                 }
                                 const json = await response.json();
-                                var tempCategoria = [];
+                                // var tempCategoria = [];
+                                var tempSubCategoria = [];
                                 for (const key in json['data']) {
                                     if (json['data'].hasOwnProperty(key)) {
                                         const element = json['data'][key];
                                         const values = Object.values(element.subcategoria);
-                                        var tempSub = [];
+                                        // var tempSub = [];
                                         values.map((subCat) => {
-                                            tempSub.push({
+                                            /* tempSub.push({
                                                 id: subCat.id,
                                                 subname: subCat.subname ?? ''
+                                            }); */
+                                            tempSubCategoria.push({
+                                                value: subCat.id,
+                                                label: subCat.subname ?? ''
                                             });
                                         });
-                                        tempCategoria.push({
+                                        /* tempCategoria.push({
                                             name: element.name,
                                             subcategoria: tempSub
-                                        });
+                                        }); */
                                     }
                                 }
-                                setCategorias(tempCategoria);
+                                // setCategorias(tempCategoria);
+                                // console.log(tempSubCategoria);
+                                setsubCategorias(tempSubCategoria);
                                 setLoading(false);
                             }
                             catch (e) {
@@ -587,32 +606,42 @@ export function ViewUpdateBusiness() {
                         </div>
                         {categoriaGroup ? <ChevronDownIcon className="w-5 h-5" /> : <ChevronUpIcon className="w-5 h-5" />}
                     </div>
-                    {!categoriaGroup && (
+                    {bAccederCategoria ? (!categoriaGroup && (
                         <div className="mt-4 space-y-4">
                             <div>
-                                <label className="block text-sm font-medium mb-1">Giro de tu empresa</label>
+                                {/* <label className="block text-sm font-medium mb-1">Giro de tu empresa</label>
                                 <input className="w-full border px-4 py-2 rounded-md" list="optionsListCat" type="text" placeholder='Giro de empresa'
                                     value={sCategoriaName} onChange={handleChangeCategoria} required ></input>
                                 <datalist id="optionsListCat">
                                     {categorias.map((option, index) => (
                                         <option key={index} value={option.name} />
                                     ))}
-                                </datalist>
-                                <label className="block text-sm font-medium mb-1">Categoría comercial</label>
-                                <input className="w-full border px-4 py-2 rounded-md" list="optionsListSubCat" type="text" placeholder='Categoría comercial'
+                                </datalist> */}
+                                <label className="block text-sm font-medium mb-1">¿Que tipo de negocio tienes?</label>
+                                <Select
+                                    value={sSubCategoriaName}
+                                    onChange={setSubCategoriaName}
+                                    options={subCategorias}
+                                    placeholder='Selecciona una opción'
+                                    isSearchable={false}
+                                />
+                                {/* <input className="w-full border px-4 py-2 rounded-md" list="optionsListSubCat" type="text" placeholder='Categoría comercial'
                                     value={sSubCategoriaName} onChange={handleChangeSubCategoria} required ></input>
                                 <datalist id="optionsListSubCat">
                                     {subCategorias.map((option, index) => (
                                         <option key={index} value={option.subname} />
                                     ))}
-                                </datalist>
+                                </datalist> */}
                                 <span>Esto ayuda a que los clientes te encuentren si están buscando una empresa como la tuya.</span>
                             </div>
                             <button className="mt-2 bg-orange-500 text-white px-4 py-2 rounded-md hover:bg-orange-600 disabled:border-gray-50 disabled:bg-gray-200 disabled:text-gray-500"
-                                disabled={bussiness.CATEGORY != sCategoriaName ? false : true}
+                                disabled={bussiness.SUBCATEGORY != sSubCategoriaName.label ? false : true}
                                 onClick={ModCategoriaGroupOpen}>Guardar</button>
                         </div>
-                    )}
+                    )) : <div className="mt-4 space-y-4">
+                        <div className='circle' ></div>
+                    </div>}
+
                 </div>
                 {/* Grupo Horario */}
                 <div className="bg-white text-black shadow rounded-xl p-4">
@@ -695,14 +724,14 @@ export function ViewUpdateBusiness() {
                             <div className='flex'>
                                 <label className="block text-sm font-medium mb-1 mr-4">¿Quieres aceptar citas a domicilio?</label>
                                 <label className="switch">
-                                <input type="checkbox" onClick={ModHomeServiceGroupOpen}
-                                    checked={bussiness.HOME_SERVICE ==
-                                        '1'
-                                        ? true
-                                        : false} />
-                                <span class="slider round"></span>
-                            </label>
-                            </div>                            
+                                    <input type="checkbox" onClick={ModHomeServiceGroupOpen}
+                                        checked={bussiness.HOME_SERVICE ==
+                                            '1'
+                                            ? true
+                                            : false} />
+                                    <span class="slider round"></span>
+                                </label>
+                            </div>
                         </div>
                     )) : <div className="mt-4 space-y-4">
                         <div className='circle' ></div>
