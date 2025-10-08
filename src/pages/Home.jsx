@@ -213,8 +213,8 @@ export function Home() {
             </div>
           </div>
           <div className='cursor-pointer flex items-center' onClick={() => toggle(setUserGroup)}>
-            <h1 className='mr-2 text-gray-800'>Perfiles de negocio</h1>
-            {userGroup ? <ChevronDownIcon className="w-5 h-5 text-gray-800" /> : <ChevronUpIcon className="w-5 h-5 text-gray-800" />}
+            <h1 className='mr-2 text-gray-800'>Empresas que administras</h1>
+            {userGroup ? <ChevronDownIcon className="w-5 h-5 text-gray-800 mt-1" /> : <ChevronUpIcon className="w-5 h-5 text-gray-800 mt-1" />}
           </div>
           {!userGroup && (
             <div className="mt-4 space-y-4">
