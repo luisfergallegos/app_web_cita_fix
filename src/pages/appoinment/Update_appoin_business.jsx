@@ -449,7 +449,7 @@ export function UpdateAppoinBusiness() {
                                     }
                                 }}>
                                 <div className='businessSubTitleIcon'>
-                                    <MapPinIcon className='w-8 h-8 md:w-10 md:h-10 lg:w-10 lg:h-10 mx-4 text-orange-500' />
+                                    <MapPinIcon className='w-8 h-8 md:w-10 md:h-10 lg:w-10 lg:h-10 mx-4 text-orange-500 flex-shrink-0' />
                                 </div>
                                 <div >
                                     <p >{citaAddress.ADDRESS_FIRST}, {citaAddress.ADDRESS_SECOND}, {citaAddress.POSTAL_CODE} {citaAddress.CITY}, {citaAddress.STATE}, Mexico</p>
