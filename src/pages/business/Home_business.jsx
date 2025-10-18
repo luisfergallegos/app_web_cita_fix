@@ -131,10 +131,10 @@ export function HomeBusiness() {
                     citas.length > 0 ?
                         <div>
                             <div className="bg-white rounded-3xl shadow-xl p-10 max-w-2xl w-full text-center animate-fade-in-up">
-                                <h2 className="text-5xl font-bold text-orange-600 mb-2">{citas[currentPage - 1]['APPOINTMENT'].length == 1
+                                <h2 className="ms:text-5xl lg:text-5xl font-bold text-orange-600 mb-2">{citas[currentPage - 1]['APPOINTMENT'].length == 1
                                     ? `Tienes ${citas[currentPage - 1]['APPOINTMENT'].length} cita agendada`
                                     : `Tienes ${citas[currentPage - 1]['APPOINTMENT'].length} citas agendadas`}</h2>
-                                <p className="text-gray-600">{ConvertDateTime(citas[currentPage - 1]['APPOINTMENT_DATE'], '00:00:00', 0)}</p>
+                                <p className="ms:text-2xl lg:text-2xl text-gray-600">{ConvertDateTime(citas[currentPage - 1]['APPOINTMENT_DATE'], '00:00:00', 0)}</p>
                                 {
                                     citas[currentPage - 1]['APPOINTMENT'].map((index) => (
                                         <div className="flex justify-between bg-gray-100 shadow-lg rounded-lg overflow-hidden scale-95 hover:scale-100 transition-all duration-300"
@@ -144,22 +144,26 @@ export function HomeBusiness() {
                                                     navigate(`/updateAppoinBusiness/${index['APOINMENT_ID']}`);
                                                 }
                                             }}  >
-                                            {
-                                                index['PHOTO'] === null ?
-                                                    <UserCircleIcon width={80}
-                                                        color={index['ESTATUS'] == '-1' ? '#B71C1C' :
-                                                            index['ESTATUS'] == '1' ? '#32325d' :
-                                                                index['ESTATUS'] == '3' || index['APPOINTMENT_CONFIRM'] == '1' ? '#4472C4' : '#fc6500'
-                                                        } /> :
-                                                    <img id='imgS' src={'data:image/jpeg;base64,' + arrayBufferToBase64(index['PHOTO'].data)} />
+                                            <div className='flex justify-center items-center ms:ml-3 lg:ml-4 '>
+                                                {
+                                                    index['PHOTO'] === null ?
+                                                        <UserCircleIcon className='w-12 h-12'
+                                                            color={index['ESTATUS'] == '-1' ? '#B71C1C' :
+                                                                index['ESTATUS'] == '1' ? '#32325d' :
+                                                                    index['ESTATUS'] == '3' || index['APPOINTMENT_CONFIRM'] == '1' ? '#4472C4' : '#fc6500'
+                                                            } /> :
+                                                        <img id='imgS' src={'data:image/jpeg;base64,' + arrayBufferToBase64(index['PHOTO'].data)} />
 
-                                            }
+                                                }
+
+                                            </div>
+
                                             <div className="grid">
-                                                <label className="text-2xl font-bold text-black">{ConvertDateTime(citas[currentPage - 1]['APPOINTMENT_DATE'], index['APPOINTMENT_TIME'], 1)} </label>
-                                                <label className="text-2xl font-bold text-gray-400">{index['ANONIMO'] == '' ? index['COMPLET_NAME'] : index['ANONIMO'].substring(0, index['ANONIMO'].indexOf(","))} </label>
-                                                <label className="text-2xl font-bold text-gray-400">{index['ANONIMO'] != '' ? index['ANONIMO'].substring(index['ANONIMO'].indexOf(",") + 1, index['ANONIMO'].length) : ''} </label>
-                                                <label className="text-1xl font-bold text-gray-500">{index['ESTATUS'] == '1' ? 'Cita modificada' : ''} </label>
-                                                <label className="text-1xl font-bold text-gray-400">{index['APPOINTMENT_CONFIRM'] == '1' ? 'Confirmada' : ''} </label>
+                                                <label className="ms:text-2xl lg:text-2xl font-bold text-black">{ConvertDateTime(citas[currentPage - 1]['APPOINTMENT_DATE'], index['APPOINTMENT_TIME'], 1)} </label>
+                                                <label className="ms:text-2xl lg:text-2xl font-bold text-gray-400">{index['ANONIMO'] == '' ? index['COMPLET_NAME'] : index['ANONIMO'].substring(0, index['ANONIMO'].indexOf(","))} </label>
+                                                <label className="ms:text-1xl lg:text-1xl font-bold text-gray-400">{index['ANONIMO'] != '' ? index['ANONIMO'].substring(index['ANONIMO'].indexOf(",") + 1, index['ANONIMO'].length) : ''} </label>
+                                                <label className="ms:text-2xl lg:text-2xl font-bold text-gray-500">{index['ESTATUS'] == '1' ? 'Cita modificada' : ''} </label>
+                                                <label className="ms:text-2xl lg:text-2xl font-bold text-gray-400">{index['APPOINTMENT_CONFIRM'] == '1' ? 'Confirmada' : ''} </label>
                                             </div>
                                             <ChevronRightIcon width={30} color="black" />
                                         </div>
