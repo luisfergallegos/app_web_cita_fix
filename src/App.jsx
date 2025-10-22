@@ -24,6 +24,7 @@ import AddAppoinBusinesssAnon, { AddAppoinBusinesssAnonLoader } from './pages/ap
 import UpdateAppoinBusiness, { UpdateAppoinLoader } from './pages/appoinment/Update_appoin_business.jsx';
 import ViewBusiness, { ViewBusinessLoader } from './pages/business/View_business.jsx';
 import DeleteUser, { DeleteUserLoader } from './pages/register_user/Delete_user.jsx';
+import Confirmation, { ConfirmationLoader } from './pages/appoinment/Confirmation.jsx';
 // Actions
 import { logoutAction } from "./actions/logout.js";
 
@@ -151,6 +152,13 @@ const router = createBrowserRouter([
         path: "deleteUser",
         element: <DeleteUser />,
         loader: DeleteUserLoader,
+        /*action: expensesAction, */
+        errorElement: <Error />
+      },
+      {
+        path: "confirmation",
+        element: <Confirmation />,
+        loader: ConfirmationLoader,
         /*action: expensesAction, */
         errorElement: <Error />
       },
