@@ -1,5 +1,5 @@
 // Library
-import { BuildingStorefrontIcon, MapPinIcon, PhoneIcon, CalendarDaysIcon, StarIcon } from '@heroicons/react/24/solid';
+import { BuildingStorefrontIcon, MapPinIcon, PhoneIcon } from '@heroicons/react/24/solid';
 import '../../components/CardBusiness.css';
 // assents
 import Store from "../../assets/business.png";
@@ -10,9 +10,6 @@ import { useLoaderData, useNavigate, useSearchParams } from 'react-router-dom';
 import { urlApi } from "../../styles/Constants.jsx";
 import { useEffect, useState } from "react";
 import { dateSpanish, fetchData } from '../../Wrapper.js';
-import { toast } from "react-toastify";
-
-const StarRating = (stars) => '⭐'.repeat(stars);
 
 // loader
 export async function ConfirmationLoader() {
@@ -76,8 +73,8 @@ export function Confirmation() {
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(
                     {
-                        'apoinment_id': `${cita['APOINMENT_ID']}`,
-                        'usernotification_id': `${cita['USER_ID']}`,
+                        'apoinment_id': cita['APOINMENT_ID'],
+                        'usernotification_id': cita['BUS_USER_ID'],
                         'username': cita['ANONIMO'] == '' ? cita['USER_NAME'] : cita['ANONIMO'].substring(0, cita['ANONIMO'].indexOf(","))
                     })
             }

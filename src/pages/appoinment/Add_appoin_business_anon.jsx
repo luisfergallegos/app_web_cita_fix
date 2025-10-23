@@ -112,7 +112,7 @@ export function AddAppoinBusinesssAnon() {
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(
                         {
-                            'user_id': userId,
+                            'user_id': '0',
                             'bussiness_id': businessId,
                             'usernotification_id': '0',
                             'appointment_date': _selectedDate,
