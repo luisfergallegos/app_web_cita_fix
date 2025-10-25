@@ -73,8 +73,8 @@ export function Confirmation() {
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(
                     {
-                        'apoinment_id': cita['APOINMENT_ID'],
-                        'usernotification_id': cita['BUS_USER_ID'],
+                        'apoinment_id': `${cita['APOINMENT_ID']}`,
+                        'usernotification_id': `${cita['BUS_USER_ID']}`,
                         'username': cita['ANONIMO'] == '' ? cita['USER_NAME'] : cita['ANONIMO'].substring(0, cita['ANONIMO'].indexOf(","))
                     })
             }
