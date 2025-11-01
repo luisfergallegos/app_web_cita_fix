@@ -3,6 +3,7 @@
 import { useLoaderData, useNavigate } from 'react-router-dom';
 import { fetchData } from "../../Wrapper.js";
 import { useEffect, useState } from "react";
+import { useLocation } from 'react-router-dom';
 // assets
 import '../business/Find_business.css';
 import { urlApi } from "../../styles/Constants.jsx";
@@ -13,8 +14,7 @@ import Loaging from '../../components/Loading.jsx';
 export function findUserLoader() {
     const sCorreo = fetchData("correo");
     const sPassword = fetchData("pwd");
-    const sUserCitaFix = fetchData("UserCitaFix") ?? [];
-    return { sCorreo, sPassword, sUserCitaFix };
+    return { sCorreo, sPassword };
 }
 
 function selectableFavorites(_usuarios) {
@@ -30,8 +30,14 @@ function selectableFavorites(_usuarios) {
 }
 
 export function FindUser() {
+    const location = useLocation();
     const navigate = useNavigate();
-    const { sCorreo, sPassword, sUserCitaFix } = useLoaderData();
+
+    const userId = location.state.userId;
+    const businessId = location.state.businessId;
+    const dorsl = location.state.dorsl;
+
+    const { sCorreo, sPassword } = useLoaderData();
     const [loading, setLoading] = useState(true);
     const [usuarios, setUsuarios] = useState([]);
 
@@ -46,13 +52,17 @@ export function FindUser() {
         return btoa(binary);
     };
 
+    function quitarAcentos(texto) {
+        return texto.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+    }
+
     const handleChange = evt => {
         const tempList = [];
         const value = evt.target.value;
         setsearchText(value);
         for (var filName in usuarios) {
             var userName = `${usuarios[filName].first_name} ${usuarios[filName].last_name}`;
-            if (userName.toLowerCase().startsWith(value.toLowerCase())) {
+            if (quitarAcentos(userName.toLowerCase()).startsWith(value.toLowerCase())) {
                 tempList.push(usuarios[filName]);
             } else if (usuarios[filName].email
                 .toLowerCase()
@@ -65,7 +75,6 @@ export function FindUser() {
 
     useEffect(() => {
         const fData = async () => {
-            const userId = sUserCitaFix['USER_ID'];
             //Solicitar por GET
             try {
                 const response = await fetch(`${urlApi}users?user_id=${userId}`);
@@ -76,15 +85,11 @@ export function FindUser() {
                 const json = await response.json();
                 setUsuarios(json['data']);
                 setFavoritesNames(selectableFavorites(json['data']));
-
-
                 setLoading(false);
             }
             catch (e) {
                 return;
             }
-
-
         };
         if (sCorreo === null && sPassword === null) {
             navigate("/");
@@ -121,19 +126,21 @@ export function FindUser() {
                 {searchText !== "" ? (usuarios &&
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                         {filteredNames.map((index) => (
-                            <div className="inline-flex bg-white p-4 border border-gray-300 rounded-md mb-2 scale-95 hover:scale-100"
+                            <div className="hover:bg-gray-200 text-orange-500 bg-white font-semibold py-2 px-2 rounded-md shadow-md transition flex items-center"
                                 key={index.USER_ID}
                                 onClick={() => {
-                                    navigate("/addAppoinBusiness", { state: { userCita: index, businessId: sUserCitaFix['BUSSINESS_ID'], dorsl: sUserCitaFix['DORSL'] } });
+                                    navigate("/addAppoinBusiness", { state: { userCita: index, businessId: businessId, dorsl: dorsl } });
                                 }}
                             >
-                                {
-                                    index['PHOTO'] === null ? <UserCircleIcon width={40} color={'#fc6500'} /> :
-                                        <img id='imgS' src={'data:image/jpeg;base64,' + arrayBufferToBase64(index['PHOTO'].data)} />
-                                }
-                                <div>
-                                    <h2 className="font-bold text-black">{index['first_name']} {index.last_name}</h2>
-                                    <p className="text-gray-400">{`${index.email.substring(0, index.email.indexOf("@") + 1)}..`}</p>
+                                <div className="flex items-center space-x-4 mr-20" >
+                                    {
+                                        index['PHOTO'] === null ? <UserCircleIcon width={50} color={'#fc6500'} /> :
+                                            <img id='imgS' src={'data:image/jpeg;base64,' + arrayBufferToBase64(index['PHOTO'].data)} />
+                                    }
+                                    <div>
+                                        <h2 className="mr-4 font-bold text-black">{index['first_name']} {index.last_name}</h2>
+                                        <p className="mr-4 text-gray-400">{`${index.email.substring(0, index.email.indexOf("@") + 1)}..`}</p>
+                                    </div>
                                 </div>
                             </div>
                         ))}
@@ -153,7 +160,7 @@ export function FindUser() {
                                     <div className="inline-flex bg-white p-4 border border-gray-300 rounded-md mb-2 scale-95 hover:scale-100"
                                         key={favo.USER_ID}
                                         onClick={() => {
-                                            navigate("/addAppoinBusiness", { state: { userCita: favo, businessId: sUserCitaFix['BUSSINESS_ID'], dorsl: sUserCitaFix['DORSL'] } });
+                                            navigate("/addAppoinBusiness", { state: { userCita: favo, businessId: businessId, dorsl: dorsl } });
                                         }}
                                     >
                                         {
@@ -173,8 +180,6 @@ export function FindUser() {
                 )}
             </div>
         </div>
-
-
     );
 }
 

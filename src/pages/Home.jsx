@@ -8,7 +8,7 @@ import CountUp from "react-countup";
 import illustration from "../assets/clock_green.svg";
 import Loaging from '../components/Loading.jsx';
 import { urlApi } from "../styles/Constants.jsx";
-import { ClockIcon, Cog6ToothIcon, PlusCircleIcon, ChevronDownIcon, ChevronUpIcon, Bars3Icon } from '@heroicons/react/24/outline';
+import { ClockIcon, Cog6ToothIcon, PlusCircleIcon, ChevronDownIcon, ChevronUpIcon, XMarkIcon as CloseIcon } from '@heroicons/react/24/outline';
 import {
   BuildingOffice2Icon,
   BuildingOfficeIcon,
@@ -33,13 +33,18 @@ export function Home() {
   const sUserCitaFix = fetchData("UserCitaFix") ?? [];
   const [citas, setCitas] = useState([]);
   const [userAdditInf, setUserAdditInf] = useState([]);
+  const [colaboraciones, setColaboraciones] = useState([]);
   const firstName = sUserCitaFix['first_name'] ?? "Usuario";
   const userId = sUserCitaFix['USER_ID'] ?? "";
   const dorsl = sUserCitaFix['DORSL'] ?? "";
   const PhotoDorsl = sUserCitaFix['PHOTO_DORSL'] ?? "";
+  const businessId = sUserCitaFix['BUSSINESS_ID'] ?? "";
 
   const [bAccederIndex, setbAccederIndex] = useState('');
-  const [userGroup, setUserGroup] = useState(false);
+  const [bAccederIndexCol, setbAccederIndexCol] = useState('');
+  const [aIndexCol, setaIndexCol] = useState('');
+  const [userGroup, setUserGroup] = useState(true);
+  const [isOpen, setIsOpen] = useState(false);
 
   const arrayBufferToBase64 = (buffer) => {
     var binary = '';
@@ -116,6 +121,107 @@ export function Home() {
     }
   };
 
+  const indexConfirmCol = async (e, col) => {
+    e.stopPropagation();
+    const AuxCol = col === '' ? aIndexCol : col;
+    setbAccederIndexCol(AuxCol.ID);
+
+    //Enviar por UPDATE
+    var options = {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(
+        {
+          'collaborator_id': `${AuxCol.ID}`,
+          'name': `${firstName}`
+        })
+    }
+    try {
+      const response = await fetch(`${urlApi}collaboratorConfirm`, options);
+      const json = await response.json();
+      if (json['sucess'] == false) {
+        setbAccederIndexCol('');
+        setaIndexCol('');
+        setIsOpen(false);
+        // console.log(`Error al cancelar cita.`);
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      else {
+        //Solicitar por GET
+        try {
+          const response = await fetch(`${urlApi}usrInfCol?user_id=${userId}`);
+          if (response.status == 200) {
+            const json = await response.json();
+            setColaboraciones(json['data']);
+            setbAccederIndexCol('');
+            setaIndexCol('');
+            setIsOpen(false);
+          } else {
+            setbAccederIndexCol('');
+            setaIndexCol('');
+            setIsOpen(false);
+            throw new Error(`HTTP error! status: ${response.status}`);
+          }
+        }
+        catch (e) {
+          setbAccederIndexCol('');
+          setaIndexCol('');
+          setIsOpen(false);
+          return;
+        }
+      }
+    }
+    catch (e) {
+      setbAccederIndexCol('');
+      setaIndexCol('');
+      setIsOpen(false);
+      return;
+    }
+  };
+
+  const indexCancelar = async () => {
+    //Enviar por DELETE
+    var options = {
+      method: 'DELETE',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(
+        {
+          'collaborator_id': `${aIndexCol.ID}`,
+          'name': `${firstName}`
+        })
+    }
+    try {
+      const response = await fetch(`${urlApi}collaboratorRechazar`, options);
+      const json = await response.json();
+      if (json['sucess'] == false) {
+        setIsOpen(false);
+        // console.log(`Error al cancelar cita.`);
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      else {
+        //Solicitar por GET
+        try {
+          const response = await fetch(`${urlApi}usrInfCol?user_id=${userId}`);
+          if (response.status == 200) {
+            const json = await response.json();
+            setColaboraciones(json['data']);
+          } else {
+            console.log(`Error getting setUserAdditInf.`);
+            throw new Error(`HTTP error! status: ${response.status}`);
+          }
+          setIsOpen(false);
+        }
+        catch (e) {
+          return;
+        }
+      }
+    }
+    catch (e) {
+      setIsOpen(false);
+      return;
+    }
+  };
+
   useEffect(() => {
     const fData = async () => {
       //Solicitar por GET
@@ -139,6 +245,19 @@ export function Home() {
             console.log(`Error getting setUserAdditInf.`);
             throw new Error(`HTTP error! status: ${response.status}`);
           }
+          try {
+            const response = await fetch(`${urlApi}usrInfCol?user_id=${userId}`);
+            if (response.status == 200) {
+              const json = await response.json();
+              setColaboraciones(json['data']);
+            } else {
+              console.log(`Error getting setUserAdditInf.`);
+              throw new Error(`HTTP error! status: ${response.status}`);
+            }
+          }
+          catch (e) {
+            return;
+          }
         }
         catch (e) {
           return;
@@ -153,30 +272,7 @@ export function Home() {
     if (sCorreo === null && sPassword === null) {
       navigate("/");
     }
-    
     fData();
-    
-    
-
-    /* const TweenAnimationBuilder = async () => {
-      let start = 0;
-      const end = lugaresVisitados;
-      const duration = 2000;
-      const stepTime = Math.abs(Math.floor(duration / end));
-      const timer = setInterval(() => {
-        start += 1;
-        setCountL(start);
-        console.log(end);
-        console.log(start);
-        if (start === end) clearInterval(timer);
-      }, stepTime);
-
-      // return () => clearInterval(timer);
-
-    }; */
-    // TweenAnimationBuilder();
-
-
   }, []);
 
   if (loading) {
@@ -195,11 +291,11 @@ export function Home() {
               <button className='mr-2' onClick={() => navigate("/viewUpdateUser")} >
                 <Cog6ToothIcon width={24} />
               </button>
-              
+
             </div>
           </div>
           <div className='flex items-center justify-between mt-2 mb-2'>
-            <BuildingOffice2Icon className="w-8 h-8 ml-2" color={'#fc6500'} /> 
+            <BuildingOffice2Icon className="w-8 h-8 ml-2" color={'#fc6500'} />
             <div className='grid text-center'>
               <h1 className="text-1xl font-bold text-black">
                 <CountUp start={0} end={userAdditInf.amount_business} duration={2} /></h1>
@@ -217,9 +313,9 @@ export function Home() {
             {userGroup ? <ChevronDownIcon className="w-5 h-5 text-gray-800 mt-1" /> : <ChevronUpIcon className="w-5 h-5 text-gray-800 mt-1" />}
           </div>
           {!userGroup && (
-            <div className="mt-4 space-y-4">
+            <div className="grid mt-4 space-y-4">
               <button
-                onClick={() => { dorsl == '' ? navigate("/registerBusiness") : navigate("/homeBusiness") }}
+                onClick={() => { dorsl == '' ? navigate("/registerBusiness") : navigate("/homeBusiness", { state: { businessId: businessId, tipo: true } }) }}
                 className="hover:bg-gray-200 text-orange-500 font-semibold py-2 px-2 rounded-md shadow-md transition flex items-center"
               >
                 {
@@ -230,6 +326,44 @@ export function Home() {
                 }
                 <label className="mr-4">{dorsl == '' ? 'Crear empresa' : dorsl.charAt(0).toUpperCase() + dorsl.slice(1)}</label>
               </button>
+              {colaboraciones.length > 0 && <h1 className='mr-2 text-gray-800'>Empresas donde colaboras</h1>}
+              {
+                colaboraciones.length > 0 ? colaboraciones.map((index) => (
+                  <div
+                    onClick={() => {
+                      if (index.CONFIRM == 1) {
+                        navigate("/homeBusiness", { state: { businessId: index.BUSSINESS_ID, tipo: index.TIPO == '0' ? false : true } });
+                      } else {
+                        setaIndexCol(index);
+                        setIsOpen(true);
+                      }
+                    }}
+                    className="hover:bg-gray-200 text-orange-500 font-semibold py-2 px-2 rounded-md shadow-md transition flex items-center"
+                  >
+                    <div className="flex items-center space-x-4 mr-20" >
+                      {
+                        index.PHOTO == null ?
+                          <BuildingOfficeIcon className='w-8 h-8 mx-1 md:w-5 md:h-5 lg:w-10 lg:h-10 ms:mx-2 md:mx-2 lg:mx-2' />
+                          : <img className="w-8 h-8 mx-1 md:w-5 md:h-5 lg:w-10 lg:h-10 ms:mx-2 md:mx-2 lg:mx-2 rounded-full object-cover border"
+                            src={'data:image/jpeg;base64,' + arrayBufferToBase64(index.PHOTO.data)} />
+                      }
+                      <div className="grid">
+                        <label className="mr-4">{index.DORSL.charAt(0).toUpperCase() + index.DORSL.slice(1)}</label>
+                      </div>
+                    </div>
+                    <div className="flex justify-end space-x-3 ml-4">
+                      {bAccederIndexCol == index.ID ?
+                        <button className="px-4 py-2 rounded-lg bg-orange-500 text-white">
+                          <div className='circleWhite'></div>
+                        </button>
+                        : index.CONFIRM == 0 ?
+                          <button className="px-4 py-2 rounded-lg bg-orange-500 text-white hover:bg-orange-600 transition"
+                            onClick={(e) => { indexConfirmCol(e, index); }}>Aceptar
+                          </button> : <></>}
+                    </div>
+                  </div>
+                )) : <></>
+              }
             </div>
           )}
         </div>
@@ -266,18 +400,18 @@ export function Home() {
                       </div>
                       <div className="mt-6 flex justify-end space-x-3 mr-2 mb-2">
                         {bAccederIndex == index['APOINMENT_ID'] ?
-                          <button className="px-4 py-2 rounded-lg bg-blue-500 text-white"><div className='circleWhite'></div></button>
+                          <button className="px-4 py-2 rounded-lg bg-blue-500 text-white">
+                            <div className='circleWhite'></div></button>
                           : index['APPOINTMENT_CONFIRM'] == 0 ?
                             <button className="px-4 py-2 rounded-lg bg-blue-500 text-white hover:bg-blue-600 transition"
                               onClick={() => { indexConfirm(index) }}>Confirmar</button> : <></>}
-                        <button className="px-4 py-2 rounded-lg bg-orange-500 text-white hover:bg-orange-600 transition" onClick={() => {
+                        <button className="px-4 py-2 rounded-lg bg-orange-500 text-white hover:bg-orange-600 transition" 
+                        onClick={() => {
                           if (index['ESTATUS'] !== '-1' && index['ESTATUS'] !== '2') {
                             navigate(`/cancelAppoin/${index['APOINMENT_ID']}`);
                           }
                         }}>Cancelar</button>
                       </div>
-
-                      {/* <ChevronRightIcon width={30} color="black" /> */}
                     </div>
                   ))
                   }
@@ -313,16 +447,31 @@ export function Home() {
         </div>
       </div>
 
-      {/* <div class="fab-container">
-        <div class="button iconbutton">
-          <button
-            onClick={() => navigate("/viewUpdateUser")}
-            class="fa-solid fa-plus"
-          >
-            <Cog6ToothIcon width={40} />
-          </button>
-        </div>
-      </div> */}
+      {/* Modal */}
+      {isOpen ?
+        <>
+          <div className="fixed inset-0 bg-black bg-opacity-50 z-40"></div>
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+            <div className="bg-white rounded-2xl shadow-2xl max-w-lg w-full p-6 relative animate-fade-in-up">
+              <button
+                onClick={() => { setIsOpen(false); setaIndexCol(''); }}
+                className="absolute top-3 right-3 text-gray-500 hover:text-orange-500"
+              >
+                <CloseIcon className="w-5 h-5 text-gray-900" />
+              </button>
+              <h4 className="text-xl font-bold text-center text-black mb-1">Confirmar</h4>
+              <p className="text-center text-yellow-500 mb-1">¿Quieres aceptar la invitación a colaborar?</p>
+              <div className='flex justify-end mt-2'>
+                <button className='bg-gray-500 text-white px-4 py-2 rounded-md hover:bg-gray-600 mx-2' onClick={() => {
+                  indexCancelar();
+                }}>Rechazar</button>
+                <button className='bg-orange-500 text-white px-4 py-2 rounded-md hover:bg-orange-600' onClick={(e) => {
+                  indexConfirmCol(e, '');
+                }}>Aceptar</button>
+              </div>
+            </div>
+          </div>
+        </> : <></>}
     </div>
   );
 }

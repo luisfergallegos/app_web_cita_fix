@@ -19,11 +19,13 @@ export function loginFormLoader() {
     const sCorreo = fetchData("correo");
     const sPassword = fetchData("pwd");
     const slastSession = fetchData("lastsession");
-    return { sCorreo, sPassword, slastSession };
+    const sUserCitaFix = fetchData("UserCitaFix") ?? [];
+    const userId = sUserCitaFix['USER_ID'] ?? "";
+    return { sCorreo, sPassword, slastSession, userId };
 }
 
 export function LoginForm() {
-    const { sCorreo, sPassword, slastSession } = useLoaderData();
+    const { sCorreo, sPassword, slastSession, userId } = useLoaderData();
 
     useEffect(() => {
         const fData = async () => {
@@ -55,6 +57,45 @@ export function LoginForm() {
                         return;
                     }
                 }
+            }
+            //Solicitar por GET
+            var options = {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                }
+            }
+            try {
+                const response = await fetch(`${urlApi}notification?userid=${userId}`, options);
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                const json = await response.json();
+                let Aux = json['data'];
+                //Solicitar por GET
+                var options = {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    }
+                }
+                try {
+                    const response = await fetch(`${urlApi}usrInfCol?user_id=${userId}`, options);
+                    if (response.status == 200) {
+                        const json = await response.json();
+                        localStorage.setItem("numNot", json['data'].filter(e => e.CONFIRM === 0).length + Aux.length);
+                    } else {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                }
+                catch (e) {
+                    return;
+                }
+            }
+            catch (e) {
+                return;
             }
         };
         fData();

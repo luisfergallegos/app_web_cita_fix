@@ -2,6 +2,7 @@
 import { useLoaderData, useNavigate } from 'react-router-dom';
 import { fetchData } from "../../Wrapper.js";
 import { useEffect, useState } from "react";
+import { useLocation } from 'react-router-dom';
 import Select from "react-select";
 // assets
 import '../register_user/View_update_user.css';
@@ -9,7 +10,11 @@ import Loaging from '../../components/Loading.jsx';
 import { urlApi } from "../../styles/Constants.jsx";
 import PersonIcon from "../../assets/business.png";
 
-import { BuildingOfficeIcon, ChevronDownIcon, ChevronUpIcon, ClockIcon, MapPinIcon, Squares2X2Icon, UserCircleIcon, CameraIcon, CheckCircleIcon, HomeIcon } from '@heroicons/react/24/solid';
+import {
+    UserCircleIcon, MagnifyingGlassIcon, BuildingOfficeIcon, ChevronDownIcon,
+    ChevronUpIcon, ClockIcon, MapPinIcon, Squares2X2Icon, CameraIcon, CheckCircleIcon,
+    HomeIcon, UserPlusIcon, XMarkIcon
+} from '@heroicons/react/24/solid';
 import RegisterSchedule from '../schedule/register_schedule.jsx';
 import UpdateSchedule from '../schedule/update_schedule.jsx';
 
@@ -17,16 +22,16 @@ import UpdateSchedule from '../schedule/update_schedule.jsx';
 export function viewUpdateBusinessLoader() {
     const sCorreo = fetchData("correo");
     const sPassword = fetchData("pwd");
-    const sUserCitaFix = fetchData("UserCitaFix") ?? [];
-    const dorsl = fetchData("dorsl");
-    const businessId = sUserCitaFix['BUSSINESS_ID'];
-    return { sCorreo, sPassword, dorsl, businessId };
+    return { sCorreo, sPassword };
 }
 
 
 export function ViewUpdateBusiness() {
+    const location = useLocation();
     const navigate = useNavigate();
-    const { sCorreo, sPassword, dorsl, businessId } = useLoaderData();
+    const businessId = location.state.businessId;
+    const businessAdmin = location.state.tipo;
+    const { sCorreo, sPassword } = useLoaderData();
     const [loading, setLoading] = useState(true);
     const [bussiness, setBussiness] = useState([]);
     const [horario, setHorario] = useState([]);
@@ -36,6 +41,7 @@ export function ViewUpdateBusiness() {
     const [horarioGroup, setHorarioGroup] = useState(true);
     const [addressGroup, setAddressGroup] = useState(true);
     const [homeServiceGroup, sethomeServiceGroup] = useState(true);
+    const [CollaboratorGroup, setCollaboratorGroup] = useState(true);
     const [codigoPostal, setCodigoPostal] = useState('');
     const [countCodigoPostal, setCountCodigoPostal] = useState(0);
     const [estado, setEstado] = useState();
@@ -44,11 +50,16 @@ export function ViewUpdateBusiness() {
     const [direccionDos, setDireccionDos] = useState('');
     const [direccionUno, setDireccionUno] = useState('');
     const [name, setName] = useState();
-    // const [categorias, setCategorias] = useState([]);
     const [subCategorias, setsubCategorias] = useState([]);
     const [categoriaId, setCategoriaId] = useState('');
     const [sCategoriaName, setCategoriaName] = useState('');
     const [sSubCategoriaName, setSubCategoriaName] = useState(null);
+    const [searchText, setsearchText] = useState('');
+    const [filteredNames, setfilteredNames] = useState([]);
+    const [usuarios, setUsuarios] = useState([]);
+    const [usuariosbkq, setUsuariosbkq] = useState([]);
+    const [selectUser, setSelectUser] = useState(null);
+    const [colaboraciones, setColaboraciones] = useState([]);
 
     const [showAlertConfirmation, setshowAlertConfirmation] = useState(false);
     const [imagen, setImagen] = useState(null);
@@ -58,6 +69,8 @@ export function ViewUpdateBusiness() {
     const [bAccederHS, setbAccederHS] = useState(true);
     const [bAccederName, setbAccederName] = useState(true);
     const [bAccederCategoria, setbAccederCategoria] = useState(true);
+    const [bAccederCollaborator, setbAccederCollaborator] = useState(true);
+
 
 
     const arrayBufferToBase64 = (buffer) => {
@@ -166,6 +179,106 @@ export function ViewUpdateBusiness() {
                 return;
             }
             setbAccederHS(true);
+        }
+    };
+
+    const ModCollaboratorGroupOpen = async (e) => {
+        e.stopPropagation();
+        if (bAccederCollaborator) {
+            setbAccederCollaborator(false);
+            //Enviar por POST
+            var options = {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(
+                    {
+                        'bussiness_id': businessId,
+                        'user_id': `${selectUser}`,
+                        'name': bussiness.DORSL
+                    })
+            }
+            try {
+                const response = await fetch(`${urlApi}collaboratorCreate`, options);
+                const json = await response.json();
+                if (json['sucess'] == false) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                else {
+                    //Solicitar por GET
+                    try {
+                        const response = await fetch(`${urlApi}bussinessInfCol?bussiness_id=${businessId}`);
+                        if (response.status == 200) {
+                            const json = await response.json();
+                            setColaboraciones(json['data']);
+                            var temp = usuariosbkq.filter((u) => !json['data'].some((c) => c.USER_ID === u.USER_ID));
+                            setUsuarios(temp);
+                            setsearchText('');
+                        } else {
+                            throw new Error(`HTTP error! status: ${response.status}`);
+                        }
+                    }
+                    catch (e) {
+                        setSelectUser(null);
+                        setbAccederCollaborator(true);
+                        return;
+                    }
+                }
+                setSelectUser(null);
+                setbAccederCollaborator(true);
+            }
+            catch (e) {
+                setSelectUser(null);
+                setbAccederCollaborator(true);
+                return;
+            }
+        }
+    };
+
+    const indexCancelar = async (ID) => {
+        if (bAccederCollaborator) {
+            setbAccederCollaborator(false);
+            //Enviar por DELETE
+            var options = {
+                method: 'DELETE',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(
+                    {
+                        'collaborator_id': `${ID}`
+                    })
+            }
+            try {
+                const response = await fetch(`${urlApi}collaboratorDelete`, options);
+                const json = await response.json();
+                if (json['sucess'] == false) {
+                    setbAccederCollaborator(true);
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                else {
+                    //Solicitar por GET
+                    try {
+                        const response = await fetch(`${urlApi}bussinessInfCol?bussiness_id=${businessId}`);
+                        if (response.status == 200) {
+                            const json = await response.json();
+                            setColaboraciones(json['data']);
+                            var temp = usuariosbkq.filter((u) => !json['data'].some((c) => c.USER_ID === u.USER_ID));
+                            setUsuarios(temp);
+                            setsearchText('');
+                            setbAccederCollaborator(true);
+                        } else {
+                            setbAccederCollaborator(true);
+                            throw new Error(`HTTP error! status: ${response.status}`);
+                        }
+                    }
+                    catch (e) {
+                        setbAccederCollaborator(true);
+                        return;
+                    }
+                }
+            }
+            catch (e) {
+                setbAccederCollaborator(true);
+                return;
+            }
         }
     };
 
@@ -348,30 +461,6 @@ export function ViewUpdateBusiness() {
         setName(value);
     };
 
-    /* const handleChangeCategoria = evt => {
-        const value = evt.target.value;
-        setCategoriaName(value);
-        for (var filName in categorias) {
-            if (categorias[filName].name.toLowerCase() == value.toLowerCase()) {
-                setsubCategorias(categorias[filName].subcategoria);
-            }
-        }
-    }; */
-
-    /*  const handleChangeSubCategoria = evt => {
-         const value = evt.target.value;
-         setSubCategoriaName(value);
-     }; */
-
-    /*  const searchIdCategoria = () => {
-         for (var filName in subCategorias) {
-             if (subCategorias[filName].label.toLowerCase() == sSubCategoriaName.label.toLowerCase()) {
-                 setSubCategoriaName(subCategorias[filName].label);
-                 setCategoriaId(subCategorias[filName].value);
-             }
-         }
-     } */
-
     const handleChangeImagen = evt => {
         const file = evt.target.files[0];
         if (file) {
@@ -416,6 +505,23 @@ export function ViewUpdateBusiness() {
         }
     }
 
+    function quitarAcentos(texto) {
+        return texto.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+    }
+
+    const handleChangeUsrs = evt => {
+        const tempList = [];
+        const value = evt.target.value;
+        setsearchText(value);
+        for (var filName in usuarios) {
+            var userName = `${usuarios[filName].first_name} ${usuarios[filName].last_name}`;
+            if (quitarAcentos(userName.toLowerCase()).startsWith(value.toLowerCase())) {
+                tempList.push(usuarios[filName]);
+            }
+        }
+        setfilteredNames(tempList);
+    };
+
     useEffect(() => {
         const fData = async () => {
             //Solicitar por GET
@@ -425,6 +531,7 @@ export function ViewUpdateBusiness() {
                     const json = await response.json();
                     setBussiness(json['data']);
                     setName(json['data']['DORSL']);
+                    const userId = json['data']['USER_ID'];
                     setCategoriaName(json['data']['CATEGORY']);
                     setSubCategoriaName({
                         value: json['data']['BUSSINESS_BRANCH_ID'],
@@ -458,27 +565,49 @@ export function ViewUpdateBusiness() {
                                     if (json['data'].hasOwnProperty(key)) {
                                         const element = json['data'][key];
                                         const values = Object.values(element.subcategoria);
-                                        // var tempSub = [];
                                         values.map((subCat) => {
-                                            /* tempSub.push({
-                                                id: subCat.id,
-                                                subname: subCat.subname ?? ''
-                                            }); */
                                             tempSubCategoria.push({
                                                 value: subCat.id,
                                                 label: subCat.subname ?? ''
                                             });
                                         });
-                                        /* tempCategoria.push({
-                                            name: element.name,
-                                            subcategoria: tempSub
-                                        }); */
                                     }
                                 }
-                                // setCategorias(tempCategoria);
-                                // console.log(tempSubCategoria);
                                 setsubCategorias(tempSubCategoria);
-                                setLoading(false);
+                                //Solicitar por GET
+                                try {
+                                    const response = await fetch(`${urlApi}users?user_id=${userId}`);
+                                    if (!response.ok) {
+                                        console.log(`Error getting empresas.`);
+                                        throw new Error(`HTTP error! status: ${response.status}`);
+                                    }
+                                    const json2 = await response.json();
+                                    setUsuariosbkq(json2['data']);
+                                    //Solicitar por GET
+                                    try {
+                                        const response = await fetch(`${urlApi}bussinessInfCol?bussiness_id=${businessId}`);
+                                        if (response.status == 200) {
+                                            const json = await response.json();
+                                            setColaboraciones(json['data']);
+
+                                            var temp = json2['data'].filter((u) => !json['data'].some((c) => c.USER_ID === u.USER_ID));
+                                            setUsuarios(temp);
+                                            
+
+                                        } else {
+                                            throw new Error(`HTTP error! status: ${response.status}`);
+                                        }
+                                        setLoading(false);
+                                    }
+                                    catch (e) {
+                                        setLoading(false);
+                                        return;
+                                    }
+                                }
+                                catch (e) {
+                                    setLoading(false);
+                                    return;
+                                }
                             }
                             catch (e) {
                                 setLoading(false);
@@ -504,7 +633,7 @@ export function ViewUpdateBusiness() {
             }
 
         };
-        if (dorsl === '') {
+        if (businessAdmin === false) {
             navigate("/");
         }
         else if (sCorreo === null && sPassword === null) {
@@ -609,14 +738,6 @@ export function ViewUpdateBusiness() {
                     {bAccederCategoria ? (!categoriaGroup && (
                         <div className="mt-4 space-y-4">
                             <div>
-                                {/* <label className="block text-sm font-medium mb-1">Giro de tu empresa</label>
-                                <input className="w-full border px-4 py-2 rounded-md" list="optionsListCat" type="text" placeholder='Giro de empresa'
-                                    value={sCategoriaName} onChange={handleChangeCategoria} required ></input>
-                                <datalist id="optionsListCat">
-                                    {categorias.map((option, index) => (
-                                        <option key={index} value={option.name} />
-                                    ))}
-                                </datalist> */}
                                 <label className="block text-sm font-medium mb-1">¿Que tipo de negocio tienes?</label>
                                 <Select
                                     value={sSubCategoriaName}
@@ -625,13 +746,6 @@ export function ViewUpdateBusiness() {
                                     placeholder='Selecciona una opción'
                                     isSearchable={false}
                                 />
-                                {/* <input className="w-full border px-4 py-2 rounded-md" list="optionsListSubCat" type="text" placeholder='Categoría comercial'
-                                    value={sSubCategoriaName} onChange={handleChangeSubCategoria} required ></input>
-                                <datalist id="optionsListSubCat">
-                                    {subCategorias.map((option, index) => (
-                                        <option key={index} value={option.subname} />
-                                    ))}
-                                </datalist> */}
                                 <span>Esto ayuda a que los clientes te encuentren si están buscando una empresa como la tuya.</span>
                             </div>
                             <button className="mt-2 bg-orange-500 text-white px-4 py-2 rounded-md hover:bg-orange-600 disabled:border-gray-50 disabled:bg-gray-200 disabled:text-gray-500"
@@ -641,7 +755,83 @@ export function ViewUpdateBusiness() {
                     )) : <div className="mt-4 space-y-4">
                         <div className='circle' ></div>
                     </div>}
-
+                </div>
+                {/* Grupo Collaborator */}
+                <div className="bg-white text-black shadow rounded-xl p-4">
+                    <div
+                        className="flex items-center justify-between cursor-pointer"
+                        onClick={() => toggle(setCollaboratorGroup)}
+                    >
+                        <div className="flex items-center gap-2">
+                            <UserPlusIcon className='w-5 h-5 text-orange-600' />
+                            <span className="font-semibold">Invitar Colaborador</span>
+                        </div>
+                        {CollaboratorGroup ? <ChevronDownIcon className="w-5 h-5" /> : <ChevronUpIcon className="w-5 h-5" />}
+                    </div>
+                    {bAccederCollaborator ? (!CollaboratorGroup && (
+                        <div className="mt-4 space-y-4">
+                            {/* Lista de Colaboradores */}
+                            {colaboraciones.length > 0 ? colaboraciones.map((index) => (
+                                <div className="font-semibold py-2 px-2 rounded-md shadow-md transition flex items-center justify-between">
+                                    <div className="flex items-center space-x-4" >
+                                        {
+                                            index['PHOTO'] === null ? <UserCircleIcon width={40} color={'#fc6500'} className="ml-2" /> :
+                                                <img id='imgS' src={'data:image/jpeg;base64,' + arrayBufferToBase64(index['PHOTO'].data)} />
+                                        }
+                                        <div className='flex flex-col'>
+                                            <label className="text-black">{index.COMPLET_NAME}</label>
+                                            {index.CONFIRM == 0 ? <p className="text-gray-400">Invitación enviada</p> : <></>}
+                                        </div>
+                                    </div>
+                                    <button className={`ml-2 text-sm text-certer w-20 px-2 py-1 rounded-lg text-white transition ${index.CONFIRM == 0 ? 'bg-red-600 hover:bg-red-700' : 'bg-gray-600 hover:bg-gray-700'}`}
+                                        onClick={() => (indexCancelar(index.ID))} >{index.CONFIRM == 0 ? 'Cancelar' : 'Quitar'}</button>
+                                </div>
+                            )) : <></>}
+                            {/* Buscador */}
+                            <div className="relative mb-10">
+                                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                    <MagnifyingGlassIcon className="h-5 w-5 text-gray-400" />
+                                </div>
+                                <input
+                                    id='searchInput'
+                                    type="text"
+                                    name="searchText"
+                                    value={searchText}
+                                    onChange={handleChangeUsrs}
+                                    placeholder="Buscar cliente..."
+                                    className="w-full pl-10 pr-4 py-3 rounded-xl shadow-sm ring-1 ring-gray-600 focus:ring-2 focus:ring-orange-400 outline-none text-gray-800 placeholder-gray-400 transition"
+                                />
+                            </div>
+                            {/* Resultados o sugerencias */}
+                            {searchText !== "" ? (usuarios &&
+                                // <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                                <div className="flex flex-col grap-3">
+                                    {filteredNames.map((index) => (
+                                        <div className={` font-semibold py-2 px-2 rounded-md shadow-md transition flex items-center justify-between
+                                            ${selectUser === index.USER_ID ? "bg-orange-500 text-white" : "bg-white hover:bg-gray-200 text-orange-500"}`}
+                                            key={index.USER_ID}
+                                            onClick={() => {
+                                                setSelectUser(selectUser === index.USER_ID ? null : index.USER_ID);
+                                            }}
+                                        >
+                                            <div className="flex items-center space-x-4" >
+                                                {
+                                                    index['PHOTO'] === null ? <UserCircleIcon width={40} color={selectUser === index.USER_ID ? '#fff' : '#fc6500'} className="ml-2" /> :
+                                                        <img id='imgS' src={'data:image/jpeg;base64,' + arrayBufferToBase64(index['PHOTO'].data)} />
+                                                }
+                                                <label className={`${selectUser === index.USER_ID ? "text-white" : "text-black"}`}>{index['first_name']} {index.last_name}</label>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            ) : <></>}
+                            <button className="mt-2 bg-orange-500 text-white px-4 py-2 rounded-md hover:bg-orange-600 disabled:border-gray-50 disabled:bg-gray-200 disabled:text-gray-500"
+                                disabled={selectUser != null ? false : true}
+                                onClick={ModCollaboratorGroupOpen}>Invitar</button>
+                        </div>
+                    )) : <div className="mt-4 space-y-4">
+                        <div className='circle' ></div>
+                    </div>}
                 </div>
                 {/* Grupo Horario */}
                 <div className="bg-white text-black shadow rounded-xl p-4">
@@ -661,6 +851,36 @@ export function ViewUpdateBusiness() {
                             <UpdateSchedule excludeTimes={_excludeTimes} horario={horario} businessId={bussiness.BUSSINESS_ID} setshowAlertConfirmation={setshowAlertConfirmation} />
 
                     )}
+                </div>
+                {/* Grupo Home Services */}
+                <div className="bg-white text-black shadow rounded-xl p-4">
+                    <div
+                        className="flex items-center justify-between cursor-pointer"
+                        onClick={() => toggle(sethomeServiceGroup)}
+                    >
+                        <div className="flex items-center gap-2">
+                            <HomeIcon className='w-5 h-5 text-orange-600' />
+                            <span className="font-semibold">Servicio a domicilio</span>
+                        </div>
+                        {homeServiceGroup ? <ChevronDownIcon className="w-5 h-5" /> : <ChevronUpIcon className="w-5 h-5" />}
+                    </div>
+                    {bAccederHS ? (!homeServiceGroup && (
+                        <div className="mt-4 space-y-4">
+                            <div className='flex'>
+                                <label className="block text-sm font-medium mb-1 mr-4">¿Quieres aceptar citas a domicilio?</label>
+                                <label className="switch">
+                                    <input type="checkbox" onClick={ModHomeServiceGroupOpen}
+                                        checked={bussiness.HOME_SERVICE ==
+                                            '1'
+                                            ? true
+                                            : false} />
+                                    <span class="slider round"></span>
+                                </label>
+                            </div>
+                        </div>
+                    )) : <div className="mt-4 space-y-4">
+                        <div className='circle' ></div>
+                    </div>}
                 </div>
                 {/* Grupo Direccion */}
                 <div className="bg-white text-black shadow rounded-xl p-4">
@@ -706,37 +926,6 @@ export function ViewUpdateBusiness() {
                                         || bussiness.STATE != estado ? false : true} onClick={ModAddressGroupOpen}>Guardar</button>
                         </div>
                     )}
-                </div>
-                {/* Grupo Home Services */}
-                <div className="bg-white text-black shadow rounded-xl p-4">
-                    <div
-                        className="flex items-center justify-between cursor-pointer"
-                        onClick={() => toggle(sethomeServiceGroup)}
-                    >
-                        <div className="flex items-center gap-2">
-                            <HomeIcon className='w-5 h-5 text-orange-600' />
-                            <span className="font-semibold">Servicio a domicilio</span>
-                        </div>
-                        {homeServiceGroup ? <ChevronDownIcon className="w-5 h-5" /> : <ChevronUpIcon className="w-5 h-5" />}
-                    </div>
-                    {bAccederHS ? (!homeServiceGroup && (
-                        <div className="mt-4 space-y-4">
-                            <div className='flex'>
-                                <label className="block text-sm font-medium mb-1 mr-4">¿Quieres aceptar citas a domicilio?</label>
-                                <label className="switch">
-                                    <input type="checkbox" onClick={ModHomeServiceGroupOpen}
-                                        checked={bussiness.HOME_SERVICE ==
-                                            '1'
-                                            ? true
-                                            : false} />
-                                    <span class="slider round"></span>
-                                </label>
-                            </div>
-                        </div>
-                    )) : <div className="mt-4 space-y-4">
-                        <div className='circle' ></div>
-                    </div>}
-
                 </div>
             </div>
         </div>);

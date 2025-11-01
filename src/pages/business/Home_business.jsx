@@ -2,6 +2,7 @@
 import { useLoaderData, useNavigate } from 'react-router-dom';
 import { dateSpanish, fetchData } from "../../Wrapper.js";
 import { useEffect, useState } from "react";
+import { useLocation } from 'react-router-dom';
 // assets
 import './Find_business.css';
 import { ChevronRightIcon, MagnifyingGlassPlusIcon, ShareIcon, UserCircleIcon, UserPlusIcon } from '@heroicons/react/24/solid';
@@ -14,20 +15,22 @@ import { Cog6ToothIcon } from '@heroicons/react/24/outline';
 export function HomeBusinessLoader() {
     const sCorreo = fetchData("correo");
     const sPassword = fetchData("pwd");
-    const sUserCitaFix = fetchData("UserCitaFix") ?? [];
-    const dorsl = sUserCitaFix['DORSL'];
-    return { sCorreo, sPassword, dorsl };
+    return { sCorreo, sPassword };
 }
 
 const PageSize = 10;
 
 export function HomeBusiness() {
+    const location = useLocation();
     const navigate = useNavigate();
-    const { sCorreo, sPassword, dorsl } = useLoaderData();
+    const { sCorreo, sPassword } = useLoaderData();
     const [loading, setLoading] = useState(true);
     const [currentPage, setCurrentPage] = useState(1);
     const sUserCitaFix = fetchData("UserCitaFix") ?? [];
     const [citas, setCitas] = useState([]);
+    const businessId = location.state.businessId ?? '';
+    const businessAdmin = location.state.tipo;
+    const [empresa, SetEmpresa] = useState([]);
 
     const arrayBufferToBase64 = (buffer) => {
         var binary = '';
@@ -56,42 +59,54 @@ export function HomeBusiness() {
 
     useEffect(() => {
         const fData = async () => {
-            const businessId = sUserCitaFix['BUSSINESS_ID'];
             const uid = sUserCitaFix['USER_ID'];
-            //Solicitar por GET
-            var options = {
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Accept': 'application/json',
-                    'x-citafix-id': uid
-                }
+            if (businessId === '') {
+                navigate("/");
             }
+            else
+                if (sCorreo === null && sPassword === null) {
+                    navigate("/");
+                }
             try {
-                const response = await fetch(`${urlApi}appoinBussiness?bussiness_id=${businessId}`, options);
+                const response = await fetch(`${urlApi}bussinessId?bussiness_id=${businessId}`);
                 if (response.status == 200) {
                     const json = await response.json();
-                    setCitas(json['data']);
-                } else if (response.status == 404) {
-                    setCitas([]);
+                    SetEmpresa(json['data']);
+                    //Solicitar por GET
+                    var options = {
+                        method: 'GET',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Accept': 'application/json',
+                            'x-citafix-id': uid
+                        }
+                    }
+                    try {
+                        const response = await fetch(`${urlApi}appoinBussiness?bussiness_id=${businessId}`, options);
+                        if (response.status == 200) {
+                            const json = await response.json();
+                            setCitas(json['data']);
+                        } else if (response.status == 404) {
+                            setCitas([]);
+                        } else {
+                            console.log(`Error getting appoin.`);
+                            throw new Error(`HTTP error! status: ${response.status}`);
+                        }
+                    }
+                    catch (e) {
+                        navigate("/");
+                    }
                 } else {
-                    console.log(`Error getting appoin.`);
+                    console.log(`Error getting bussinessId.`);
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
                 setLoading(false);
             }
             catch (e) {
-                return;
+                navigate("/");
             }
-
-
         };
-        if (dorsl === '') {
-            navigate("/");
-        }
-        else if (sCorreo === null && sPassword === null) {
-            navigate("/");
-        }
+
         fData();
     }, []);
 
@@ -105,22 +120,20 @@ export function HomeBusiness() {
                 <div className="bg-white text-black shadow rounded-xl p-4">
                     <div className="cursor-pointer flex items-center justify-between">
                         <div className="flex items-center gap-2">
-                            <h2 className="text-2xl font-bold text-gray-800">{sUserCitaFix['DORSL']}</h2>
+                            <h2 className="text-2xl font-bold text-gray-800">{empresa.DORSL}</h2>
                         </div>
-                        <div className='flex items-center justify-between'>
-                            <button className='mr-2' onClick={() => navigate("/viewUpdateBusiness")} >
+                        <div className='flex items-center justify-between ml-2 '>
+                            {businessAdmin && <button className='mr-2' onClick={() => navigate("/viewUpdateBusiness", { state: { businessId: businessId, tipo: businessAdmin } })} >
                                 <Cog6ToothIcon width={24} />
-                            </button>
+                            </button>}
                             <button onClick={() => {
                                 const baseUrl = '/viewBusiness';
                                 const params = new URLSearchParams({
-                                    n: sUserCitaFix['DORSL'],
-                                    i: sUserCitaFix['BUSSINESS_ID']
+                                    n: empresa.DORSL,
+                                    i: businessId
                                 });
                                 navigate(`${baseUrl}?${params.toString()}`);
-
                             }
-
                             } >
                                 <ShareIcon width={24} />
                             </button>
@@ -153,11 +166,8 @@ export function HomeBusiness() {
                                                                     index['ESTATUS'] == '3' || index['APPOINTMENT_CONFIRM'] == '1' ? '#4472C4' : '#fc6500'
                                                             } /> :
                                                         <img id='imgS' src={'data:image/jpeg;base64,' + arrayBufferToBase64(index['PHOTO'].data)} />
-
                                                 }
-
                                             </div>
-
                                             <div className="grid">
                                                 <label className="ms:text-2xl lg:text-2xl font-bold text-black">{ConvertDateTime(citas[currentPage - 1]['APPOINTMENT_DATE'], index['APPOINTMENT_TIME'], 1)} </label>
                                                 <label className="ms:text-2xl lg:text-2xl font-bold text-gray-400">{index['ANONIMO'] == '' ? index['COMPLET_NAME'] : index['ANONIMO'].substring(0, index['ANONIMO'].indexOf(","))} </label>
@@ -167,11 +177,9 @@ export function HomeBusiness() {
                                             </div>
                                             <ChevronRightIcon width={30} color="black" />
                                         </div>
-
                                     )
                                     )
                                 }
-
                             </div>
                             <Pagination
                                 className="pagination-bar flex items-center justify-center"
@@ -189,7 +197,7 @@ export function HomeBusiness() {
                                 <p className="text-gray-600">Guarda tus proximas citas de manera fácil y al instante. </p>
                                 <p className="text-gray-600 mb-4">Dirígete al buscador de cliente</p>
                                 <button
-                                    onClick={() => navigate("/findUser")}
+                                    onClick={() => navigate("/findUser", { state: { userId: sUserCitaFix['USER_ID'], businessId: businessId, dorsl: empresa.DORSL } })}
                                     className="bg-orange-500 hover:bg-orange-600 text-white font-semibold py-2 px-6 rounded-md shadow-md transition"
                                 >
                                     Ir a clientes
@@ -199,60 +207,29 @@ export function HomeBusiness() {
                 }
             </div>
             {
-                dorsl == '' ? <div></div> :
+                empresa.DORSL == '' ? <div></div> :
                     <div class="fab-container2">
                         <div class="button iconbutton">
                             <button
-                                onClick={() => navigate("/addAppoinBusinessAnon", { state: { userId: sUserCitaFix['USER_ID'], businessId: sUserCitaFix['BUSSINESS_ID'], dorsl: sUserCitaFix['DORSL'] } })}
-                                class="fa-solid fa-plus"
-                            >
+                                onClick={() => navigate("/addAppoinBusinessAnon", { state: { businessId: businessId, dorsl: empresa.DORSL } })} //Cambiar
+                                class="fa-solid fa-plus">
                                 <UserPlusIcon width={40} />
                             </button>
                         </div>
                     </div>
             }
             {
-                dorsl == '' ? <div></div> :
+                empresa.DORSL == '' ? <div></div> :
                     <div class="fab-container">
                         <div class="button iconbutton">
                             <button
-                                onClick={() => navigate("/findUser")}
-                                class="fa-solid fa-plus"
-                            >
+                                onClick={() => navigate("/findUser", { state: { userId: sUserCitaFix['USER_ID'], businessId: businessId, dorsl: empresa.DORSL } })}
+                                class="fa-solid fa-plus">
                                 <MagnifyingGlassPlusIcon width={40} />
                             </button>
                         </div>
                     </div>
             }
-            {/* {
-                dorsl == '' ? <div></div> :
-                    <div class="fab-container">
-                        <div class="button iconbutton">
-                            <button
-                                onClick={() => navigate(`/viewBusiness/${sUserCitaFix['BUSSINESS_ID']}`)}
-                                class="fa-solid fa-plus"
-                            >
-                                <ShareIcon width={40} />
-                            </button>
-                        </div>
-                    </div>
-            } */}
-
-            {/* {
-                dorsl == '' ? <div></div> :
-                    <div class="fab-container">
-                        <div class="button iconbutton">
-                            <button
-                                onClick={() => navigate("/viewUpdateBusiness")}
-                                class="fa-solid fa-plus"
-                            >
-                                <Cog6ToothIcon width={40} />
-                            </button>
-                        </div>
-                    </div>
-            } */}
-
-
         </div>
     );
 }

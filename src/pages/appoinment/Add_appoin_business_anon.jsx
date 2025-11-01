@@ -58,7 +58,6 @@ export function AddAppoinBusinesssAnon() {
     const [loading, setLoading] = useState(true);
     const [isOpen, setIsOpen] = useState(false);
 
-    const userId = location.state.userId;
     const businessId = location.state.businessId;
     const dorsl = location.state.dorsl;
     var _today = new Date();
