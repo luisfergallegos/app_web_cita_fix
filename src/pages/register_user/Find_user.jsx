@@ -33,9 +33,9 @@ export function FindUser() {
     const location = useLocation();
     const navigate = useNavigate();
 
-    const userId = location.state.userId;
-    const businessId = location.state.businessId;
-    const dorsl = location.state.dorsl;
+    const userId = location.state?.userId;
+    const businessId = location.state?.businessId ?? '';
+    const dorsl = location.state?.dorsl;
 
     const { sCorreo, sPassword } = useLoaderData();
     const [loading, setLoading] = useState(true);
@@ -75,6 +75,12 @@ export function FindUser() {
 
     useEffect(() => {
         const fData = async () => {
+            if (businessId === '') {
+                navigate("/");
+            }
+            else if (sCorreo === null && sPassword === null) {
+                navigate("/");
+            }
             //Solicitar por GET
             try {
                 const response = await fetch(`${urlApi}users?user_id=${userId}`);
@@ -91,9 +97,6 @@ export function FindUser() {
                 return;
             }
         };
-        if (sCorreo === null && sPassword === null) {
-            navigate("/");
-        }
         fData();
     }, []);
 

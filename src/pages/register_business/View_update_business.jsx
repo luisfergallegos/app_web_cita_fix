@@ -29,8 +29,8 @@ export function viewUpdateBusinessLoader() {
 export function ViewUpdateBusiness() {
     const location = useLocation();
     const navigate = useNavigate();
-    const businessId = location.state.businessId;
-    const businessAdmin = location.state.tipo;
+    const businessId = location.state?.businessId ?? '';
+    const businessAdmin = location.state?.tipo;
     const { sCorreo, sPassword } = useLoaderData();
     const [loading, setLoading] = useState(true);
     const [bussiness, setBussiness] = useState([]);
@@ -524,6 +524,15 @@ export function ViewUpdateBusiness() {
 
     useEffect(() => {
         const fData = async () => {
+            if (businessId === '') {
+                navigate("/");
+            }
+            else if (businessAdmin === false) {
+                navigate("/");
+            }
+            else if (sCorreo === null && sPassword === null) {
+                navigate("/");
+            }
             //Solicitar por GET
             try {
                 const response = await fetch(`${urlApi}bussinessId?bussiness_id=${businessId}`);
@@ -592,8 +601,6 @@ export function ViewUpdateBusiness() {
 
                                             var temp = json2['data'].filter((u) => !json['data'].some((c) => c.USER_ID === u.USER_ID));
                                             setUsuarios(temp);
-                                            
-
                                         } else {
                                             throw new Error(`HTTP error! status: ${response.status}`);
                                         }
@@ -633,12 +640,6 @@ export function ViewUpdateBusiness() {
             }
 
         };
-        if (businessAdmin === false) {
-            navigate("/");
-        }
-        else if (sCorreo === null && sPassword === null) {
-            navigate("/");
-        }
         fData();
     }, []);
 

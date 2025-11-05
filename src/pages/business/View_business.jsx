@@ -53,7 +53,7 @@ export function ViewBusiness() {
 
     useEffect(() => {
         // Cargar user info desde loader
-        if (!businessId) {
+        if (!businessId && !businessDORSL) {
             navigate("/");
         }
         const fData = async () => {
@@ -77,10 +77,6 @@ export function ViewBusiness() {
                         }
                         else {
                             setQualifications([]);
-                        }
-                        if (!response.ok) {
-                            console.log(`Error getting empresas.`);
-                            throw new Error(`HTTP error! status: ${response.status}`);
                         }
                         //Solicitar por GET
                         try {

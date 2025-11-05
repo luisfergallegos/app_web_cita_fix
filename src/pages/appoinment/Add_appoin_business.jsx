@@ -61,10 +61,10 @@ export function AddAppoinBusinesss() {
 
 
     const { USER_ID, first_name, last_name,
-        PHOTO, FAVORITE, FAVORITES_ID } = location.state.userCita;
+        PHOTO, FAVORITE, FAVORITES_ID } = location.state?.userCita;
     const [bFavorite, setbFav] = useState(FAVORITE == 1 ? false : true);
-    const businessId = location.state.businessId;
-    const dorsl = location.state.dorsl;
+    const businessId = location.state?.businessId ?? '';
+    const dorsl = location.state?.dorsl;
     var _today = new Date();
     const initialDate = new Date(_today);
     const lastDate = new Date(_today.setDate(_today.getDate() + 31));
@@ -231,6 +231,12 @@ export function AddAppoinBusinesss() {
 
     useEffect(() => {
         const fData = async () => {
+            if (businessId === '') {
+                navigate("/");
+            }
+            else if (sCorreo === null && sPassword === null) {
+                navigate("/");
+            }
             //Solicitar por GET
             try {
                 const response = await fetch(`${urlApi}appoinBussDateDays?bussiness_id=${businessId}`);
@@ -264,9 +270,6 @@ export function AddAppoinBusinesss() {
 
 
         };
-        if (sCorreo === null && sPassword === null) {
-            navigate("/");
-        }
         fData();
     }, []);
 

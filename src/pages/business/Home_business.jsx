@@ -28,8 +28,8 @@ export function HomeBusiness() {
     const [currentPage, setCurrentPage] = useState(1);
     const sUserCitaFix = fetchData("UserCitaFix") ?? [];
     const [citas, setCitas] = useState([]);
-    const businessId = location.state.businessId ?? '';
-    const businessAdmin = location.state.tipo;
+    const businessId = location.state?.businessId ?? '';
+    const businessAdmin = location.state?.tipo;
     const [empresa, SetEmpresa] = useState([]);
 
     const arrayBufferToBase64 = (buffer) => {

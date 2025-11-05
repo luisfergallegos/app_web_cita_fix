@@ -111,7 +111,8 @@ export function AddAppoin() {
 
     const { BUSSINESS_ID, USER_ID, DORSL, PHOTO, CATEGORY, SERVICE_LEVEL,
         ADDRESS_FIRST, ADDRESS_SECOND, POSTAL_CODE, CITY, STATE,
-        phone, Horario, HOME_SERVICE } = location.state.business;
+        phone, Horario, HOME_SERVICE } = location.state?.business ?? {};
+    const userId = location.state?.userId ?? '';
     var _today = new Date();
     const initialDate = new Date(_today);
     const lastDate = new Date(_today.setDate(_today.getDate() + 31));
@@ -206,7 +207,6 @@ export function AddAppoin() {
                 else {
                     var dateFormat = startDate.getMonth() + 1;
                     var _selectedDate = `${startDate.getFullYear()}-${('0' + dateFormat).slice(-2)}-${startDate.getDate()}`;
-                    
                     //Enviar por POST
                     var options = {
                         method: 'POST',
@@ -312,6 +312,12 @@ export function AddAppoin() {
 
     useEffect(() => {
         const fData = async () => {
+            if (userId === '') {
+                navigate("/");
+            }
+            else if (sCorreo === null && sPassword === null) {
+                navigate("/");
+            }
             //Solicitar por GET
             try {
                 const response = await fetch(`${urlApi}appoinBussDateDays?bussiness_id=${BUSSINESS_ID}`);
@@ -345,9 +351,6 @@ export function AddAppoin() {
 
 
         };
-        if (sCorreo === null && sPassword === null) {
-            navigate("/");
-        }
         fData();
     }, []);
 
@@ -452,48 +455,45 @@ export function AddAppoin() {
                 <hr className="mb-4 mt-4" />
                 {
                     HOME_SERVICE == '1' && <div className='businessTitle'>
-                    <div style={{ display: 'flex', justifyItems: 'center', alignItems: 'center', marginRight: '20px' }}>
-                        <h4 style={{ marginRight: '20px' }}>{bMostrarAddress ? '¿Cuál es la dirección?' : 'Visita a domicilio'}</h4>
-                        <label className="switch">
-                            <input type="checkbox" onClick={ModMostrarAddres} />
-                            <span class="slider round"></span>
-                        </label>
+                        <div style={{ display: 'flex', justifyItems: 'center', alignItems: 'center', marginRight: '20px' }}>
+                            <h4 style={{ marginRight: '20px' }}>{bMostrarAddress ? '¿Cuál es la dirección?' : 'Visita a domicilio'}</h4>
+                            <label className="switch">
+                                <input type="checkbox" onClick={ModMostrarAddres} />
+                                <span class="slider round"></span>
+                            </label>
+                        </div>
+                        <div className={bMostrarAddress ? 'businessContainer_Address' : 'businessContainer_Address active'} >
+                            <div className='AddressForm-group'>
+                                <label>Código postal</label>
+                                <input type="text" placeholder='Código postal' maxLength={5} onChange={getCodigoPostal} />
+                            </div>
+                            <div className='AddressForm-group'>
+                                <label>Estado</label>
+                                <input type="text" placeholder='Estado' value={estado} disabled />
+                            </div>
+                            <div className='AddressForm-group'>
+                                <label>Municipio/Ciudad</label>
+                                <input type="text" placeholder='Municipio/Ciudad' value={ciudad} disabled />
+                            </div>
+                            <div className='AddressForm-group'>
+                                <label>Colonia</label>
+                                <input list="optionsList" type="text" placeholder='Colonia'
+                                    disabled={colonias.length == 0 ? true : false}
+                                    onChange={handleChangeColonia} required ></input>
+                                <datalist id="optionsList">
+                                    {colonias.map((option, index) => (
+                                        <option key={index} value={option} />
+                                    ))}
+                                </datalist>
+                            </div>
+                            <div className='AddressForm-group'>
+                                <label>Calle / Número externo</label>
+                                <input type="text" placeholder='Calle / Número externo'
+                                    onChange={handleChange} />
+                            </div>
+                        </div>
                     </div>
-                    <div className={bMostrarAddress ? 'businessContainer_Address' : 'businessContainer_Address active'} >
-                        <div className='AddressForm-group'>
-                            <label>Código postal</label>
-                            <input type="text" placeholder='Código postal' maxLength={5} onChange={getCodigoPostal} />
-                        </div>
-                        <div className='AddressForm-group'>
-                            <label>Estado</label>
-                            <input type="text" placeholder='Estado' value={estado} disabled />
-                        </div>
-                        <div className='AddressForm-group'>
-                            <label>Municipio/Ciudad</label>
-                            <input type="text" placeholder='Municipio/Ciudad' value={ciudad} disabled />
-                        </div>
-                        <div className='AddressForm-group'>
-                            <label>Colonia</label>
-                            <input list="optionsList" type="text" placeholder='Colonia'
-                                disabled={colonias.length == 0 ? true : false}
-                                onChange={handleChangeColonia} required ></input>
-                            <datalist id="optionsList">
-                                {colonias.map((option, index) => (
-                                    <option key={index} value={option} />
-                                ))}
-                            </datalist>
-                        </div>
-                        <div className='AddressForm-group'>
-                            <label>Calle / Número externo</label>
-                            <input type="text" placeholder='Calle / Número externo'
-                                onChange={handleChange} />
-                        </div>
-                    </div>
-                </div>
                 }
-
-                
-                
 
                 {bAcceder ? <div className='businessBtn'>
                     <button className='mb-10' onClick={() => {
@@ -525,8 +525,8 @@ export function AddAppoin() {
                                 <div className='flex justify-end mt-2'>
                                     <button className='bg-gray-500 text-white px-4 py-2 rounded-md hover:bg-gray-600 mx-2' onClick={() => { setIsOpen(false); setMessage(''); }}>Cancelar</button>
                                     <button className='bg-orange-500 text-white px-4 py-2 rounded-md hover:bg-orange-600' onClick={() => {
-                                            _buildConfirm();
-                                        }}>Confirmar</button>
+                                        _buildConfirm();
+                                    }}>Confirmar</button>
                                 </div>
                             </div>
                         </div>
