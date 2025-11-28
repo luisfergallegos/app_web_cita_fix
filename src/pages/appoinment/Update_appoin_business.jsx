@@ -593,6 +593,7 @@ export function UpdateAppoinBusiness() {
                     <button onClick={() => { setIsOpen(true); setPopupMenuButton(!bPopupMenuButton); }} class="fa-solid fa-plus">
                         <TrashIcon width={40} />
                     </button>
+                    <label class="text-white px-1 font-bold">Cancelar</label>
                 </div>
             </div>}
 
@@ -621,6 +622,7 @@ export function UpdateAppoinBusiness() {
                     >
                         {bMostrarEditar ? <CloseIcon width={40} /> : <CalendarDateRangeIcon width={40} />}
                     </button>
+                    <label class="text-white px-1 font-bold">Reagendar</label>
                 </div>
             </div>}
 

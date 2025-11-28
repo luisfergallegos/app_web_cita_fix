@@ -1,5 +1,5 @@
 // rrd imports
-import { useLoaderData, useNavigate } from 'react-router-dom';
+import { useLoaderData, useNavigate, useLocation } from 'react-router-dom';
 import { dateSpanish, fetchData } from "../../Wrapper.js";
 import { useEffect, useState } from "react";
 // assets
@@ -20,15 +20,18 @@ export async function CancelarAppoinLoader({ params }) {
 }
 
 export function CancelarAppoin() {
+    const location = useLocation();
     const navigate = useNavigate();
     const { sCorreo, sPassword, citaId } = useLoaderData();
     const [loading, setLoading] = useState(true);
     const [cita, setCita] = useState([]);
+    const [evento, setEvento] = useState([]);
     const [isOpen, setIsOpen] = useState(false);
     const [isOpenC, setIsOpenC] = useState(false);
     const [selectedRating, setSelectedRating] = useState(0);
     const [comentario, setComentario] = useState('');
     const [bAcceder, setbAcceder] = useState(true);
+    const flagEvent = location.state?.flagEvent == 1 ? true : false;
 
     // Function to convert Base64 string to binary data
     const arrayBufferToBase64 = (buffer) => {
@@ -140,8 +143,26 @@ export function CancelarAppoin() {
                 }
                 const json = await response.json();
                 setCita(json['data']);
-
-                setLoading(false);
+                if (flagEvent) {
+                    // console.log('flagEvent:' + flagEvent);
+                    // console.log('bussiness_id:' + json['data']['BUSSINESS_ID']);
+                    //Solicitar por GET
+                    try {
+                        const response = await fetch(`${urlApi}getEvent?bussiness_id=${json['data']['BUSSINESS_ID']}`);
+                        if (!response.ok) {
+                            console.log(`Error getting inf Event.`);
+                            throw new Error(`HTTP error! status: ${response.status}`);
+                        }
+                        const json2 = await response.json();
+                        setEvento(json2['data']);
+                        setLoading(false);
+                    }
+                    catch (e) {
+                        return;
+                    }
+                }
+                else
+                    setLoading(false);
             }
             catch (e) {
                 return;
@@ -166,11 +187,49 @@ export function CancelarAppoin() {
                     }
                 </div>
                 <div>
-                    <h1 className='text-3xl text-black'>Resumen de la cita</h1>
-                    <h4 className='text-2xl font-bold text-black mb-1'>{cita.DORSL}</h4>
-                    <p className='w-full text-gray-400 mb-4'>{ConvertDateTime(cita.APPOINTMENT_DATE, cita.APPOINTMENT_TIME, 1)} -
-                        {ConvertDateTime(cita.APPOINTMENT_DATE, cita.APPOINTMENT_TIME, 0)}</p>
-                    {cita.BUS_USER_PHONE &&
+                    {flagEvent ? <></> : <h1 className='text-3xl text-black'>Resumen de la cita</h1>}
+                    <h4 className="mt-3 text-lg font-bold text-gray-900">{cita.DORSL}</h4>
+                    {flagEvent ? <p className="mb-2 text-sm text-gray-700">
+                        <strong>Vestimenta:</strong> {evento.DRESSCODE || 'Código de vestimenta'}
+                    </p> : <></>}
+                    {flagEvent ?
+                        <div className="bg-white rounded-lg p-6">
+                            <div className="flex items-start justify-between">
+                                <div>
+                                    <h3 className="text-lg font-bold text-gray-900">✨ {evento.ENCABEZADO || 'Encabezado'}</h3>
+                                    <p className="text-sm text-gray-600 mt-1">
+                                        {evento.ANFITRION ? `${evento.ANFITRION} —` : ""} <span className="font-medium">{evento.MOTIVO || 'Motivo'}</span>
+                                    </p>
+                                </div>
+                            </div>
+                            <hr className="my-4 border-gray-100" />
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm text-gray-700 ">
+                                <div>
+                                    <p className="text-xs text-gray-500">📅 Fecha</p>
+                                    <p className="font-medium">{ConvertDateTime(cita.APPOINTMENT_DATE, cita.APPOINTMENT_TIME, 0)}</p>
+                                </div>
+                                <div>
+                                    <p className="text-xs text-gray-500">🕒 Hora</p>
+                                    <p className="font-medium">{ConvertDateTime(cita.APPOINTMENT_DATE, cita.APPOINTMENT_TIME, 1)}</p>
+                                </div>
+
+                                <div className="sm:col-span-2">
+                                    <p className="text-xs text-gray-500">📍 Ubicación</p>
+                                    <p className="font-medium">{evento.UBICACION || "Lugar"}</p>
+                                    <p className="font-medium">⚠️ {evento.NOTAS || "Notas / Indicaciones / enlace"}</p>
+                                </div>
+                                <div className="sm:col-span-2 mt-2">
+                                    <p className="text-xs text-gray-500">🔖 Invitados</p>
+                                    <p className="font-medium">{cita.MENSSAGE.substring(0, cita.MENSSAGE.indexOf(","))} {`(${cita.MENSSAGE.substring(cita.MENSSAGE.indexOf(",") + 1, cita.MENSSAGE.length)})`}</p>
+                                </div>
+                            </div>
+                            <div className="mt-6 text-sm text-gray-600">
+                                <p>{evento.DESPEDIDA || 'Mensaje final'} 🎊</p>
+                            </div>
+                        </div> : <></>}
+                    {flagEvent ? <></> : <p className='w-full text-gray-400 mb-4'>{ConvertDateTime(cita.APPOINTMENT_DATE, cita.APPOINTMENT_TIME, 1)} -
+                        {ConvertDateTime(cita.APPOINTMENT_DATE, cita.APPOINTMENT_TIME, 0)}</p>}
+                    {flagEvent ? <></> : cita.BUS_USER_PHONE &&
                         <div className='flex justify-start items-center ms-4' style={{
                             cursor: 'pointer'
                         }}
@@ -187,6 +246,7 @@ export function CancelarAppoin() {
                                 <p className='text-gray-400'>{cita.BUS_USER_PHONE}</p>
                             </div>
                         </div>}
+
                     {cita.FLAG_ADDRESS != '0' ?
                         <div className='flex justify-start items-center ms-4'>
                             <MapPinIcon className='w-8 h-8 md:w-10 md:h-10 lg:w-10 lg:h-10 mx-4 text-orange-500' />
@@ -195,35 +255,31 @@ export function CancelarAppoin() {
                             </div>
                         </div> : <></>
                     }
-                </div>
-                <hr className="mb-4 mt-4" />
+                </div>                
+                {flagEvent ? <></> : <hr className="mb-4 mt-4" />}
                 <div>
-                    <h1 className='font-bold text-black mb-1'>Información de la cita</h1>
-                    <div className='flex justify-start items-center ms-4'>
+                    {flagEvent ? <></> : <h1 className='font-bold text-black mb-1'>Información de la cita</h1>}                    
+                    {flagEvent ? <></> : <div className='flex justify-start items-center ms-4'>
                         <InformationCircleIcon className='w-8 h-8 md:w-10 md:h-10 lg:w-10 lg:h-10 mx-4' color='#fc6500' />
                         <div>
                             <p className='text-gray-400'>Reservada</p>
                         </div>
-                    </div>
-                    {cita.APPOINTMENT_CONFIRM == '1' ?
+                    </div>}                    
+                    {flagEvent ? <></> : cita.APPOINTMENT_CONFIRM == '1' ?
                         <div className='flex justify-start items-center ms-4'>
-                        <InformationCircleIcon className='w-8 h-8 md:w-10 md:h-10 lg:w-10 lg:h-10 mx-4' color='#fc6500' />
-                        <div>
-                            <p className='text-gray-400'>Confirmada</p>
-                        </div>
-                    </div> : <></>
-                    }
-                    {
-                        cita.ESTATUS == '1' ?
+                            <InformationCircleIcon className='w-8 h-8 md:w-10 md:h-10 lg:w-10 lg:h-10 mx-4' color='#fc6500' />
+                            <div>
+                                <p className='text-gray-400'>Confirmada</p>
+                            </div>
+                        </div> : <></>}
+                    {flagEvent ? <></> : cita.ESTATUS == '1' ?
                             <div className='flex justify-start items-center ms-4'>
                                 <InformationCircleIcon className='w-8 h-8 md:w-10 md:h-10 lg:w-10 lg:h-10 mx-4' color='#fc6500' />
                                 <div>
                                     <p className='text-gray-400'>Modificada por la empresa</p>
                                 </div>
-                            </div> : <div></div>
-                    }
-                    {
-                        cita.ESTATUS == '-1' ? <div className='flex justify-start items-center ms-4'>
+                            </div> : <div></div>}
+                    {flagEvent ? <></> : cita.ESTATUS == '-1' ? <div className='flex justify-start items-center ms-4'>
                             <InformationCircleIcon className='w-8 h-8 md:w-10 md:h-10 lg:w-10 lg:h-10 mx-4' color='#B71C1C' />
                             <div>
                                 <p className='text-gray-400'>Cancelada</p>
@@ -247,25 +303,23 @@ export function CancelarAppoin() {
                                         <div>
                                             <p className='text-gray-400'>Finalizada</p>
                                         </div>
-                                    </div>
-                    }
-                    <hr className="mb-4 mt-4" />
-                    <div className='flex justify-start items-center ms-4'>
+                                    </div>}
+                    {flagEvent ? <></> : <hr className="mb-4 mt-4" />}
+                    {flagEvent ? <></> : <div className='flex justify-start items-center ms-4'>
                         <BuildingStorefrontIcon className='w-8 h-8 md:w-10 md:h-10 lg:w-10 lg:h-10 mx-4 text-orange-500 flex-shrink-0' />
                         <div>
                             <p className='text-gray-400'>{cita.CATEGORIA}</p>
                         </div>
-                        
-                    </div>
-                    <div className='flex justify-start items-center ms-4 mt-2'>
+                    </div>}
+                    {flagEvent ? <></> : <div className='flex justify-start items-center ms-4 mt-2'>
                         <ChatBubbleLeftEllipsisIcon className='w-8 h-8 md:w-10 md:h-10 lg:w-10 lg:h-10 mx-4 text-orange-500 flex-shrink-0' />
                         <div className='text-left mr-5'>
                             <p className='text-gray-400'>{cita.MENSSAGE ? cita.MENSSAGE : 'Sin Motivo de la visita/Servicio'}</p>
                         </div>
-                    </div>
-                    <hr className="mb-4 mt-4" />
-                    <h1 className='font-bold text-black mb-1'>Ubicación</h1>
-                    <div className='flex justify-start items-center ms-4'
+                    </div>}                    
+                    {flagEvent ? <></> : <hr className="mb-4 mt-4" />}
+                    {flagEvent ? <></> : <h1 className='font-bold text-black mb-1'>Ubicación</h1>}                    
+                    {flagEvent ? <></> : <div className='flex justify-start items-center ms-4'
                         style={{
                             cursor: 'pointer'
                         }}
@@ -281,9 +335,8 @@ export function CancelarAppoin() {
                             <p className='text-gray-400'>{cita.ADDRESS_FIRST}, {cita.ADDRESS_SECOND}, {cita.POSTAL_CODE}</p>
                             <p className='text-gray-400'>{cita.CITY}, {cita.STATE}, Mexico</p>
                         </div>
-                    </div>
+                    </div>}
                     <hr className="mb-4 mt-4" />
-                    
                     {bAcceder ? <div className='businessBtn'>
                         {cita.ESTATUS == '-1' ? <></> : <button className='mb-10' onClick={() => {
                             if (cita.ESTATUS == '2' && cita.FLAG_SERVICE_LEVEL == '0') {

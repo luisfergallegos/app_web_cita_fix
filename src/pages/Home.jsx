@@ -8,7 +8,7 @@ import CountUp from "react-countup";
 import illustration from "../assets/clock_green.svg";
 import Loaging from '../components/Loading.jsx';
 import { urlApi } from "../styles/Constants.jsx";
-import { ClockIcon, Cog6ToothIcon, PlusCircleIcon, ChevronDownIcon, ChevronUpIcon, XMarkIcon as CloseIcon } from '@heroicons/react/24/outline';
+import { ClockIcon, Cog6ToothIcon, PlusCircleIcon, ChevronDownIcon, ChevronUpIcon, XMarkIcon as CloseIcon, CalendarDateRangeIcon } from '@heroicons/react/24/outline';
 import {
   BuildingOffice2Icon,
   BuildingOfficeIcon,
@@ -34,6 +34,7 @@ export function Home() {
   const [citas, setCitas] = useState([]);
   const [userAdditInf, setUserAdditInf] = useState([]);
   const [colaboraciones, setColaboraciones] = useState([]);
+  const [eventosUser, setEventosUser] = useState([]);
   const firstName = sUserCitaFix['first_name'] ?? "Usuario";
   const userId = sUserCitaFix['USER_ID'] ?? "";
   const dorsl = sUserCitaFix['DORSL'] ?? "";
@@ -42,9 +43,14 @@ export function Home() {
 
   const [bAccederIndex, setbAccederIndex] = useState('');
   const [bAccederIndexCol, setbAccederIndexCol] = useState('');
+  const [bAccederIndexCancelar, setbAccederIndexCancelar] = useState('');
+  const [selectEvento, setSelectEvento] = useState(null);
   const [aIndexCol, setaIndexCol] = useState('');
   const [userGroup, setUserGroup] = useState(true);
+  const [eventosGroup, setEventosGroup] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
+  const [isOpenCancelar, setIsOpenCancelar] = useState(false);
+  const [bPopupMenuButton, setPopupMenuButton] = useState(false);
 
   const arrayBufferToBase64 = (buffer) => {
     var binary = '';
@@ -179,6 +185,10 @@ export function Home() {
     }
   };
 
+  const ModPopupMenu = () => {
+    setPopupMenuButton(!bPopupMenuButton);
+  };
+
   const indexCancelar = async () => {
     //Enviar por DELETE
     var options = {
@@ -222,6 +232,52 @@ export function Home() {
     }
   };
 
+  const _buildCancelar = async () => {
+    setbAccederIndexCancelar(selectEvento);
+    setIsOpenCancelar(false);
+    //Enviar por DELETE
+    var options = {
+      method: 'DELETE',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(
+        {
+          'bussiness_id': selectEvento
+        })
+    }
+    try {
+      const response = await fetch(`${urlApi}event`, options);
+      const json = await response.json();
+      if (json['sucess'] == false) {
+        setSelectEvento(null);
+        setbAccederIndexCancelar('');
+        // console.log(`Error al cancelar cita.`);
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      else {
+        setSelectEvento(null);
+        setbAccederIndexCancelar('');
+        try {
+          const response = await fetch(`${urlApi}event?userid=${userId}`);
+          if (response.status == 200) {
+            const json = await response.json();
+            setEventosUser(json['data']);
+          } else {
+            console.log(`Error getting Eventos of User.`);
+            throw new Error(`HTTP error! status: ${response.status}`);
+          }
+        }
+        catch (e) {
+          return;
+        }
+      }
+    }
+    catch (e) {
+      setSelectEvento(null);
+      setbAccederIndexCancelar('');
+      return;
+    }
+  };
+
   useEffect(() => {
     const fData = async () => {
       //Solicitar por GET
@@ -253,6 +309,19 @@ export function Home() {
             } else {
               console.log(`Error getting setUserAdditInf.`);
               throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            try {
+              const response = await fetch(`${urlApi}event?userid=${userId}`);
+              if (response.status == 200) {
+                const json = await response.json();
+                setEventosUser(json['data']);
+              } else {
+                console.log(`Error getting Eventos of User.`);
+                throw new Error(`HTTP error! status: ${response.status}`);
+              }
+            }
+            catch (e) {
+              return;
             }
           }
           catch (e) {
@@ -367,7 +436,43 @@ export function Home() {
             </div>
           )}
         </div>
-
+        {
+          eventosUser.length > 0 &&
+          <div className="bg-white rounded-3xl shadow-xl mt-20 p-10 max-w-2xl w-full text-center animate-fade-in-up">
+            <div className='cursor-pointer flex items-center' onClick={() => toggle(setEventosGroup)}>
+              <h1 className='mr-2 text-gray-800'>Tus próximos eventos</h1>
+              {eventosGroup ? <ChevronDownIcon className="w-5 h-5 text-gray-800 mt-1" /> : <ChevronUpIcon className="w-5 h-5 text-gray-800 mt-1" />}
+            </div>
+            {!eventosGroup && eventosUser.map((index) =>
+            (
+              <div className="bg-gray-100 shadow-lg rounded-lg overflow-hidden scale-95 hover:scale-100 transition-all duration-300"
+                key={index['BUSSINESS_ID']}
+              >
+                <div className="flex items-center space-x-4 mr-20 mt-5" >
+                  <ClockIcon width={80} className="ml-5"
+                    color={'#32325d'} />
+                  <div className="grid">
+                    <label className="text-2xl font-bold text-black">{index['EVENTO']} de {index['ANFITRION']} </label>
+                    <label className="text-1xl text-gray-400">{ConvertDateTime(index['EVENT_DATE'], index['EVENT_TIME'], 0)} </label>
+                    <label className="text-1xl text-gray-400">{ConvertDateTime(index['EVENT_DATE'], index['EVENT_TIME'], 1)} </label>
+                  </div>
+                </div>
+                <div className="mt-6 flex justify-end space-x-3 mr-2 mb-2">
+                  {bAccederIndexCancelar == index['BUSSINESS_ID'] ?
+                    <button className="px-4 py-2 rounded-lg bg-red-600 text-white">
+                      <div className='circleWhiteRed'></div></button>
+                    : <button className="px-4 py-2 rounded-lg text-white bg-red-600 hover:bg-red-700 transition"
+                      onClick={() => { setIsOpenCancelar(true); setSelectEvento(index['BUSSINESS_ID']); }}>Cancelar</button>}
+                  <button className="px-4 py-2 rounded-lg bg-orange-500 text-white hover:bg-orange-600 transition"
+                    onClick={() => {
+                      navigate(`/updateEvent`,  { state: { userId: userId, evento: index } });
+                    }}>Ver más</button>
+                </div>
+              </div>
+            ))
+            }
+          </div>
+        }
         <div className="bg-white rounded-3xl shadow-xl mt-20 p-10 max-w-2xl w-full text-center animate-fade-in-up">
           {
             citas.length > 0 ? (
@@ -405,12 +510,12 @@ export function Home() {
                           : index['APPOINTMENT_CONFIRM'] == 0 ?
                             <button className="px-4 py-2 rounded-lg bg-blue-500 text-white hover:bg-blue-600 transition"
                               onClick={() => { indexConfirm(index) }}>Confirmar</button> : <></>}
-                        <button className="px-4 py-2 rounded-lg bg-orange-500 text-white hover:bg-orange-600 transition" 
-                        onClick={() => {
-                          if (index['ESTATUS'] !== '-1' && index['ESTATUS'] !== '2') {
-                            navigate(`/cancelAppoin/${index['APOINMENT_ID']}`);
-                          }
-                        }}>Cancelar</button>
+                        <button className="px-4 py-2 rounded-lg bg-orange-500 text-white hover:bg-orange-600 transition"
+                          onClick={() => {
+                            if (index['ESTATUS'] !== '-1' && index['ESTATUS'] !== '2') {
+                              navigate(`/cancelAppoin/${index['APOINMENT_ID']}`, {state : { flagEvent: index['FLAG_EVENT'] }});
+                            }
+                          }}>Cancelar</button>
                       </div>
                     </div>
                   ))
@@ -433,20 +538,26 @@ export function Home() {
               </div>
             )
           }
-
         </div>
       </div>
+      {!bPopupMenuButton ? <></> : <div class="fab-container2">
+        <div class="button iconbutton">
+          <button onClick={() => navigate("/addEvent", { state: { userId: userId } })} class="fa-solid fa-plus">
+            <CalendarDateRangeIcon width={40} />
+          </button>
+          <label class="text-white px-1 font-bold">Evento</label>
+        </div>
+      </div>}
       <div class="fab-container">
         <div class="button iconbutton">
           <button
-            onClick={() => navigate("/findBusiness")}
+            onClick={() => ModPopupMenu()}
             class="fa-solid fa-plus"
           >
-            <PlusCircleIcon width={40} />
+            {bPopupMenuButton ? <CloseIcon width={40} /> : <PlusCircleIcon width={40} />}
           </button>
         </div>
       </div>
-
       {/* Modal */}
       {isOpen ?
         <>
@@ -467,6 +578,32 @@ export function Home() {
                 }}>Rechazar</button>
                 <button className='bg-orange-500 text-white px-4 py-2 rounded-md hover:bg-orange-600' onClick={(e) => {
                   indexConfirmCol(e, '');
+                }}>Aceptar</button>
+              </div>
+            </div>
+          </div>
+        </> : <></>}
+      {/* Modal */}
+      {isOpenCancelar ?
+        <>
+          <div className="fixed inset-0 bg-black bg-opacity-50 z-40"></div>
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+            <div className="bg-white rounded-2xl shadow-2xl max-w-lg w-full p-6 relative animate-fade-in-up">
+              <button
+                onClick={() => { setIsOpenCancelar(false); setSelectEvento(null); }}
+                className="absolute top-3 right-3 text-gray-500 hover:text-orange-500"
+              >
+                <CloseIcon className="w-5 h-5 text-gray-900" />
+              </button>
+              <h4 className="text-xl font-bold text-center text-black mb-1">Confirmar</h4>
+              <p className="text-center text-yellow-500 mb-1">¿Seguro que quieres cancelar este evento?</p>
+              <div className='flex justify-end mt-2'>
+                <button className='bg-gray-500 text-white px-4 py-2 rounded-md hover:bg-gray-600 mx-2' onClick={() => {
+                  setIsOpenCancelar(false);
+                  setSelectEvento(null);
+                }}>Cancelar</button>
+                <button className='bg-orange-500 text-white px-4 py-2 rounded-md hover:bg-orange-600' onClick={(e) => {
+                  _buildCancelar();
                 }}>Aceptar</button>
               </div>
             </div>

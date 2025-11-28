@@ -25,6 +25,8 @@ import UpdateAppoinBusiness, { UpdateAppoinLoader } from './pages/appoinment/Upd
 import ViewBusiness, { ViewBusinessLoader } from './pages/business/View_business.jsx';
 import DeleteUser, { DeleteUserLoader } from './pages/register_user/Delete_user.jsx';
 import Confirmation, { ConfirmationLoader } from './pages/appoinment/Confirmation.jsx';
+import AddEvento, { AddEventoLoader } from './pages/evento/add_evento.jsx';
+import UpdateEvento, { UpdateEventoLoader } from './pages/evento/update_evento.jsx';
 // Actions
 import { logoutAction } from "./actions/logout.js";
 
@@ -138,6 +140,20 @@ const router = createBrowserRouter([
         path: "updateAppoinBusiness/:id",
         element: <UpdateAppoinBusiness />,
         loader: UpdateAppoinLoader,
+        /*action: expensesAction, */
+        errorElement: <Error />
+      },
+      {
+        path: "addEvent",
+        element: <AddEvento />,
+        loader: AddEventoLoader,
+        /*action: expensesAction, */
+        errorElement: <Error />
+      },
+      {
+        path: "updateEvent",
+        element: <UpdateEvento />,
+        loader: UpdateEventoLoader,
         /*action: expensesAction, */
         errorElement: <Error />
       },
