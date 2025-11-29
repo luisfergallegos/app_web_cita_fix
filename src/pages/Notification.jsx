@@ -97,7 +97,7 @@ export function Notification() {
                                     key={index['APOINMENT_ID']}
                                     onClick={() => {
                                         if (index['STATUS_DETAIL'] !== 'Cancelada') {
-                                            navigate(`/cancelAppoin/${index['APOINMENT_ID']}`);
+                                            navigate(`/cancelAppoin/${index['APOINMENT_ID']}`, {state : { flagEvent: index['FLAG_EVENT'] }});
                                         }
                                     }}  >
                                     <BellAlertIcon width={40} className='ml-2 flex-shrink-0'

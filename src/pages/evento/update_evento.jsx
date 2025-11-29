@@ -61,6 +61,7 @@ export function UpdateEvento({ onSubmit }) {
     const [errors, setErrors] = useState({});
     const [submitted, setSubmitted] = useState(false);
     const [bAccederIndexCancelar, setbAccederIndexCancelar] = useState('');
+    const [bAccederConf, setbAccederConf] = useState(true);
 
     const arrayBufferToBase64 = (buffer) => {
         var binary = '';
@@ -84,11 +85,16 @@ export function UpdateEvento({ onSubmit }) {
                 const json = await response.json();
                 setInvitados(json['data']);
                 var aux = 0;
+                var auxC = 0;
                 var tempSubCategoria = json['data'][0]['APPOINTMENT'];
                 for (const key in tempSubCategoria) {
                     aux += parseInt(tempSubCategoria[key]['MESSAGE'].substring(0, tempSubCategoria[key]['MESSAGE'].indexOf(",")));
+                    if (tempSubCategoria[key]['APPOINTMENT_CONFIRM'] == 1) {
+                        auxC += parseInt(tempSubCategoria[key]['MESSAGE'].substring(0, tempSubCategoria[key]['MESSAGE'].indexOf(",")));
+                    }
                 }
                 setTotalInvitados(aux);
+                setTotalConfirmados(auxC);
             } else if (response.status == 404) {
                 setInvitados([]);
                 setTotalInvitados(0);
@@ -322,6 +328,31 @@ export function UpdateEvento({ onSubmit }) {
         }
     };
 
+    const sendCon = async () => {
+        if (bAccederConf) {
+            setbAccederConf(false);
+            //Enviar por DELETE
+            var options = {
+                method: 'GET',
+                headers: { 'Content-Type': 'application/json' }
+            }
+            try {
+                const response = await fetch(`${urlApi}sendEventConf?bussiness_id=${evento.BUSSINESS_ID}`, options);
+                const json = await response.json();
+                if (json['sucess'] == false) {
+                    setbAccederConf(true);
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                else 
+                    setbAccederConf(true);
+            }
+            catch (e) {
+                setbAccederConf(true);
+                return;
+            }
+        }
+    };
+
     useEffect(() => {
         const fData = async () => {
             if (userId === '') {
@@ -404,6 +435,18 @@ export function UpdateEvento({ onSubmit }) {
                             <div className="flex items-center justify-between">
                                 <div>
                                     <h3 className="text-lg font-semibold text-gray-900">Invitados</h3>
+                                    {bAccederConf ?
+                                        <button
+                                            className="mt-2 inline-flex items-center gap-2 px-2 py-1 rounded-xl bg-green-500 text-white font-semibold shadow hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-300"
+                                            onClick={() => {
+                                                sendCon();
+                                            }}
+                                        >
+                                            Enviar confirmación por WhatsApp
+                                        </button> : <button className="px-4 py-2 mt-2 mb-2 mr-2 rounded-lg bg-green-600 text-white">
+                                            <div className='circleWhite'></div></button>
+                                    }
+
                                 </div>
                             </div>
                             <div className="mt-4 bg-white rounded-lg p-4 border border-gray-100">
@@ -585,11 +628,9 @@ export function UpdateEvento({ onSubmit }) {
                                         {submitted ? (
                                             <span className="text-orange-600 font-medium">¡Invitación lista!</span>
                                         ) : (
-                                            form.isPrivate ? <span>Por el momento no se pueden enviar invitaciones por correo electrónico</span> 
+                                            form.isPrivate ? <span>Por el momento no se pueden enviar invitaciones por correo electrónico</span>
                                                 : <span>Los campos obligatorios están marcados</span>
-                                            
                                         )}
-                                        
                                     </div>
                                 </div>
                             </form>
