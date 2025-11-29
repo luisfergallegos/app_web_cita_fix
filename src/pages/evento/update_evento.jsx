@@ -273,7 +273,8 @@ export function UpdateEvento({ onSubmit }) {
     function formatDate(iso) {
         if (!iso) return "";
         try {
-            const d = new Date(iso);
+            var parts = iso.split('-');
+            const d = new Date(parts[0], parts[1] - 1, parts[2]);
             return d.toLocaleDateString("es-ES", {
                 day: "numeric",
                 month: "long",
