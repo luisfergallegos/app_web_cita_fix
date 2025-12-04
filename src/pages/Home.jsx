@@ -318,10 +318,10 @@ export function Home() {
               } else {
                 console.log(`Error getting Eventos of User.`);
                 throw new Error(`HTTP error! status: ${response.status}`);
-              }
-              setLoading(false);
+              }              
             }
             catch (e) {
+              setLoading(false);
               return;
             }
           }
