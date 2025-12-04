@@ -62,6 +62,7 @@ export function UpdateEvento({ onSubmit }) {
     const [submitted, setSubmitted] = useState(false);
     const [bAccederIndexCancelar, setbAccederIndexCancelar] = useState('');
     const [bAccederConf, setbAccederConf] = useState(true);
+    const [bCheckSendConfWhat, setbCheckSendConfWhat] = useState(false);
 
     const arrayBufferToBase64 = (buffer) => {
         var binary = '';
@@ -435,18 +436,28 @@ export function UpdateEvento({ onSubmit }) {
                             <div className="flex items-center justify-between">
                                 <div>
                                     <h3 className="text-lg font-semibold text-gray-900">Invitados</h3>
-                                    {bAccederConf ?
-                                        <button
-                                            className="mt-2 inline-flex items-center gap-2 px-2 py-1 rounded-xl bg-green-500 text-white font-semibold shadow hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-300"
-                                            onClick={() => {
-                                                sendCon();
-                                            }}
-                                        >
-                                            Enviar confirmación por WhatsApp
-                                        </button> : <button className="px-4 py-2 mt-2 mb-2 mr-2 rounded-lg bg-green-600 text-white">
-                                            <div className='circleWhite'></div></button>
-                                    }
-
+                                    <div className="mt-2 space-y-3">
+                                        <p className="text-sm font-bold text-gray-700">
+                                            <strong>Los enlaces de confirmación para tus invitados se generan automáticamente </strong>
+                                            y se enviarán <strong>15 días antes de la fecha de tu evento.</strong>
+                                        </p>
+                                        <label className="flex items-center gap-2 cursor-pointer">
+                                            <input
+                                                type="checkbox"
+                                                checked={bCheckSendConfWhat}
+                                                onChange={(e) => setbCheckSendConfWhat(e.target.checked)}
+                                            />
+                                            <span>Enviar confirmación ahora</span>
+                                        </label>
+                                        {bAccederConf ? bCheckSendConfWhat && 
+                                            <button className="px-4 py-2 rounded bg-green-500 text-white font-semibold hover:bg-green-600" onClick={() => {
+                                                    sendCon();
+                                                }}>
+                                                Enviar ahora
+                                            </button> : <button className="px-4 py-2 mt-2 mb-2 mr-2 rounded-lg bg-green-600 text-white">
+                                                <div className='circleWhite'></div></button>
+                                        }
+                                    </div>
                                 </div>
                             </div>
                             <div className="mt-4 bg-white rounded-lg p-4 border border-gray-100">
