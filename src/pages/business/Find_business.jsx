@@ -20,35 +20,6 @@ export function findBusinessLoader() {
     return { correo, pwd };
 }
 
-/* function StarRating(maxRating) {
-    const stars = [];
-    var colors = 'grey_red_amber_orange_lightGreen_green'.split('_');
-    for (let i = 1; i <= maxRating; i++) {
-        stars.push(
-            <StarIcon width={20} color={colors[maxRating - 1]} />);
-    }
-    return stars;
-} */
-
-/* const CloseIcon = () => (
-    <svg width="24" height="24" fill="none" viewBox="0 0 24 24">
-        <path
-            stroke="currentColor"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            stroke-width="1.5"
-            d="M17.25 6.75L6.75 17.25"
-        />
-        <path
-            stroke="currentColor"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            stroke-width="1.5"
-            d="M6.75 6.75L17.25 17.25"
-        />
-    </svg>
-); */
-
 export function FindBusiness() {
     const navigate = useNavigate();
     const { correo, pwd } = useLoaderData();
@@ -56,22 +27,15 @@ export function FindBusiness() {
     const [empresas, setEmpresas] = useState([]);
     const [index, setIndex] = useState();
 
-
-    /* const userId = sUserCitaFix['USER_ID'];
-    const userName = sUserCitaFix['first_name'] + ' ' + sUserCitaFix['last_name']; */
     const [userId, setUserId] = useState("");
     const [userName, setUserName] = useState("");
 
-    /* const [searchText, setsearchText] = useState('');
-    const [filteredNames, setFilteredNames] = useState([]); */
     const [searchText, setSearchText] = useState("");
     const [filteredNames, setFilteredNames] = useState([]);
 
     const [isOpen, setIsOpen] = useState(false);
     const [indexEmp, setIndexEmp] = useState();
     const [qualifications, setQualifications] = useState([]);
-
-    const [showIndicator, setShowIndicator] = useState(JSON.parse(localStorage.getItem("hasSeenSearchIndicator")));
 
     const arrayBufferToBase64 = (buffer) => {
         var binary = '';
@@ -87,7 +51,6 @@ export function FindBusiness() {
     }
 
     const handleChange = evt => {
-        // if (showIndicator) setShowIndicator("");
         const value = evt.target.value;
         setSearchText(value);
         if (value === "") {
@@ -101,19 +64,6 @@ export function FindBusiness() {
             );
             setFilteredNames(results);
         }
-        /* const tempList = [];
-        const value = evt.target.value;
-        setsearchText(value);
-        for (var filName in empresas) {
-            if (empresas[filName].DORSL.toLowerCase().startsWith(value.toLowerCase())) {
-                tempList.push(empresas[filName]);
-            } else if (empresas[filName].CATEGORY
-                .toLowerCase()
-                .startsWith(value.toLowerCase())) {
-                tempList.push(empresas[filName]);
-            }
-        }
-        setfilteredNames(tempList); */
     };
 
 
@@ -177,33 +127,9 @@ export function FindBusiness() {
                         name="searchText"
                         value={searchText}
                         onChange={handleChange}
-                        onFocus={() => {
-                            if (showIndicator == "Indicator") {
-                                setShowIndicator("Nop");
-                                localStorage.setItem("hasSeenSearchIndicator", JSON.stringify("Nop"));
-                            }
-                        }}
                         placeholder="Buscar negocios o categorías..."
                         className="w-full pl-10 pr-4 py-3 rounded-xl shadow-sm focus:ring-2 focus:ring-orange-400 outline-none text-gray-800 placeholder-gray-400"
                     />
-                    {/* Círculo animado */}
-                    {showIndicator == "Indicator" ?
-                        <>
-                            {/* Fondo vidrio suave */}
-                            <div className="fixed inset-0 bg-white/20 backdrop-blur-sm z-30 pointer-events-none" />
-
-                            {/* Indicador flotante con tooltip */}
-                            <div className="absolute -top-6 right-2 flex flex-col items-end group z-40">
-                                <div className="mb-2 px-4 py-2 bg-gray-900 text-white text-sm rounded-lg shadow-xl opacity-90 group-hover:opacity-100 transition">
-                                    ✨ Escribe para buscar un negocio
-                                </div>
-                                <span className="flex h-6 w-6 relative">
-                                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-orange-400 opacity-75"></span>
-                                    <span className="relative inline-flex rounded-full h-6 w-6 bg-orange-500"></span>
-                                </span>
-                            </div>
-                        </>
-                        : <></>}
                 </div>
 
                 {/* Resultados o sugerencias */}

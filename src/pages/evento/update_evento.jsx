@@ -2,12 +2,12 @@
 // rrd imports
 import { useLoaderData, useNavigate } from 'react-router-dom';
 import { fetchData } from "../../Wrapper.js";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useLocation } from 'react-router-dom';
 
 // assets
 import { urlApi } from "../../styles/Constants.jsx";
-import { TrashIcon, UserCircleIcon } from '@heroicons/react/24/solid';
+import { TrashIcon, UserCircleIcon, ChevronDownIcon, ChevronUpIcon } from '@heroicons/react/24/solid';
 // import InvitationPreview from "../../components/InvitationPreview.jsx";
 
 
@@ -63,6 +63,34 @@ export function UpdateEvento({ onSubmit }) {
     const [bAccederIndexCancelar, setbAccederIndexCancelar] = useState('');
     const [bAccederConf, setbAccederConf] = useState(true);
     const [bCheckSendConfWhat, setbCheckSendConfWhat] = useState(false);
+    const formRef = useRef(null);
+    const [invitadosGroup, setInvitadosGroup] = useState(false);
+    const [editEvent, setEditEvent] = useState(true);
+    const [eventoEdit, setEventoEdit] = useState({
+        evento: evento.EVENTO,
+        encabezado: evento.ENCABEZADO,
+        motivo: evento.MOTIVO,
+        anfitrion: evento.ANFITRION,
+        ubicacion: evento.UBICACION,
+        dressCode: evento.DRESSCODE,
+        notas: evento.NOTAS,
+        despedida: evento.DESPEDIDA,
+        appointment_date: evento.EVENT_DATE,
+        appointment_time: evento.EVENT_TIME,
+        bussiness_id: evento.BUSSINESS_ID,
+        isPrivate: 0
+    });
+
+    const toggle = (setter) => setter((prev) => !prev);
+
+    function formatPhone(number) {
+        const n = form.phone.replace(/\D/g, '');
+        if (n.length === 10) {
+            const formatted = `(${n.slice(0, 3)}) ${n.slice(3, 6)}-${n.slice(6, 10)}`;
+            setForm(prev => ({ ...prev, phone: formatted }));
+        }
+        // return `(${n.slice(0, 3)}) ${n.slice(3, 6)}-${n.slice(6, 10)}`
+    }
 
     const arrayBufferToBase64 = (buffer) => {
         var binary = '';
@@ -119,11 +147,9 @@ export function UpdateEvento({ onSubmit }) {
         }
         else {
             const isValidPhone = form.phone.replace(/\D/g, '');
-            if (isValidPhone.length != 10) {
+            if (isValidPhone.length !== 10) {
                 e.phone = "El número de teléfono es inválido.";
             }
-            else
-                form.phone = `(${form.phone.slice(0, 3)}) ${form.phone.slice(3, 6)}-${form.phone.slice(6, 10)}`;
         }
         if (form.numInv == 0)
             e.numInv = "El número de invitados es obligatorio.";
@@ -139,12 +165,20 @@ export function UpdateEvento({ onSubmit }) {
         setSubmitted(false);
     }
 
+    function handleEditEventChange(e) {
+        const { name, value } = e.target;
+        setEventoEdit((prev) => ({ ...prev, [name]: value }));
+    }
+
     async function handleSubmit(e) {
         e.preventDefault();
         const eobj = validate();
         setErrors(eobj);
         if (Object.keys(eobj).length > 0)
             return;
+        // if(!form.isPrivate){
+        //     form.phone = formatPhone(form.phone);
+        // }
         form.anonimo = form.isPrivate ? `${form.nombre},${form.correo}` : `${form.nombre},+52 ${form.phone}`;
         form.dorsl = `${evento.EVENTO} de ${evento.ANFITRION}`;
         form.message = `${form.numInv},${form.detalleInv}`;
@@ -344,7 +378,7 @@ export function UpdateEvento({ onSubmit }) {
                     setbAccederConf(true);
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
-                else 
+                else
                     setbAccederConf(true);
             }
             catch (e) {
@@ -376,6 +410,12 @@ export function UpdateEvento({ onSubmit }) {
                     <div className="bg-white shadow-lg rounded-2xl p-6 md:p-8">
                         <div className="flex items-center justify-between">
                             <div>
+                                {/* {editEvent &&
+                                    (<button className="px-3 py-1 text-sm rounded-lg bg-blue-500 text-white hover:bg-blue-600"
+                                        onClick={() => setEditEvent(false)}>
+                                        Editar evento
+                                    </button>) 
+                                } */}
                                 <h3 className="mt-3 text-lg font-bold text-gray-900">{evento.EVENTO || 'Tipo de evento'} de {evento.ANFITRION || 'Anfitrión'}</h3>
                                 <p className="mb-2 text-sm text-gray-700">
                                     <strong>Vestimenta:</strong> {evento.DRESSCODE || 'Código de vestimenta'}
@@ -386,10 +426,37 @@ export function UpdateEvento({ onSubmit }) {
                         <div className="bg-white rounded-lg p-6 border border-gray-100">
                             <div className="flex items-start justify-between">
                                 <div>
-                                    <h3 className="text-lg font-bold text-gray-900">✨ {evento.ENCABEZADO || 'Encabezado'}</h3>
-                                    <p className="text-sm text-gray-600 mt-1">
-                                        {evento.ANFITRION ? `${evento.ANFITRION} —` : ""} <span className="font-medium">{evento.MOTIVO || 'Motivo'}</span>
-                                    </p>
+                                    {!editEvent ?
+                                        <input
+                                            name="encabezado"
+                                            value={eventoEdit.encabezado}
+                                            onChange={handleEditEventChange}
+                                            placeholder="Ejemplo: ¡Estas invitado!, Acompáñanos a celebrar"
+                                            className={`border rounded-lg px-3 py-1 w-full`}
+                                        /> : <h3 className="text-lg font-bold text-gray-900">✨ {evento.ENCABEZADO || 'Encabezado'}</h3>
+                                    }
+                                    {!editEvent ?
+                                        <>
+                                            <input
+                                                name="anfitrion"
+                                                value={eventoEdit.anfitrion}
+                                                onChange={handleEditEventChange}
+                                                placeholder="Nombre del anfitrión"
+                                                className={`border rounded-lg px-3 py-1 w-full`}
+                                            />
+                                            <input
+                                                name="motivo"
+                                                value={eventoEdit.motivo}
+                                                onChange={handleEditEventChange}
+                                                placeholder="Ejemplo: Mis 30 años, Reapertura del negocio"
+                                                className={`border rounded-lg px-3 py-1 w-full`}
+                                            />
+                                        </>
+                                        : <p className="text-sm text-gray-600 mt-1">
+                                            {evento.ANFITRION ? `${evento.ANFITRION} —` : ""} <span className="font-medium">{evento.MOTIVO || 'Motivo'}</span>
+                                        </p>
+                                    }
+
                                 </div>
 
                             </div>
@@ -405,29 +472,73 @@ export function UpdateEvento({ onSubmit }) {
                                 </div>
 
                                 <div className="sm:col-span-2">
-                                    <p className="text-xs text-gray-500">📍 Ubicación</p>
-                                    <p className="font-medium">{evento.UBICACION || "Lugar"}</p>
-                                    <p className="font-medium">{evento.NOTAS || "Notas / Indicaciones / enlace"}</p>
+                                    {!editEvent ?
+                                        <>
+                                            <input
+                                                name="ubicacion"
+                                                value={eventoEdit.ubicacion}
+                                                onChange={handleEditEventChange}
+                                                placeholder="Dirección o referencia"
+                                                className={`border rounded-lg px-3 py-1 w-full`}
+                                            />
+                                            <textarea
+                                                name="notas"
+                                                value={eventoEdit.notas}
+                                                onChange={handleEditEventChange}
+                                                rows={4}
+                                                placeholder="Ej: traer traje de baño, sin niños, confirmar asistencia, enlace maps, etc."
+                                                className="mt-1 block w-full rounded-lg border-gray-200 px-3 py-2 shadow-sm focus:ring-2 focus:ring-indigo-300"
+                                            />
+                                        </> : <>
+                                            <p className="text-xs text-gray-500">📍 Ubicación</p>
+                                            <p className="font-medium">{evento.UBICACION || "Lugar"}</p>
+                                            <p className="font-medium">{evento.NOTAS || "Notas / Indicaciones / enlace"}</p>
+                                        </>
+                                    }
+
                                 </div>
                             </div>
                             <div className="mt-6 text-sm text-gray-600">
-                                <p>{evento.DESPEDIDA || 'Mensaje final'} 🎊</p>
+                                {!editEvent ?
+                                    <input
+                                        name="despedida"
+                                        value={eventoEdit.despedida}
+                                        onChange={handleEditEventChange}
+                                        placeholder="Ejemplo: será un gusto celebrar contigo, ¡No faltes!"
+                                        className={`border rounded-lg px-3 py-1 w-full`}
+                                    /> : <p>{evento.DESPEDIDA || 'Mensaje final'} 🎊</p>
+                                }
                             </div>
                         </div>
-                        <div className="flex items-center justify-between mt-3">
-                            <button
-                                type="submit"
-                                className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-orange-500 text-white font-semibold shadow hover:bg-orange-600 focus:outline-none focus:ring-2 focus:ring-orange-300"
-                                onClick={() => {
-                                    setbAcceder(true);
-                                }}
-                            >
-                                Invitar al evento
-                            </button>
-                            <div className="text-sm text-gray-500">
-                                <span> Invitados {('0' + (totalInvitados)).slice(-2)} / Confirmados {('0' + (totalConfirmados)).slice(-2)} </span>
+                        {!editEvent ?
+                            <div className="flex gap-3 mt-4">
+                                <button className="px-3 py-1 text-sm rounded-lg bg-green-500 text-white hover:bg-green-600"
+                                    onClick={() => setEditEvent(!editEvent)}>
+                                    Actualizar
+                                </button>
+                                <button className="px-3 py-1 text-sm rounded-lg bg-gray-500 text-white hover:bg-gray-600"
+                                    onClick={() => setEditEvent(!editEvent)}>
+                                    Cancelar
+                                </button>
                             </div>
-                        </div>
+                            : <div className="flex items-center justify-between mt-3">
+                                <button
+                                    className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-orange-500 text-white font-semibold shadow hover:bg-orange-600 focus:outline-none focus:ring-2 focus:ring-orange-300"
+                                    onClick={() => {
+                                        setbAcceder(true);
+                                        setTimeout(() => {
+                                            formRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                                        }, 100);
+                                    }}
+                                >
+                                    Invitar al evento
+                                </button>
+                                <div className="text-sm text-gray-500">
+                                    <span> Invitados {('0' + (totalInvitados)).slice(-2)} / Confirmados {('0' + (totalConfirmados)).slice(-2)} </span>
+                                </div>
+                            </div>
+                        }
+
 
                     </div>
                     {/* Invitados Evento */}
@@ -435,75 +546,81 @@ export function UpdateEvento({ onSubmit }) {
                         <div className="bg-white shadow-lg rounded-2xl p-6 md:p-8">
                             <div className="flex items-center justify-between">
                                 <div>
-                                    <h3 className="text-lg font-semibold text-gray-900">Invitados</h3>
-                                    <div className="mt-2 space-y-3">
-                                        <p className="text-sm font-bold text-gray-700">
-                                            <strong>Los enlaces de confirmación para tus invitados se generan automáticamente </strong>
-                                            y se enviarán <strong>15 días antes de la fecha de tu evento.</strong>
-                                        </p>
-                                        <label className="flex items-center gap-2 cursor-pointer">
-                                            <input
-                                                type="checkbox"
-                                                checked={bCheckSendConfWhat}
-                                                onChange={(e) => setbCheckSendConfWhat(e.target.checked)}
-                                            />
-                                            <span>Enviar confirmación ahora</span>
-                                        </label>
-                                        {bAccederConf ? bCheckSendConfWhat && 
-                                            <button className="px-4 py-2 rounded bg-green-500 text-white font-semibold hover:bg-green-600" onClick={() => {
+                                    <div className='cursor-pointer flex items-center' onClick={() => toggle(setInvitadosGroup)} >
+                                        <h3 className="text-lg font-semibold text-gray-900">Invitados</h3>
+                                        {invitadosGroup ? <ChevronDownIcon className="w-5 h-5 text-gray-800 mt-1 ml-4" /> : <ChevronUpIcon className="w-5 h-5 text-gray-800 mt-1 ml-4" />}
+                                    </div>
+                                    {!invitadosGroup && (
+                                        <div className="mt-2 space-y-3">
+                                            <p className="text-sm font-bold text-gray-700">
+                                                <strong>Los enlaces de confirmación para tus invitados se generan automáticamente </strong>
+                                                y se enviarán <strong>15 días antes de la fecha de tu evento.</strong>
+                                            </p>
+                                            <label className="flex items-center gap-2 cursor-pointer">
+                                                <input
+                                                    type="checkbox"
+                                                    checked={bCheckSendConfWhat}
+                                                    onChange={(e) => setbCheckSendConfWhat(e.target.checked)}
+                                                />
+                                                <span>Enviar confirmación ahora</span>
+                                            </label>
+                                            {bAccederConf ? bCheckSendConfWhat &&
+                                                <button className="px-4 py-2 rounded bg-green-500 text-white font-semibold hover:bg-green-600" onClick={() => {
                                                     sendCon();
                                                 }}>
-                                                Enviar ahora
-                                            </button> : <button className="px-4 py-2 mt-2 mb-2 mr-2 rounded-lg bg-green-600 text-white">
+                                                    Enviar ahora
+                                                </button> : <button className="px-4 py-2 mt-2 mb-2 mr-2 rounded-lg bg-green-600 text-white">
                                                 <div className='circleWhite'></div></button>
-                                        }
-                                    </div>
+                                            }
+                                        </div>
+                                    )
+                                    }
                                 </div>
                             </div>
-                            <div className="mt-4 bg-white rounded-lg p-4 border border-gray-100">
-                                <ul className="text-sm text-gray-600 space-y-1">
-                                    {invitados[0]['APPOINTMENT'].map((index) =>
-                                    (
-                                        <div className="flex justify-between bg-gray-100 shadow-lg rounded-lg overflow-hidden scale-95 hover:scale-100 transition-all duration-300"
-                                            key={index['APOINMENT_ID']}
-                                        >
-                                            <div className='flex justify-center items-center ms:ml-3 lg:ml-4 '>
-                                                {
-                                                    index['PHOTO'] === null ?
-                                                        <UserCircleIcon className='w-12 h-12'
-                                                            color={index['ESTATUS'] == '-1' ? '#B71C1C' :
-                                                                index['ESTATUS'] == '1' ? '#32325d' :
-                                                                    index['ESTATUS'] == '3' || index['APPOINTMENT_CONFIRM'] == '1' ? '#4472C4' : '#fc6500'
-                                                            } /> :
-                                                        <img id='imgS' src={'data:image/jpeg;base64,' + arrayBufferToBase64(index['PHOTO'].data)} />
-                                                }
-                                            </div>
-                                            <div className="grid">
-                                                <label className="ms:text-2xl lg:text-2xl font-bold text-black text-center">{index['ANONIMO'] == '' ? index['COMPLET_NAME'] : index['ANONIMO'].substring(0, index['ANONIMO'].indexOf(","))} </label>
-                                                <label className="ms:text-1xl lg:text-1xl font-bold text-black text-center">{index['ANONIMO'] != '' ? index['ANONIMO'].substring(index['ANONIMO'].indexOf(",") + 1, index['ANONIMO'].length) : ''} </label>
-                                                <label className="ms:text-1xl lg:text-1xl text-gray-500 text-center">Invitados : {index['MESSAGE'].substring(0, index['MESSAGE'].indexOf(","))} {`(${index['MESSAGE'].substring(index['MESSAGE'].indexOf(",") + 1, index['MESSAGE'].length)})`} </label>
-                                                <label className="ms:text-1xl lg:text-1xl font-bold text-green-600 text-center">{index['APPOINTMENT_CONFIRM'] == '1' ? 'Confirmada' : ''} </label>
-                                            </div>
-                                            {bAccederIndexCancelar == index['APOINMENT_ID'] ?
-                                                <button className="px-4 py-2 mt-3 mb-3 mr-2 rounded-lg bg-red-600 text-white">
-                                                    <div className='circleWhiteRed'></div></button>
-                                                : <TrashIcon className="mr-4" width={25} color="#B71C1C" onClick={() => {
-                                                    if (index['ESTATUS'] !== '-1' && index['ESTATUS'] !== '2') {
-                                                        _buildCancelar(index);
+                            {!invitadosGroup && (
+                                <div className="mt-4 bg-white rounded-lg p-4 border border-gray-100">
+                                    <ul className="text-sm text-gray-600 space-y-1">
+                                        {invitados[0]['APPOINTMENT'].map((index) =>
+                                        (
+                                            <div className="flex justify-between bg-gray-100 shadow-lg rounded-lg overflow-hidden scale-95 hover:scale-100 transition-all duration-300"
+                                                key={index['APOINMENT_ID']}
+                                            >
+                                                <div className='flex justify-center items-center ms:ml-3 lg:ml-4 '>
+                                                    {
+                                                        index['PHOTO'] === null ?
+                                                            <UserCircleIcon className='w-12 h-12'
+                                                                color={index['ESTATUS'] == '-1' ? '#B71C1C' :
+                                                                    index['ESTATUS'] == '1' ? '#32325d' :
+                                                                        index['ESTATUS'] == '3' || index['APPOINTMENT_CONFIRM'] == '1' ? '#4472C4' : '#fc6500'
+                                                                } /> :
+                                                            <img id='imgS' src={'data:image/jpeg;base64,' + arrayBufferToBase64(index['PHOTO'].data)} />
                                                     }
-                                                }} />}
+                                                </div>
+                                                <div className="grid">
+                                                    <label className="ms:text-2xl lg:text-2xl font-bold text-black text-center">{index['ANONIMO'] == '' ? index['COMPLET_NAME'] : index['ANONIMO'].substring(0, index['ANONIMO'].indexOf(","))} </label>
+                                                    <label className="ms:text-1xl lg:text-1xl font-bold text-black text-center">{index['ANONIMO'] != '' ? index['ANONIMO'].substring(index['ANONIMO'].indexOf(",") + 1, index['ANONIMO'].length) : ''} </label>
+                                                    <label className="ms:text-1xl lg:text-1xl text-gray-500 text-center">Invitados : {index['MESSAGE'].substring(0, index['MESSAGE'].indexOf(","))} {`(${index['MESSAGE'].substring(index['MESSAGE'].indexOf(",") + 1, index['MESSAGE'].length)})`} </label>
+                                                    <label className="ms:text-1xl lg:text-1xl font-bold text-green-600 text-center">{index['APPOINTMENT_CONFIRM'] == '1' ? 'Confirmada' : ''} </label>
+                                                </div>
+                                                {bAccederIndexCancelar == index['APOINMENT_ID'] ?
+                                                    <button className="px-4 py-2 mt-3 mb-3 mr-2 rounded-lg bg-red-600 text-white">
+                                                        <div className='circleWhiteRed'></div></button>
+                                                    : <TrashIcon className="mr-4" width={25} color="#B71C1C" onClick={() => {
+                                                        if (index['ESTATUS'] !== '-1' && index['ESTATUS'] !== '2') {
+                                                            _buildCancelar(index);
+                                                        }
+                                                    }} />}
 
-                                        </div>
-                                    ))}
-                                </ul>
-                            </div>
-
+                                            </div>
+                                        ))}
+                                    </ul>
+                                </div>
+                            )}
                         </div>}
-
                 </div>
 
                 {/* Invitar Card */}
-                {bAcceder && <div className="flex flex-col gap-4">
+                {bAcceder && <div ref={formRef} className="flex flex-col gap-4">
                     <div className="bg-gradient-to-br from-gray-50 to-white border border-gray-100 rounded-2xl p-6 shadow-sm">
                         <div className="flex items-center justify-between">
                             <div>
@@ -590,7 +707,12 @@ export function UpdateEvento({ onSubmit }) {
                                                 type="tel"
                                                 name="phone"
                                                 value={form.phone}
-                                                onChange={(e) => handleChange({ target: { name: 'phone', value: e.target.value.replace(/\D/g, '') } })}
+                                                // onChange={(e) => handleChange({ target: { name: 'phone', value: e.target.value.replace(/\D/g, '') } })}
+                                                onChange={(e) => {
+                                                    const raw = e.target.value.replace(/\D/g, '').slice(0, 10);
+                                                    setForm(prev => ({ ...prev, phone: raw }));
+                                                }}
+                                                onBlur={formatPhone}
                                                 placeholder="Número de teléfono"
                                                 className={`mt-1 block w-full rounded-lg border ${errors.phone ? 'border-red-400' : 'border-gray-200'} px-3 py-2 shadow-sm focus:ring-2 focus:ring-indigo-300`}
                                             />
