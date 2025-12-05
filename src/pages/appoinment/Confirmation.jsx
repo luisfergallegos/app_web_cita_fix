@@ -3,6 +3,7 @@ import { BuildingStorefrontIcon, MapPinIcon, PhoneIcon } from '@heroicons/react/
 import '../../components/CardBusiness.css';
 // assents
 import Store from "../../assets/business.png";
+import EventoPng from "../../assets/evento.png";
 import Logo from "../../assets/splash.png";
 import Loaging from '../../components/Loading.jsx';
 // rrd imports
@@ -29,7 +30,7 @@ export function Confirmation() {
     const [searchParams] = useSearchParams();
     const apoinment_id = searchParams.get("ai");
     const keyName = searchParams.get("kn");
-    const flagEvent = searchParams.get("fe") == 'true' ? true : false;
+    const [flagEvent, setFlagEvent] = useState(searchParams.get("fe") == 'true' ? true : false);
 
     // Function to convert Base64 string to binary data
     const arrayBufferToBase64 = (buffer) => {
@@ -99,6 +100,39 @@ export function Confirmation() {
         }
     }
 
+    const indexConfirmNot = async () => {
+        if (bAcceder) {
+            setbAcceder(false);
+            //Enviar por UPDATE
+            var options = {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(
+                    {
+                        'apoinment_id': `${cita['APOINMENT_ID']}`,
+                        'usernotification_id': `${cita['BUS_USER_ID']}`,
+                        'username': cita['ANONIMO'] == '' ? cita['USER_NAME'] : cita['ANONIMO'].substring(0, cita['ANONIMO'].indexOf(","))
+                    })
+            }
+            try {
+                const response = await fetch(`${urlApi}appoinConfirmNot`, options);
+                const json = await response.json();
+                if (json['sucess'] == false) {
+                    setbAcceder(true);
+                    // console.log(`Error al cancelar cita.`);
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                else {
+                    navigate("/");
+                }
+            }
+            catch (e) {
+                setbAcceder(true);
+                return;
+            }
+        }
+    }
+
     function stringToHex(str) {
         let hexString = '';
         for (let i = 0; i < str.length; i++) {
@@ -131,13 +165,16 @@ export function Confirmation() {
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
                 const json = await response.json();
-                setCita(json['data']);                
+                setCita(json['data']);
                 var Aux = json['data']['ANONIMO'] == '' ? json['data']['USER_NAME'] : json['data']['ANONIMO'].substring(0, json['data']['ANONIMO'].indexOf(","));
+                // console.log('keyName: ' + keyName);
+                // console.log('stringToHex: ' + stringToHex(Aux));
                 if( keyName != stringToHex(Aux)){
                     navigate("/");
                 }
-                if (flagEvent) {
-                    // console.log('flagEvent:' + flagEvent);
+                if (json['data']['FLAG_EVENT'] == '1') {
+                    setFlagEvent(true);
+                    // console.log('flagEvent: ' + flagEvent);
                     // console.log('bussiness_id:' + json['data']['BUSSINESS_ID']);
                     //Solicitar por GET
                     try {
@@ -154,8 +191,11 @@ export function Confirmation() {
                         return;
                     }
                 }
-                else
+                else {
+                    setFlagEvent(false);
                     setLoading(false);
+                }
+
             }
             catch (e) {
                 setLoading(false);
@@ -184,7 +224,7 @@ export function Confirmation() {
                     <div className='flex justify-center mb-4'>
                         {
                             cita.BUS_PHOTO === null ?
-                                <img className="w-64 h-64 object-cover rounded-2xl border" id='store' src={Store} /> :
+                                <img className="w-64 h-64 object-cover rounded-2xl border" id='store' src={flagEvent ? EventoPng : Store} /> :
                                 <img className="w-64 h-64 object-cover rounded-2xl border" src={'data:image/jpeg;base64,' + arrayBufferToBase64(cita.BUS_PHOTO.data)} />
                         }
                     </div>
@@ -194,7 +234,7 @@ export function Confirmation() {
                             Vestimenta: {evento.DRESSCODE || 'Código de vestimenta'}
                         </b> : <></>}
                         {flagEvent ? <></> : <b className='text-2xl font-bold mb-4'>{ConvertDateTime(cita.APPOINTMENT_DATE, cita.APPOINTMENT_TIME, 1)}  -  {ConvertDateTime(cita.APPOINTMENT_DATE, cita.APPOINTMENT_TIME, 0)}</b>}
-                        
+
                     </div>
                     {flagEvent ?
                         <div className="bg-white rounded-lg p-6">
@@ -253,15 +293,17 @@ export function Confirmation() {
                         </div>
                         {cita.BUS_USER_PHONE}
                     </div>}
-
                     <hr className="mb-4" />
-                    {bAcceder ? <div className='businessBtn '>
-                        {cita.APPOINTMENT_CONFIRM == 1 ? <></> : <button className='mb-10 mt-4' onClick={() => {
+                    {cita.APPOINTMENT_CONFIRM == 0 ? bAcceder ? <div className='businessBtn flex'>
+                        <button className='px-3 py-1 text-sm rounded-lg bg-gray-500 text-white hover:bg-gray-600' onClick={() => {
                             indexConfirm();
-                        }}>Confirmar</button>}
+                        }}>Confirmar</button>
+                        <button className='ml-4 px-3 py-1 text-sm rounded-lg bg-gray-500 text-white hover:bg-gray-600' onClick={() => {
+                            indexConfirmNot();
+                        }}>No asistiré</button>
                     </div> : <div className='businessBtn'>
                         <button className='mb-10 mt-4'><div className='circle' ></div></button>
-                    </div>}
+                    </div> : <></>}
 
                 </div>
             </div>

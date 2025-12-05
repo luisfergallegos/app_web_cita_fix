@@ -39,7 +39,7 @@ export default function Login() {
       setTimeout(() => setShowAlert(false), 3000); // ocultar alerta
       return;
     }
-    else {
+    
       setLoading(true);
       var options = {
         method: 'GET',
@@ -51,10 +51,19 @@ export default function Login() {
       }
       try {
         const response = await fetch(`${urlApi}login?email=${email}`, options);
-        if (!response.ok) {
-          alert(`No se pudo iniciar sesión con esas credenciales`);
-          throw new Error(`HTTP error! status: ${response.status}`);
+        if( response.status === 404 ){
+          setLoading(false);
+          return toast.error(`Usuario no registrado`);
         }
+        if( response.status === 401 ){
+          setLoading(false);
+          return toast.error(`Contraseña incorrecta`);
+        }
+        if( response.status === 500 ){
+          setLoading(false);
+          return toast.error(`Error en el servidor, intenta más tarde`);
+        }
+        
         const json = await response.json();
         if (json['sucess']) {
           localStorage.setItem("correo", '');
@@ -67,9 +76,10 @@ export default function Login() {
           localStorage.setItem("pwd", JSON.stringify(password));
           try {
             const response = await fetch(`${urlApi}usr?email=${email}`, options);
-            if (!response.ok) {
-              console.log(`No se pudo obtener informacion del usuario`);
-              throw new Error(`HTTP error! status: ${response.status}`);
+            if (!response.ok) {              
+              toast.error(`No se puede obtener la información del usuario`);
+              setLoading(false);
+              return;
             }
             const json = await response.json();
             //obtener nombre
@@ -91,7 +101,7 @@ export default function Login() {
         setLoading(false);
         return;
       }
-    }
+    
   };
 
   const signInAction = async () => {

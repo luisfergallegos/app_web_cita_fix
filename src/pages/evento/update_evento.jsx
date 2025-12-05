@@ -48,6 +48,7 @@ export function UpdateEvento({ onSubmit }) {
         encabezado: evento.ENCABEZADO,
         motivo: evento.MOTIVO,
         despedida: evento.DESPEDIDA,
+        evento: evento.EVENTO,
 
         numInv: 0,
         detalleInv: "",
@@ -120,6 +121,9 @@ export function UpdateEvento({ onSubmit }) {
                     aux += parseInt(tempSubCategoria[key]['MESSAGE'].substring(0, tempSubCategoria[key]['MESSAGE'].indexOf(",")));
                     if (tempSubCategoria[key]['APPOINTMENT_CONFIRM'] == 1) {
                         auxC += parseInt(tempSubCategoria[key]['MESSAGE'].substring(0, tempSubCategoria[key]['MESSAGE'].indexOf(",")));
+                    }
+                    else if (tempSubCategoria[key]['APPOINTMENT_CONFIRM'] == 2) {
+                        aux -= parseInt(tempSubCategoria[key]['MESSAGE'].substring(0, tempSubCategoria[key]['MESSAGE'].indexOf(",")));
                     }
                 }
                 setTotalInvitados(aux);
@@ -219,6 +223,7 @@ export function UpdateEvento({ onSubmit }) {
                         encabezado: evento.ENCABEZADO,
                         motivo: evento.MOTIVO,
                         despedida: evento.DESPEDIDA,
+                        evento: evento.EVENTO,
 
                         numInv: 0,
                         detalleInv: "",
@@ -255,6 +260,7 @@ export function UpdateEvento({ onSubmit }) {
                         encabezado: evento.ENCABEZADO,
                         motivo: evento.MOTIVO,
                         despedida: evento.DESPEDIDA,
+                        evento: evento.EVENTO,
 
                         numInv: 0,
                         detalleInv: "",
@@ -291,6 +297,7 @@ export function UpdateEvento({ onSubmit }) {
                     encabezado: evento.ENCABEZADO,
                     motivo: evento.MOTIVO,
                     despedida: evento.DESPEDIDA,
+                    evento: evento.EVENTO,
 
                     numInv: 0,
                     detalleInv: "",
@@ -589,7 +596,7 @@ export function UpdateEvento({ onSubmit }) {
                                                     {
                                                         index['PHOTO'] === null ?
                                                             <UserCircleIcon className='w-12 h-12'
-                                                                color={index['ESTATUS'] == '-1' ? '#B71C1C' :
+                                                                color={index['ESTATUS'] == '-1' || index['APPOINTMENT_CONFIRM'] == '2' ? '#B71C1C' :
                                                                     index['ESTATUS'] == '1' ? '#32325d' :
                                                                         index['ESTATUS'] == '3' || index['APPOINTMENT_CONFIRM'] == '1' ? '#4472C4' : '#fc6500'
                                                                 } /> :
@@ -601,6 +608,7 @@ export function UpdateEvento({ onSubmit }) {
                                                     <label className="ms:text-1xl lg:text-1xl font-bold text-black text-center">{index['ANONIMO'] != '' ? index['ANONIMO'].substring(index['ANONIMO'].indexOf(",") + 1, index['ANONIMO'].length) : ''} </label>
                                                     <label className="ms:text-1xl lg:text-1xl text-gray-500 text-center">Invitados : {index['MESSAGE'].substring(0, index['MESSAGE'].indexOf(","))} {`(${index['MESSAGE'].substring(index['MESSAGE'].indexOf(",") + 1, index['MESSAGE'].length)})`} </label>
                                                     <label className="ms:text-1xl lg:text-1xl font-bold text-green-600 text-center">{index['APPOINTMENT_CONFIRM'] == '1' ? 'Confirmada' : ''} </label>
+                                                    <label className="ms:text-1xl lg:text-1xl font-bold text-red-600 text-center">{index['APPOINTMENT_CONFIRM'] == '2' ? 'No asistiré' :  ''} </label>
                                                 </div>
                                                 {bAccederIndexCancelar == index['APOINMENT_ID'] ?
                                                     <button className="px-4 py-2 mt-3 mb-3 mr-2 rounded-lg bg-red-600 text-white">
@@ -649,6 +657,7 @@ export function UpdateEvento({ onSubmit }) {
                                     encabezado: evento.ENCABEZADO,
                                     motivo: evento.MOTIVO,
                                     despedida: evento.DESPEDIDA,
+                                    evento: evento.EVENTO,
 
                                     numInv: 0,
                                     detalleInv: "",
