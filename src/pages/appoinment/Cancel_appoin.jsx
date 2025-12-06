@@ -31,7 +31,7 @@ export function CancelarAppoin() {
     const [selectedRating, setSelectedRating] = useState(0);
     const [comentario, setComentario] = useState('');
     const [bAcceder, setbAcceder] = useState(true);
-    const flagEvent = location.state?.flagEvent == 1 ? true : false;
+    const [flagEvent, setFlagEvent] = useState(location.state?.flagEvent == 1 ? true : false);
 
     // Function to convert Base64 string to binary data
     const arrayBufferToBase64 = (buffer) => {
@@ -130,6 +130,26 @@ export function CancelarAppoin() {
         setComentario(value);
     };
 
+    const TextoConLinks = ({ text }) => {
+        const regex = /(https?:\/\/[^\s]+)/g;
+
+        const partes = text.split(regex);
+
+        return (
+            <p>
+                {partes.map((parte, index) =>
+                    regex.test(parte) ? (
+                        <a key={index} href={parte} target="_blank" rel="noopener noreferrer" style={{ color: "blue" }}>
+                            {parte}
+                        </a>
+                    ) : (
+                        <span key={index}>{parte}</span>
+                    )
+                )}
+            </p>
+        );
+    };
+
 
 
     useEffect(() => {
@@ -143,9 +163,10 @@ export function CancelarAppoin() {
                 }
                 const json = await response.json();
                 setCita(json['data']);
-                if (flagEvent) {
+                if (json['data']['FLAG_EVENT'] == '1') {
                     // console.log('flagEvent:' + flagEvent);
                     // console.log('bussiness_id:' + json['data']['BUSSINESS_ID']);
+                    setFlagEvent(true);
                     //Solicitar por GET
                     try {
                         const response = await fetch(`${urlApi}getEvent?bussiness_id=${json['data']['BUSSINESS_ID']}`);
@@ -161,8 +182,10 @@ export function CancelarAppoin() {
                         return;
                     }
                 }
-                else
+                else {
+                    setFlagEvent(false);
                     setLoading(false);
+                }
             }
             catch (e) {
                 return;
@@ -215,8 +238,8 @@ export function CancelarAppoin() {
 
                                 <div className="sm:col-span-2">
                                     <p className="text-xs text-gray-500">📍 Ubicación</p>
-                                    <p className="font-medium">{evento.UBICACION || "Lugar"}</p>
-                                    <p className="font-medium">⚠️ {evento.NOTAS || "Notas / Indicaciones / enlace"}</p>
+                                    <p className="font-medium">{evento.UBICACION || "Lugar"}</p>                                    
+                                    <p className="font-medium"> {<TextoConLinks text={"⚠️ "+evento.NOTAS}/> || "Notas / Indicaciones / enlace"}</p>
                                 </div>
                                 <div className="sm:col-span-2 mt-2">
                                     <p className="text-xs text-gray-500">🔖 Invitados</p>
@@ -255,16 +278,16 @@ export function CancelarAppoin() {
                             </div>
                         </div> : <></>
                     }
-                </div>                
+                </div>
                 {flagEvent ? <></> : <hr className="mb-4 mt-4" />}
                 <div>
-                    {flagEvent ? <></> : <h1 className='font-bold text-black mb-1'>Información de la cita</h1>}                    
+                    {flagEvent ? <></> : <h1 className='font-bold text-black mb-1'>Información de la cita</h1>}
                     {flagEvent ? <></> : <div className='flex justify-start items-center ms-4'>
                         <InformationCircleIcon className='w-8 h-8 md:w-10 md:h-10 lg:w-10 lg:h-10 mx-4' color='#fc6500' />
                         <div>
                             <p className='text-gray-400'>Reservada</p>
                         </div>
-                    </div>}                    
+                    </div>}
                     {flagEvent ? <></> : cita.APPOINTMENT_CONFIRM == '1' ?
                         <div className='flex justify-start items-center ms-4'>
                             <InformationCircleIcon className='w-8 h-8 md:w-10 md:h-10 lg:w-10 lg:h-10 mx-4' color='#fc6500' />
@@ -273,37 +296,37 @@ export function CancelarAppoin() {
                             </div>
                         </div> : <></>}
                     {flagEvent ? <></> : cita.ESTATUS == '1' ?
-                            <div className='flex justify-start items-center ms-4'>
-                                <InformationCircleIcon className='w-8 h-8 md:w-10 md:h-10 lg:w-10 lg:h-10 mx-4' color='#fc6500' />
-                                <div>
-                                    <p className='text-gray-400'>Modificada por la empresa</p>
-                                </div>
-                            </div> : <div></div>}
-                    {flagEvent ? <></> : cita.ESTATUS == '-1' ? <div className='flex justify-start items-center ms-4'>
-                            <InformationCircleIcon className='w-8 h-8 md:w-10 md:h-10 lg:w-10 lg:h-10 mx-4' color='#B71C1C' />
+                        <div className='flex justify-start items-center ms-4'>
+                            <InformationCircleIcon className='w-8 h-8 md:w-10 md:h-10 lg:w-10 lg:h-10 mx-4' color='#fc6500' />
                             <div>
-                                <p className='text-gray-400'>Cancelada</p>
+                                <p className='text-gray-400'>Modificada por la empresa</p>
                             </div>
-                        </div> :
-                            cita.ESTATUS == '3' ?
+                        </div> : <div></div>}
+                    {flagEvent ? <></> : cita.ESTATUS == '-1' ? <div className='flex justify-start items-center ms-4'>
+                        <InformationCircleIcon className='w-8 h-8 md:w-10 md:h-10 lg:w-10 lg:h-10 mx-4' color='#B71C1C' />
+                        <div>
+                            <p className='text-gray-400'>Cancelada</p>
+                        </div>
+                    </div> :
+                        cita.ESTATUS == '3' ?
+                            <div className='flex justify-start items-center ms-4'>
+                                <InformationCircleIcon className='w-8 h-8 md:w-10 md:h-10 lg:w-10 lg:h-10 mx-4' color='#448AFF' />
+                                <div>
+                                    <p className='text-gray-400'>En cita</p>
+                                </div>
+                            </div> :
+                            cita.ESTATUS == '0' || cita.ESTATUS == '1' ?
                                 <div className='flex justify-start items-center ms-4'>
-                                    <InformationCircleIcon className='w-8 h-8 md:w-10 md:h-10 lg:w-10 lg:h-10 mx-4' color='#448AFF' />
+                                    <InformationCircleIcon className='w-8 h-8 md:w-10 md:h-10 lg:w-10 lg:h-10 mx-4' color='#727272' />
                                     <div>
-                                        <p className='text-gray-400'>En cita</p>
+                                        <p className='text-gray-400'>Pendiente</p>
                                     </div>
-                                </div> :
-                                cita.ESTATUS == '0' || cita.ESTATUS == '1' ?
-                                    <div className='flex justify-start items-center ms-4'>
-                                        <InformationCircleIcon className='w-8 h-8 md:w-10 md:h-10 lg:w-10 lg:h-10 mx-4' color='#727272' />
-                                        <div>
-                                            <p className='text-gray-400'>Pendiente</p>
-                                        </div>
-                                    </div> : <div className='flex justify-start items-center ms-4'>
-                                        <InformationCircleIcon className='w-8 h-8 md:w-10 md:h-10 lg:w-10 lg:h-10 mx-4' color='#fc6500' />
-                                        <div>
-                                            <p className='text-gray-400'>Finalizada</p>
-                                        </div>
-                                    </div>}
+                                </div> : <div className='flex justify-start items-center ms-4'>
+                                    <InformationCircleIcon className='w-8 h-8 md:w-10 md:h-10 lg:w-10 lg:h-10 mx-4' color='#fc6500' />
+                                    <div>
+                                        <p className='text-gray-400'>Finalizada</p>
+                                    </div>
+                                </div>}
                     {flagEvent ? <></> : <hr className="mb-4 mt-4" />}
                     {flagEvent ? <></> : <div className='flex justify-start items-center ms-4'>
                         <BuildingStorefrontIcon className='w-8 h-8 md:w-10 md:h-10 lg:w-10 lg:h-10 mx-4 text-orange-500 flex-shrink-0' />
@@ -316,9 +339,9 @@ export function CancelarAppoin() {
                         <div className='text-left mr-5'>
                             <p className='text-gray-400'>{cita.MENSSAGE ? cita.MENSSAGE : 'Sin Motivo de la visita/Servicio'}</p>
                         </div>
-                    </div>}                    
+                    </div>}
                     {flagEvent ? <></> : <hr className="mb-4 mt-4" />}
-                    {flagEvent ? <></> : <h1 className='font-bold text-black mb-1'>Ubicación</h1>}                    
+                    {flagEvent ? <></> : <h1 className='font-bold text-black mb-1'>Ubicación</h1>}
                     {flagEvent ? <></> : <div className='flex justify-start items-center ms-4'
                         style={{
                             cursor: 'pointer'

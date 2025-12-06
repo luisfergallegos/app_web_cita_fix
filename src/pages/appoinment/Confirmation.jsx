@@ -151,6 +151,26 @@ export function Confirmation() {
         return hexString;
     }
 
+    const TextoConLinks = ({ text }) => {
+        const regex = /(https?:\/\/[^\s]+)/g;
+
+        const partes = text.split(regex);
+
+        return (
+            <p>
+                {partes.map((parte, index) =>
+                    regex.test(parte) ? (
+                        <a key={index} href={parte} target="_blank" rel="noopener noreferrer" style={{ color: "blue" }}>
+                            {parte}
+                        </a>
+                    ) : (
+                        <span key={index}>{parte}</span>
+                    )
+                )}
+            </p>
+        );
+    };
+
     useEffect(() => {
         // Cargar user info desde loader
         if (!apoinment_id) {
@@ -260,7 +280,7 @@ export function Confirmation() {
                                 <div className="sm:col-span-2">
                                     <p className="text-xs text-gray-500">📍 Ubicación</p>
                                     <p className="font-medium">{evento.UBICACION || "Lugar"}</p>
-                                    <p className="font-medium">⚠️ {evento.NOTAS || "Notas / Indicaciones / enlace"}</p>
+                                    <p className="font-medium"> {<TextoConLinks text={"⚠️ "+evento.NOTAS}/> || "Notas / Indicaciones / enlace"}</p>
                                 </div>
                                 <div className="sm:col-span-2 mt-2">
                                     <p className="text-xs text-gray-500">🔖 Invitados</p>
