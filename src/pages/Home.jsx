@@ -30,16 +30,18 @@ export function Home() {
   const { sCorreo, sPassword } = useLoaderData();
   const [loading, setLoading] = useState(true);
 
-  const sUserCitaFix = fetchData("UserCitaFix") ?? [];
+
   const [citas, setCitas] = useState([]);
   const [userAdditInf, setUserAdditInf] = useState([]);
   const [colaboraciones, setColaboraciones] = useState([]);
   const [eventosUser, setEventosUser] = useState([]);
-  const firstName = sUserCitaFix['first_name'] ?? "Usuario";
-  const userId = sUserCitaFix['USER_ID'] ?? "";
-  const dorsl = sUserCitaFix['DORSL'] ?? "";
-  const PhotoDorsl = sUserCitaFix['PHOTO_DORSL'] ?? "";
-  const businessId = sUserCitaFix['BUSSINESS_ID'] ?? "";
+
+  const sUserCitaFix = fetchData("UserCitaFix") ?? [];
+  const [firstName, setFirstName] = useState(sUserCitaFix['first_name'] ?? "");
+  const [userId, setUserId] = useState(sUserCitaFix['USER_ID'] ?? "");
+  const [dorsl, setDorsl] = useState(sUserCitaFix['DORSL'] ?? "");
+  const [PhotoDorsl, setPhotoDorsl] = useState(sUserCitaFix['PHOTO_DORSL'] ?? "");
+  const [businessId, setBusinessId] = useState(sUserCitaFix['BUSSINESS_ID'] ?? "");
 
   const [bAccederIndex, setbAccederIndex] = useState('');
   const [bAccederIndexCol, setbAccederIndexCol] = useState('');
@@ -281,6 +283,32 @@ export function Home() {
   useEffect(() => {
     const fData = async () => {
       //Solicitar por GET
+      var options = {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          'x-citafix-ps': sPassword
+        }
+      }
+      try {
+        const response = await fetch(`${urlApi}usr?email=${sCorreo}`, options);
+        if (!response.ok) {
+          toast.error(`No se puede obtener la información del usuario`);
+        }
+        const json = await response.json();
+        //obtener nombre
+        localStorage.setItem("UserCitaFix", JSON.stringify(json['data']));
+        setFirstName(json['data']['first_name']);
+        setUserId(json['data']['USER_ID']);
+        setDorsl(json['data']['DORSL']);
+        setPhotoDorsl(json['data']['PHOTO_DORSL']);
+        setBusinessId(json['data']['BUSSINESS_ID']);
+        localStorage.setItem("dorsl", JSON.stringify(dorsl));
+      }
+      catch (e) {
+        console.log(`Error getting appoin.`);
+      }
       try {
         const response = await fetch(`${urlApi}appoin?userid=${userId}`);
         if (response.status == 200) {
@@ -318,7 +346,7 @@ export function Home() {
               } else {
                 console.log(`Error getting Eventos of User.`);
                 throw new Error(`HTTP error! status: ${response.status}`);
-              }              
+              }
             }
             catch (e) {
               setLoading(false);
