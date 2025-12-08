@@ -180,23 +180,19 @@ export function Confirmation() {
             //Solicitar por GET
             try {
                 // const response = await fetch(`${urlApi}getAppoin?apoinment_id=${apoinment_id}`);
-
-                console.log("📡 URL:", `${urlApi} getAppoin?apoinment_id=${apoinment_id}`);
-
+                // console.log("📡 URL:", `${urlApi}getAppoin?apoinment_id=${apoinment_id}`);
                 const response = await fetch(`${urlApi}getAppoin?apoinment_id=${apoinment_id}`)
                     .catch(err => {
                         console.error("❌ FETCH ERROR:", err);
                     });
-
-                console.log("📡 RESPONSE:", response);
-
+                // console.log("📡 RESPONSE:", response);
                 if (!response.ok) {
                     console.log(`Error getting getAppoin.`);
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
                 // const json = await response.json();
                 const json = await response.json().catch(e => console.log("❌ JSON PARSE ERROR:", e));
-                console.log("📡 JSON:", json);
+                // console.log("📡 JSON:", json);
                 setCita(json['data']);
                 // var Aux = json['data']['ANONIMO'] == '' ? json['data']['USER_NAME'] : json['data']['ANONIMO'].substring(0, json['data']['ANONIMO'].indexOf(","));
                 // console.log('keyName: ' + Aux);
