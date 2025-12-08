@@ -30,7 +30,7 @@ export function Confirmation() {
     const [searchParams] = useSearchParams();
     const apoinment_id = searchParams.get("ai");
     const keyName = searchParams.get("kn");
-    const [flagEvent, setFlagEvent] = useState(false);
+    const [flagEvent, setFlagEvent] = useState(searchParams.get("fe") == 'true' ? true : false);
 
     // Function to convert Base64 string to binary data
     const arrayBufferToBase64 = (buffer) => {
@@ -151,7 +151,7 @@ export function Confirmation() {
         return hexString;
     }
 
-    const TextoConLinks = ({ text }) => {
+    const TextoConLinks = ({ text = "" }) => {
         const regex = /(https?:\/\/[^\s]+)/g;
 
         const partes = text.split(regex);
@@ -173,7 +173,6 @@ export function Confirmation() {
 
     useEffect(() => {
         // Cargar user info desde loader
-        console.log('apoinment_id: ' + apoinment_id);
         if (!apoinment_id) {
             navigate("/");
         }
@@ -281,8 +280,7 @@ export function Confirmation() {
                                 <div className="sm:col-span-2">
                                     <p className="text-xs text-gray-500">📍 Ubicación</p>
                                     <p className="font-medium">{evento.UBICACION || "Lugar"}</p>
-                                    {<TextoConLinks text={"⚠️ "+evento.NOTAS}/> || <p className="font-medium">"Notas / Indicaciones / enlace" </p>}
-                                    
+                                    <TextoConLinks text={"⚠️ "+(evento.NOTAS || "")} />  
                                 </div>
                                 <div className="sm:col-span-2 mt-2">
                                     <p className="text-xs text-gray-500">🔖 Invitados</p>
