@@ -130,13 +130,13 @@ export function CancelarAppoin() {
         setComentario(value);
     };
 
-    const TextoConLinks = ({ text }) => {
+    const TextoConLinks = ({ text = "" }) => {
         const regex = /(https?:\/\/[^\s]+)/g;
 
         const partes = text.split(regex);
 
         return (
-            <p>
+            <p className="font-medium">
                 {partes.map((parte, index) =>
                     regex.test(parte) ? (
                         <a key={index} href={parte} target="_blank" rel="noopener noreferrer" style={{ color: "blue" }}>
@@ -239,7 +239,7 @@ export function CancelarAppoin() {
                                 <div className="sm:col-span-2">
                                     <p className="text-xs text-gray-500">📍 Ubicación</p>
                                     <p className="font-medium">{evento.UBICACION || "Lugar"}</p>                                    
-                                    <p className="font-medium"> {<TextoConLinks text={"⚠️ "+evento.NOTAS}/> || "Notas / Indicaciones / enlace"}</p>
+                                    <TextoConLinks text={"⚠️ "+(evento.NOTAS || "")} /> 
                                 </div>
                                 <div className="sm:col-span-2 mt-2">
                                     <p className="text-xs text-gray-500">🔖 Invitados</p>
