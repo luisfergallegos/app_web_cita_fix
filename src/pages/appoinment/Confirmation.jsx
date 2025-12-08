@@ -186,12 +186,12 @@ export function Confirmation() {
                 }
                 const json = await response.json();
                 setCita(json['data']);
-                var Aux = json['data']['ANONIMO'] == '' ? json['data']['USER_NAME'] : json['data']['ANONIMO'].substring(0, json['data']['ANONIMO'].indexOf(","));
-                // console.log('keyName: ' + keyName);
+                // var Aux = json['data']['ANONIMO'] == '' ? json['data']['USER_NAME'] : json['data']['ANONIMO'].substring(0, json['data']['ANONIMO'].indexOf(","));
+                // console.log('keyName: ' + Aux);
                 // console.log('stringToHex: ' + stringToHex(Aux));
-                if( keyName != stringToHex(Aux)){
-                    navigate("/");
-                }
+                // if( keyName != stringToHex(Aux)){
+                //     navigate("/");
+                // }
                 if (json['data']['FLAG_EVENT'] == '1') {
                     setFlagEvent(true);
                     // console.log('flagEvent: ' + flagEvent);
