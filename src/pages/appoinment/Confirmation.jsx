@@ -30,7 +30,7 @@ export function Confirmation() {
     const [searchParams] = useSearchParams();
     const apoinment_id = searchParams.get("ai");
     const keyName = searchParams.get("kn");
-    const [flagEvent, setFlagEvent] = useState(searchParams.get("fe") == 'true' ? true : false);
+    const [flagEvent, setFlagEvent] = useState(false);
 
     // Function to convert Base64 string to binary data
     const arrayBufferToBase64 = (buffer) => {
