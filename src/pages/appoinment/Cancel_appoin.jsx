@@ -70,7 +70,7 @@ export function CancelarAppoin() {
                 headers: { 'Content-Type': 'application/json' }
             }
             try {
-                const response = await fetch(`${urlApi}appoin?apoinment_id=${cita.APOINMENT_ID}&usernotification_id=${cita.BUS_USER_ID}&dorsl=${cita.DORSL}&for_who=Bus`, options);
+                const response = await fetch(`${urlApi}appoin?apoinment_id=${cita.APOINMENT_ID}&usernotification_id=${cita.BUS_USER_ID}&dorsl=${cita.USER_NAME}&for_who=Bus`, options);
                 const json = await response.json();
                 if (json['sucess'] == false) {
                     setbAcceder(true);

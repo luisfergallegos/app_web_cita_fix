@@ -211,7 +211,7 @@ export function UpdateAppoinBusiness() {
             headers: { 'Content-Type': 'application/json' }
         }
         try {
-            const response = await fetch(`${urlApi}appoin?apoinment_id=${cita.APOINMENT_ID}&usernotification_id=${cita.USER_ID}&dorsl=${cita.USER_NAME}&for_who=Usr`, options);
+            const response = await fetch(`${urlApi}appoin?apoinment_id=${cita.APOINMENT_ID}&usernotification_id=${cita.USER_ID}&dorsl=${cita.DORSL}&for_who=Usr`, options);
             const json = await response.json();
             if (json['sucess'] == false) {
                 setIsOpen(false);
