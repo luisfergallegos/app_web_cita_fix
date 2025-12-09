@@ -123,7 +123,7 @@ export function FindBusiness() {
                 </div> : <div></div>
             }
             <div className="min-h-screen bg-gradient-to-br from-orange-600 to-orange-800 px-4 py-10">
-                <div className="max-w-6xl mt-6 mx-auto">
+                <div className="max-w-6xl mt-8 mx-auto">
                     <h2 className="text-xl text-white font-semibold mb-2">¿Buscas un servicio o deseas agendar una cita?</h2>
                     {/* Buscador */}
                     <div className="relative mb-10">

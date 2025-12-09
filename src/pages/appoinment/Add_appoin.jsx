@@ -3,8 +3,9 @@ import { useLoaderData, useNavigate } from 'react-router-dom';
 import { fetchData, dateSpanish } from "../../Wrapper.js";
 import { forwardRef, useEffect, useState } from "react";
 import { useLocation } from 'react-router-dom';
+import { toast } from "react-toastify";
 // assets
-import './Add_appoin.css';
+// import './Add_appoin.css';
 import '../../components/Loading.css';
 import Store from "../../assets/business.png";
 import Loaging from '../../components/Loading.jsx';
@@ -22,25 +23,6 @@ export function AddAppoinLoader() {
     return { sCorreo, sPassword };
 }
 
-/* function defineInitialDate() {
-    var tempdias = [];
-    var _today = new Date();
-    var Aux = new Date(_today.getFullYear(), _today.getMonth(), _today.getDate());
-    //console.log(`Aux : ${Aux}`);
-    tempdias.push(Aux);
-
-    var lasttoday = new Date(_today.getFullYear(), _today.getMonth() + 2, 0);
-    var AñoAux = parseInt(lasttoday.getFullYear());
-    var MesAux = parseInt(lasttoday.getMonth());
-    var diaAux = parseInt(lasttoday.getDate());
-    var Aux = new Date(AñoAux, MesAux, diaAux);
-
-    //console.log(`Aux : ${Aux}`);
-    tempdias.push(Aux);
-
-    return tempdias;
-} */
-
 function selectableDayPredicate(_dias) {
     var tempdias = [];
     //Convert String to Date
@@ -56,34 +38,7 @@ function selectableDayPredicate(_dias) {
         }
     }
     return tempdias;
-    /* var _tempdias = [];
-    var _initialDate = _dias[0];
-    var _lastDate = _dias[_dias.length - 1];
-    var formattedDate = _initialDate;
-    while (formattedDate <= _lastDate) {       
-        var bformattedDate = bBuscar(formattedDate, _dias);       
-        if (bformattedDate === true) {
-            _tempdias.push(new Date(formattedDate.getFullYear(), formattedDate.getMonth(), formattedDate.getDate()));
-        }
-        // Increment the date
-        var newDate = formattedDate.setDate(formattedDate.getDate() + 1);
-        formattedDate = new Date(newDate);
-    }
-
-    return _tempdias; */
 }
-
-/* function bBuscar(sDay, _dias) {
-    var bAux = true;
-    for (let index = 0; index < _dias.length; index++) {
-        var element = _dias[index];
-        if (element.toLocaleDateString() === sDay.toLocaleDateString()) {
-            bAux = false;
-            break;
-        }
-    }
-    return bAux;
-} */
 
 export function AddAppoin() {
     const location = useLocation();
@@ -100,10 +55,18 @@ export function AddAppoin() {
     const [estado, setEstado] = useState();
     const [ciudad, setCiudad] = useState();
     const [colonias, setColonias] = useState([]);
-    const [bAcceder, setbAcceder] = useState(true);
-    const [direccionUno, setDireccionUno] = useState('');
-    const [direccionDos, setDireccionDos] = useState('');
+    const [canSubmit, setCanSubmit] = useState(true);
+    // const [direccionUno, setDireccionUno] = useState('');
+    // const [direccionDos, setDireccionDos] = useState('');
     const [codigoPostal, setCodigoPostal] = useState('');
+    const [address, setAddress] = useState({
+        address_first: '',
+        address_second: "",
+        postal_code: "",
+        city: "",
+        state: ""
+    });
+    const [errors, setErrors] = useState({});
     const [message, setMessage] = useState('');
 
     const [loading, setLoading] = useState(true);
@@ -116,6 +79,26 @@ export function AddAppoin() {
     var _today = new Date();
     const initialDate = new Date(_today);
     const lastDate = new Date(_today.setDate(_today.getDate() + 31));
+
+    const toggleAddress = () => setbMostrarAddress((v) => !v);
+
+    function validate() {
+        const e = {};
+        if (!address.postal_code.trim())
+            e.postal_code = "El Código postal es obligatorio.";
+        if (!address.state.trim())
+            e.state = "El Estado es obligatorio.";
+        if (!address.city.trim())
+            e.city = "El Municipio/Ciudad es obligatorio.";
+        if (!address.address_second.trim())
+            e.address_second = "La Colonia es obligatorio.";
+        if (!address.address_first.trim())
+            e.address_first = "La Calle / Número externo es obligatorio.";
+
+        return e;
+    }
+
+    
 
     // Function to convert Base64 string to binary data
     const arrayBufferToBase64 = (buffer) => {
@@ -150,164 +133,89 @@ export function AddAppoin() {
         setcita(tempcita);
     }
 
-    const ModMostrarAddres = () => {
-        setbMostrarAddress(!bMostrarAddress);
-    };
-
-    const _buildConfirm = async () => {
-        if (selectedTime !== '') {
-            if (bAcceder) {
-                setbAcceder(false);
-                setIsOpen(false);
-                if (bMostrarAddress) {
-                    var dateFormat = startDate.getMonth() + 1;
-                    var _selectedDate = `${startDate.getFullYear()}-${('0' + dateFormat).slice(-2)}-${startDate.getDate()}`;
-
-                    //Enviar por POST
-                    var options = {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(
-                            {
-                                'user_id': location.state.userId,
-                                'bussiness_id': BUSSINESS_ID,
-                                'usernotification_id': USER_ID,
-                                'appointment_date': _selectedDate,
-                                'appointment_time': selectedTime,
-                                'anonimo': '',
-                                'message': message,
-                                'estatus': '0',
-                                'dorsl': location.state.userName,
-                                'for_who': 'Bus',
-                                "address_first": direccionUno,
-                                "address_second": direccionDos,
-                                "postal_code": codigoPostal,
-                                "city": ciudad,
-                                "state": estado
-                            })
-                    }
-                    try {
-                        const response = await fetch(`${urlApi}appoinAddress`, options);
-                        const json = await response.json();
-                        if (json['sucess'] == false) {
-                            setbAcceder(true);
-                            alert(`Ya no se encuentra disponible Fecha : ${_selectedDate} Hora : ${selectedTime} Corríjalo e inténtelo nuevamente.`);
-                            // console.log(`Error al guardar cita.`);
-                            throw new Error(`HTTP error! status: ${response.status}`);
-                        }
-                        else {
-                            navigate("/");
-                        }
-                    }
-                    catch (e) {
-                        setbAcceder(true);
-                        return;
-                    }
-                }
-                else {
-                    var dateFormat = startDate.getMonth() + 1;
-                    var _selectedDate = `${startDate.getFullYear()}-${('0' + dateFormat).slice(-2)}-${startDate.getDate()}`;
-                    //Enviar por POST
-                    var options = {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(
-                            {
-                                'user_id': location.state.userId,
-                                'bussiness_id': BUSSINESS_ID,
-                                'usernotification_id': USER_ID,
-                                'appointment_date': _selectedDate,
-                                'appointment_time': selectedTime,
-                                'anonimo': '',
-                                'message': message,
-                                'estatus': '0',
-                                'dorsl': location.state.userName,
-                                'for_who': 'Bus'
-                            })
-                    }
-                    try {
-                        const response = await fetch(`${urlApi}appoin`, options);
-                        const json = await response.json();
-                        if (json['sucess'] == false) {
-                            setbAcceder(true);
-                            alert(`Ya no se encuentra disponible Fecha : ${_selectedDate} Hora : ${selectedTime} Corríjalo e inténtelo nuevamente.`);
-                            console.log(`Error al guardar cita.`);
-                            throw new Error(`HTTP error! status: ${response.status}`);
-                        }
-                        else {
-                            navigate("/");
-                        }
-                    }
-                    catch (e) {
-                        setbAcceder(true);
-                        return;
-                    }
-                }
-            }
+    const _buildConfirm = async (e) => {
+        if (!selectedTime || !startDate) {
+            return toast.error(`Selecciona fecha y hora.`);
         }
 
+        if (!canSubmit) return;
 
+        setCanSubmit(false);
+        setIsOpen(false);
 
+        const month = (`0` + (startDate.getMonth() + 1)).slice(-2);
+        const day = (`0` + startDate.getDate()).slice(-2);
+        const selectedDate = `${startDate.getFullYear()}-${month}-${day}`;
+
+        const bodyBase = {
+            user_id: userId,
+            bussiness_id: BUSSINESS_ID,
+            usernotification_id: USER_ID,
+            appointment_date: selectedDate,
+            appointment_time: selectedTime,
+            anonimo: '',
+            message,
+            estatus: '0',
+            dorsl: location.state.userName,
+            for_who: 'Bus'
+        };
+
+        const endpoint = bMostrarAddress ? 'appoinAddress' : 'appoin';
+        const body = bMostrarAddress
+            ? { ...bodyBase, address_first: address.address_first, address_second: address.address_second, postal_code: address.postal_code, city: address.city, state: address.state }
+            : bodyBase;
+
+        try {
+            const resp = await fetch(`${urlApi}${endpoint}`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(body)
+            });
+            const json = await resp.json();
+            if (json.sucess === false) {
+                toast.error(`Fecha ${selectedDate} / Hora ${selectedTime} ya no está disponible.`);
+                setCanSubmit(true);
+                return;
+            }
+            navigate('/home');
+        } catch (e) {
+            console.error(e);
+            toast.error('Ocurrió un error al guardar la cita. Intenta de nuevo.');
+            setCanSubmit(true);
+        }
     };
 
     const getCodigoPostal = async (evt) => {
         const value = evt.target.value;
-        var tempcita = [];
-        if (evt.target.value.length === 5) {
-            setCodigoPostal(value);
-            //Solicitar por GET
-            try {
-                const response = await fetch(`${urlApi}postalCode?d_codigo=${value}`);
-                if (!response.ok) {
-                    console.log(`Error getting getDaysInactive.`);
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-                const json = await response.json();
-                console.log(json['data']);
-                setEstado(json['data'][0].d_estado);
-                setCiudad(json['data'][0].d_ciudad);
-                var tempcita = [];
-                for (let index = 0; index < json['data'][0].d_asentas.length; index++) {
-                    var element = json['data'][0].d_asentas[index];
-                    tempcita.push(element.d_asenta);
-                }
-                setColonias(tempcita);
-            }
-            catch (e) {
-                return;
-            }
-            /* const json = fetchData("postalCode") ?? [];
-            setEstado(json['data'][0].d_estado);
-            setCiudad(json['data'][0].d_ciudad);
-            var tempcita = [];
-            for (let index = 0; index < json['data'][0].d_asentas.length; index++) {
-                var element = json['data'][0].d_asentas[index];
-                tempcita.push(element.d_asenta);
-            }
-            setColonias(tempcita); */
-        }
-        else {
-            setColonias(tempcita);
+        setCodigoPostal(value);
+        if (value.length !== 5) {
+            setColonias([]);
             setEstado('');
             setCiudad('');
+            return;
+        }
+        try {
+            const resp = await fetch(`${urlApi}postalCode?d_codigo=${value}`);
+            if (!resp.ok) throw new Error('Postal fetch error');
+            const json = await resp.json();
+            const data = json.data?.[0];
+            if (!data) return;
+            setEstado(data.d_estado || '');
+            setCiudad(data.d_ciudad || '');
+            setColonias((data.d_asentas || []).map((a) => a.d_asenta));
+            address.postal_code = value;
+            address.state = data.d_estado || '';
+            address.city = data.d_ciudad || '';
+        } catch (e) {
+            console.error(e);
         }
     };
 
-    const handleChange = evt => {
-        const value = evt.target.value;
-        setDireccionUno(value);
+    function handleChange(e){
+        const { name, value } = e.target;
+        setAddress((prev) => ({ ...prev, [name]: value }));
+        setErrors((prev) => ({ ...prev, [name]: undefined }));
     };
-
-    const handleChangeColonia = evt => {
-        const value = evt.target.value;
-        setDireccionDos(value);
-    };
-
-    const handleChangeMessage = evt => {
-        const value = evt.target.value;
-        setMessage(value);
-    };
-
 
 
     useEffect(() => {
@@ -326,7 +234,7 @@ export function AddAppoin() {
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
                 const json = await response.json();
-                setExcludeDates(selectableDayPredicate(json['data']));
+                setExcludeDates(selectableDayPredicate(json.data || []));
 
                 //Solicitar por GET
                 try {
@@ -355,67 +263,52 @@ export function AddAppoin() {
     }, []);
 
 
-    /* moment.defineLocale('es', {
-        months: 'Enero_Febrero_Marzo_Abril_Mayo_Junio_Julio_Agosto_Septiembre_Octubre_Noviembre_Diciembre'.split('_'),
-        monthsShort: 'Enero._Feb._Mar_Abr._May_Jun_Jul._Ago_Sept._Oct._Nov._Dec.'.split('_'),
-        weekdays: 'Domingo_Lunes_Martes_Miercoles_Jueves_Viernes_Sabado'.split('_'),
-        weekdaysShort: 'Dom._Lun._Mar._Mier._Jue._Vier._Sab.'.split('_'),
-        weekdaysMin: 'Do_Lu_Ma_Mi_Ju_Vi_Sa'.split('_')
-  }); 
-    let _selectedDate = moment(new Date()).format('dddd, d MMMM y'); */
-
-
 
 
     if (loading) {
         return <Loaging />;
     }
 
+    const photoBase64 = arrayBufferToBase64(PHOTO == null ? PHOTO : PHOTO.data);
+
     return (
-        <div className="min-h-screen grid items-center justify-center bg-gradient-to-br from-orange-600 to-orange-800 px-4">
-            <div className="bg-white rounded-3xl shadow-xl mt-20 mb-10 text-center animate-fade-in-up w-full max-w-md">
-                <div className="flex justify-center mb-4">
-                    {
-                        PHOTO == null ? <img className="w-40 h-40 object-cover rounded-full border mt-8 bg-gray-300" src={Store} /> :
-                            <img className="w-40 h-40 object-cover rounded-full border mt-8" src={'data:image/jpeg;base64,' + arrayBufferToBase64(PHOTO.data)} />
-                    }
+        <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-orange-600 to-orange-800 p-4">
+            <div className="w-full max-w-lg bg-white rounded-3xl shadow-xl p-6 text-center mt-20">
+                <div className="flex flex-col items-center">
+                    {photoBase64 ? (
+                        <img className="w-36 h-36 rounded-full object-cover border mt-4" src={`data:image/jpeg;base64,${photoBase64}`} alt="business" />
+                    ) : (
+                        <img className="w-36 h-36 rounded-full object-cover border mt-4 bg-gray-200" src={Store} alt="default" />
+                    )}
+                    <h3 className="text-2xl font-bold mt-4 text-black">{DORSL}</h3>
+                    <p className="text-gray-500 mb-3">{CATEGORY}</p>
+                    <div className="w-full flex items-center gap-3 px-4 mt-2">
+                        <MapPinIcon className="w-6 h-6 text-orange-500" />
+                        <div className="text-left">
+                            <p className="text-gray-500">{ADDRESS_FIRST} {ADDRESS_SECOND} CP {POSTAL_CODE}</p>
+                            <p className="text-gray-500">{CITY}, {STATE}</p>
+                        </div>
+                    </div>
+                    <div className="w-full flex items-center gap-3 px-4 mt-2">
+                        <PhoneIcon className="w-6 h-6 text-orange-500" />
+                        <div className="text-left">
+                            <p className="text-gray-500">{phone || 'Este negocio aún no ha agregado información de contacto.'}</p>
+                        </div>
+                    </div>
+                    <div className="w-full flex items-center gap-3 px-4 mt-2 mb-2">
+                        <CalendarDaysIcon className="w-6 h-6 text-orange-500" />
+                        <div className="text-left">
+                            <p className="text-gray-500">{Horario}</p>
+                        </div>
+                    </div>
                 </div>
-                <div>
-                    <h4 className='text-2xl font-bold text-black mb-1'>{DORSL}</h4>
-                    <p className='w-full text-gray-400 mb-4'>{CATEGORY}</p>
-                    <div className='flex justify-start rmal items-center ms-4'>
-                        <MapPinIcon className='w-8 h-8 md:w-10 md:h-10 lg:w-10 lg:h-10 mx-4 text-orange-500' />
-                        <div className='text-left'>
-                            <p className='mr-10 text-gray-400'>{ADDRESS_FIRST} {ADDRESS_SECOND} CP {POSTAL_CODE}</p>
-                            <p className='mr-10 text-gray-400'>{CITY}, {STATE}</p>
-                        </div>
-                    </div>
-                    <div className='flex justify-start items-center ms-4'>
-                        <PhoneIcon className='w-8 h-8 md:w-10 md:h-10 lg:w-10 lg:h-10 mx-4 text-orange-500' />
-                        <div>
-                            {phone != '' ? <p className='mr-10 text-gray-400'>{phone}</p> : <p className='mr-10 text-gray-400'>Sin información de contacto</p>}
-                        </div>
-                    </div>
-                    <div className='flex justify-start items-center ms-4'>
-                        <CalendarDaysIcon className='w-8 h-8 md:w-10 md:h-10 lg:w-10 lg:h-10 mx-4 text-orange-500' />
-                        <div>
-                            <p className='mr-10 text-gray-400'>{Horario}</p>
-                        </div>
-                    </div>
+
+                <hr className="my-4" />
+
+                <div className="text-left px-4">
+                    <h4 className="text-lg font-semibold">Agendar</h4>
                 </div>
-                {/* <hr className="mb-4 mt-4" />
-                <div className='businessTitle'>
-                    <h4>Información de contacto</h4>
-                    <div className='flex justify-start items-center ms-4 mt-4'>
-                        <div>
-                            <p className='ml-4 text-black'>{location.state.userName}</p>
-                        </div>
-                    </div>
-                </div> */}
-                <hr className="mb-4 mt-4" />
-                <div className='businessTitle'>
-                    <h4>Agendar</h4>
-                </div>
+
                 <div className='flex justify-start items-center ms-4'>
                     <CalendarDateRangeIcon className='w-8 h-8 md:w-10 md:h-10 lg:w-10 lg:h-10 mx-4 text-orange-500' />
                     <div>
@@ -431,106 +324,123 @@ export function AddAppoin() {
                     </div>
 
                 </div>
-                <div className='grid grid-cols-4 gap-5 p-10' >
-                    {cita[0] &&
-                        cita[0].map(({ APPOINTMENT_TIME, STATUS }, index) =>
-                        (
-                            <div className={STATUS === 'No' ? 'businessAppointmentTime active' : 'businessAppointmentTime'}
-                                key={index}
-                                style={{
-                                    backgroundColor: index === selectedIndex ? 'white' : STATUS === 'No' ? 'grey' : '#e0e0e0',
-                                    color: index === selectedIndex ? '#fc6500' : 'black'
-                                }}
+                {/* Horarios */}
+                <div className="grid grid-cols-4 gap-3 p-6">
+                    {cita[0] && cita[0].map(({ APPOINTMENT_TIME, STATUS }, idx) => {
+                        const disabled = STATUS !== 'free';
+                        const selected = idx === selectedIndex;
+                        return (
+                            <button
+                                key={idx}
+                                type="button"
+                                disabled={disabled}
                                 onClick={() => {
-                                    if (STATUS === 'free') {
+                                    if (!disabled) {
                                         setselectedTime(APPOINTMENT_TIME);
-                                        setselectedIndex(index);
+                                        setselectedIndex(idx);
                                     }
-                                }}  >
-                                <label>{APPOINTMENT_TIME} </label>
-                            </div>
-                        ))
-                    }
+                                }}
+                                className={`py-3 px-2 rounded-md shadow-sm text-sm ${selected ? 'bg-white text-orange-500 border' : disabled ? 'bg-gray-300 cursor-not-allowed' : 'bg-gray-100'}`}
+                            >
+                                {APPOINTMENT_TIME}
+                            </button>
+                        );
+                    })}
                 </div>
-                <hr className="mb-4 mt-4" />
-                {
-                    HOME_SERVICE == '1' && <div className='businessTitle'>
-                        <div style={{ display: 'flex', justifyItems: 'center', alignItems: 'center', marginRight: '20px' }}>
-                            <h4 style={{ marginRight: '20px' }}>{bMostrarAddress ? '¿Cuál es la dirección?' : 'Visita a domicilio'}</h4>
-                            <label className="switch">
-                                <input type="checkbox" onClick={ModMostrarAddres} />
-                                <span class="slider round"></span>
+                <hr className="my-4" />
+                {HOME_SERVICE == '1' && (
+                    <div className="px-4">
+                        <div className="flex items-center justify-between">
+                            <h4 className="text-lg font-semibold">{bMostrarAddress ? '¿Cuál es la dirección?' : 'Visita a domicilio'}</h4>
+                            <label className="flex items-center gap-2">
+                                <input type="checkbox" checked={bMostrarAddress} onChange={toggleAddress} className="hidden" />
+                                <div className={`w-10 h-6 rounded-full p-1 flex items-center ${bMostrarAddress ? 'bg-orange-500' : 'bg-gray-300'}`}>
+                                    <div className={`bg-white w-4 h-4 rounded-full transform ${bMostrarAddress ? 'translate-x-4' : 'translate-x-0'} transition-transform`} />
+                                </div>
                             </label>
                         </div>
-                        <div className={bMostrarAddress ? 'businessContainer_Address' : 'businessContainer_Address active'} >
-                            <div className='AddressForm-group'>
-                                <label>Código postal</label>
-                                <input type="text" placeholder='Código postal' maxLength={5} onChange={getCodigoPostal} />
+
+                        <div className={`${bMostrarAddress ? 'grid' : 'hidden'} gap-3 grid-cols-2 mt-4`}>
+                            <div>
+                                <label className="text-xs font-medium">Código postal</label>
+                                <input maxLength={5} value={codigoPostal} onChange={getCodigoPostal} className="mt-1 w-full border rounded-md p-2" placeholder="Código postal" />
+                                {errors.postal_code && <p className="mt-1 text-xs text-red-600">{errors.postal_code}</p>}
                             </div>
-                            <div className='AddressForm-group'>
-                                <label>Estado</label>
-                                <input type="text" placeholder='Estado' value={estado} disabled />
+                            <div>
+                                <label className="text-xs font-medium">Estado</label>
+                                <input value={estado} disabled className="mt-1 w-full border rounded-md p-2 bg-gray-50" placeholder="Estado" />
+                                {errors.state && <p className="mt-1 text-xs text-red-600">{errors.state}</p>}
                             </div>
-                            <div className='AddressForm-group'>
-                                <label>Municipio/Ciudad</label>
-                                <input type="text" placeholder='Municipio/Ciudad' value={ciudad} disabled />
+                            <div>
+                                <label className="text-xs font-medium">Municipio/Ciudad</label>
+                                <input value={ciudad} disabled className="mt-1 w-full border rounded-md p-2 bg-gray-50" placeholder="Municipio/Ciudad" />
+                                {errors.city && <p className="mt-1 text-xs text-red-600">{errors.city}</p>}
                             </div>
-                            <div className='AddressForm-group'>
-                                <label>Colonia</label>
-                                <input list="optionsList" type="text" placeholder='Colonia'
-                                    disabled={colonias.length == 0 ? true : false}
-                                    onChange={handleChangeColonia} required ></input>
+                            <div>
+                                <label className="text-xs font-medium">Colonia</label>
+                                <input list="optionsList" value={address.address_second}
+                                    // onChange={handleChange} 
+                                    onChange={(e) => {
+                                        const raw = e.target.value;
+                                        setAddress(prev => ({ ...prev, address_second: raw }));
+                                    }}
+                                    disabled={colonias.length === 0} className="mt-1 w-full border rounded-md p-2" placeholder="Colonia" />
                                 <datalist id="optionsList">
-                                    {colonias.map((option, index) => (
-                                        <option key={index} value={option} />
-                                    ))}
+                                    {colonias.map((c, i) => <option key={i} value={c} />)}
                                 </datalist>
+                                {errors.address_second && <p className="mt-1 text-xs text-red-600">{errors.address_second}</p>}
                             </div>
-                            <div className='AddressForm-group'>
-                                <label>Calle / Número externo</label>
-                                <input type="text" placeholder='Calle / Número externo'
-                                    onChange={handleChange} />
+                            <div className="col-span-2">
+                                <label className="text-xs font-medium">Calle / Número externo</label>
+                                <input name="address_first" value={address.address_first} onChange={handleChange} className="mt-1 w-full border rounded-md p-2" placeholder="Calle / Número externo" />
+                                {errors.address_first && <p className="mt-1 text-xs text-red-600">{errors.address_first}</p>}
                             </div>
                         </div>
                     </div>
-                }
+                )}
+                <div className="mt-6 px-4 mb-6">
+                    {canSubmit ? (
+                        <button
+                            onClick={(e) => {
+                                if (bMostrarAddress) {
+                                    e.preventDefault();
+                                    const eobj = validate();
+                                    setErrors(eobj);
+                                    if (Object.keys(eobj).length > 0) return;
+                                }
+                                if (selectedTime) setIsOpen(true);
+                                else
+                                    toast.error('Selecciona una hora.');
+                            }}
+                            className="w-full py-3 rounded-md font-bold text-white bg-orange-500 hover:bg-orange-600"
+                        >
+                            Guardar
+                        </button>
+                    ) : (
+                        <button className="w-full py-3 rounded-md bg-gray-300">
+                            <span className="animate-pulse">Procesando...</span>
+                        </button>
+                    )}
+                </div>
 
-                {bAcceder ? <div className='businessBtn'>
-                    <button className='mb-10' onClick={() => {
-                        if (selectedTime !== '') {
-                            setIsOpen(true);
-                        }
-                    }}>Guardar</button>
-                </div> : <div className='businessBtn'>
-                    <button className='mb-10'><div className='circle' ></div></button>
-                </div>}
-
-                {/* Modal */}
+                {/* Modal confirm */}
                 {isOpen && (
-                    <>
-                        <div className="fixed inset-0 bg-black bg-opacity-50 z-40"></div>
-                        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-                            <div className="bg-white rounded-2xl shadow-2xl max-w-lg w-full p-6 relative animate-fade-in-up">
-                                <button
-                                    onClick={() => setIsOpen(false)}
-                                    className="absolute top-3 right-3 text-gray-500 hover:text-orange-500"
-                                >
-                                    <CloseIcon className="w-5 h-5 text-gray-900" />
-                                </button>
-                                <h4 className="text-xl font-bold text-center text-black mb-1">Confirmar</h4>
-                                <p className="text-center text-yellow-500 mb-1">¿Deseas guardar tu cita?</p>
-                                <p className="text-center text-gray-500 mb-4">Motivo de la visita/Servicio</p>
-                                <hr className="mb-4" />
-                                <textarea type="text" className='w-full text-black border px-4 py-2 rounded-md' placeholder='Opcional' rows="4" cols="50" onChange={handleChangeMessage}></textarea>
-                                <div className='flex justify-end mt-2'>
-                                    <button className='bg-gray-500 text-white px-4 py-2 rounded-md hover:bg-gray-600 mx-2' onClick={() => { setIsOpen(false); setMessage(''); }}>Cancelar</button>
-                                    <button className='bg-orange-500 text-white px-4 py-2 rounded-md hover:bg-orange-600' onClick={() => {
-                                        _buildConfirm();
-                                    }}>Confirmar</button>
-                                </div>
+                    <div className="fixed inset-0 z-50 flex items-center justify-center">
+                        <div className="absolute inset-0 bg-black opacity-40" />
+                        <div className="bg-white rounded-2xl shadow-xl p-6 z-10 w-full max-w-md">
+                            <button className="absolute top-4 right-4" onClick={() => setIsOpen(false)}>
+                                <CloseIcon className="w-6 h-6 text-gray-700" />
+                            </button>
+                            <h4 className="text-xl font-bold text-center">Confirmar</h4>
+                            <p className="text-center text-yellow-500 mt-1">¿Deseas guardar tu cita?</p>
+                            <p className="text-center text-gray-500 mt-1">Motivo de la visita/Servicio</p>
+                            <textarea value={message} onChange={(e) => setMessage(e.target.value)} className="w-full mt-3 border rounded-md p-2" rows={4} placeholder="Opcional" />
+                            <div className="flex justify-end gap-3 mt-4">
+                                <button onClick={() => { setIsOpen(false); setMessage(''); }} className="px-4 py-2 rounded-md bg-gray-500 text-white">Cancelar</button>
+                                <button onClick={_buildConfirm} className="px-4 py-2 rounded-md bg-orange-500 text-white">Confirmar</button>
                             </div>
                         </div>
-                    </>
+                    </div>
                 )}
             </div>
         </div>

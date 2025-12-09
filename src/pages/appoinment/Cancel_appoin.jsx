@@ -2,8 +2,9 @@
 import { useLoaderData, useNavigate, useLocation } from 'react-router-dom';
 import { dateSpanish, fetchData } from "../../Wrapper.js";
 import { useEffect, useState } from "react";
+import { toast } from "react-toastify";
 // assets
-import './Add_appoin.css';
+// import './Add_appoin.css';
 import '../../components/Loading.css';
 import Loaging from '../../components/Loading.jsx';
 import { urlApi } from "../../styles/Constants.jsx";
@@ -200,16 +201,18 @@ export function CancelarAppoin() {
     if (loading) {
         return <Loaging />;
     }
+
+    const photoBase64 = arrayBufferToBase64(cita.BUS_PHOTO == null ? cita.BUS_PHOTO : cita.BUS_PHOTO.data);
+
     return (
-        <div className="min-h-screen grid items-center justify-center bg-gradient-to-br from-orange-600 to-orange-800 px-4">
-            <div className="bg-white rounded-3xl shadow-xl mt-20 mb-10 text-center animate-fade-in-up w-full max-w-md">
-                <div className="flex justify-center mb-4">
-                    {
-                        cita.BUS_PHOTO === null ? <img className="w-40 h-40 object-cover rounded-full border mt-8" src={User} /> :
-                            <img className="w-40 h-40 object-cover rounded-full border mt-8" src={'data:image/jpeg;base64,' + arrayBufferToBase64(cita.BUS_PHOTO.data)} />
-                    }
-                </div>
-                <div>
+        <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-orange-600 to-orange-800 p-4">
+            <div className="w-full max-w-lg bg-white rounded-3xl shadow-xl p-6 text-center mt-20">
+                <div className="flex flex-col items-center">
+                    {photoBase64 ? (
+                        <img className="w-36 h-36 rounded-full object-cover border mt-4" src={`data:image/jpeg;base64,${photoBase64}`} alt="business" />
+                    ) : (
+                        <img className="w-36 h-36 rounded-full object-cover border mt-4 bg-gray-200" src={User} alt="default" />
+                    )}
                     {flagEvent ? <></> : <h1 className='text-3xl text-black'>Resumen de la cita</h1>}
                     <h4 className="mt-3 text-lg font-bold text-gray-900">{cita.DORSL}</h4>
                     {flagEvent ? <p className="mb-2 text-sm text-gray-700">
@@ -238,8 +241,8 @@ export function CancelarAppoin() {
 
                                 <div className="sm:col-span-2">
                                     <p className="text-xs text-gray-500">📍 Ubicación</p>
-                                    <p className="font-medium">{evento.UBICACION || "Lugar"}</p>                                    
-                                    <TextoConLinks text={"⚠️ "+(evento.NOTAS || "")} /> 
+                                    <p className="font-medium">{evento.UBICACION || "Lugar"}</p>
+                                    <TextoConLinks text={"⚠️ " + (evento.NOTAS || "")} />
                                 </div>
                                 <div className="sm:col-span-2 mt-2">
                                     <p className="text-xs text-gray-500">🔖 Invitados</p>
@@ -253,7 +256,7 @@ export function CancelarAppoin() {
                     {flagEvent ? <></> : <p className='w-full text-gray-400 mb-4'>{ConvertDateTime(cita.APPOINTMENT_DATE, cita.APPOINTMENT_TIME, 1)} -
                         {ConvertDateTime(cita.APPOINTMENT_DATE, cita.APPOINTMENT_TIME, 0)}</p>}
                     {flagEvent ? <></> : cita.BUS_USER_PHONE &&
-                        <div className='flex justify-start items-center ms-4' style={{
+                        <div className="w-full flex items-center gap-3 px-4 mt-2" style={{
                             cursor: 'pointer'
                         }}
                             onClick={() => {
@@ -264,115 +267,123 @@ export function CancelarAppoin() {
                                     window.open(`https://api.whatsapp.com/send/?phone=${cleanNumber}&text=Hola, ¿Tengo una duda sobre mi cita?&type=phone_number&app_absent=0`);
                                 }
                             }}>
-                            <EnvelopeIcon className='w-8 h-8 md:w-10 md:h-10 lg:w-10 lg:h-10 mx-4 text-orange-500 flex-shrink-0' />
+                            <EnvelopeIcon className="w-6 h-6 text-orange-500" />
                             <div>
                                 <p className='text-gray-400'>{cita.BUS_USER_PHONE}</p>
                             </div>
                         </div>}
-
                     {cita.FLAG_ADDRESS != '0' ?
-                        <div className='flex justify-start items-center ms-4'>
-                            <MapPinIcon className='w-8 h-8 md:w-10 md:h-10 lg:w-10 lg:h-10 mx-4 text-orange-500' />
+                        <div className="w-full flex items-center gap-3 px-4 mt-2">
+                            <MapPinIcon className="w-6 h-6 text-orange-500" />
                             <div>
                                 <p className='text-gray-400'>Visita a domicilio</p>
                             </div>
                         </div> : <></>
                     }
                 </div>
-                {flagEvent ? <></> : <hr className="mb-4 mt-4" />}
-                <div>
-                    {flagEvent ? <></> : <h1 className='font-bold text-black mb-1'>Información de la cita</h1>}
-                    {flagEvent ? <></> : <div className='flex justify-start items-center ms-4'>
-                        <InformationCircleIcon className='w-8 h-8 md:w-10 md:h-10 lg:w-10 lg:h-10 mx-4' color='#fc6500' />
+                {flagEvent ? <></> : <hr className="my-4" />}
+                <div className="text-left px-4">
+                    {flagEvent ? <></> : <h4 className="text-lg font-semibold">Información de la cita</h4>}
+                    {flagEvent ? <></> : <div className="w-full flex items-center gap-3 px-4 mt-2">
+                        <InformationCircleIcon className="w-6 h-6 text-orange-500" />
                         <div>
                             <p className='text-gray-400'>Reservada</p>
                         </div>
                     </div>}
-                    {flagEvent ? <></> : cita.APPOINTMENT_CONFIRM == '1' ?
-                        <div className='flex justify-start items-center ms-4'>
-                            <InformationCircleIcon className='w-8 h-8 md:w-10 md:h-10 lg:w-10 lg:h-10 mx-4' color='#fc6500' />
-                            <div>
-                                <p className='text-gray-400'>Confirmada</p>
-                            </div>
-                        </div> : <></>}
-                    {flagEvent ? <></> : cita.ESTATUS == '1' ?
-                        <div className='flex justify-start items-center ms-4'>
-                            <InformationCircleIcon className='w-8 h-8 md:w-10 md:h-10 lg:w-10 lg:h-10 mx-4' color='#fc6500' />
-                            <div>
-                                <p className='text-gray-400'>Modificada por la empresa</p>
-                            </div>
-                        </div> : <div></div>}
-                    {flagEvent ? <></> : cita.ESTATUS == '-1' ? <div className='flex justify-start items-center ms-4'>
-                        <InformationCircleIcon className='w-8 h-8 md:w-10 md:h-10 lg:w-10 lg:h-10 mx-4' color='#B71C1C' />
+                    {flagEvent ? <></> : cita.APPOINTMENT_CONFIRM == '1' ? <div className="w-full flex items-center gap-3 px-4 mt-2">
+                        <InformationCircleIcon className="w-6 h-6 text-orange-500" />
+                        <div>
+                            <p className='text-gray-400'>Confirmada</p>
+                        </div>
+                    </div> : <></>}
+                    {flagEvent ? <></> : cita.ESTATUS == '1' ? <div className="w-full flex items-center gap-3 px-4 mt-2">
+                        <InformationCircleIcon className="w-6 h-6 text-orange-500" />
+                        <div>
+                            <p className='text-gray-400'>Modificada por la empresa</p>
+                        </div>
+                    </div> : <></>}
+                    {flagEvent ? <></> : cita.ESTATUS == '-1' ? <div className="w-full flex items-center gap-3 px-4 mt-2">
+                        <InformationCircleIcon className="w-6 h-6 text-red-500" />
                         <div>
                             <p className='text-gray-400'>Cancelada</p>
                         </div>
-                    </div> :
-                        cita.ESTATUS == '3' ?
-                            <div className='flex justify-start items-center ms-4'>
-                                <InformationCircleIcon className='w-8 h-8 md:w-10 md:h-10 lg:w-10 lg:h-10 mx-4' color='#448AFF' />
+                    </div> : cita.ESTATUS == '3' ?
+                        <div className="w-full flex items-center gap-3 px-4 mt-2">
+                            <InformationCircleIcon className="w-6 h-6 text-blue-500" />
+                            <div>
+                                <p className='text-gray-400'>En cita</p>
+                            </div>
+                        </div> : cita.ESTATUS == '0' || cita.ESTATUS == '1' ?
+                            <div className="w-full flex items-center gap-3 px-4 mt-2">
+                                <InformationCircleIcon className="w-6 h-6 text-gray-500" />
                                 <div>
-                                    <p className='text-gray-400'>En cita</p>
+                                    <p className='text-gray-400'>Pendiente</p>
                                 </div>
-                            </div> :
-                            cita.ESTATUS == '0' || cita.ESTATUS == '1' ?
-                                <div className='flex justify-start items-center ms-4'>
-                                    <InformationCircleIcon className='w-8 h-8 md:w-10 md:h-10 lg:w-10 lg:h-10 mx-4' color='#727272' />
-                                    <div>
-                                        <p className='text-gray-400'>Pendiente</p>
-                                    </div>
-                                </div> : <div className='flex justify-start items-center ms-4'>
-                                    <InformationCircleIcon className='w-8 h-8 md:w-10 md:h-10 lg:w-10 lg:h-10 mx-4' color='#fc6500' />
-                                    <div>
-                                        <p className='text-gray-400'>Finalizada</p>
-                                    </div>
-                                </div>}
-                    {flagEvent ? <></> : <hr className="mb-4 mt-4" />}
-                    {flagEvent ? <></> : <div className='flex justify-start items-center ms-4'>
-                        <BuildingStorefrontIcon className='w-8 h-8 md:w-10 md:h-10 lg:w-10 lg:h-10 mx-4 text-orange-500 flex-shrink-0' />
+                            </div> : <div className="w-full flex items-center gap-3 px-4 mt-2">
+                                <InformationCircleIcon className="w-6 h-6 text-orange-500" />
+                                <div>
+                                    <p className='text-gray-400'>Finalizada</p>
+                                </div>
+                            </div>}
+                </div>
+                {flagEvent ? <></> : <hr className="my-4" />}
+                <div className="text-left px-4">
+                    {flagEvent ? <></> : <div className="w-full flex items-center gap-3 px-4 mt-2">
+                        <BuildingStorefrontIcon className="w-6 h-6 text-orange-500" />
                         <div>
                             <p className='text-gray-400'>{cita.CATEGORIA}</p>
                         </div>
                     </div>}
-                    {flagEvent ? <></> : <div className='flex justify-start items-center ms-4 mt-2'>
-                        <ChatBubbleLeftEllipsisIcon className='w-8 h-8 md:w-10 md:h-10 lg:w-10 lg:h-10 mx-4 text-orange-500 flex-shrink-0' />
-                        <div className='text-left mr-5'>
+                    {flagEvent ? <></> : <div className="w-full flex items-center gap-3 px-4 mt-2">
+                        <ChatBubbleLeftEllipsisIcon className="w-6 h-6 text-orange-500" />
+                        <div>
                             <p className='text-gray-400'>{cita.MENSSAGE ? cita.MENSSAGE : 'Sin Motivo de la visita/Servicio'}</p>
                         </div>
                     </div>}
-                    {flagEvent ? <></> : <hr className="mb-4 mt-4" />}
-                    {flagEvent ? <></> : <h1 className='font-bold text-black mb-1'>Ubicación</h1>}
-                    {flagEvent ? <></> : <div className='flex justify-start items-center ms-4'
-                        style={{
+
+                </div>
+                {flagEvent ? <></> : <hr className="my-4" />}
+                <div className="text-left px-4">
+                    {flagEvent ? <></> : <h4 className="text-lg font-semibold">Ubicación</h4>}
+                    {flagEvent ? <></> : cita.BUS_USER_PHONE &&
+                        <div className="w-full flex items-center gap-3 px-4 mt-2" style={{
                             cursor: 'pointer'
                         }}
-                        onClick={() => {
-                            if (navigator.platform.indexOf('iPhone') !== -1 || navigator.platform.indexOf('iPad') !== -1 || navigator.platform.indexOf('iPod') !== -1) {
-                                window.open(`maps://maps.google.com/?q=${cita.ADDRESS_FIRST} ${cita.ADDRESS_SECOND} CP ${cita.POSTAL_CODE} ${cita.CITY}, ${cita.STATE} Mexico`);
-                            } else {
-                                window.open(`https://maps.google.com?q=${cita.ADDRESS_FIRST} ${cita.ADDRESS_SECOND} CP ${cita.POSTAL_CODE} ${cita.CITY}, ${cita.STATE} Mexico`);
-                            }
-                        }}>
-                        <MapPinIcon className='w-8 h-8 md:w-10 md:h-10 lg:w-10 lg:h-10 mx-4 text-orange-500 flex-shrink-0' />
-                        <div className='text-left mr-5'>
-                            <p className='text-gray-400'>{cita.ADDRESS_FIRST}, {cita.ADDRESS_SECOND}, {cita.POSTAL_CODE}</p>
-                            <p className='text-gray-400'>{cita.CITY}, {cita.STATE}, Mexico</p>
-                        </div>
-                    </div>}
-                    <hr className="mb-4 mt-4" />
-                    {bAcceder ? <div className='businessBtn'>
-                        {cita.ESTATUS == '-1' ? <></> : <button className='mb-10' onClick={() => {
-                            if (cita.ESTATUS == '2' && cita.FLAG_SERVICE_LEVEL == '0') {
-                                setIsOpenC(true);
-                            } else {
-                                setIsOpen(true);
-                            }
-                        }}>{cita.ESTATUS == '2' && cita.FLAG_SERVICE_LEVEL == '0' ? 'Calificar'
-                            : 'Cancelar'}</button>}
-
-                    </div> : <div className='businessBtn'>
-                        <button className='mb-10'><div className='circle' ></div></button>
-                    </div>}
+                            onClick={() => {
+                                if (navigator.platform.indexOf('iPhone') !== -1 || navigator.platform.indexOf('iPad') !== -1 || navigator.platform.indexOf('iPod') !== -1) {
+                                    window.open(`maps://maps.google.com/?q=${cita.ADDRESS_FIRST} ${cita.ADDRESS_SECOND} CP ${cita.POSTAL_CODE} ${cita.CITY}, ${cita.STATE} Mexico`);
+                                } else {
+                                    window.open(`https://maps.google.com?q=${cita.ADDRESS_FIRST} ${cita.ADDRESS_SECOND} CP ${cita.POSTAL_CODE} ${cita.CITY}, ${cita.STATE} Mexico`);
+                                }
+                            }}>
+                            <MapPinIcon className="w-6 h-6 text-orange-500" />
+                            <div>
+                                <p className='text-gray-400'>{cita.ADDRESS_FIRST}, {cita.ADDRESS_SECOND}, {cita.POSTAL_CODE}</p>
+                                <p className='text-gray-400'>{cita.CITY}, {cita.STATE}, Mexico</p>
+                            </div>
+                        </div>}
+                </div>
+                {flagEvent ? <></> : <hr className="my-4" />}
+                <div className="mt-6 px-4 mb-6">
+                    {bAcceder ? (
+                        cita.ESTATUS == '-1' ? <></> :
+                        <button
+                            onClick={() => {
+                                if (cita.ESTATUS == '2' && cita.FLAG_SERVICE_LEVEL == '0') {
+                                    setIsOpenC(true);
+                                } else {
+                                    setIsOpen(true);
+                                }
+                            }}
+                            className="w-full py-3 rounded-md font-bold text-white bg-orange-500 hover:bg-orange-600">
+                            {cita.ESTATUS == '2' && cita.FLAG_SERVICE_LEVEL == '0' ? 'Calificar'
+                                : 'Cancelar'}
+                        </button>
+                    ) : (
+                        <button className="w-full py-3 rounded-md bg-gray-300">
+                            <span className="animate-pulse">Procesando...</span>
+                        </button>
+                    )}
                 </div>
                 {/* Modal */}
                 {isOpen ? (
@@ -395,9 +406,9 @@ export function CancelarAppoin() {
                                             cita.ESTATUS == '2' ||
                                             cita.ESTATUS == '-1') {
                                             if (cita.ESTATUS == '3') {
-                                                alert('No se puede cancelar la cita (Actual)');
+                                                toast.error('No se puede cancelar la cita (Actual)');
                                             } else if (cita.ESTATUS == '-1') {
-                                                alert('No se puede cancelar la cita (Cancelada)');
+                                                toast.error('No se puede cancelar la cita (Cancelada)');
                                             } else if (cita.FLAG_SERVICE_LEVEL ==
                                                 '0') {
                                                 _buildCalif();
