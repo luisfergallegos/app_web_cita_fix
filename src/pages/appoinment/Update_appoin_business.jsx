@@ -2,8 +2,9 @@
 import { useLoaderData, useNavigate } from 'react-router-dom';
 import { dateSpanish, fetchData } from "../../Wrapper.js";
 import { forwardRef, useEffect, useState } from "react";
+import { toast } from "react-toastify";
 // assets
-import './Add_appoin.css';
+// import './Add_appoin.css';
 import '../../components/Loading.css';
 import Loaging from '../../components/Loading.jsx';
 import { urlApi } from "../../styles/Constants.jsx";
@@ -308,28 +309,28 @@ export function UpdateAppoinBusiness() {
     if (loading) {
         return <Loaging />;
     }
+
+    const photoBase64 = arrayBufferToBase64(cita.USER_PHOTO == null ? cita.USER_PHOTO : cita.USER_PHOTO.data);
+
     return (
-        <div className="min-h-screen grid items-center justify-center bg-gradient-to-br from-gray-600 to-gray-800 px-4">
-            <div className="bg-white rounded-3xl shadow-xl mt-20 mb-10 text-center animate-fade-in-up w-full max-w-md">
-                <div className="flex justify-center mb-4">
-                    {
-                        cita.USER_PHOTO == null ? <img className="w-40 h-40 object-cover rounded-full border mt-8 bg-gray-300" src={User} /> :
-                            <img className="w-40 h-40 object-cover rounded-full border mt-8" src={'data:image/jpeg;base64,' + arrayBufferToBase64(cita.USER_PHOTO.data)} />
-                    }
-                </div>
-                <div>
-                    <h4 className='text-2xl font-bold text-black mb-1'>{cita.ANONIMO == '' ? cita.USER_NAME : cita.ANONIMO.substring(0, cita.ANONIMO.indexOf(","))}</h4>
+        <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-600 to-gray-800 p-4">
+            <div className="w-full max-w-lg bg-white rounded-3xl shadow-xl p-6 text-center mt-20">
+                <div className="flex flex-col items-center">
+                    {photoBase64 ? (
+                        <img className="w-36 h-36 rounded-full object-cover border mt-4" src={`data:image/jpeg;base64,${photoBase64}`} alt="business" />
+                    ) : (
+                        <img className="w-36 h-36 rounded-full object-cover border mt-4 bg-gray-200" src={User} alt="default" />
+                    )}
+                    <h3 className="text-2xl font-bold mt-4 text-black">{cita.ANONIMO == '' ? cita.USER_NAME : cita.ANONIMO.substring(0, cita.ANONIMO.indexOf(","))}</h3>
                     <h4 className='text-black mb-1'>{cita.ANONIMO == '' ? '' : cita.ANONIMO.substring(cita.ANONIMO.indexOf(",") + 1, cita.ANONIMO.length)}</h4>
-                    <p className='ml-10 mr-10 text-gray-400 mb-4'>{ConvertDateTime(cita.APPOINTMENT_DATE, cita.APPOINTMENT_TIME, 1)} -
+                    <p className='w-full text-gray-400 mb-4'>{ConvertDateTime(cita.APPOINTMENT_DATE, cita.APPOINTMENT_TIME, 1)} -
                         {ConvertDateTime(cita.APPOINTMENT_DATE, cita.APPOINTMENT_TIME, 0)}</p>
-                </div>
-                {flagAnonPhone != '' ?
-                    <div className='flex justify-start items-center ms-4'>
-                        <PhoneIcon className='w-8 h-8 md:w-10 md:h-10 lg:w-10 lg:h-10 mx-4 text-orange-500' />
-                        <div style={{
-                            cursor: 'pointer'
-                        }}
-                            onClick={() => {
+                    {flagAnonPhone != '' ?
+                        <div className="w-full flex items-center gap-3 px-4 mt-2">
+                            <PhoneIcon className="w-6 h-6 text-orange-500" />
+                            <div className="text-left" style={{
+                                cursor: 'pointer'
+                            }} onClick={() => {
                                 const cleanNumber = cita.ANONIMO.substring(cita.ANONIMO.indexOf(",") + 1, cita.ANONIMO.length).replace(/\D/g, '');
                                 if (navigator.platform.indexOf('iPhone') !== -1 || navigator.platform.indexOf('iPad') !== -1 || navigator.platform.indexOf('iPod') !== -1) {
                                     window.open(`https://api.whatsapp.com/send/?phone=${cleanNumber}&text=Hola, ¿Tengo una duda sobre mi cita?&type=phone_number&app_absent=0`);
@@ -337,142 +338,105 @@ export function UpdateAppoinBusiness() {
                                     window.open(`https://api.whatsapp.com/send/?phone=${cleanNumber}&text=Hola, ¿Tengo una duda sobre mi cita?&type=phone_number&app_absent=0`);
                                 }
                             }}>
-                            <p className='text-gray-400'>{cita.ANONIMO.substring(cita.ANONIMO.indexOf(",") + 1, cita.ANONIMO.length)}</p>
-                        </div>
-                    </div>
-                    : (
-                        cita.ANONIMO == '' ?
-                            (
-                                cita.USER_PHONE == '' ?
-                                    <div className='flex justify-start items-center ms-4'
-                                        style={{
-                                            cursor: 'pointer'
-                                        }}
-                                        onClick={() => {
-                                            if (navigator.platform.indexOf('iPhone') !== -1 || navigator.platform.indexOf('iPad') !== -1 || navigator.platform.indexOf('iPod') !== -1) {
-                                                location.href = `mailto:${cita.USER_EMAIL}&subject=Tu cita en ${cita.DORSL}`;
-                                            } else {
-                                                window.open(`mailto:${cita.USER_EMAIL}&subject=Tu cita en ${cita.DORSL}`);
-                                            }
-                                        }}
-                                    >
-                                        <EnvelopeIcon className='w-8 h-8 md:w-10 md:h-10 lg:w-10 lg:h-10 mx-4 text-orange-500' />
-                                        <div>
-                                            <p className='text-gray-400'>{cita.USER_EMAIL}</p>
-                                        </div>
+                                <p className='text-gray-500'>{cita.ANONIMO.substring(cita.ANONIMO.indexOf(",") + 1, cita.ANONIMO.length)}</p>
+                            </div>
+                        </div> : cita.ANONIMO == '' ?
+                            (cita.USER_PHONE == '' ?
+                                <div className="w-full flex items-center gap-3 px-4 mt-2">
+                                    <EnvelopeIcon className="w-6 h-6 text-orange-500" />
+                                    <div className="text-left" style={{
+                                        cursor: 'pointer'
+                                    }} onClick={() => {
+                                        if (navigator.platform.indexOf('iPhone') !== -1 || navigator.platform.indexOf('iPad') !== -1 || navigator.platform.indexOf('iPod') !== -1) {
+                                            location.href = `mailto:${cita.USER_EMAIL}&subject=Tu cita en ${cita.DORSL}`;
+                                        } else {
+                                            window.open(`mailto:${cita.USER_EMAIL}&subject=Tu cita en ${cita.DORSL}`);
+                                        }
+                                    }}>
+                                        <p className='text-gray-500'>{cita.USER_EMAIL}</p>
                                     </div>
-                                    :
-                                    <div className='flex justify-start items-center ms-4'
-                                        style={{
-                                            cursor: 'pointer'
-                                        }}
-                                        onClick={() => {
-                                            const cleanNumber = cita.USER_PHONE.replace(/\D/g, '');
-                                            if (navigator.platform.indexOf('iPhone') !== -1 || navigator.platform.indexOf('iPad') !== -1 || navigator.platform.indexOf('iPod') !== -1) {
-                                                window.open(`https://api.whatsapp.com/send/?phone=${cleanNumber}&text=Hola, ¿Tengo una duda sobre mi cita?&type=phone_number&app_absent=0`);
-                                            } else {
-                                                window.open(`https://api.whatsapp.com/send/?phone=${cleanNumber}&text=Hola, ¿Tengo una duda sobre mi cita?&type=phone_number&app_absent=0`);
-                                            }
-                                        }}>
-                                        <PhoneIcon className='w-8 h-8 md:w-10 md:h-10 lg:w-10 lg:h-10 mx-4 text-orange-500' />
-                                        <div>
-                                            <p className='text-gray-400'>{cita.USER_PHONE}</p>
-                                        </div>
+                                </div> : <div className="w-full flex items-center gap-3 px-4 mt-2">
+                                    <PhoneIcon className="w-6 h-6 text-orange-500" />
+                                    <div className="text-left" style={{
+                                        cursor: 'pointer'
+                                    }} onClick={() => {
+                                        const cleanNumber = cita.USER_PHONE.replace(/\D/g, '');
+                                        if (navigator.platform.indexOf('iPhone') !== -1 || navigator.platform.indexOf('iPad') !== -1 || navigator.platform.indexOf('iPod') !== -1) {
+                                            window.open(`https://api.whatsapp.com/send/?phone=${cleanNumber}&text=Hola, ¿Tengo una duda sobre mi cita?&type=phone_number&app_absent=0`);
+                                        } else {
+                                            window.open(`https://api.whatsapp.com/send/?phone=${cleanNumber}&text=Hola, ¿Tengo una duda sobre mi cita?&type=phone_number&app_absent=0`);
+                                        }
+                                    }}>
+                                        <p className='text-gray-500'>{cita.USER_PHONE}</p>
                                     </div>
-
-                            )
-                            :
-                            <div className='flex justify-start items-center ms-4'
-                                style={{
+                                </div>) : <div className="w-full flex items-center gap-3 px-4 mt-2">
+                                <EnvelopeIcon className="w-6 h-6 text-orange-500" />
+                                <div className="text-left" style={{
                                     cursor: 'pointer'
-                                }}
-                                onClick={() => {
+                                }} onClick={() => {
                                     if (navigator.platform.indexOf('iPhone') !== -1 || navigator.platform.indexOf('iPad') !== -1 || navigator.platform.indexOf('iPod') !== -1) {
                                         location.href = `mailto:${cita.ANONIMO.substring(cita.ANONIMO.indexOf(",") + 1, cita.ANONIMO.length)}&subject=Tu cita en ${cita.DORSL}`;
                                     } else {
                                         window.open(`mailto:${cita.ANONIMO.substring(cita.ANONIMO.indexOf(",") + 1, cita.ANONIMO.length)}&subject=Tu cita en ${cita.DORSL}`);
                                     }
-                                }}
-                            >
-                                <EnvelopeIcon className='w-8 h-8 md:w-10 md:h-10 lg:w-10 lg:h-10 mx-4 text-orange-500' />
-                                <div>
-                                    <p className='text-gray-400'>{cita.ANONIMO.substring(cita.ANONIMO.indexOf(",") + 1, cita.ANONIMO.length)}</p>
-                                </div>
-                            </div>)
-                }
-
-
-                <hr className="mb-4 mt-4" />
-                <div className='businessTitle'>
-                    <h4>Información de la cita</h4>
-                    <div >
-                        {
-                            citaDetalle &&
-                            citaDetalle.map((index) => (
-                                <div className="flex justify-start items-center" >
-                                    <InformationCircleIcon className='w-8 h-8 md:w-10 md:h-10 lg:w-10 lg:h-10 mx-4'
-                                        color={index['STATUS_DETAIL'] == 'Cancelada' ? '#B71C1C' :
-                                            index['STATUS_DETAIL'] == 'Actual' ? '#448AFF' :
-                                                index['STATUS_DETAIL'] == 'Finalizada' || index['STATUS_DETAIL'] == 'Finalizada por baja' ? '#9E9E9E' : '#FF9800'
-                                        } />
-                                    <p>{index['STATUS_DETAIL']}</p>
-                                </div>
-                            )
-                            )
-                        }
-                    </div>
-                </div>
-
-                {cita.FLAG_ADDRESS != '0' ?
-                    <div className='flex justify-start items-center ms-4'>
-                        <MapPinIcon className='w-8 h-8 md:w-10 md:h-10 lg:w-10 lg:h-10 mx-4 text-orange-500' />
-                        <div>
-                            <p className='text-gray-400'>Visita a domicilio</p>
-                        </div>
-                    </div> : <></>
-                }
-
-                {cita.FLAG_ADDRESS != '0' ?
-                    <>
-                        <hr className="mb-4 mt-4" />
-                        <div className='businessTitle'>
-                            <h4>Visita a domicilio</h4>
-                            <div className='businessSubTitleContainer'
-                                style={{
-                                    cursor: 'pointer'
-                                }}
-                                onClick={() => {
-                                    if (navigator.platform.indexOf('iPhone') !== -1 || navigator.platform.indexOf('iPad') !== -1 || navigator.platform.indexOf('iPod') !== -1) {
-                                        window.open(`maps://maps.google.com/?q=${citaAddress.ADDRESS_FIRST} ${citaAddress.ADDRESS_SECOND} CP ${citaAddress.POSTAL_CODE} ${citaAddress.CITY}, ${citaAddress.STATE} Mexico`);
-                                    } else {
-                                        window.open(`https://maps.google.com?q=${citaAddress.ADDRESS_FIRST} ${citaAddress.ADDRESS_SECOND} CP ${citaAddress.POSTAL_CODE} ${citaAddress.CITY}, ${citaAddress.STATE} Mexico`);
-                                    }
                                 }}>
-                                <div className='businessSubTitleIcon'>
-                                    <MapPinIcon className='w-8 h-8 md:w-10 md:h-10 lg:w-10 lg:h-10 mx-4 text-orange-500 flex-shrink-0' />
+                                    <p className='text-gray-500'>{cita.ANONIMO.substring(cita.ANONIMO.indexOf(",") + 1, cita.ANONIMO.length)}</p>
                                 </div>
-                                <div >
-                                    <p >{citaAddress.ADDRESS_FIRST}, {citaAddress.ADDRESS_SECOND}, {citaAddress.POSTAL_CODE} {citaAddress.CITY}, {citaAddress.STATE}, Mexico</p>
-                                </div>
+                            </div>}
+                </div>
+                <hr className="my-4" />
+                <div className="text-left px-4">
+                    <h4 className="text-lg font-semibold">Información de la cita</h4>
+                    {
+                        citaDetalle &&
+                        citaDetalle.map((index) => (
+                            <div className="w-full flex items-center gap-3 px-4 mt-2" >
+                                <InformationCircleIcon className='w-6 h-6'
+                                    color={index['STATUS_DETAIL'] == 'Cancelada' ? '#B71C1C' :
+                                        index['STATUS_DETAIL'] == 'Actual' ? '#448AFF' :
+                                            index['STATUS_DETAIL'] == 'Finalizada' || index['STATUS_DETAIL'] == 'Finalizada por baja' ? '#9E9E9E' : '#FF9800'
+                                    } />
+                                <p className='text-gray-400'>{index['STATUS_DETAIL']}</p>
+                            </div>
+                        )
+                        )
+                    }
+                </div>
+                {cita.FLAG_ADDRESS != '0' ? <hr className="my-4" /> : <></>}
+                {cita.FLAG_ADDRESS != '0' ?
+                    <div className="text-left px-4">
+                        <h4 className="text-lg font-semibold">Visita a domicilio</h4>
+                        <div className="w-full flex items-center gap-3 px-4 mt-2">
+                            <MapPinIcon className="w-6 h-6 text-orange-500" />
+                            <div className="text-left" style={{
+                                cursor: 'pointer'
+                            }} onClick={() => {
+                                if (navigator.platform.indexOf('iPhone') !== -1 || navigator.platform.indexOf('iPad') !== -1 || navigator.platform.indexOf('iPod') !== -1) {
+                                    window.open(`maps://maps.google.com/?q=${citaAddress.ADDRESS_FIRST} ${citaAddress.ADDRESS_SECOND} CP ${citaAddress.POSTAL_CODE} ${citaAddress.CITY}, ${citaAddress.STATE} Mexico`);
+                                } else {
+                                    window.open(`https://maps.google.com?q=${citaAddress.ADDRESS_FIRST} ${citaAddress.ADDRESS_SECOND} CP ${citaAddress.POSTAL_CODE} ${citaAddress.CITY}, ${citaAddress.STATE} Mexico`);
+                                }
+                            }}>
+                                <p className='text-gray-500'>{citaAddress.ADDRESS_FIRST}, {citaAddress.ADDRESS_SECOND}, {citaAddress.POSTAL_CODE} {citaAddress.CITY}, {citaAddress.STATE}, Mexico</p>
                             </div>
                         </div>
-                    </>
-                    :
-                    <div></div>
-                }
-                <hr className="mb-4 mt-4" />
-                <div className='businessTitle'>
-                    <h4>Motivo de la visita/Servicio</h4>
-                    <div className='flex justify-center items-center text-gray-500'>
-                        <p>{cita.MENSSAGE == '' ? 'Sin Motivo de la visita/Servicio' : cita.MENSSAGE}</p>
+                    </div> : <></>}
+                <hr className="my-4" />
+                <div className="text-left px-4">
+                    <h4 className="text-lg font-semibold">Motivo de la visita/Servicio</h4>
+                    <div className="w-full flex items-center gap-3 px-4 mt-2">
+                        <></>
+                        <div className="text-left">
+                            <p className='text-gray-500'>{cita.MENSSAGE == '' ? 'Aún no ha agregado motivo de la visita/Servicio' : cita.MENSSAGE}</p>
+                        </div>
+
                     </div>
                 </div>
-
                 {bMostrarEditar ?
                     <>
-                        <hr className="mb-4 mt-4" />
-                        <div className='businessTitle'>
-                            <h4>Reagendar</h4>
+                        <hr className="my-4" />
+                        <div className="text-left px-4">
+                            <h4 className="text-lg font-semibold">Reagendar</h4>
                         </div>
                         <div className='flex justify-start items-center ms-4'>
                             <CalendarDateRangeIcon className='w-8 h-8 md:w-10 md:h-10 lg:w-10 lg:h-10 mx-4 text-orange-500' />
@@ -488,39 +452,42 @@ export function UpdateAppoinBusiness() {
                                 />
                             </div>
                         </div>
-                        <div className='grid grid-cols-4 gap-5 p-10' >
-                            {citaDate[0] &&
-                                citaDate[0].map(({ APPOINTMENT_TIME, STATUS }, index) =>
-                                (
-                                    <div className={STATUS === 'No' ? 'businessAppointmentTime active' : 'businessAppointmentTime'}
-                                        key={index}
-                                        style={{
-                                            backgroundColor: index === selectedIndex ? 'white' : STATUS === 'No' ? 'grey' : '#e0e0e0',
-                                            color: index === selectedIndex ? '#fc6500' : 'black'
-                                        }}
+                        {/* Horarios */}
+                        <div className="grid grid-cols-4 gap-3 p-6">
+                            {citaDate[0] && citaDate[0].map(({ APPOINTMENT_TIME, STATUS }, idx) => {
+                                const disabled = STATUS !== 'free';
+                                const selected = idx === selectedIndex;
+                                return (
+                                    <button
+                                        key={idx}
+                                        type="button"
+                                        disabled={disabled}
                                         onClick={() => {
-                                            if (STATUS === 'free') {
+                                            if (!disabled) {
                                                 setselectedTime(APPOINTMENT_TIME);
-                                                setselectedIndex(index);
+                                                setselectedIndex(idx);
                                             }
-                                        }}  >
-                                        <label>{APPOINTMENT_TIME} </label>
-                                    </div>
-                                ))
-                            }
+                                        }}
+                                        className={`py-3 px-2 rounded-md shadow-sm text-sm ${selected ? 'bg-white text-orange-500 border' : disabled ? 'bg-gray-300 cursor-not-allowed' : 'bg-gray-100'}`}
+                                    >
+                                        {APPOINTMENT_TIME}
+                                    </button>
+                                );
+                            })}
                         </div>
-                        <hr className="mb-4 mt-4" />
-                        {bAcceder ? <div className='businessBtn'>
-                            <button
-                                onClick={() => {
+                        <hr className="my-4" />
+                        <div className="mt-6 px-4 mb-6">
+                            {bAcceder ? (
+                                <button
+                                    onClick={() => {
                                     var parts = cita.APPOINTMENT_DATE.split('-');
                                     var partsTime = cita.APPOINTMENT_TIME.split(':');
                                     var formattedDate = new Date(parts[0], parts[1] - 1, parts[2], partsTime[0], partsTime[1], partsTime[2]);
                                     if (startDate === '') {
-                                        alert(`Selecciona una fecha`);
+                                        toast.error('Selecciona una fecha.');
                                     }
                                     else if (selectedTime === '') {
-                                        alert(`Selecciona una hora`);
+                                        toast.error('Selecciona una hora.');
                                     }
                                     else if (selectedTime == cita.APPOINTMENT_TIME.substring(0, 5) && startDate != formattedDate) {
                                         setIsOpenU(true);
@@ -529,16 +496,20 @@ export function UpdateAppoinBusiness() {
                                         setIsOpenU(true);
                                     }
                                     else {
-                                        alert(`seleccionar una hora distinta a ${cita.APPOINTMENT_TIME}`);
+                                        toast.error(`Seleccionar una hora distinta a ${cita.APPOINTMENT_TIME}`);
                                     }
-
-                                }}>Guardar</button>
-                        </div> : <div className='businessBtn'>
-                            <button className='mb-10'><div className='circle' ></div></button>
-                        </div>}
-
-                        <div className="mb-4 mt-4" />
-                    </> : <div></div>}
+                                }}
+                                    className="w-full py-3 rounded-md font-bold text-white bg-orange-500 hover:bg-orange-600"
+                                >
+                                    Guardar
+                                </button>
+                            ) : (
+                                <button className="w-full py-3 rounded-md bg-gray-300">
+                                    <span className="animate-pulse">Procesando...</span>
+                                </button>
+                            )}
+                        </div>                       
+                    </> : <></>}
                 {/* Modal */}
                 {isOpen ?
                     <>
