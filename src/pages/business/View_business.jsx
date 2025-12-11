@@ -66,27 +66,35 @@ export function ViewBusiness() {
 
     // Descargar como imagen (opcional). Requiere html2canvas instalado
     async function downloadAsImage() {
-        const node = previewRef.current;
-        if (!node) return;
+        try {
+            const node = previewRef.current;
+            if (!node) return;
 
-        const canvas = await html2canvas(node, { scale: 2 });
-        const dataUrl = canvas.toDataURL("image/png");
+            const canvas = await html2canvas(node, { scale: 2 });
+            const dataUrl = canvas.toDataURL("image/png");
 
-        const blob = await (await fetch(dataUrl)).blob();
-        const file = new File([blob], "invitacion.png", { type: "image/png" });
+            const blob = await (await fetch(dataUrl)).blob();
+            const file = new File([blob], "invitacion.png", { type: "image/png" });
 
-        if (navigator.canShare && navigator.canShare({ files: [file] })) {
-            await navigator.share({
-                files: [file],
-                text: sURL
-            });
-        } else {
-            // fallback
-            window.open(
-                `https://wa.me/?text=${encodeURIComponent('Próximas citas disponibles: '+sURL)}`,
-                "_blank"
-            );
+            if (navigator.canShare && navigator.canShare({ files: [file] })) {
+                await navigator.share({
+                    files: [file],
+                    text: sURL
+                });
+                return;
+            }
+
+            const link = document.createElement("a");
+            link.download = `${empresa.DORSL}_citas_disponibles.png`;
+            link.href = canvas.toDataURL("image/png");
+            link.click();
+            toast.info("Descargamos la imagen porque tu navegador no soporta compartir archivos.");
+
+        } catch (e) {
+            console.error(e);
+            toast.error("Ocurrió un error generando la imagen.");
         }
+
     }
 
     useEffect(() => {
@@ -171,7 +179,11 @@ export function ViewBusiness() {
                     {/* BOTÓN copy enlace */}
                     <button onClick={() => {
                         navigator.clipboard.writeText(sURL);
-                        return toast.success(`El enlace se ha copiado en el portapapeles`);
+                        window.open(
+                            `https://wa.me/?text=${encodeURIComponent('Próximas citas disponibles: ' + sURL)}`,
+                            "_blank"
+                        );
+                        return toast.info(`El enlace se ha copiado en el portapapeles`);
                     }}
                         className="w-full flex items-center justify-end"
                     >
