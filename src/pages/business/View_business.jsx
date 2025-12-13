@@ -78,7 +78,9 @@ export function ViewBusiness() {
 
             if (navigator.canShare && navigator.canShare({ files: [file] })) {
                 await navigator.share({
-                    files: [file], sURL,
+                    files: [file], 
+                    text: "Próximas citas disponibles",
+                    url: sURL,
                 });
                 return;
             }
