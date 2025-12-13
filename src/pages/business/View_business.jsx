@@ -230,7 +230,6 @@ export function ViewBusiness() {
                         sCorreo == null & sPassword == null ?
                             <div className="text-left px-4 mb-2">
                                 <h4 className="text-sm font-semibold">Citas disponibles.</h4>
-                                <h4 className="text-sm font-semibold">En tus redes sociales</h4>
                             </div> : <div className="text-left px-4 mb-2">
                                 <h4 className="text-sm font-semibold">Comparte tus próximas citas disponibles.</h4>
                                 <h4 className="text-sm font-semibold">En tus redes sociales</h4>
