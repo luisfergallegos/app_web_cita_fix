@@ -78,8 +78,7 @@ export function ViewBusiness() {
 
             if (navigator.canShare && navigator.canShare({ files: [file] })) {
                 await navigator.share({
-                    files: [file],
-                    text: sURL
+                    files: [file], sURL,
                 });
                 return;
             }
@@ -225,10 +224,16 @@ export function ViewBusiness() {
                         </div>
                     </div>
                     <hr className="my-4" />
-                    <div className="text-left px-4 mb-2">
-                        <h4 className="text-sm font-semibold">Comparte tus próximas citas disponibles.</h4>
-                        <h4 className="text-sm font-semibold">En tus redes sociales</h4>
-                    </div>
+                    {
+                        sCorreo == null & sPassword == null ?
+                            <div className="text-left px-4 mb-2">
+                                <h4 className="text-sm font-semibold">Citas disponibles.</h4>
+                                <h4 className="text-sm font-semibold">En tus redes sociales</h4>
+                            </div> : <div className="text-left px-4 mb-2">
+                                <h4 className="text-sm font-semibold">Comparte tus próximas citas disponibles.</h4>
+                                <h4 className="text-sm font-semibold">En tus redes sociales</h4>
+                            </div>
+                    }
                     <div
                         ref={previewRef}
                         className="bg-gradient-to-br from-gray-200 to-indigo-50 border border-gray-100 rounded-2xl p-6 shadow-md"

@@ -4,10 +4,11 @@ import { useLoaderData, useNavigate } from 'react-router-dom';
 import { fetchData } from "../../Wrapper.js";
 import { useEffect, useRef, useState } from "react";
 import { useLocation } from 'react-router-dom';
+import { toast } from "react-toastify";
 
 // assets
 import { urlApi } from "../../styles/Constants.jsx";
-import { TrashIcon, UserCircleIcon, ChevronDownIcon, ChevronUpIcon } from '@heroicons/react/24/solid';
+import { TrashIcon, UserCircleIcon, ChevronDownIcon, ChevronUpIcon, PencilSquareIcon } from '@heroicons/react/24/solid';
 // import InvitationPreview from "../../components/InvitationPreview.jsx";
 
 
@@ -26,6 +27,7 @@ export function UpdateEvento({ onSubmit }) {
     const evento = location.state?.evento ?? '';
     const [invitados, setInvitados] = useState([]);
     const [bAcceder, setbAcceder] = useState(false);
+    const [bAccederEdit, setbAccederEdit] = useState(true);
     const [bEnviar, setbEnviar] = useState(true);
     const [totalInvitados, setTotalInvitados] = useState(0);
     const [totalConfirmados, setTotalConfirmados] = useState(0);
@@ -76,8 +78,8 @@ export function UpdateEvento({ onSubmit }) {
         dressCode: evento.DRESSCODE,
         notas: evento.NOTAS,
         despedida: evento.DESPEDIDA,
-        appointment_date: evento.EVENT_DATE,
-        appointment_time: evento.EVENT_TIME,
+        event_date: evento.EVENT_DATE,
+        event_time: evento.EVENT_TIME,
         bussiness_id: evento.BUSSINESS_ID,
         isPrivate: 0
     });
@@ -234,10 +236,10 @@ export function UpdateEvento({ onSubmit }) {
                         appointment_confirm: 0,
                         isPrivate: 0
                     });
-                    throw new Error(`HTTP error! status: ${response.status}`);
+                    toast.error(`Invitación no se puedo enviar. intenta de nuevo`);
                 }
                 else {
-
+                    toast.success(`Invitación enviada`);
                     setbEnviar(true);
                     setSubmitted(false);
                     setbAcceder(false);
@@ -357,7 +359,7 @@ export function UpdateEvento({ onSubmit }) {
             const json = await response.json();
             if (json['sucess'] == false) {
                 setbAccederIndexCancelar('');
-                throw new Error(`HTTP error! status: ${response.status}`);
+                toast.error(`Error en el servidor, intenta más tarde`);
             }
             else {
                 setbAccederIndexCancelar('');
@@ -367,6 +369,32 @@ export function UpdateEvento({ onSubmit }) {
         catch (e) {
             setbAccederIndexCancelar('');
             return;
+        }
+    };
+
+    const _buildEditEvent = async () => {
+        if (bAccederEdit) {
+            setbAccederEdit(false);
+            // Enviar por POST
+            var options = {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(eventoEdit)
+            }
+            try {
+                const response = await fetch(`${urlApi}event`, options);
+                const json = await response.json();
+                if (json['sucess'] == false) {
+                    setbAccederEdit(true);
+                    toast.error(`Error en el servidor, intenta más tarde`);
+                }
+                else {
+                    navigate("/home");
+                }
+            }
+            catch (e) {
+                setbAccederEdit(true);
+            }
         }
     };
 
@@ -383,7 +411,7 @@ export function UpdateEvento({ onSubmit }) {
                 const json = await response.json();
                 if (json['sucess'] == false) {
                     setbAccederConf(true);
-                    throw new Error(`HTTP error! status: ${response.status}`);
+                    toast.error(`Error en el servidor, intenta más tarde`);
                 }
                 else
                     setbAccederConf(true);
@@ -410,23 +438,58 @@ export function UpdateEvento({ onSubmit }) {
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-orange-600 to-orange-800 py-8 px-4 sm:px-6 lg:px-8">
-            {/* <InvitationPreview data={data} /> */}
-            <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-8 mt-12">
+            {/* <InvitationPreview /> */}
+            <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-8 mt-12">                
                 {/* Preview Card Evento */}
-                <div className="flex flex-col gap-4">
+                <div className="flex flex-col gap-4">                    
                     <div className="bg-white shadow-lg rounded-2xl p-6 md:p-8">
+                        {/* <div className="flex items-center justify-end">
+                            {editEvent &&
+                                (<button 
+                                    onClick={() => setEditEvent(false)}>
+                                    <PencilSquareIcon className="w-8 h-8 text-blue-500 flex-shrink-0" />
+                                </button>)
+                            }
+                        </div> */}
                         <div className="flex items-center justify-between">
                             <div>
-                                {/* {editEvent &&
-                                    (<button className="px-3 py-1 text-sm rounded-lg bg-blue-500 text-white hover:bg-blue-600"
-                                        onClick={() => setEditEvent(false)}>
-                                        Editar evento
-                                    </button>) 
-                                } */}
-                                <h3 className="mt-3 text-lg font-bold text-gray-900">{evento.EVENTO || 'Tipo de evento'} de {evento.ANFITRION || 'Anfitrión'}</h3>
-                                <p className="mb-2 text-sm text-gray-700">
-                                    <strong>Vestimenta:</strong> {evento.DRESSCODE || 'Código de vestimenta'}
-                                </p>
+                                {!editEvent ?
+                                    <select
+                                        name="evento"
+                                        value={eventoEdit.evento}
+                                        onChange={handleEditEventChange}
+                                        className="mt-1 block w-full rounded-lg border-gray-200 shadow-sm focus:ring-2 focus:ring-indigo-300"
+                                    >
+                                        <option>Cumpleaños</option>
+                                        <option>Fiesta</option>
+                                        <option>Graduación</option>
+                                        <option>Boda</option>
+                                        <option>XV</option>
+                                        <option>Reunión</option>
+                                        {/* <option>Curso</option>
+                                    <option>Conferencia</option>
+                                    <option>Otro</option> */}
+                                    </select>
+                                    :
+                                    <h3 className="mt-3 text-lg font-bold text-gray-900">{evento.EVENTO || 'Tipo de evento'} de {evento.ANFITRION || 'Anfitrión'}</h3>
+                                }
+                                {!editEvent ?
+                                    <select
+                                        name="dressCode"
+                                        value={eventoEdit.dressCode}
+                                        onChange={handleEditEventChange}
+                                        className="mt-1 block w-full rounded-lg border-gray-200 shadow-sm focus:ring-2 focus:ring-indigo-300"
+                                    >
+                                        <option>Casual</option>
+                                        <option>Formal</option>
+                                        <option>Temática</option>
+                                        <option>Elegante</option>
+                                    </select>
+                                    :
+                                    <p className="mb-2 text-sm text-gray-700">
+                                        <strong>Vestimenta:</strong> {evento.DRESSCODE || 'Código de vestimenta'}
+                                    </p>
+                                }
                             </div>
                             <div className="text-xs text-gray-400">Vista previa</div>
                         </div>
@@ -471,11 +534,32 @@ export function UpdateEvento({ onSubmit }) {
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm text-gray-700">
                                 <div>
                                     <p className="text-xs text-gray-500">📅 Fecha</p>
-                                    <p className="font-medium">{formatDate(evento.EVENT_DATE)}</p>
+                                    {!editEvent ?
+                                        <input
+                                            type="date"
+                                            name="event_date"
+                                            value={eventoEdit.event_date}
+                                            onChange={handleEditEventChange}
+                                            className={`border rounded-lg px-3 py-1 w-full`}
+                                        />
+                                        :
+                                        <p className="font-medium">{formatDate(evento.EVENT_DATE)}</p>
+                                    }
+
                                 </div>
                                 <div>
                                     <p className="text-xs text-gray-500">🕒 Hora</p>
-                                    <p className="font-medium">{formatTime(evento.EVENT_TIME)}</p>
+                                    {!editEvent ?
+                                        <input
+                                            type="time"
+                                            name="event_time"
+                                            value={eventoEdit.event_time}
+                                            onChange={handleEditEventChange}
+                                            className={`border rounded-lg px-3 py-1 w-full`}
+                                        />
+                                        :
+                                        <p className="font-medium">{formatTime(evento.EVENT_TIME)}</p>
+                                    }
                                 </div>
 
                                 <div className="sm:col-span-2">
@@ -519,10 +603,18 @@ export function UpdateEvento({ onSubmit }) {
                         </div>
                         {!editEvent ?
                             <div className="flex gap-3 mt-4">
-                                <button className="px-3 py-1 text-sm rounded-lg bg-green-500 text-white hover:bg-green-600"
-                                    onClick={() => setEditEvent(!editEvent)}>
-                                    Actualizar
-                                </button>
+                                {bAccederEdit ?
+                                    <button className="px-3 py-1 text-sm rounded-lg bg-green-500 text-white hover:bg-green-600"
+                                        onClick={() => {
+                                            _buildEditEvent();
+                                        }}>
+                                        Actualizar
+                                    </button>
+                                    :
+                                    <button className="px-3 py-1 text-sm rounded-lg bg-green-300">
+                                        <span className="animate-pulse">Procesando...</span>
+                                    </button>
+                                }
                                 <button className="px-3 py-1 text-sm rounded-lg bg-gray-500 text-white hover:bg-gray-600"
                                     onClick={() => setEditEvent(!editEvent)}>
                                     Cancelar
@@ -608,7 +700,7 @@ export function UpdateEvento({ onSubmit }) {
                                                     <label className="ms:text-1xl lg:text-1xl font-bold text-black text-center">{index['ANONIMO'] != '' ? index['ANONIMO'].substring(index['ANONIMO'].indexOf(",") + 1, index['ANONIMO'].length) : ''} </label>
                                                     <label className="ms:text-1xl lg:text-1xl text-gray-500 text-center">Invitados : {index['MESSAGE'].substring(0, index['MESSAGE'].indexOf(","))} {`(${index['MESSAGE'].substring(index['MESSAGE'].indexOf(",") + 1, index['MESSAGE'].length)})`} </label>
                                                     <label className="ms:text-1xl lg:text-1xl font-bold text-green-600 text-center">{index['APPOINTMENT_CONFIRM'] == '1' ? 'Confirmada' : ''} </label>
-                                                    <label className="ms:text-1xl lg:text-1xl font-bold text-red-600 text-center">{index['APPOINTMENT_CONFIRM'] == '2' ? 'No asistiré' :  ''} </label>
+                                                    <label className="ms:text-1xl lg:text-1xl font-bold text-red-600 text-center">{index['APPOINTMENT_CONFIRM'] == '2' ? 'No asistiré' : ''} </label>
                                                 </div>
                                                 {bAccederIndexCancelar == index['APOINMENT_ID'] ?
                                                     <button className="px-4 py-2 mt-3 mb-3 mr-2 rounded-lg bg-red-600 text-white">
