@@ -632,7 +632,7 @@ export function UpdateEvento({ onSubmit }) {
                                 >
                                     Invitar al evento
                                 </button>
-                                <div className="text-sm text-gray-500">
+                                <div className="ml-4 text-sm text-gray-500">
                                     <span> Invitados {('0' + (totalInvitados)).slice(-2)} / Confirmados {('0' + (totalConfirmados)).slice(-2)} </span>
                                 </div>
                             </div>
