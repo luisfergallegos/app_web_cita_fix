@@ -29,6 +29,7 @@ export function UpdateEvento({ onSubmit }) {
     const [bAcceder, setbAcceder] = useState(false);
     const [bAccederEdit, setbAccederEdit] = useState(true);
     const [bEnviar, setbEnviar] = useState(true);
+    const [bUseEmail, setbUseEmail] = useState(false);
     const [totalInvitados, setTotalInvitados] = useState(0);
     const [totalConfirmados, setTotalConfirmados] = useState(0);
     const [form, setForm] = useState({
@@ -59,7 +60,7 @@ export function UpdateEvento({ onSubmit }) {
         phone: "",
         correo: "",
         appointment_confirm: 0,
-        isPrivate: 0
+        isPrivate: evento.ISPRIVATE
     });
     const [errors, setErrors] = useState({});
     const [submitted, setSubmitted] = useState(false);
@@ -81,7 +82,7 @@ export function UpdateEvento({ onSubmit }) {
         event_date: evento.EVENT_DATE,
         event_time: evento.EVENT_TIME,
         bussiness_id: evento.BUSSINESS_ID,
-        isPrivate: 0
+        isPrivate: evento.ISPRIVATE
     });
 
     const toggle = (setter) => setter((prev) => !prev);
@@ -146,7 +147,7 @@ export function UpdateEvento({ onSubmit }) {
         const e = {};
         if (!form.nombre.trim())
             e.nombre = "El nombre del contacto es obligatorio.";
-        if (form.isPrivate) {
+        if (bUseEmail) {
             const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
             if (!emailRegex.test(form.correo))
                 e.correo = "El correo electrónico es inválido.";
@@ -185,7 +186,7 @@ export function UpdateEvento({ onSubmit }) {
         // if(!form.isPrivate){
         //     form.phone = formatPhone(form.phone);
         // }
-        form.anonimo = form.isPrivate ? `${form.nombre},${form.correo}` : `${form.nombre},+52 ${form.phone}`;
+        form.anonimo = bUseEmail ? `${form.nombre},${form.correo}` : `${form.nombre},+52 ${form.phone}`;
         form.dorsl = `${evento.EVENTO} de ${evento.ANFITRION}`;
         form.message = `${form.numInv},${form.detalleInv}`;
         const payload = { ...form };
@@ -199,13 +200,15 @@ export function UpdateEvento({ onSubmit }) {
                 body: JSON.stringify(payload)
             }
             try {
-                const response = await fetch(`${urlApi}appoinEveW`, options);
+                const flag = bUseEmail ? `${urlApi}appoinEveE` : `${urlApi}appoinEveW`;
+                const response = await fetch(flag, options);
                 const json = await response.json();
                 if (json['sucess'] == false) {
                     // Avisar que no se puedo enviar la invitación
                     setbEnviar(true);
                     setSubmitted(false);
                     setbAcceder(false);
+                    setbUseEmail(false);
                     setForm({
                         user_id: 0,
                         bussiness_id: evento.BUSSINESS_ID,
@@ -234,7 +237,7 @@ export function UpdateEvento({ onSubmit }) {
                         phone: "",
                         correo: "",
                         appointment_confirm: 0,
-                        isPrivate: 0
+                        isPrivate: evento.ISPRIVATE
                     });
                     toast.error(`Invitación no se puedo enviar. intenta de nuevo`);
                 }
@@ -243,6 +246,7 @@ export function UpdateEvento({ onSubmit }) {
                     setbEnviar(true);
                     setSubmitted(false);
                     setbAcceder(false);
+                    setbUseEmail(false);
                     setForm({
                         user_id: 0,
                         bussiness_id: evento.BUSSINESS_ID,
@@ -271,7 +275,7 @@ export function UpdateEvento({ onSubmit }) {
                         phone: "",
                         correo: "",
                         appointment_confirm: 0,
-                        isPrivate: 0
+                        isPrivate: evento.ISPRIVATE
                     });
                     UpdateInvitados();
                 }
@@ -280,6 +284,7 @@ export function UpdateEvento({ onSubmit }) {
                 setbEnviar(true);
                 setSubmitted(false);
                 setbAcceder(false);
+                setbUseEmail(false);
                 setForm({
                     user_id: 0,
                     bussiness_id: evento.BUSSINESS_ID,
@@ -308,7 +313,7 @@ export function UpdateEvento({ onSubmit }) {
                     phone: "",
                     correo: "",
                     appointment_confirm: 0,
-                    isPrivate: 0
+                    isPrivate: evento.ISPRIVATE
                 });
             }
 
@@ -389,6 +394,7 @@ export function UpdateEvento({ onSubmit }) {
                     toast.error(`Error en el servidor, intenta más tarde`);
                 }
                 else {
+                    setTimeout(() => toast.success("Evento editado"), 3000);
                     navigate("/home");
                 }
             }
@@ -443,14 +449,14 @@ export function UpdateEvento({ onSubmit }) {
                 {/* Preview Card Evento */}
                 <div className="flex flex-col gap-4">                    
                     <div className="bg-white shadow-lg rounded-2xl p-6 md:p-8">
-                        {/* <div className="flex items-center justify-end">
+                        <div className="flex items-center justify-end">
                             {editEvent &&
                                 (<button 
                                     onClick={() => setEditEvent(false)}>
                                     <PencilSquareIcon className="w-8 h-8 text-blue-500 flex-shrink-0" />
                                 </button>)
                             }
-                        </div> */}
+                        </div>
                         <div className="flex items-center justify-between">
                             <div>
                                 {!editEvent ?
@@ -466,9 +472,9 @@ export function UpdateEvento({ onSubmit }) {
                                         <option>Boda</option>
                                         <option>XV</option>
                                         <option>Reunión</option>
-                                        {/* <option>Curso</option>
-                                    <option>Conferencia</option>
-                                    <option>Otro</option> */}
+                                        <option>Curso</option>
+                                        <option>Conferencia</option>
+                                        <option>Otro</option>
                                     </select>
                                     :
                                     <h3 className="mt-3 text-lg font-bold text-gray-900">{evento.EVENTO || 'Tipo de evento'} de {evento.ANFITRION || 'Anfitrión'}</h3>
@@ -486,10 +492,22 @@ export function UpdateEvento({ onSubmit }) {
                                         <option>Elegante</option>
                                     </select>
                                     :
-                                    <p className="mb-2 text-sm text-gray-700">
+                                    <p className="text-sm text-gray-700">
                                         <strong>Vestimenta:</strong> {evento.DRESSCODE || 'Código de vestimenta'}
                                     </p>
                                 }
+                                {!editEvent ? <>
+                                    <input
+                                        type="checkbox"
+                                        name="isPrivate"
+                                        checked={eventoEdit.isPrivate || false}
+                                        onChange={(e) => handleEditEventChange({ target: { name: 'isPrivate', value: e.target.checked } })}
+                                        className={`h-4 w-4 text-orange-500 rounded border-gray-300 focus:ring-orange-500`}
+                                    />
+                                    <span className="ml-2 text-sm font-medium text-gray-700">Evento privado</span></> :
+                                    <p className="mb-2 text-sm text-gray-700">
+                                        <strong>Evento:</strong> {evento.ISPRIVATE ? 'Privado' : 'Abierto'}
+                                    </p>}
                             </div>
                             <div className="text-xs text-gray-400">Vista previa</div>
                         </div>
@@ -758,7 +776,7 @@ export function UpdateEvento({ onSubmit }) {
                                     phone: "",
                                     correo: "",
                                     appointment_confirm: 0,
-                                    isPrivate: 0
+                                    isPrivate: evento.ISPRIVATE
                                 });
                             }}>cancelar</div>
                         </div>
@@ -779,14 +797,14 @@ export function UpdateEvento({ onSubmit }) {
                                 <label className="flex items-center gap-2 mt-2">
                                     <input
                                         type="checkbox"
-                                        name="isPrivate"
-                                        checked={form.isPrivate || false}
-                                        onChange={(e) => handleChange({ target: { name: 'isPrivate', value: e.target.checked } })}
+                                        name="bUseEmail"
+                                        checked={bUseEmail || false}
+                                        onChange={(e) => setbUseEmail(!bUseEmail)}
                                         className={`h-4 w-4 text-orange-500 rounded border-gray-300 focus:ring-orange-500`}
                                     />
                                     <span className="text-sm font-bold text-gray-700">¿Deseas que sea por correo electrónico?</span>
                                 </label>
-                                {form.isPrivate ? <div className="grid grid-cols-1 sm:grid-cols-1 gap-4">
+                                {bUseEmail ? <div className="grid grid-cols-1 sm:grid-cols-1 gap-4">
                                     <label className="block">
                                         <span className="text-sm font-medium text-gray-700">¿Cuál es el correo electrónico?</span>
                                         <input
@@ -851,7 +869,6 @@ export function UpdateEvento({ onSubmit }) {
                                 <div className="flex items-center justify-between">
                                     {bEnviar ? <button
                                         type="submit"
-                                        disabled={form.isPrivate ? true : false}
                                         className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-orange-500 text-white 
                                         font-semibold shadow hover:bg-orange-600 focus:outline-none focus:ring-2 focus:ring-indigo-300 
                                         disabled:border-gray-50 disabled:bg-gray-200 disabled:text-gray-500"
@@ -862,8 +879,7 @@ export function UpdateEvento({ onSubmit }) {
                                         {submitted ? (
                                             <span className="text-orange-600 font-medium">¡Invitación lista!</span>
                                         ) : (
-                                            form.isPrivate ? <span>Por el momento no se pueden enviar invitaciones por correo electrónico</span>
-                                                : <span>Los campos obligatorios están marcados</span>
+                                            <span>Los campos obligatorios están marcados</span>
                                         )}
                                     </div>
                                 </div>
