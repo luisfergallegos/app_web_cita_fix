@@ -445,450 +445,463 @@ export function UpdateEvento({ onSubmit }) {
     return (
         <div className="min-h-screen bg-gradient-to-br from-orange-600 to-orange-800 py-8 px-4 sm:px-6 lg:px-8">
             {/* <InvitationPreview /> */}
-            <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-8 mt-12">                
-                {/* Preview Card Evento */}
-                <div className="flex flex-col gap-4">                    
-                    <div className="bg-white shadow-lg rounded-2xl p-6 md:p-8">
-                        <div className="flex items-center justify-end">
-                            {editEvent &&
-                                (<button 
-                                    onClick={() => setEditEvent(false)}>
-                                    <PencilSquareIcon className="w-8 h-8 text-blue-500 flex-shrink-0" />
-                                </button>)
-                            }
-                        </div>
-                        <div className="flex items-center justify-between">
-                            <div>
-                                {!editEvent ?
-                                    <select
-                                        name="evento"
-                                        value={eventoEdit.evento}
-                                        onChange={handleEditEventChange}
-                                        className="mt-1 block w-full rounded-lg border-gray-200 shadow-sm focus:ring-2 focus:ring-indigo-300"
-                                    >
-                                        <option>Cumpleaños</option>
-                                        <option>Fiesta</option>
-                                        <option>Graduación</option>
-                                        <option>Boda</option>
-                                        <option>XV</option>
-                                        <option>Reunión</option>
-                                        <option>Curso</option>
-                                        <option>Conferencia</option>
-                                        <option>Otro</option>
-                                    </select>
-                                    :
-                                    <h3 className="mt-3 text-lg font-bold text-gray-900">{evento.EVENTO || 'Tipo de evento'} de {evento.ANFITRION || 'Anfitrión'}</h3>
-                                }
-                                {!editEvent ?
-                                    <select
-                                        name="dressCode"
-                                        value={eventoEdit.dressCode}
-                                        onChange={handleEditEventChange}
-                                        className="mt-1 block w-full rounded-lg border-gray-200 shadow-sm focus:ring-2 focus:ring-indigo-300"
-                                    >
-                                        <option>Casual</option>
-                                        <option>Formal</option>
-                                        <option>Temática</option>
-                                        <option>Elegante</option>
-                                    </select>
-                                    :
-                                    <p className="text-sm text-gray-700">
-                                        <strong>Vestimenta:</strong> {evento.DRESSCODE || 'Código de vestimenta'}
-                                    </p>
-                                }
-                                {!editEvent ? <>
-                                    <input
-                                        type="checkbox"
-                                        name="isPrivate"
-                                        checked={eventoEdit.isPrivate || false}
-                                        onChange={(e) => handleEditEventChange({ target: { name: 'isPrivate', value: e.target.checked } })}
-                                        className={`h-4 w-4 text-orange-500 rounded border-gray-300 focus:ring-orange-500`}
-                                    />
-                                    <span className="ml-2 text-sm font-medium text-gray-700">Evento privado</span></> :
-                                    <p className="mb-2 text-sm text-gray-700">
-                                        <strong>Evento:</strong> {evento.ISPRIVATE ? 'Privado' : 'Abierto'}
-                                    </p>}
-                            </div>
-                            <div className="text-xs text-gray-400">Vista previa</div>
-                        </div>
-                        <div className="bg-white rounded-lg p-6 border border-gray-100">
-                            <div className="flex items-start justify-between">
-                                <div>
-                                    {!editEvent ?
-                                        <input
-                                            name="encabezado"
-                                            value={eventoEdit.encabezado}
-                                            onChange={handleEditEventChange}
-                                            placeholder="Ejemplo: ¡Estas invitado!, Acompáñanos a celebrar"
-                                            className={`border rounded-lg px-3 py-1 w-full`}
-                                        /> : <h3 className="text-lg font-bold text-gray-900">✨ {evento.ENCABEZADO || 'Encabezado'}</h3>
-                                    }
-                                    {!editEvent ?
-                                        <>
-                                            <input
-                                                name="anfitrion"
-                                                value={eventoEdit.anfitrion}
-                                                onChange={handleEditEventChange}
-                                                placeholder="Nombre del anfitrión"
-                                                className={`border rounded-lg px-3 py-1 w-full`}
-                                            />
-                                            <input
-                                                name="motivo"
-                                                value={eventoEdit.motivo}
-                                                onChange={handleEditEventChange}
-                                                placeholder="Ejemplo: Mis 30 años, Reapertura del negocio"
-                                                className={`border rounded-lg px-3 py-1 w-full`}
-                                            />
-                                        </>
-                                        : <p className="text-sm text-gray-600 mt-1">
-                                            {evento.ANFITRION ? `${evento.ANFITRION} —` : ""} <span className="font-medium">{evento.MOTIVO || 'Motivo'}</span>
-                                        </p>
-                                    }
-
-                                </div>
-
-                            </div>
-                            <hr className="my-4 border-gray-100" />
-                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm text-gray-700">
-                                <div>
-                                    <p className="text-xs text-gray-500">📅 Fecha</p>
-                                    {!editEvent ?
-                                        <input
-                                            type="date"
-                                            name="event_date"
-                                            value={eventoEdit.event_date}
-                                            onChange={handleEditEventChange}
-                                            className={`border rounded-lg px-3 py-1 w-full`}
-                                        />
-                                        :
-                                        <p className="font-medium">{formatDate(evento.EVENT_DATE)}</p>
-                                    }
-
-                                </div>
-                                <div>
-                                    <p className="text-xs text-gray-500">🕒 Hora</p>
-                                    {!editEvent ?
-                                        <input
-                                            type="time"
-                                            name="event_time"
-                                            value={eventoEdit.event_time}
-                                            onChange={handleEditEventChange}
-                                            className={`border rounded-lg px-3 py-1 w-full`}
-                                        />
-                                        :
-                                        <p className="font-medium">{formatTime(evento.EVENT_TIME)}</p>
-                                    }
-                                </div>
-
-                                <div className="sm:col-span-2">
-                                    {!editEvent ?
-                                        <>
-                                            <input
-                                                name="ubicacion"
-                                                value={eventoEdit.ubicacion}
-                                                onChange={handleEditEventChange}
-                                                placeholder="Dirección o referencia"
-                                                className={`border rounded-lg px-3 py-1 w-full`}
-                                            />
-                                            <textarea
-                                                name="notas"
-                                                value={eventoEdit.notas}
-                                                onChange={handleEditEventChange}
-                                                rows={4}
-                                                placeholder="Ej: traer traje de baño, sin niños, confirmar asistencia, enlace maps, etc."
-                                                className="mt-1 block w-full rounded-lg border-gray-200 px-3 py-2 shadow-sm focus:ring-2 focus:ring-indigo-300"
-                                            />
-                                        </> : <>
-                                            <p className="text-xs text-gray-500">📍 Ubicación</p>
-                                            <p className="font-medium">{evento.UBICACION || "Lugar"}</p>
-                                            <p className="font-medium">{evento.NOTAS || "Notas / Indicaciones / enlace"}</p>
-                                        </>
-                                    }
-
-                                </div>
-                            </div>
-                            <div className="mt-6 text-sm text-gray-600">
-                                {!editEvent ?
-                                    <input
-                                        name="despedida"
-                                        value={eventoEdit.despedida}
-                                        onChange={handleEditEventChange}
-                                        placeholder="Ejemplo: será un gusto celebrar contigo, ¡No faltes!"
-                                        className={`border rounded-lg px-3 py-1 w-full`}
-                                    /> : <p>{evento.DESPEDIDA || 'Mensaje final'} 🎊</p>
-                                }
-                            </div>
-                        </div>
-                        {!editEvent ?
-                            <div className="flex gap-3 mt-4">
-                                {bAccederEdit ?
-                                    <button className="px-3 py-1 text-sm rounded-lg bg-green-500 text-white hover:bg-green-600"
-                                        onClick={() => {
-                                            _buildEditEvent();
-                                        }}>
-                                        Actualizar
-                                    </button>
-                                    :
-                                    <button className="px-3 py-1 text-sm rounded-lg bg-green-300">
-                                        <span className="animate-pulse">Procesando...</span>
-                                    </button>
-                                }
-                                <button className="px-3 py-1 text-sm rounded-lg bg-gray-500 text-white hover:bg-gray-600"
-                                    onClick={() => setEditEvent(!editEvent)}>
-                                    Cancelar
-                                </button>
-                            </div>
-                            : <div className="flex items-center justify-between mt-3">
-                                <button
-                                    className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-orange-500 text-white font-semibold shadow hover:bg-orange-600 focus:outline-none focus:ring-2 focus:ring-orange-300"
-                                    onClick={() => {
-                                        setbAcceder(true);
-                                        setTimeout(() => {
-                                            formRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                                        }, 100);
-                                    }}
-                                >
-                                    Invitar al evento
-                                </button>
-                                <div className="ml-4 text-sm text-gray-500">
-                                    <span> Invitados {('0' + (totalInvitados)).slice(-2)} / Confirmados {('0' + (totalConfirmados)).slice(-2)} </span>
-                                </div>
-                            </div>
-                        }
-
-
-                    </div>
-                    {/* Invitados Evento */}
-                    {totalInvitados > 0 &&
+            {evento.ESTATUS == '1' ?
+                <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-8 mt-12">
+                    {/* Preview Card Evento */}
+                    <div className="flex flex-col gap-4">
                         <div className="bg-white shadow-lg rounded-2xl p-6 md:p-8">
+                            <div className="flex items-center justify-end">
+                                {editEvent &&
+                                    (<button
+                                        onClick={() => setEditEvent(false)}>
+                                        <PencilSquareIcon className="w-8 h-8 text-blue-500 flex-shrink-0" />
+                                    </button>)
+                                }
+                            </div>
                             <div className="flex items-center justify-between">
                                 <div>
-                                    <div className='cursor-pointer flex items-center' onClick={() => toggle(setInvitadosGroup)} >
-                                        <h3 className="text-lg font-semibold text-gray-900">Invitados</h3>
-                                        {invitadosGroup ? <ChevronDownIcon className="w-5 h-5 text-gray-800 mt-1 ml-4" /> : <ChevronUpIcon className="w-5 h-5 text-gray-800 mt-1 ml-4" />}
-                                    </div>
-                                    {!invitadosGroup && (
-                                        <div className="mt-2 space-y-3">
-                                            <p className="text-sm font-bold text-gray-700">
-                                                <strong>Los enlaces de confirmación para tus invitados se generan automáticamente </strong>
-                                                y se enviarán <strong>15 días antes de la fecha de tu evento.</strong>
-                                            </p>
-                                            <label className="flex items-center gap-2 cursor-pointer">
+                                    {!editEvent ?
+                                        <select
+                                            name="evento"
+                                            value={eventoEdit.evento}
+                                            onChange={handleEditEventChange}
+                                            className="mt-1 block w-full rounded-lg border-gray-200 shadow-sm focus:ring-2 focus:ring-indigo-300"
+                                        >
+                                            <option>Cumpleaños</option>
+                                            <option>Fiesta</option>
+                                            <option>Graduación</option>
+                                            <option>Boda</option>
+                                            <option>XV</option>
+                                            <option>Reunión</option>
+                                            <option>Curso</option>
+                                            <option>Conferencia</option>
+                                            <option>Otro</option>
+                                        </select>
+                                        :
+                                        <h3 className="mt-3 text-lg font-bold text-gray-900">{evento.EVENTO || 'Tipo de evento'} de {evento.ANFITRION || 'Anfitrión'}</h3>
+                                    }
+                                    {!editEvent ?
+                                        <select
+                                            name="dressCode"
+                                            value={eventoEdit.dressCode}
+                                            onChange={handleEditEventChange}
+                                            className="mt-1 block w-full rounded-lg border-gray-200 shadow-sm focus:ring-2 focus:ring-indigo-300"
+                                        >
+                                            <option>Casual</option>
+                                            <option>Formal</option>
+                                            <option>Temática</option>
+                                            <option>Elegante</option>
+                                        </select>
+                                        :
+                                        <p className="text-sm text-gray-700">
+                                            <strong>Vestimenta:</strong> {evento.DRESSCODE || 'Código de vestimenta'}
+                                        </p>
+                                    }
+                                    {!editEvent ? <>
+                                        <input
+                                            type="checkbox"
+                                            name="isPrivate"
+                                            checked={eventoEdit.isPrivate || false}
+                                            onChange={(e) => handleEditEventChange({ target: { name: 'isPrivate', value: e.target.checked } })}
+                                            className={`h-4 w-4 text-orange-500 rounded border-gray-300 focus:ring-orange-500`}
+                                        />
+                                        <span className="ml-2 text-sm font-medium text-gray-700">Evento privado</span></> :
+                                        <p className="mb-2 text-sm text-gray-700">
+                                            <strong>Evento:</strong> {evento.ISPRIVATE ? 'Privado' : 'Abierto'}
+                                        </p>}
+                                </div>
+                                <div className="text-xs text-gray-400">Vista previa</div>
+                            </div>
+                            <div className="bg-white rounded-lg p-6 border border-gray-100">
+                                <div className="flex items-start justify-between">
+                                    <div>
+                                        {!editEvent ?
+                                            <input
+                                                name="encabezado"
+                                                value={eventoEdit.encabezado}
+                                                onChange={handleEditEventChange}
+                                                placeholder="Ejemplo: ¡Estas invitado!, Acompáñanos a celebrar"
+                                                className={`border rounded-lg px-3 py-1 w-full`}
+                                            /> : <h3 className="text-lg font-bold text-gray-900">✨ {evento.ENCABEZADO || 'Encabezado'}</h3>
+                                        }
+                                        {!editEvent ?
+                                            <>
                                                 <input
-                                                    type="checkbox"
-                                                    checked={bCheckSendConfWhat}
-                                                    onChange={(e) => setbCheckSendConfWhat(e.target.checked)}
+                                                    name="anfitrion"
+                                                    value={eventoEdit.anfitrion}
+                                                    onChange={handleEditEventChange}
+                                                    placeholder="Nombre del anfitrión"
+                                                    className={`border rounded-lg px-3 py-1 w-full`}
                                                 />
-                                                <span>Enviar confirmación ahora</span>
-                                            </label>
-                                            {bAccederConf ? bCheckSendConfWhat &&
-                                                <button className="px-4 py-2 rounded bg-green-500 text-white font-semibold hover:bg-green-600" onClick={() => {
-                                                    sendCon();
-                                                }}>
-                                                    Enviar ahora
-                                                </button> : <button className="px-4 py-2 mt-2 mb-2 mr-2 rounded-lg bg-green-600 text-white">
-                                                <div className='circleWhite'></div></button>
-                                            }
-                                        </div>
-                                    )
+                                                <input
+                                                    name="motivo"
+                                                    value={eventoEdit.motivo}
+                                                    onChange={handleEditEventChange}
+                                                    placeholder="Ejemplo: Mis 30 años, Reapertura del negocio"
+                                                    className={`border rounded-lg px-3 py-1 w-full`}
+                                                />
+                                            </>
+                                            : <p className="text-sm text-gray-600 mt-1">
+                                                {evento.ANFITRION ? `${evento.ANFITRION} —` : ""} <span className="font-medium">{evento.MOTIVO || 'Motivo'}</span>
+                                            </p>
+                                        }
+
+                                    </div>
+
+                                </div>
+                                <hr className="my-4 border-gray-100" />
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm text-gray-700">
+                                    <div>
+                                        <p className="text-xs text-gray-500">📅 Fecha</p>
+                                        {!editEvent ?
+                                            <input
+                                                type="date"
+                                                name="event_date"
+                                                value={eventoEdit.event_date}
+                                                onChange={handleEditEventChange}
+                                                className={`border rounded-lg px-3 py-1 w-full`}
+                                            />
+                                            :
+                                            <p className="font-medium">{formatDate(evento.EVENT_DATE)}</p>
+                                        }
+
+                                    </div>
+                                    <div>
+                                        <p className="text-xs text-gray-500">🕒 Hora</p>
+                                        {!editEvent ?
+                                            <input
+                                                type="time"
+                                                name="event_time"
+                                                value={eventoEdit.event_time}
+                                                onChange={handleEditEventChange}
+                                                className={`border rounded-lg px-3 py-1 w-full`}
+                                            />
+                                            :
+                                            <p className="font-medium">{formatTime(evento.EVENT_TIME)}</p>
+                                        }
+                                    </div>
+
+                                    <div className="sm:col-span-2">
+                                        {!editEvent ?
+                                            <>
+                                                <input
+                                                    name="ubicacion"
+                                                    value={eventoEdit.ubicacion}
+                                                    onChange={handleEditEventChange}
+                                                    placeholder="Dirección o referencia"
+                                                    className={`border rounded-lg px-3 py-1 w-full`}
+                                                />
+                                                <textarea
+                                                    name="notas"
+                                                    value={eventoEdit.notas}
+                                                    onChange={handleEditEventChange}
+                                                    rows={4}
+                                                    placeholder="Ej: traer traje de baño, sin niños, confirmar asistencia, enlace maps, etc."
+                                                    className="mt-1 block w-full rounded-lg border-gray-200 px-3 py-2 shadow-sm focus:ring-2 focus:ring-indigo-300"
+                                                />
+                                            </> : <>
+                                                <p className="text-xs text-gray-500">📍 Ubicación</p>
+                                                <p className="font-medium">{evento.UBICACION || "Lugar"}</p>
+                                                <p className="font-medium">{evento.NOTAS || "Notas / Indicaciones / enlace"}</p>
+                                            </>
+                                        }
+
+                                    </div>
+                                </div>
+                                <div className="mt-6 text-sm text-gray-600">
+                                    {!editEvent ?
+                                        <input
+                                            name="despedida"
+                                            value={eventoEdit.despedida}
+                                            onChange={handleEditEventChange}
+                                            placeholder="Ejemplo: será un gusto celebrar contigo, ¡No faltes!"
+                                            className={`border rounded-lg px-3 py-1 w-full`}
+                                        /> : <p>{evento.DESPEDIDA || 'Mensaje final'} 🎊</p>
                                     }
                                 </div>
                             </div>
-                            {!invitadosGroup && (
-                                <div className="mt-4 bg-white rounded-lg p-4 border border-gray-100">
-                                    <ul className="text-sm text-gray-600 space-y-1">
-                                        {invitados[0]['APPOINTMENT'].map((index) =>
-                                        (
-                                            <div className="flex justify-between bg-gray-100 shadow-lg rounded-lg overflow-hidden scale-95 hover:scale-100 transition-all duration-300"
-                                                key={index['APOINMENT_ID']}
-                                            >
-                                                <div className='flex justify-center items-center ms:ml-3 lg:ml-4 '>
-                                                    {
-                                                        index['PHOTO'] === null ?
-                                                            <UserCircleIcon className='w-12 h-12'
-                                                                color={index['ESTATUS'] == '-1' || index['APPOINTMENT_CONFIRM'] == '2' ? '#B71C1C' :
-                                                                    index['ESTATUS'] == '1' ? '#32325d' :
-                                                                        index['ESTATUS'] == '3' || index['APPOINTMENT_CONFIRM'] == '1' ? '#4472C4' : '#fc6500'
-                                                                } /> :
-                                                            <img id='imgS' src={'data:image/jpeg;base64,' + arrayBufferToBase64(index['PHOTO'].data)} />
-                                                    }
-                                                </div>
-                                                <div className="grid">
-                                                    <label className="ms:text-2xl lg:text-2xl font-bold text-black text-center">{index['ANONIMO'] == '' ? index['COMPLET_NAME'] : index['ANONIMO'].substring(0, index['ANONIMO'].indexOf(","))} </label>
-                                                    <label className="ms:text-1xl lg:text-1xl font-bold text-black text-center">{index['ANONIMO'] != '' ? index['ANONIMO'].substring(index['ANONIMO'].indexOf(",") + 1, index['ANONIMO'].length) : ''} </label>
-                                                    <label className="ms:text-1xl lg:text-1xl text-gray-500 text-center">Invitados : {index['MESSAGE'].substring(0, index['MESSAGE'].indexOf(","))} {`(${index['MESSAGE'].substring(index['MESSAGE'].indexOf(",") + 1, index['MESSAGE'].length)})`} </label>
-                                                    <label className="ms:text-1xl lg:text-1xl font-bold text-green-600 text-center">{index['APPOINTMENT_CONFIRM'] == '1' ? 'Confirmada' : ''} </label>
-                                                    <label className="ms:text-1xl lg:text-1xl font-bold text-red-600 text-center">{index['APPOINTMENT_CONFIRM'] == '2' ? 'No asistiré' : ''} </label>
-                                                </div>
-                                                {bAccederIndexCancelar == index['APOINMENT_ID'] ?
-                                                    <button className="px-4 py-2 mt-3 mb-3 mr-2 rounded-lg bg-red-600 text-white">
-                                                        <div className='circleWhiteRed'></div></button>
-                                                    : <TrashIcon className="mr-4" width={25} color="#B71C1C" onClick={() => {
-                                                        if (index['ESTATUS'] !== '-1' && index['ESTATUS'] !== '2') {
-                                                            _buildCancelar(index);
-                                                        }
-                                                    }} />}
-
-                                            </div>
-                                        ))}
-                                    </ul>
+                            {!editEvent ?
+                                <div className="flex gap-3 mt-4">
+                                    {bAccederEdit ?
+                                        <button className="px-3 py-1 text-sm rounded-lg bg-green-500 text-white hover:bg-green-600"
+                                            onClick={() => {
+                                                _buildEditEvent();
+                                            }}>
+                                            Actualizar
+                                        </button>
+                                        :
+                                        <button className="px-3 py-1 text-sm rounded-lg bg-green-300">
+                                            <span className="animate-pulse">Procesando...</span>
+                                        </button>
+                                    }
+                                    <button className="px-3 py-1 text-sm rounded-lg bg-gray-500 text-white hover:bg-gray-600"
+                                        onClick={() => setEditEvent(!editEvent)}>
+                                        Cancelar
+                                    </button>
                                 </div>
-                            )}
-                        </div>}
-                </div>
-
-                {/* Invitar Card */}
-                {bAcceder && <div ref={formRef} className="flex flex-col gap-4">
-                    <div className="bg-gradient-to-br from-gray-50 to-white border border-gray-100 rounded-2xl p-6 shadow-sm">
-                        <div className="flex items-center justify-between">
-                            <div>
-                                <h3 className="text-lg font-semibold text-gray-900">Invitar</h3>
-                            </div>
-                            <div className="text-xs text-red-500 cursor-pointer" onClick={() => {
-                                setbEnviar(true);
-                                setbAcceder(false);
-                                setSubmitted(false);
-                                setForm({
-                                    user_id: 0,
-                                    bussiness_id: evento.BUSSINESS_ID,
-                                    usernotification_id: 0,
-                                    appointment_date: evento.EVENT_DATE,
-                                    appointment_time: evento.EVENT_TIME,
-                                    anonimo: "",
-                                    message: "",
-                                    estatus: '0',
-                                    dorsl: '',
-                                    for_who: 'Bus',
-
-                                    anfitrion: evento.ANFITRION,
-                                    ubicacion: evento.UBICACION,
-                                    dressCode: evento.DRESSCODE,
-                                    notas: evento.NOTAS,
-                                    encabezado: evento.ENCABEZADO,
-                                    motivo: evento.MOTIVO,
-                                    despedida: evento.DESPEDIDA,
-                                    evento: evento.EVENTO,
-
-                                    numInv: 0,
-                                    detalleInv: "",
-
-                                    nombre: "",
-                                    phone: "",
-                                    correo: "",
-                                    appointment_confirm: 0,
-                                    isPrivate: evento.ISPRIVATE
-                                });
-                            }}>cancelar</div>
-                        </div>
-                        <div className="mt-4 bg-white rounded-lg p-4 border border-gray-100">
-                            <form onSubmit={handleSubmit} className="space-y-5">
-                                <h4>Información de contacto</h4>
-                                <label className="block">
-                                    <span className="text-sm font-medium text-gray-700">Nombre</span>
-                                    <input
-                                        name="nombre"
-                                        value={form.nombre}
-                                        onChange={handleChange}
-                                        placeholder="Nombre del contacto"
-                                        className={`mt-1 block w-full rounded-lg border ${errors.nombre ? 'border-red-400' : 'border-gray-200'} px-3 py-2 shadow-sm focus:ring-2 focus:ring-indigo-300`}
-                                    />
-                                    {errors.nombre && <p className="mt-1 text-xs text-red-600">{errors.nombre}</p>}
-                                </label>
-                                <label className="flex items-center gap-2 mt-2">
-                                    <input
-                                        type="checkbox"
-                                        name="bUseEmail"
-                                        checked={bUseEmail || false}
-                                        onChange={(e) => setbUseEmail(!bUseEmail)}
-                                        className={`h-4 w-4 text-orange-500 rounded border-gray-300 focus:ring-orange-500`}
-                                    />
-                                    <span className="text-sm font-bold text-gray-700">¿Deseas que sea por correo electrónico?</span>
-                                </label>
-                                {bUseEmail ? <div className="grid grid-cols-1 sm:grid-cols-1 gap-4">
-                                    <label className="block">
-                                        <span className="text-sm font-medium text-gray-700">¿Cuál es el correo electrónico?</span>
-                                        <input
-                                            type="email"
-                                            name="correo"
-                                            value={form.correo}
-                                            onChange={handleChange}
-                                            placeholder="Correo electrónico"
-                                            className={`mt-1 block w-full rounded-lg border ${errors.correo ? 'border-red-400' : 'border-gray-200'} px-3 py-2 shadow-sm focus:ring-2 focus:ring-indigo-300`}
-                                        />
-                                        {errors.correo && <p className="mt-1 text-xs text-red-600">{errors.correo}</p>}
-                                        <p className="mt-1 text-xs text-gray-600">En este correo electrónico recibirá un recordatorio de su vista.</p>
-                                    </label>
-                                </div> :
-                                    <div className="grid grid-cols-1 sm:grid-cols-1 gap-4">
-                                        <label className="block">
-                                            <span className="text-sm font-medium text-gray-700">¿Cuál es el número de teléfono?</span>
-                                            <input
-                                                type="tel"
-                                                name="phone"
-                                                value={form.phone}
-                                                // onChange={(e) => handleChange({ target: { name: 'phone', value: e.target.value.replace(/\D/g, '') } })}
-                                                onChange={(e) => {
-                                                    const raw = e.target.value.replace(/\D/g, '').slice(0, 10);
-                                                    setForm(prev => ({ ...prev, phone: raw }));
-                                                }}
-                                                onBlur={formatPhone}
-                                                placeholder="Número de teléfono"
-                                                className={`mt-1 block w-full rounded-lg border ${errors.phone ? 'border-red-400' : 'border-gray-200'} px-3 py-2 shadow-sm focus:ring-2 focus:ring-indigo-300`}
-                                            />
-                                            {errors.phone && <p className="mt-1 text-xs text-red-600">{errors.phone}</p>}
-                                            <p className="mt-1 text-xs text-gray-600">En este número de teléfono recibirá un recordatorio de su vista.</p>
-                                        </label>
-                                    </div>}
-                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                    <label className="block">
-                                        <span className="text-sm font-medium text-gray-700">Número de invitados</span>
-                                        <input
-                                            type="number"
-                                            min="0"
-                                            max="10"
-                                            name="numInv"
-                                            value={form.numInv}
-                                            onChange={handleChange}
-                                            className={`mt-1 block w-full rounded-lg border ${errors.numInv ? 'border-red-400' : 'border-gray-200'} px-3 py-2 shadow-sm focus:ring-2 focus:ring-indigo-300`}
-                                        />
-                                        {errors.numInv && <p className="mt-1 text-xs text-red-600">{errors.numInv}</p>}
-                                    </label>
-                                    <label className="block">
-                                        <span className="text-sm font-medium text-gray-700">Adultos / niños </span>
-                                        <input
-                                            name="detalleInv"
-                                            value={form.detalleInv}
-                                            onChange={handleChange}
-                                            placeholder="Ej: 2 Adultos y 1 niño, 2 Adultos"
-                                            className={`mt-1 block w-full rounded-lg border ${errors.detalleInv ? 'border-red-400' : 'border-gray-200'} px-3 py-2 shadow-sm focus:ring-2 focus:ring-indigo-300`}
-                                        />
-                                        {errors.detalleInv && <p className="mt-1 text-xs text-red-600">{errors.detalleInv}</p>}
-                                    </label>
-                                </div>
-
-                                <div className="flex items-center justify-between">
-                                    {bEnviar ? <button
-                                        type="submit"
-                                        className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-orange-500 text-white 
-                                        font-semibold shadow hover:bg-orange-600 focus:outline-none focus:ring-2 focus:ring-indigo-300 
-                                        disabled:border-gray-50 disabled:bg-gray-200 disabled:text-gray-500"
+                                : <div className="flex items-center justify-between mt-3">
+                                    <button
+                                        className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-orange-500 text-white font-semibold shadow hover:bg-orange-600 focus:outline-none focus:ring-2 focus:ring-orange-300"
+                                        onClick={() => {
+                                            setbAcceder(true);
+                                            setTimeout(() => {
+                                                formRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                                            }, 100);
+                                        }}
                                     >
-                                        Enviar
-                                    </button> : <button className='mb-10'><div className='circle' ></div></button>}
-                                    <div className="text-sm text-gray-500">
-                                        {submitted ? (
-                                            <span className="text-orange-600 font-medium">¡Invitación lista!</span>
-                                        ) : (
-                                            <span>Los campos obligatorios están marcados</span>
-                                        )}
+                                        Invitar al evento
+                                    </button>
+                                    <div className="ml-4 text-sm text-gray-500">
+                                        <span> Invitados {('0' + (totalInvitados)).slice(-2)} / Confirmados {('0' + (totalConfirmados)).slice(-2)} </span>
                                     </div>
                                 </div>
-                            </form>
+                            }
+
+
                         </div>
+                        {/* Invitados Evento */}
+                        {totalInvitados > 0 &&
+                            <div className="bg-white shadow-lg rounded-2xl p-6 md:p-8">
+                                <div className="flex items-center justify-between">
+                                    <div>
+                                        <div className='cursor-pointer flex items-center' onClick={() => toggle(setInvitadosGroup)} >
+                                            <h3 className="text-lg font-semibold text-gray-900">Invitados</h3>
+                                            {invitadosGroup ? <ChevronDownIcon className="w-5 h-5 text-gray-800 mt-1 ml-4" /> : <ChevronUpIcon className="w-5 h-5 text-gray-800 mt-1 ml-4" />}
+                                        </div>
+                                        {!invitadosGroup && (
+                                            <div className="mt-2 space-y-3">
+                                                <p className="text-sm font-bold text-gray-700">
+                                                    <strong>Los enlaces de confirmación para tus invitados se generan automáticamente </strong>
+                                                    y se enviarán <strong>15 días antes de la fecha de tu evento.</strong>
+                                                </p>
+                                                <label className="flex items-center gap-2 cursor-pointer">
+                                                    <input
+                                                        type="checkbox"
+                                                        checked={bCheckSendConfWhat}
+                                                        onChange={(e) => setbCheckSendConfWhat(e.target.checked)}
+                                                    />
+                                                    <span>Enviar confirmación ahora</span>
+                                                </label>
+                                                {bAccederConf ? bCheckSendConfWhat &&
+                                                    <button className="px-4 py-2 rounded bg-green-500 text-white font-semibold hover:bg-green-600" onClick={() => {
+                                                        sendCon();
+                                                    }}>
+                                                        Enviar ahora
+                                                    </button> : <button className="px-4 py-2 mt-2 mb-2 mr-2 rounded-lg bg-green-600 text-white">
+                                                    <div className='circleWhite'></div></button>
+                                                }
+                                            </div>
+                                        )
+                                        }
+                                    </div>
+                                </div>
+                                {!invitadosGroup && (
+                                    <div className="mt-4 bg-white rounded-lg p-4 border border-gray-100">
+                                        <ul className="text-sm text-gray-600 space-y-1">
+                                            {invitados[0]['APPOINTMENT'].map((index) =>
+                                            (
+                                                <div className="flex justify-between bg-gray-100 shadow-lg rounded-lg overflow-hidden scale-95 hover:scale-100 transition-all duration-300"
+                                                    key={index['APOINMENT_ID']}
+                                                >
+                                                    <div className='flex justify-center items-center ms:ml-3 lg:ml-4 '>
+                                                        {
+                                                            index['PHOTO'] === null ?
+                                                                <UserCircleIcon className='w-12 h-12'
+                                                                    color={index['ESTATUS'] == '-1' || index['APPOINTMENT_CONFIRM'] == '2' ? '#B71C1C' :
+                                                                        index['ESTATUS'] == '1' ? '#32325d' :
+                                                                            index['ESTATUS'] == '3' || index['APPOINTMENT_CONFIRM'] == '1' ? '#4472C4' : '#fc6500'
+                                                                    } /> :
+                                                                <img id='imgS' src={'data:image/jpeg;base64,' + arrayBufferToBase64(index['PHOTO'].data)} />
+                                                        }
+                                                    </div>
+                                                    <div className="grid">
+                                                        <label className="ms:text-2xl lg:text-2xl font-bold text-black text-center">{index['ANONIMO'] == '' ? index['COMPLET_NAME'] : index['ANONIMO'].substring(0, index['ANONIMO'].indexOf(","))} </label>
+                                                        <label className="ms:text-1xl lg:text-1xl font-bold text-black text-center">{index['ANONIMO'] != '' ? index['ANONIMO'].substring(index['ANONIMO'].indexOf(",") + 1, index['ANONIMO'].length) : ''} </label>
+                                                        <label className="ms:text-1xl lg:text-1xl text-gray-500 text-center">Invitados : {index['MESSAGE'].substring(0, index['MESSAGE'].indexOf(","))} {`(${index['MESSAGE'].substring(index['MESSAGE'].indexOf(",") + 1, index['MESSAGE'].length)})`} </label>
+                                                        <label className="ms:text-1xl lg:text-1xl font-bold text-green-600 text-center">{index['APPOINTMENT_CONFIRM'] == '1' ? 'Confirmada' : ''} </label>
+                                                        <label className="ms:text-1xl lg:text-1xl font-bold text-red-600 text-center">{index['APPOINTMENT_CONFIRM'] == '2' ? 'No asistiré' : ''} </label>
+                                                    </div>
+                                                    {bAccederIndexCancelar == index['APOINMENT_ID'] ?
+                                                        <button className="px-4 py-2 mt-3 mb-3 mr-2 rounded-lg bg-red-600 text-white">
+                                                            <div className='circleWhiteRed'></div></button>
+                                                        : <TrashIcon className="mr-4" width={25} color="#B71C1C" onClick={() => {
+                                                            if (index['ESTATUS'] !== '-1' && index['ESTATUS'] !== '2') {
+                                                                _buildCancelar(index);
+                                                            }
+                                                        }} />}
+
+                                                </div>
+                                            ))}
+                                        </ul>
+                                    </div>
+                                )}
+                            </div>}
+                    </div>
+
+                    {/* Invitar Card */}
+                    {bAcceder && <div ref={formRef} className="flex flex-col gap-4">
+                        <div className="bg-gradient-to-br from-gray-50 to-white border border-gray-100 rounded-2xl p-6 shadow-sm">
+                            <div className="flex items-center justify-between">
+                                <div>
+                                    <h3 className="text-lg font-semibold text-gray-900">Invitar</h3>
+                                </div>
+                                <div className="text-xs text-red-500 cursor-pointer" onClick={() => {
+                                    setbEnviar(true);
+                                    setbAcceder(false);
+                                    setSubmitted(false);
+                                    setForm({
+                                        user_id: 0,
+                                        bussiness_id: evento.BUSSINESS_ID,
+                                        usernotification_id: 0,
+                                        appointment_date: evento.EVENT_DATE,
+                                        appointment_time: evento.EVENT_TIME,
+                                        anonimo: "",
+                                        message: "",
+                                        estatus: '0',
+                                        dorsl: '',
+                                        for_who: 'Bus',
+
+                                        anfitrion: evento.ANFITRION,
+                                        ubicacion: evento.UBICACION,
+                                        dressCode: evento.DRESSCODE,
+                                        notas: evento.NOTAS,
+                                        encabezado: evento.ENCABEZADO,
+                                        motivo: evento.MOTIVO,
+                                        despedida: evento.DESPEDIDA,
+                                        evento: evento.EVENTO,
+
+                                        numInv: 0,
+                                        detalleInv: "",
+
+                                        nombre: "",
+                                        phone: "",
+                                        correo: "",
+                                        appointment_confirm: 0,
+                                        isPrivate: evento.ISPRIVATE
+                                    });
+                                }}>cancelar</div>
+                            </div>
+                            <div className="mt-4 bg-white rounded-lg p-4 border border-gray-100">
+                                <form onSubmit={handleSubmit} className="space-y-5">
+                                    <h4>Información de contacto</h4>
+                                    <label className="block">
+                                        <span className="text-sm font-medium text-gray-700">Nombre</span>
+                                        <input
+                                            name="nombre"
+                                            value={form.nombre}
+                                            onChange={handleChange}
+                                            placeholder="Nombre del contacto"
+                                            className={`mt-1 block w-full rounded-lg border ${errors.nombre ? 'border-red-400' : 'border-gray-200'} px-3 py-2 shadow-sm focus:ring-2 focus:ring-indigo-300`}
+                                        />
+                                        {errors.nombre && <p className="mt-1 text-xs text-red-600">{errors.nombre}</p>}
+                                    </label>
+                                    <label className="flex items-center gap-2 mt-2">
+                                        <input
+                                            type="checkbox"
+                                            name="bUseEmail"
+                                            checked={bUseEmail || false}
+                                            onChange={(e) => setbUseEmail(!bUseEmail)}
+                                            className={`h-4 w-4 text-orange-500 rounded border-gray-300 focus:ring-orange-500`}
+                                        />
+                                        <span className="text-sm font-bold text-gray-700">¿Deseas que sea por correo electrónico?</span>
+                                    </label>
+                                    {bUseEmail ? <div className="grid grid-cols-1 sm:grid-cols-1 gap-4">
+                                        <label className="block">
+                                            <span className="text-sm font-medium text-gray-700">¿Cuál es el correo electrónico?</span>
+                                            <input
+                                                type="email"
+                                                name="correo"
+                                                value={form.correo}
+                                                onChange={handleChange}
+                                                placeholder="Correo electrónico"
+                                                className={`mt-1 block w-full rounded-lg border ${errors.correo ? 'border-red-400' : 'border-gray-200'} px-3 py-2 shadow-sm focus:ring-2 focus:ring-indigo-300`}
+                                            />
+                                            {errors.correo && <p className="mt-1 text-xs text-red-600">{errors.correo}</p>}
+                                            <p className="mt-1 text-xs text-gray-600">En este correo electrónico recibirá un recordatorio de su vista.</p>
+                                        </label>
+                                    </div> :
+                                        <div className="grid grid-cols-1 sm:grid-cols-1 gap-4">
+                                            <label className="block">
+                                                <span className="text-sm font-medium text-gray-700">¿Cuál es el número de teléfono?</span>
+                                                <input
+                                                    type="tel"
+                                                    name="phone"
+                                                    value={form.phone}
+                                                    // onChange={(e) => handleChange({ target: { name: 'phone', value: e.target.value.replace(/\D/g, '') } })}
+                                                    onChange={(e) => {
+                                                        const raw = e.target.value.replace(/\D/g, '').slice(0, 10);
+                                                        setForm(prev => ({ ...prev, phone: raw }));
+                                                    }}
+                                                    onBlur={formatPhone}
+                                                    placeholder="Número de teléfono"
+                                                    className={`mt-1 block w-full rounded-lg border ${errors.phone ? 'border-red-400' : 'border-gray-200'} px-3 py-2 shadow-sm focus:ring-2 focus:ring-indigo-300`}
+                                                />
+                                                {errors.phone && <p className="mt-1 text-xs text-red-600">{errors.phone}</p>}
+                                                <p className="mt-1 text-xs text-gray-600">En este número de teléfono recibirá un recordatorio de su vista.</p>
+                                            </label>
+                                        </div>}
+                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                        <label className="block">
+                                            <span className="text-sm font-medium text-gray-700">Número de invitados</span>
+                                            <input
+                                                type="number"
+                                                min="0"
+                                                max="10"
+                                                name="numInv"
+                                                value={form.numInv}
+                                                onChange={handleChange}
+                                                className={`mt-1 block w-full rounded-lg border ${errors.numInv ? 'border-red-400' : 'border-gray-200'} px-3 py-2 shadow-sm focus:ring-2 focus:ring-indigo-300`}
+                                            />
+                                            {errors.numInv && <p className="mt-1 text-xs text-red-600">{errors.numInv}</p>}
+                                        </label>
+                                        <label className="block">
+                                            <span className="text-sm font-medium text-gray-700">Adultos / niños </span>
+                                            <input
+                                                name="detalleInv"
+                                                value={form.detalleInv}
+                                                onChange={handleChange}
+                                                placeholder="Ej: 2 Adultos y 1 niño, 2 Adultos"
+                                                className={`mt-1 block w-full rounded-lg border ${errors.detalleInv ? 'border-red-400' : 'border-gray-200'} px-3 py-2 shadow-sm focus:ring-2 focus:ring-indigo-300`}
+                                            />
+                                            {errors.detalleInv && <p className="mt-1 text-xs text-red-600">{errors.detalleInv}</p>}
+                                        </label>
+                                    </div>
+
+                                    <div className="flex items-center justify-between">
+                                        {bEnviar ? <button
+                                            type="submit"
+                                            className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-orange-500 text-white 
+                                        font-semibold shadow hover:bg-orange-600 focus:outline-none focus:ring-2 focus:ring-indigo-300 
+                                        disabled:border-gray-50 disabled:bg-gray-200 disabled:text-gray-500"
+                                        >
+                                            Enviar
+                                        </button> : <button className='mb-10'><div className='circle' ></div></button>}
+                                        <div className="text-sm text-gray-500">
+                                            {submitted ? (
+                                                <span className="text-orange-600 font-medium">¡Invitación lista!</span>
+                                            ) : (
+                                                <span>Los campos obligatorios están marcados</span>
+                                            )}
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>}
+
+                </div> :
+                <div className="absolute inset-0 flex items-center justify-center bg-black/40">
+                    <div className="bg-white p-6 rounded-xl shadow-lg text-center max-w-sm">
+                        <h2 className="text-3xl font-semibold text-red-600 mb-2">
+                            Evento no disponible
+                        </h2>
+                        <p className="text-lg text-gray-600">
+                            Este evento fue {evento.ESTATUS == '2' ? 'finalizó': evento.ESTATUS == '-1' ? 'cancelado':'.'}
+                        </p>
                     </div>
                 </div>}
-
-            </div>
+            
+            
         </div>
     );
 }
