@@ -84,6 +84,7 @@ export function UpdateEvento({ onSubmit }) {
         bussiness_id: evento.BUSSINESS_ID,
         isPrivate: evento.ISPRIVATE
     });
+    const [bESTATUS, setbESTATUS] = useState(evento.ESTATUS ?? '');
 
     const toggle = (setter) => setter((prev) => !prev);
 
@@ -431,13 +432,32 @@ export function UpdateEvento({ onSubmit }) {
 
     useEffect(() => {
         const fData = async () => {
-            if (userId === '') {
+            // Validaciones tempranas (early return)
+            if (!userId || !sCorreo || !sPassword) {
                 navigate("/");
+                return;
             }
-            else if (sCorreo === null && sPassword === null) {
-                navigate("/");
+
+            try {
+                const response = await fetch(`${urlApi}getEvent?bussiness_id=${evento?.BUSSINESS_ID}`);
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const json = await response.json();
+
+                if (json?.data?.ESTATUS !== undefined) {
+                    setbESTATUS(json.data.ESTATUS);
+                } else {
+                    console.warn("La respuesta no contiene ESTATUS:", json);
+                }
+
+            } catch (error) {
+                console.error("Error getting info Event:", error);
+            } finally {
+                UpdateInvitados();
             }
-            UpdateInvitados();
         };
         fData();
     }, []);
@@ -445,7 +465,7 @@ export function UpdateEvento({ onSubmit }) {
     return (
         <div className="min-h-screen bg-gradient-to-br from-orange-600 to-orange-800 py-8 px-4 sm:px-6 lg:px-8">
             {/* <InvitationPreview /> */}
-            {evento.ESTATUS == '1' ?
+            {bESTATUS == '1' ?
                 <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-8 mt-12">
                     {/* Preview Card Evento */}
                     <div className="flex flex-col gap-4">
@@ -896,12 +916,12 @@ export function UpdateEvento({ onSubmit }) {
                             Evento no disponible
                         </h2>
                         <p className="text-lg text-gray-600">
-                            Este evento fue {evento.ESTATUS == '2' ? 'finalizó': evento.ESTATUS == '-1' ? 'cancelado':'.'}
+                            Este evento fue {bESTATUS == '2' ? 'finalizó' : bESTATUS == '-1' ? 'cancelado' : '.'}
                         </p>
                     </div>
                 </div>}
-            
-            
+
+
         </div>
     );
 }
