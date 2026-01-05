@@ -15,7 +15,12 @@ import {
     BarsArrowUpIcon,
     CalendarDateRangeIcon, EnvelopeIcon, InformationCircleIcon, MapPinIcon, PhoneIcon,
     TrashIcon,
-    XMarkIcon as CloseIcon
+    XMarkIcon as CloseIcon,
+    CheckCircleIcon,
+    XCircleIcon,
+    ClockIcon,
+    PencilSquareIcon,
+    ArrowPathIcon
 } from '@heroicons/react/24/solid';
 
 // loader
@@ -49,6 +54,7 @@ export function UpdateAppoinBusiness() {
     const [initialDate, setinitialDate] = useState(new Date(_today));
     const lastDate = new Date(_today.setDate(_today.getDate() + 31));
     const [flagAnonPhone, setFlagAnonPhone] = useState('');
+    const [citasHis, setCitasHis] = useState([]);
 
 
     // Function to convert Base64 string to binary data
@@ -241,6 +247,42 @@ export function UpdateAppoinBusiness() {
         setbMostrarEditar(!bMostrarEditar);
     };
 
+    const GetHistorial = async (bus, usr) => {
+        //Solicitar por GET
+        var options = {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            }
+        }
+        try {
+            const response = await fetch(`${urlApi}appBusUsr?bussiness_id=${bus}&user_id=${usr}`, options);
+            if (response.status == 200) {
+                const json = await response.json();
+                setCitasHis(json.data);
+            } else if (response.status == 404) {
+                setCitasHis([]);
+            } else {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+        }
+        catch (e) {
+            console.log('catch ' + e.message);
+        }
+    };
+
+    const STATUS_CONFIG = {
+        '-1': { label: 'Cancelada', color: 'text-red-500', icon: XCircleIcon },
+        '0': { label: 'Nueva', color: 'text-sky-400', icon: ClockIcon },
+        '1': { label: 'Modificada', color: 'text-blue-700', icon: PencilSquareIcon },
+        '2': { label: 'Finalizada', color: 'text-gray-400', icon: CheckCircleIcon },
+        '3': { label: 'Actual', color: 'text-blue-500', icon: ArrowPathIcon },
+    };
+
+    const getStatusInfo = (status) =>
+        STATUS_CONFIG[status] || { label: 'Desconocido', color: 'text-gray-400', icon: ClockIcon };
+
 
     useEffect(() => {
         const fData = async () => {
@@ -254,6 +296,7 @@ export function UpdateAppoinBusiness() {
                 const json = await response.json();
                 const FLAG_ADDRESS = json['data']['FLAG_ADDRESS'];
                 setCita(json['data']);
+                await GetHistorial(json['data']['BUSSINESS_ID'], json['data']['USER_ID']);
                 var temp = json['data']['ANONIMO'].substring(json['data']['ANONIMO'].indexOf(",") + 1, json['data']['ANONIMO'].length) ?? '';
                 const cleanNumber = temp.replace(/\D/g, '');
                 if (!isNaN(cleanNumber)) {
@@ -427,7 +470,7 @@ export function UpdateAppoinBusiness() {
                     <div className="w-full flex items-center gap-3 px-4 mt-2">
                         <></>
                         <div className="text-left">
-                            <p className='text-gray-500'>{cita.MENSSAGE == '' ? 'Aún no ha agregado motivo de la visita/Servicio' : cita.MENSSAGE}</p>
+                            <p className='text-gray-500'>{cita.MENSSAGE == '' ? 'Aún no ha agregado motivo de la Visita/Servicio' : cita.MENSSAGE}</p>
                         </div>
 
                     </div>
@@ -480,25 +523,25 @@ export function UpdateAppoinBusiness() {
                             {bAcceder ? (
                                 <button
                                     onClick={() => {
-                                    var parts = cita.APPOINTMENT_DATE.split('-');
-                                    var partsTime = cita.APPOINTMENT_TIME.split(':');
-                                    var formattedDate = new Date(parts[0], parts[1] - 1, parts[2], partsTime[0], partsTime[1], partsTime[2]);
-                                    if (startDate === '') {
-                                        toast.error('Selecciona una fecha.');
-                                    }
-                                    else if (selectedTime === '') {
-                                        toast.error('Selecciona una hora.');
-                                    }
-                                    else if (selectedTime == cita.APPOINTMENT_TIME.substring(0, 5) && startDate != formattedDate) {
-                                        setIsOpenU(true);
-                                    }
-                                    else if (selectedTime != cita.APPOINTMENT_TIME.substring(0, 5)) {
-                                        setIsOpenU(true);
-                                    }
-                                    else {
-                                        toast.error(`Seleccionar una hora distinta a ${cita.APPOINTMENT_TIME}`);
-                                    }
-                                }}
+                                        var parts = cita.APPOINTMENT_DATE.split('-');
+                                        var partsTime = cita.APPOINTMENT_TIME.split(':');
+                                        var formattedDate = new Date(parts[0], parts[1] - 1, parts[2], partsTime[0], partsTime[1], partsTime[2]);
+                                        if (startDate === '') {
+                                            toast.error('Selecciona una fecha.');
+                                        }
+                                        else if (selectedTime === '') {
+                                            toast.error('Selecciona una hora.');
+                                        }
+                                        else if (selectedTime == cita.APPOINTMENT_TIME.substring(0, 5) && startDate != formattedDate) {
+                                            setIsOpenU(true);
+                                        }
+                                        else if (selectedTime != cita.APPOINTMENT_TIME.substring(0, 5)) {
+                                            setIsOpenU(true);
+                                        }
+                                        else {
+                                            toast.error(`Seleccionar una hora distinta a ${cita.APPOINTMENT_TIME}`);
+                                        }
+                                    }}
                                     className="w-full py-3 rounded-md font-bold text-white bg-orange-500 hover:bg-orange-600"
                                 >
                                     Guardar
@@ -508,8 +551,36 @@ export function UpdateAppoinBusiness() {
                                     <span className="animate-pulse">Procesando...</span>
                                 </button>
                             )}
-                        </div>                       
+                        </div>
                     </> : <></>}
+                <hr className="my-4" />
+                <div className="text-left px-4">
+                    <h4 className="text-lg font-semibold">Historial</h4>
+                    {citasHis?.map((index) => {
+                        if (cita.APOINMENT_ID === index['APOINMENT_ID']) return null;
+
+                        const statusInfo = getStatusInfo(index['ESTATUS']);
+                        const StatusIcon = statusInfo.icon;
+
+                        return (
+                            <div key={index['APOINMENT_ID']} className="grid mt-2">
+                                <p className="w-full font-bold text-gray-500">
+                                    {ConvertDateTime(index['APPOINTMENT_DATE'], index['APPOINTMENT_TIME'], 1)} -{' '}
+                                    {ConvertDateTime(index['APPOINTMENT_DATE'], index['APPOINTMENT_TIME'], 0)}
+                                </p>
+                                <div className="w-full flex items-center gap-3 ml-8">
+                                    <div className={`flex items-center gap-1 font-medium ${statusInfo.color}`}>
+                                        <StatusIcon className="w-4 h-4" />
+                                        <span>{statusInfo.label}</span>
+                                    </div>
+                                    <p className="font-bold text-gray-400">
+                                        {index['MESSAGE'] || 'Sin motivo de la visita/servicio'}
+                                    </p>
+                                </div>
+                            </div>
+                        );
+                    })}
+                </div>
                 {/* Modal */}
                 {isOpen ?
                     <>

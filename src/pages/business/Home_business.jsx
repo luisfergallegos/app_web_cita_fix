@@ -3,6 +3,7 @@ import { useLoaderData, useNavigate } from 'react-router-dom';
 import { dateSpanish, fetchData } from "../../Wrapper.js";
 import { useEffect, useState } from "react";
 import { useLocation } from 'react-router-dom';
+import { toast } from "react-toastify";
 // assets
 import './Find_business.css';
 import { ChevronRightIcon, MagnifyingGlassPlusIcon, ShareIcon, UserCircleIcon, UserPlusIcon } from '@heroicons/react/24/solid';
@@ -153,8 +154,10 @@ export function HomeBusiness() {
                                         <div className="flex justify-between bg-gray-100 shadow-lg rounded-lg overflow-hidden scale-95 hover:scale-100 transition-all duration-300"
                                             key={index['APOINMENT_ID']}
                                             onClick={() => {
-                                                if (index['ESTATUS'] !== '-1' && index['ESTATUS'] !== '2') {
+                                                if (index['ESTATUS'] != '-1' && index['ESTATUS'] != '2') {
                                                     navigate(`/updateAppoinBusiness/${index['APOINMENT_ID']}`);
+                                                } else {
+                                                    toast.error(`No se puede acceder, Cita ${index['ESTATUS'] == '-1' ? 'Cancelada' : index['ESTATUS'] == '2' ?? 'Finalizada'}`);
                                                 }
                                             }}  >
                                             <div className='flex justify-center items-center ms:ml-3 lg:ml-4 '>
@@ -172,8 +175,15 @@ export function HomeBusiness() {
                                                 <label className="ms:text-2xl lg:text-2xl font-bold text-black">{ConvertDateTime(citas[currentPage - 1]['APPOINTMENT_DATE'], index['APPOINTMENT_TIME'], 1)} </label>
                                                 <label className="ms:text-2xl lg:text-2xl font-bold text-gray-400">{index['ANONIMO'] == '' ? index['COMPLET_NAME'] : index['ANONIMO'].substring(0, index['ANONIMO'].indexOf(","))} </label>
                                                 <label className="ms:text-1xl lg:text-1xl font-bold text-gray-400">{index['ANONIMO'] != '' ? index['ANONIMO'].substring(index['ANONIMO'].indexOf(",") + 1, index['ANONIMO'].length) : ''} </label>
-                                                <label className="ms:text-2xl lg:text-2xl font-bold text-gray-500">{index['ESTATUS'] == '1' ? 'Cita modificada' : ''} </label>
-                                                <label className="ms:text-2xl lg:text-2xl font-bold text-gray-400">{index['APPOINTMENT_CONFIRM'] == '1' ? 'Confirmada' : ''} </label>
+                                                <label className={`"ms:text-2xl lg:text-2xl font-bold " ${index['ESTATUS'] == '-1' ? 'text-red-500' : index['ESTATUS'] == '1' ? 'text-blue-800' : index['ESTATUS'] == '2' ?? 'text-gray-400'}`}> {index['ESTATUS'] == '-1' ? 'Cancelada' : index['ESTATUS'] == '1' ? 'Modificada' : index['ESTATUS'] == '2' ?? 'Finalizada'} </label>
+                                                {/* <label className="ms:text-2xl lg:text-2xl font-bold text-gray-400">{index['APPOINTMENT_CONFIRM'] == '1' ? index['ESTATUS'] == '-1' ? index['ESTATUS'] == '2' ? '' : '' : 'Confirmada' : ''} </label> */}
+                                                {index['APPOINTMENT_CONFIRM'] == '1' &&
+                                                    index['ESTATUS'] != '-1' &&
+                                                    index['ESTATUS'] != '2' && (
+                                                        <label className="ms:text-2xl lg:text-2xl font-bold text-blue-500">
+                                                            Confirmada
+                                                        </label>
+                                                    )}
                                             </div>
                                             <ChevronRightIcon width={30} color="black" />
                                         </div>
