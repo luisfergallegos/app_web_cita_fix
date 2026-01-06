@@ -2,6 +2,7 @@
 import { useLoaderData } from "react-router-dom";
 import { Outlet } from "react-router-dom";
 import { useEffect, useState } from "react";
+import { useProfile } from "../ProfileContext.jsx";
 // helper funtions
 import { fetchData } from "../Wrapper.js";
 // components
@@ -10,6 +11,7 @@ import { XMarkIcon as CloseIcon } from '@heroicons/react/24/solid';
 
 // import './Main.css';
 import Navbar from "../components/Navbar.jsx";
+import NavbarBus from "../components/NavbarBus.jsx";
 
 // loader
 export function mainLoader() {
@@ -20,6 +22,7 @@ export function mainLoader() {
 
 function Main() {
   const { sCorreo, sPassword } = useLoaderData();
+  const { profile } = useProfile();
   // const [sidebarOpen, setSidebarOpen] = useState(false);
 
   // 📱 Detector de móvil
@@ -65,7 +68,7 @@ function Main() {
                     </div>
                 </div>
             )}
-          <Navbar /> 
+          {profile == "business" ? <NavbarBus /> : <Navbar /> }
           <Outlet />
         </div>
          : <Outlet />

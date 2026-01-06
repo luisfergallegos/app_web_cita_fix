@@ -172,7 +172,7 @@ export function AddAppoin() {
                 body: JSON.stringify(body)
             });
             const json = await resp.json();
-            if (json.sucess === false) {
+            if (json.sucess == false) {
                 toast.error(`Fecha ${selectedDate} / Hora ${selectedTime} ya no está disponible.`);
                 setCanSubmit(true);
                 return;
@@ -220,10 +220,10 @@ export function AddAppoin() {
 
     useEffect(() => {
         const fData = async () => {
-            if (userId === '') {
+            if (userId == '') {
                 navigate("/");
             }
-            else if (sCorreo === null && sPassword === null) {
+            else if (sCorreo == null && sPassword == null) {
                 navigate("/");
             }
             //Solicitar por GET
@@ -328,7 +328,7 @@ export function AddAppoin() {
                 <div className="grid grid-cols-4 gap-3 p-6">
                     {cita[0] && cita[0].map(({ APPOINTMENT_TIME, STATUS }, idx) => {
                         const disabled = STATUS !== 'free';
-                        const selected = idx === selectedIndex;
+                        const selected = idx == selectedIndex;
                         return (
                             <button
                                 key={idx}
@@ -384,7 +384,7 @@ export function AddAppoin() {
                                         const raw = e.target.value;
                                         setAddress(prev => ({ ...prev, address_second: raw }));
                                     }}
-                                    disabled={colonias.length === 0} className="mt-1 w-full border rounded-md p-2" placeholder="Colonia" />
+                                    disabled={colonias.length == 0} className="mt-1 w-full border rounded-md p-2" placeholder="Colonia" />
                                 <datalist id="optionsList">
                                     {colonias.map((c, i) => <option key={i} value={c} />)}
                                 </datalist>

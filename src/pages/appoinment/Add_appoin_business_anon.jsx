@@ -3,6 +3,7 @@ import { useLoaderData, useNavigate } from 'react-router-dom';
 import { fetchData, dateSpanish } from "../../Wrapper.js";
 import { forwardRef, useEffect, useState } from "react";
 import { useLocation } from 'react-router-dom';
+import { toast } from "react-toastify";
 // assets
 import './Add_appoin.css';
 import '../../components/Loading.css';
@@ -129,7 +130,7 @@ export function AddAppoinBusinesssAnon() {
                     const json = await response.json();
                     if (json['sucess'] == false) {
                         setbAcceder(true);
-                        alert(`Ya no se encuentra disponible Fecha : ${_selectedDate} Hora : ${selectedTime} Corríjalo e inténtelo nuevamente.`);
+                        toast.error(`Ya no se encuentra disponible Fecha : ${_selectedDate} Hora : ${selectedTime} Corríjalo e inténtelo nuevamente.`);
                         // console.log(`Error al guardar cita.`);
                         throw new Error(`HTTP error! status: ${response.status}`);
                     }
@@ -186,10 +187,10 @@ export function AddAppoinBusinesssAnon() {
 
     useEffect(() => {
         const fData = async () => {
-            if (businessId === '') {
+            if (businessId == '') {
                 navigate("/");
             }
-            else if (sCorreo === null && sPassword === null) {
+            else if (sCorreo == null && sPassword == null) {
                 navigate("/");
             }
             //Solicitar por GET
@@ -324,14 +325,14 @@ export function AddAppoinBusinesssAnon() {
                     {cita[0] &&
                         cita[0].map(({ APPOINTMENT_TIME, STATUS }, index) =>
                         (
-                            <div className={STATUS === 'No' ? 'businessAppointmentTime active' : 'businessAppointmentTime'}
+                            <div className={STATUS == 'No' ? 'businessAppointmentTime active' : 'businessAppointmentTime'}
                                 key={index}
                                 style={{
-                                    backgroundColor: index === selectedIndex ? 'white' : STATUS === 'No' ? 'grey' : '#e0e0e0',
-                                    color: index === selectedIndex ? '#fc6500' : 'black'
+                                    backgroundColor: index == selectedIndex ? 'white' : STATUS == 'No' ? 'grey' : '#e0e0e0',
+                                    color: index == selectedIndex ? '#fc6500' : 'black'
                                 }}
                                 onClick={() => {
-                                    if (STATUS === 'free') {
+                                    if (STATUS == 'free') {
                                         setselectedTime(APPOINTMENT_TIME);
                                         setselectedIndex(index);
                                     }

@@ -96,7 +96,7 @@ export function AddEvento({ onSubmit }) {
                 setbAcceder(true);
             }
 
-            if (onSubmit && typeof onSubmit === "function") onSubmit(payload);
+            if (onSubmit && typeof onSubmit == "function") onSubmit(payload);
             // else console.log("Invitation form submitted:", payload);
 
             setSubmitted(true);
@@ -105,10 +105,10 @@ export function AddEvento({ onSubmit }) {
 
     useEffect(() => {
         const fData = async () => {
-            if (userId === '') {
+            if (userId == '') {
                 navigate("/");
             }
-            else if (sCorreo === null && sPassword === null) {
+            else if (sCorreo == null && sPassword == null) {
                 navigate("/");
             }
         };

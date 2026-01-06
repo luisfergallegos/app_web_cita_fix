@@ -152,7 +152,7 @@ export function UpdateAppoinBusiness() {
             minute: '2-digit',
             hour12: true,
         });
-        if (flag === 0) {
+        if (flag == 0) {
             return dateSpanish(formattedDate);
         }
         else {
@@ -168,7 +168,7 @@ export function UpdateAppoinBusiness() {
 
             var dateFormat = startDate.getMonth() + 1;
             var _selectedDate = `${startDate.getFullYear()}-${('0' + dateFormat).slice(-2)}-${startDate.getDate()}`;
-            var anonimo = cita.ANONIMO.length === 0 ? '' : cita.ANONIMO;
+            var anonimo = cita.ANONIMO.length == 0 ? '' : cita.ANONIMO;
 
             //Enviar por PUT
             var options = {
@@ -194,7 +194,7 @@ export function UpdateAppoinBusiness() {
                 if (json['sucess'] == false) {
                     setbAcceder(true);
                     getDaysInactive();
-                    alert(`Ya no se encuentra disponible Fecha : ${_selectedDate} Hora : ${selectedTime} Corríjalo e inténtelo nuevamente.`);
+                    toast.error(`Ya no se encuentra disponible Fecha : ${_selectedDate} Hora : ${selectedTime} Corríjalo e inténtelo nuevamente.`);
                     // console.log(`Error al guardar cita.`);
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
@@ -343,7 +343,7 @@ export function UpdateAppoinBusiness() {
                 return;
             }
         };
-        if (sCorreo === null && sPassword === null) {
+        if (sCorreo == null && sPassword == null) {
             navigate("/");
         }
         fData();
@@ -499,7 +499,7 @@ export function UpdateAppoinBusiness() {
                         <div className="grid grid-cols-4 gap-3 p-6">
                             {citaDate[0] && citaDate[0].map(({ APPOINTMENT_TIME, STATUS }, idx) => {
                                 const disabled = STATUS !== 'free';
-                                const selected = idx === selectedIndex;
+                                const selected = idx == selectedIndex;
                                 return (
                                     <button
                                         key={idx}
@@ -526,10 +526,10 @@ export function UpdateAppoinBusiness() {
                                         var parts = cita.APPOINTMENT_DATE.split('-');
                                         var partsTime = cita.APPOINTMENT_TIME.split(':');
                                         var formattedDate = new Date(parts[0], parts[1] - 1, parts[2], partsTime[0], partsTime[1], partsTime[2]);
-                                        if (startDate === '') {
+                                        if (startDate == '') {
                                             toast.error('Selecciona una fecha.');
                                         }
-                                        else if (selectedTime === '') {
+                                        else if (selectedTime == '') {
                                             toast.error('Selecciona una hora.');
                                         }
                                         else if (selectedTime == cita.APPOINTMENT_TIME.substring(0, 5) && startDate != formattedDate) {
@@ -557,7 +557,7 @@ export function UpdateAppoinBusiness() {
                 <div className="text-left px-4">
                     <h4 className="text-lg font-semibold">Historial</h4>
                     {citasHis?.map((index) => {
-                        if (cita.APOINMENT_ID === index['APOINMENT_ID']) return null;
+                        if (cita.APOINMENT_ID == index['APOINMENT_ID']) return null;
 
                         const statusInfo = getStatusInfo(index['ESTATUS']);
                         const StatusIcon = statusInfo.icon;
@@ -668,7 +668,7 @@ export function UpdateAppoinBusiness() {
                 </div>
             </div>}
 
-            {cita.ESTATUS == '2' ? <></> : <div class="fab-container">
+            {cita.ESTATUS == 2 ? <></> : <div class="fab-container">
                 <div class="button iconbutton">
                     <button
                         onClick={() => ModPopupMenu()}

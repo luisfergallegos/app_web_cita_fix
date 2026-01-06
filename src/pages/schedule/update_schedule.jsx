@@ -1,6 +1,7 @@
 // rrd imports
 import { useState } from "react";
 import { urlApi } from "../../styles/Constants.jsx";
+import { toast } from "react-toastify";
 //librery
 import DatePicker from 'react-datepicker';
 import "react-datepicker/dist/react-datepicker.css";
@@ -15,14 +16,14 @@ export function UpdateSchedule({ excludeTimes, horario, businessId, setshowAlert
             var newValue = valuesDefault[indexToUpdate];
             newValue['value'] = 1;
             setValuesDefault(valuesDefault.map((item, index) =>
-                index === indexToUpdate ? newValue : item
+                index == indexToUpdate ? newValue : item
             ));
         }
         else {
             var newValue = valuesDefault[indexToUpdate];
             newValue['value'] = 0;
             setValuesDefault(valuesDefault.map((item, index) =>
-                index === indexToUpdate ? newValue : item
+                index == indexToUpdate ? newValue : item
             ));
 
         }
@@ -33,7 +34,7 @@ export function UpdateSchedule({ excludeTimes, horario, businessId, setshowAlert
         var newValue = valuesDefault[indexToUpdate];
         newValue['desdeH'] = hour;
         setValuesDefault(valuesDefault.map((item, index) =>
-            index === indexToUpdate ? newValue : item
+            index == indexToUpdate ? newValue : item
         ));
     };
 
@@ -42,7 +43,7 @@ export function UpdateSchedule({ excludeTimes, horario, businessId, setshowAlert
         var newValue = valuesDefault[indexToUpdate];
         newValue['hastaH'] = hour;
         setValuesDefault(valuesDefault.map((item, index) =>
-            index === indexToUpdate ? newValue : item
+            index == indexToUpdate ? newValue : item
         ));
     };
 
@@ -53,7 +54,7 @@ export function UpdateSchedule({ excludeTimes, horario, businessId, setshowAlert
         newValue['intervalo'] = dIntervalo[indexToUpdateIntervalo];
         newValue['intervaloDes'] = _intervaloDes[indexToUpdateIntervalo];
         setValuesDefault(valuesDefault.map((item, index) =>
-            index === indexToUpdate ? newValue : item
+            index == indexToUpdate ? newValue : item
         ));
     };
 
@@ -95,7 +96,7 @@ export function UpdateSchedule({ excludeTimes, horario, businessId, setshowAlert
             }
         }
         else {
-            alert('Es posible que exista un hora incorrecta o no válido');
+            toast.error('Es posible que exista un hora incorrecta o no válido');
         }
     };
 

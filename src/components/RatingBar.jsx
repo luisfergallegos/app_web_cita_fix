@@ -19,7 +19,7 @@ export function  RatingBar ({ maxRating = 5, onRatingChange }) {
                 <Star
                     key={i}
                     filled={i < rating}
-                    half={i === Math.floor(rating) && rating % 1 !== 0}
+                    half={i == Math.floor(rating) && rating % 1 !== 0}
                     color={i < rating ? colors[rating] : colors[0] }
                     onClick={() => handleClick(i)}
                 />

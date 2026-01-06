@@ -210,7 +210,7 @@ export function ViewUpdateBusiness() {
                         if (response.status == 200) {
                             const json = await response.json();
                             setColaboraciones(json['data']);
-                            var temp = usuariosbkq.filter((u) => !json['data'].some((c) => c.USER_ID === u.USER_ID));
+                            var temp = usuariosbkq.filter((u) => !json['data'].some((c) => c.USER_ID == u.USER_ID));
                             setUsuarios(temp);
                             setsearchText('');
                         } else {
@@ -260,7 +260,7 @@ export function ViewUpdateBusiness() {
                         if (response.status == 200) {
                             const json = await response.json();
                             setColaboraciones(json['data']);
-                            var temp = usuariosbkq.filter((u) => !json['data'].some((c) => c.USER_ID === u.USER_ID));
+                            var temp = usuariosbkq.filter((u) => !json['data'].some((c) => c.USER_ID == u.USER_ID));
                             setUsuarios(temp);
                             setsearchText('');
                             setbAccederCollaborator(true);
@@ -415,7 +415,7 @@ export function ViewUpdateBusiness() {
         const value = evt.target.value;
         var tempcita = [];
         setCountCodigoPostal(evt.target.value.length);
-        if (evt.target.value.length === 5) {
+        if (evt.target.value.length == 5) {
             setCodigoPostal(value);
             //Solicitar por GET
             try {
@@ -524,13 +524,13 @@ export function ViewUpdateBusiness() {
 
     useEffect(() => {
         const fData = async () => {
-            if (businessId === '') {
+            if (businessId == '') {
                 navigate("/");
             }
-            else if (businessAdmin === false) {
+            else if (businessAdmin == false) {
                 navigate("/");
             }
-            else if (sCorreo === null && sPassword === null) {
+            else if (sCorreo == null && sPassword == null) {
                 navigate("/");
             }
             //Solicitar por GET
@@ -599,7 +599,7 @@ export function ViewUpdateBusiness() {
                                             const json = await response.json();
                                             setColaboraciones(json['data']);
 
-                                            var temp = json2['data'].filter((u) => !json['data'].some((c) => c.USER_ID === u.USER_ID));
+                                            var temp = json2['data'].filter((u) => !json['data'].some((c) => c.USER_ID == u.USER_ID));
                                             setUsuarios(temp);
                                         } else {
                                             throw new Error(`HTTP error! status: ${response.status}`);
@@ -776,7 +776,7 @@ export function ViewUpdateBusiness() {
                                 <div className="font-semibold py-2 px-2 rounded-md shadow-md transition flex items-center justify-between">
                                     <div className="flex items-center space-x-4" >
                                         {
-                                            index['PHOTO'] === null ? <UserCircleIcon width={40} color={'#fc6500'} className="ml-2" /> :
+                                            index['PHOTO'] == null ? <UserCircleIcon width={40} color={'#fc6500'} className="ml-2" /> :
                                                 <img id='imgS' src={'data:image/jpeg;base64,' + arrayBufferToBase64(index['PHOTO'].data)} />
                                         }
                                         <div className='flex flex-col'>
@@ -809,18 +809,18 @@ export function ViewUpdateBusiness() {
                                 <div className="flex flex-col grap-3">
                                     {filteredNames.map((index) => (
                                         <div className={` font-semibold py-2 px-2 rounded-md shadow-md transition flex items-center justify-between
-                                            ${selectUser === index.USER_ID ? "bg-orange-500 text-white" : "bg-white hover:bg-gray-200 text-orange-500"}`}
+                                            ${selectUser == index.USER_ID ? "bg-orange-500 text-white" : "bg-white hover:bg-gray-200 text-orange-500"}`}
                                             key={index.USER_ID}
                                             onClick={() => {
-                                                setSelectUser(selectUser === index.USER_ID ? null : index.USER_ID);
+                                                setSelectUser(selectUser == index.USER_ID ? null : index.USER_ID);
                                             }}
                                         >
                                             <div className="flex items-center space-x-4" >
                                                 {
-                                                    index['PHOTO'] === null ? <UserCircleIcon width={40} color={selectUser === index.USER_ID ? '#fff' : '#fc6500'} className="ml-2" /> :
+                                                    index['PHOTO'] == null ? <UserCircleIcon width={40} color={selectUser == index.USER_ID ? '#fff' : '#fc6500'} className="ml-2" /> :
                                                         <img id='imgS' src={'data:image/jpeg;base64,' + arrayBufferToBase64(index['PHOTO'].data)} />
                                                 }
-                                                <label className={`${selectUser === index.USER_ID ? "text-white" : "text-black"}`}>{index['first_name']} {index.last_name}</label>
+                                                <label className={`${selectUser == index.USER_ID ? "text-white" : "text-black"}`}>{index['first_name']} {index.last_name}</label>
                                             </div>
                                         </div>
                                     ))}

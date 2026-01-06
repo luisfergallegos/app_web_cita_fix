@@ -357,7 +357,7 @@ export function ViewUpdateUser() {
                 return;
             }
         };
-        if (sCorreo === null && sPassword === null) {
+        if (sCorreo == null && sPassword == null) {
             navigate("/");
         }
         fData();

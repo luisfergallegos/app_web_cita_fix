@@ -29,7 +29,7 @@ export default function Login() {
     const isValidEmail = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
 
-    if (email === '' || password === '') {
+    if (email == '' || password == '') {
       setShowAlert(true);
       setTimeout(() => setShowAlert(false), 3000); // ocultar alerta
       return;
@@ -51,15 +51,15 @@ export default function Login() {
       }
       try {
         const response = await fetch(`${urlApi}login?email=${email}`, options);
-        if( response.status === 404 ){
+        if( response.status == 404 ){
           setLoading(false);
           return toast.error(`Usuario no registrado`);
         }
-        if( response.status === 401 ){
+        if( response.status == 401 ){
           setLoading(false);
           return toast.error(`Contraseña incorrecta`);
         }
-        if( response.status === 500 ){
+        if( response.status == 500 ){
           setLoading(false);
           return toast.error(`Error en el servidor, intenta más tarde`);
         }
@@ -108,7 +108,7 @@ export default function Login() {
     //ValidateEmail
     const isValidEmail = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
-    if (email === "") {
+    if (email == "") {
       setShowAlert(true);
       setTimeout(() => setShowAlert(false), 3000); // ocultar alerta
       return;

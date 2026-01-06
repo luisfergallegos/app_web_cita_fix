@@ -39,8 +39,8 @@ export function Notification() {
                     const response = await fetch(`${urlApi}usrInfCol?user_id=${userId}`);
                     if (response.status == 200) {
                         const json = await response.json();
-                        setColaboraciones(json['data'].filter(e => e.CONFIRM === 0));
-                        localStorage.setItem("numNot", json['data'].filter(e => e.CONFIRM === 0).length + Aux.length);
+                        setColaboraciones(json['data'].filter(e => e.CONFIRM == 0));
+                        localStorage.setItem("numNot", json['data'].filter(e => e.CONFIRM == 0).length + Aux.length);
                     } else {
                         console.log(`Error getting setUserAdditInf.`);
                         throw new Error(`HTTP error! status: ${response.status}`);
@@ -55,7 +55,7 @@ export function Notification() {
                 return;
             }
         };
-        if (sCorreo === null && sPassword === null) {
+        if (sCorreo == null && sPassword == null) {
             navigate("/");
         }
         fData();

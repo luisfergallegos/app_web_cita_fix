@@ -85,7 +85,7 @@ export function LoginForm() {
                     const response = await fetch(`${urlApi}usrInfCol?user_id=${userId}`, options);
                     if (response.status == 200) {
                         const json = await response.json();
-                        localStorage.setItem("numNot", json['data'].filter(e => e.CONFIRM === 0).length + Aux.length);
+                        localStorage.setItem("numNot", json['data'].filter(e => e.CONFIRM == 0).length + Aux.length);
                     } else {
                         throw new Error(`HTTP error! status: ${response.status}`);
                     }

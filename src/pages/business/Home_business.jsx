@@ -4,33 +4,38 @@ import { dateSpanish, fetchData } from "../../Wrapper.js";
 import { useEffect, useState } from "react";
 import { useLocation } from 'react-router-dom';
 import { toast } from "react-toastify";
+import { useProfile } from "../../ProfileContext.jsx";
 // assets
 import './Find_business.css';
-import { ChevronRightIcon, MagnifyingGlassPlusIcon, ShareIcon, UserCircleIcon, UserPlusIcon } from '@heroicons/react/24/solid';
+import { ChevronRightIcon, MagnifyingGlassPlusIcon, ShareIcon, UserCircleIcon, UserPlusIcon, ArrowPathIcon } from '@heroicons/react/24/solid';
 import Pagination from '../../components/Pagination.jsx';
 import Loaging from '../../components/Loading.jsx';
 import { urlApi } from "../../styles/Constants.jsx";
 import { Cog6ToothIcon } from '@heroicons/react/24/outline';
 
 // loader
-export function HomeBusinessLoader() {
-    const sCorreo = fetchData("correo");
-    const sPassword = fetchData("pwd");
-    return { sCorreo, sPassword };
-}
+// export function HomeBusinessLoader() {
+//     const sCorreo = fetchData("correo");
+//     const sPassword = fetchData("pwd");
+//     return { sCorreo, sPassword };
+// }
 
 const PageSize = 10;
 
 export function HomeBusiness() {
+    const { setProfile } = useProfile();
     const location = useLocation();
     const navigate = useNavigate();
-    const { sCorreo, sPassword } = useLoaderData();
+    // const { sCorreo, sPassword } = useLoaderData();
+    const sCorreo = fetchData("correo");
+    const sPassword = fetchData("pwd");
     const [loading, setLoading] = useState(true);
     const [currentPage, setCurrentPage] = useState(1);
     const sUserCitaFix = fetchData("UserCitaFix") ?? [];
     const [citas, setCitas] = useState([]);
-    const businessId = location.state?.businessId ?? '';
-    const businessAdmin = location.state?.tipo;
+    const stored = JSON.parse(localStorage.getItem("homeBusiness"));
+    const businessId = stored.businessId ?? '';
+    const businessAdmin = stored.tipo;
     const [empresa, SetEmpresa] = useState([]);
 
     const arrayBufferToBase64 = (buffer) => {
@@ -49,7 +54,7 @@ export function HomeBusiness() {
             minute: '2-digit',
             hour12: true,
         });
-        if (flag === 0) {
+        if (flag == 0) {
             return dateSpanish(formattedDate);
         }
         else {
@@ -58,14 +63,25 @@ export function HomeBusiness() {
 
     }
 
+    const STATUS_CONFIG = {
+        '-1': { label: 'Cancelada', color: 'text-red-500' },
+        '0': { label: 'Nueva', color: 'text-sky-400' },
+        '1': { label: 'Modificada', color: 'text-blue-700' },
+        '2': { label: 'Finalizada', color: 'text-gray-400' },
+        '3': { label: 'Actual', color: 'text-blue-500' },
+    };
+
+    const getStatusInfo = (status) =>
+        STATUS_CONFIG[status] || { label: 'Desconocido', color: 'text-gray-400' };
+
     useEffect(() => {
         const fData = async () => {
             const uid = sUserCitaFix['USER_ID'];
-            if (businessId === '') {
+            if (businessId == '') {
                 navigate("/");
             }
             else
-                if (sCorreo === null && sPassword === null) {
+                if (sCorreo == null && sPassword == null) {
                     navigate("/");
                 }
             try {
@@ -150,44 +166,46 @@ export function HomeBusiness() {
                                     : `Tienes ${citas[currentPage - 1]['APPOINTMENT'].length} citas agendadas`}</h2>
                                 <p className="ms:text-2xl lg:text-2xl text-gray-600">{ConvertDateTime(citas[currentPage - 1]['APPOINTMENT_DATE'], '00:00:00', 0)}</p>
                                 {
-                                    citas[currentPage - 1]['APPOINTMENT'].map((index) => (
-                                        <div className="flex justify-between bg-gray-100 shadow-lg rounded-lg overflow-hidden scale-95 hover:scale-100 transition-all duration-300"
-                                            key={index['APOINMENT_ID']}
-                                            onClick={() => {
-                                                if (index['ESTATUS'] != '-1' && index['ESTATUS'] != '2') {
-                                                    navigate(`/updateAppoinBusiness/${index['APOINMENT_ID']}`);
-                                                } else {
-                                                    toast.error(`No se puede acceder, Cita ${index['ESTATUS'] == '-1' ? 'Cancelada' : index['ESTATUS'] == '2' ?? 'Finalizada'}`);
-                                                }
-                                            }}  >
-                                            <div className='flex justify-center items-center ms:ml-3 lg:ml-4 '>
-                                                {
-                                                    index['PHOTO'] === null ?
-                                                        <UserCircleIcon className='w-12 h-12'
-                                                            color={index['ESTATUS'] == '-1' ? '#B71C1C' :
-                                                                index['ESTATUS'] == '1' ? '#32325d' :
-                                                                    index['ESTATUS'] == '3' || index['APPOINTMENT_CONFIRM'] == '1' ? '#4472C4' : '#fc6500'
-                                                            } /> :
-                                                        <img id='imgS' src={'data:image/jpeg;base64,' + arrayBufferToBase64(index['PHOTO'].data)} />
-                                                }
+                                    citas[currentPage - 1]['APPOINTMENT'].map((index) => {
+                                        const statusInfo = getStatusInfo(index['ESTATUS']);
+                                        return (
+                                            <div className="flex justify-between bg-gray-100 shadow-lg rounded-lg overflow-hidden scale-95 hover:scale-100 transition-all duration-300"
+                                                key={index['APOINMENT_ID']}
+                                                onClick={() => {
+                                                    if (index['ESTATUS'] !== -1 && index['ESTATUS'] !== 2) {
+                                                        navigate(`/updateAppoinBusiness/${index['APOINMENT_ID']}`);
+                                                    } else {
+                                                        toast.error(`No se puede acceder, Cita ${statusInfo.label}`);
+                                                    }
+                                                }}  >
+                                                <div className='flex justify-center items-center ms:ml-3 lg:ml-4 '>
+                                                    {
+                                                        index['PHOTO'] == null ?
+                                                            <UserCircleIcon className='w-12 h-12'
+                                                                color={index['ESTATUS'] == -1 ? '#B71C1C' :
+                                                                    index['ESTATUS'] == 1 ? '#32325d' :
+                                                                        index['ESTATUS'] == 3 || index['APPOINTMENT_CONFIRM'] == 1 ? '#4472C4' : '#fc6500'
+                                                                } /> :
+                                                            <img id='imgS' src={'data:image/jpeg;base64,' + arrayBufferToBase64(index['PHOTO'].data)} />
+                                                    }
+                                                </div>
+                                                <div className="grid">
+                                                    <label className="ms:text-2xl lg:text-2xl font-bold text-black">{ConvertDateTime(citas[currentPage - 1]['APPOINTMENT_DATE'], index['APPOINTMENT_TIME'], 1)} </label>
+                                                    <label className="ms:text-2xl lg:text-2xl font-bold text-gray-400">{index['ANONIMO'] == '' ? index['COMPLET_NAME'] : index['ANONIMO'].substring(0, index['ANONIMO'].indexOf(","))} </label>
+                                                    <label className="ms:text-1xl lg:text-1xl font-bold text-gray-400">{index['ANONIMO'] != '' ? index['ANONIMO'].substring(index['ANONIMO'].indexOf(",") + 1, index['ANONIMO'].length) : ''} </label>
+                                                    <label className={`ms:text-2xl lg:text-2xl font-bold ${statusInfo.color}`}> {statusInfo.label} </label>
+                                                    {index['APPOINTMENT_CONFIRM'] == 1 &&
+                                                        index['ESTATUS'] !== -1 &&
+                                                        index['ESTATUS'] !== 2 && (
+                                                            <label className="ms:text-2xl lg:text-2xl font-bold text-blue-500">
+                                                                Confirmada
+                                                            </label>
+                                                        )}
+                                                </div>
+                                                <ChevronRightIcon width={30} color="black" />
                                             </div>
-                                            <div className="grid">
-                                                <label className="ms:text-2xl lg:text-2xl font-bold text-black">{ConvertDateTime(citas[currentPage - 1]['APPOINTMENT_DATE'], index['APPOINTMENT_TIME'], 1)} </label>
-                                                <label className="ms:text-2xl lg:text-2xl font-bold text-gray-400">{index['ANONIMO'] == '' ? index['COMPLET_NAME'] : index['ANONIMO'].substring(0, index['ANONIMO'].indexOf(","))} </label>
-                                                <label className="ms:text-1xl lg:text-1xl font-bold text-gray-400">{index['ANONIMO'] != '' ? index['ANONIMO'].substring(index['ANONIMO'].indexOf(",") + 1, index['ANONIMO'].length) : ''} </label>
-                                                <label className={`"ms:text-2xl lg:text-2xl font-bold " ${index['ESTATUS'] == '-1' ? 'text-red-500' : index['ESTATUS'] == '1' ? 'text-blue-800' : index['ESTATUS'] == '2' ?? 'text-gray-400'}`}> {index['ESTATUS'] == '-1' ? 'Cancelada' : index['ESTATUS'] == '1' ? 'Modificada' : index['ESTATUS'] == '2' ?? 'Finalizada'} </label>
-                                                {/* <label className="ms:text-2xl lg:text-2xl font-bold text-gray-400">{index['APPOINTMENT_CONFIRM'] == '1' ? index['ESTATUS'] == '-1' ? index['ESTATUS'] == '2' ? '' : '' : 'Confirmada' : ''} </label> */}
-                                                {index['APPOINTMENT_CONFIRM'] == '1' &&
-                                                    index['ESTATUS'] != '-1' &&
-                                                    index['ESTATUS'] != '2' && (
-                                                        <label className="ms:text-2xl lg:text-2xl font-bold text-blue-500">
-                                                            Confirmada
-                                                        </label>
-                                                    )}
-                                            </div>
-                                            <ChevronRightIcon width={30} color="black" />
-                                        </div>
-                                    )
+                                        );
+                                    }
                                     )
                                 }
                             </div>
@@ -207,7 +225,7 @@ export function HomeBusiness() {
                                 <p className="text-gray-600">Guarda tus proximas citas de manera fácil y al instante. </p>
                                 <p className="text-gray-600 mb-4">Dirígete al buscador de cliente</p>
                                 <button
-                                    onClick={() => navigate("/findUser", { state: { userId: sUserCitaFix['USER_ID'], businessId: businessId, dorsl: empresa.DORSL } })}
+                                    onClick={() => navigate("/findUser")}
                                     className="bg-orange-500 hover:bg-orange-600 text-white font-semibold py-2 px-6 rounded-md shadow-md transition"
                                 >
                                     Ir a clientes
@@ -218,25 +236,43 @@ export function HomeBusiness() {
             </div>
             {
                 empresa.DORSL == '' ? <div></div> :
-                    <div class="fab-container2">
+                    <div class="fab-container3">                        
                         <div class="button iconbutton">
                             <button
                                 onClick={() => navigate("/addAppoinBusinessAnon", { state: { businessId: businessId, dorsl: empresa.DORSL } })} //Cambiar
                                 class="fa-solid fa-plus">
                                 <UserPlusIcon width={40} />
                             </button>
+                            <label class="text-white px-1 font-bold">Invitar</label>
                         </div>
                     </div>
             }
             {
                 empresa.DORSL == '' ? <div></div> :
-                    <div class="fab-container">
+                    <div class="fab-container2">
                         <div class="button iconbutton">
                             <button
-                                onClick={() => navigate("/findUser", { state: { userId: sUserCitaFix['USER_ID'], businessId: businessId, dorsl: empresa.DORSL } })}
+                                onClick={() => navigate("/findUser")}
                                 class="fa-solid fa-plus">
                                 <MagnifyingGlassPlusIcon width={40} />
                             </button>
+                            <label class="text-white px-1 font-bold">Nueva</label>
+                        </div>
+                    </div>
+            }
+            {
+                empresa.DORSL == '' ? <div></div> :
+                    <div class="fab-container">                        
+                        <div class="button iconbutton text-center">
+                            <button
+                                onClick={() => {
+                                    setProfile("user");
+                                    navigate("/home");
+                                }}
+                                class="fa-solid fa-plus">
+                                <ArrowPathIcon width={40} />
+                            </button>
+                            <label class="text-white px-1 font-bold">{sUserCitaFix['first_name']}</label>
                         </div>
                     </div>
             }

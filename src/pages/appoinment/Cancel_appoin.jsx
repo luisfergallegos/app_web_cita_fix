@@ -51,7 +51,7 @@ export function CancelarAppoin() {
             minute: '2-digit',
             hour12: true,
         });
-        if (flag === 0) {
+        if (flag == 0) {
             return dateSpanish(formattedDate);
         }
         else {
@@ -192,7 +192,7 @@ export function CancelarAppoin() {
                 return;
             }
         };
-        if (sCorreo === null && sPassword === null) {
+        if (sCorreo == null && sPassword == null) {
             navigate("/");
         }
         fData();
@@ -290,30 +290,30 @@ export function CancelarAppoin() {
                             <p className='text-gray-400'>Reservada</p>
                         </div>
                     </div>}
-                    {flagEvent ? <></> : cita.APPOINTMENT_CONFIRM == '1' ? <div className="w-full flex items-center gap-3 px-4 mt-2">
+                    {flagEvent ? <></> : cita.APPOINTMENT_CONFIRM == 1 ? <div className="w-full flex items-center gap-3 px-4 mt-2">
                         <InformationCircleIcon className="w-6 h-6 text-orange-500" />
                         <div>
                             <p className='text-gray-400'>Confirmada</p>
                         </div>
                     </div> : <></>}
-                    {flagEvent ? <></> : cita.ESTATUS == '1' ? <div className="w-full flex items-center gap-3 px-4 mt-2">
+                    {flagEvent ? <></> : cita.ESTATUS == 1 ? <div className="w-full flex items-center gap-3 px-4 mt-2">
                         <InformationCircleIcon className="w-6 h-6 text-orange-500" />
                         <div>
                             <p className='text-gray-400'>Modificada por la empresa</p>
                         </div>
                     </div> : <></>}
-                    {flagEvent ? <></> : cita.ESTATUS == '-1' ? <div className="w-full flex items-center gap-3 px-4 mt-2">
+                    {flagEvent ? <></> : cita.ESTATUS == -1 ? <div className="w-full flex items-center gap-3 px-4 mt-2">
                         <InformationCircleIcon className="w-6 h-6 text-red-500" />
                         <div>
                             <p className='text-gray-400'>Cancelada</p>
                         </div>
-                    </div> : cita.ESTATUS == '3' ?
+                    </div> : cita.ESTATUS == 3 ?
                         <div className="w-full flex items-center gap-3 px-4 mt-2">
                             <InformationCircleIcon className="w-6 h-6 text-blue-500" />
                             <div>
                                 <p className='text-gray-400'>En cita</p>
                             </div>
-                        </div> : cita.ESTATUS == '0' || cita.ESTATUS == '1' ?
+                        </div> : cita.ESTATUS == 0 || cita.ESTATUS == 1 ?
                             <div className="w-full flex items-center gap-3 px-4 mt-2">
                                 <InformationCircleIcon className="w-6 h-6 text-gray-500" />
                                 <div>
@@ -366,7 +366,7 @@ export function CancelarAppoin() {
                 {flagEvent ? <></> : <hr className="my-4" />}
                 <div className="mt-6 px-4 mb-6">
                     {bAcceder ? (
-                        cita.ESTATUS == '-1' ? <></> :
+                        cita.ESTATUS == -1 ? <></> :
                         <button
                             onClick={() => {
                                 if (cita.ESTATUS == '2' && cita.FLAG_SERVICE_LEVEL == '0') {
@@ -402,12 +402,12 @@ export function CancelarAppoin() {
                                 <div className='flex justify-end mt-2'>
                                     <button className='bg-gray-500 text-white px-4 py-2 rounded-md hover:bg-gray-600 mx-2' onClick={() => { setIsOpen(false); }}>Cancelar</button>
                                     <button className='bg-orange-500 text-white px-4 py-2 rounded-md hover:bg-orange-600' onClick={() => {
-                                        if (cita.ESTATUS == '3' ||
-                                            cita.ESTATUS == '2' ||
-                                            cita.ESTATUS == '-1') {
-                                            if (cita.ESTATUS == '3') {
+                                        if (cita.ESTATUS == 3 ||
+                                            cita.ESTATUS == 2 ||
+                                            cita.ESTATUS == -1) {
+                                            if (cita.ESTATUS == 3) {
                                                 toast.error('No se puede cancelar la cita (Actual)');
-                                            } else if (cita.ESTATUS == '-1') {
+                                            } else if (cita.ESTATUS == -1) {
                                                 toast.error('No se puede cancelar la cita (Cancelada)');
                                             } else if (cita.FLAG_SERVICE_LEVEL ==
                                                 '0') {

@@ -54,7 +54,7 @@ export function FindBusiness() {
     const handleChange = evt => {
         const value = evt.target.value;
         setSearchText(value);
-        if (value === "") {
+        if (value == "") {
             setFilteredNames(empresas);
         } else {
             const results = empresas.filter((emp) =>

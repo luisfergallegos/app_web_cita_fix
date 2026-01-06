@@ -44,7 +44,7 @@ export function RegisterBusiness() {
 
     const register = async (e) => {
         //ValidateName
-        if (sName === "") {
+        if (sName == "") {
             setsNameError("Ingresa el nombre de tu empresa");
             return;
         }
@@ -53,7 +53,7 @@ export function RegisterBusiness() {
         }
 
         //ValidateCategoria
-        if (sSubCategoriaName.label === "") {
+        if (sSubCategoriaName.label == "") {
             setSubCategoriaNameError("Ingresa tu categoría comercial");
             return;
         } else {
@@ -61,7 +61,7 @@ export function RegisterBusiness() {
         }
 
         //ValidateSubCategoria
-        /* if (sSubCategoriaName === "") {
+        /* if (sSubCategoriaName == "") {
             setSubCategoriaNameError("Ingresa tu categoría comercial");
             return;
         }
@@ -76,7 +76,7 @@ export function RegisterBusiness() {
         } */
 
         //ValidateCalle/Numero
-        if (direccionUno === "") {
+        if (direccionUno == "") {
             setdireccionUnoError("Ingresa tu calle / número");
             return;
         }
@@ -85,7 +85,7 @@ export function RegisterBusiness() {
         }
 
         //ValidateColina
-        if (direccionDos === "") {
+        if (direccionDos == "") {
             setdireccionDosError("Ingresa tu colonia");
             return;
         }
@@ -134,7 +134,7 @@ export function RegisterBusiness() {
         const value = evt.target.value;
         var tempcita = [];
         setCountCodigoPostal(evt.target.value.length);
-        if (evt.target.value.length === 5) {
+        if (evt.target.value.length == 5) {
             setCodigoPostal(value);
             //Solicitar por GET
             try {
@@ -272,7 +272,7 @@ export function RegisterBusiness() {
         if (dorsl != '') {
             navigate("/");
         }
-        else if (sCorreo === null && sPassword === null) {
+        else if (sCorreo == null && sPassword == null) {
             navigate("/");
         }
         fData();

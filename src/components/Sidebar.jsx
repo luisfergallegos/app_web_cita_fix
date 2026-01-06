@@ -29,22 +29,22 @@ export function Sidebar({ sidebarOpen, setSidebarOpen }) {
         },
         {
             label:
-                (sUserCitaFix['first_name'] === "" || sUserCitaFix.length === 0
+                (sUserCitaFix['first_name'] == "" || sUserCitaFix.length == 0
                     ? 'Agrega tu nombre'
                     : sUserCitaFix['first_name']),
             sublabel: 'Ver tus citas',
-            icon: (bPhotoUser['data'] === null || bPhotoUser.length === 0
+            icon: (bPhotoUser['data'] == null || bPhotoUser.length == 0
                 ? <UserCircleIcon className='w-8 h-8 mx-1 md:w-10 md:h-10 lg:w-10 lg:h-10 ms:mx-2 md:mx-2 lg:mx-2' />
                 : <img src={User} width={50} height={50} />),
             to: "home"
         },
         {
-            label: (dorsl == '' || sUserCitaFix.length === 0
+            label: (dorsl == '' || sUserCitaFix.length == 0
                 ? 'Agrega tu empresa'
                 : dorsl),
-            sublabel: (dorsl === '' ? '' : 'Ver tu empresa'),
+            sublabel: (dorsl == '' ? '' : 'Ver tu empresa'),
             icon: <BuildingStorefrontIcon className='w-8 h-8 mx-1 md:w-10 md:h-10 lg:w-10 lg:h-10 ms:mx-2 md:mx-2 lg:mx-2' />,
-            to: (dorsl == '' || sUserCitaFix.length === 0
+            to: (dorsl == '' || sUserCitaFix.length == 0
                 ? "registerBusiness"
                 : "homeBusiness") 
         },

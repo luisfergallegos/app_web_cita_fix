@@ -4,9 +4,10 @@ import { createBrowserRouter, RouterProvider, BrowserRouter } from "react-router
 
 // Layouts
 import Main, { mainLoader } from "./layouts/Main.jsx";
+import { ProfileProvider } from "./ProfileContext.jsx";
 
 // Routers
-import Home, { homeLoader } from "./pages/Home.jsx";
+import Home from "./pages/Home.jsx";
 import ViewUpdateUser, { viewUpdateUserLoader } from "./pages/register_user/View_update_user.jsx";
 import ViewUpdateBusiness, { viewUpdateBusinessLoader } from "./pages/register_business/View_update_business.jsx";
 import FindBusiness, { findBusinessLoader } from "./pages/business/Find_business.jsx";
@@ -16,7 +17,7 @@ import LoginForm, { loginFormLoader } from "./pages/Login";
 import Error from "./pages/Error.jsx";
 import AddAppoin, { AddAppoinLoader } from './pages/appoinment/Add_appoin.jsx';
 import CancelarAppoin, { CancelarAppoinLoader } from './pages/appoinment/Cancel_appoin.jsx';
-import HomeBusiness, { HomeBusinessLoader } from './pages/business/Home_business.jsx';
+import HomeBusiness from './pages/business/Home_business.jsx';
 import RegisterBusiness, { registerBusinessLoader } from './pages/register_business/Register_business.jsx';
 import FindUser, { findUserLoader } from './pages/register_user/Find_user.jsx';
 import AddAppoinBusinesss, { AddAppoinBusinesssLoader } from './pages/appoinment/Add_appoin_business.jsx';
@@ -29,6 +30,7 @@ import AddEvento, { AddEventoLoader } from './pages/evento/add_evento.jsx';
 import UpdateEvento, { UpdateEventoLoader } from './pages/evento/update_evento.jsx';
 // Actions
 import { logoutAction } from "./actions/logout.js";
+import RequireBusiness from "./components/RequireBusiness.jsx";
 
 const router = createBrowserRouter([
   {
@@ -53,8 +55,7 @@ const router = createBrowserRouter([
       {
         path: "home",
         element: <Home />,
-        loader: homeLoader,
-        errorElement: <Error />
+        // loader: homeLoader,
       },
       {
         path: "registerUser",
@@ -81,7 +82,7 @@ const router = createBrowserRouter([
       {
         path: "homeBusiness",
         element: <HomeBusiness />,
-        loader: HomeBusinessLoader,
+        // loader: HomeBusinessLoader,
         /* action: findBusinessAction, */
         errorElement: <Error />
       },
@@ -124,7 +125,11 @@ const router = createBrowserRouter([
       },
       {
         path: "addAppoinBusiness",
-        element: <AddAppoinBusinesss />,
+        element: (
+          <RequireBusiness>
+            <AddAppoinBusinesss />
+          </RequireBusiness>
+        ),
         loader: AddAppoinBusinesssLoader,
         /*action: expensesAction, */
         errorElement: <Error />
@@ -188,13 +193,12 @@ const router = createBrowserRouter([
 ]);
 
 function App() {
-
   return (
-    <>
+    <ProfileProvider>
       <RouterProvider router={router} />
       <ToastContainer />
-    </>
-  )
+    </ProfileProvider>
+  );
 }
 
 export default App;

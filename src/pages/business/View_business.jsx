@@ -257,7 +257,7 @@ export function ViewBusiness() {
                                         <ClockIcon className="w-10 h-10 text-orange-500" />
                                         <div>
                                             <p className="text-gray-500">{formatDate(h.APPOINTMENT_DATE)}</p>
-                                            <p className="text-gray-500">Disponibles : <strong>{h.APPOINTMENT.filter(a => a.STATUS === "free").length}</strong></p>
+                                            <p className="text-gray-500">Disponibles : <strong>{h.APPOINTMENT.filter(a => a.STATUS == "free").length}</strong></p>
                                         </div> </div>
                                 ))
                             ) :

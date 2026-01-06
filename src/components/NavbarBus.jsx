@@ -4,53 +4,36 @@ import { fetchData } from "../Wrapper.js";
 import { NavLink } from 'react-router-dom';
 
 // Library
-import { Bars3Icon, XMarkIcon, HomeIcon, BellIcon, MagnifyingGlassIcon } from '@heroicons/react/24/solid';
+import { Bars3Icon, XMarkIcon, BuildingOfficeIcon, MagnifyingGlassIcon } from '@heroicons/react/24/solid';
 
 // assents
 import logo from "../assets/splash.png";
 
 
-export function Navbar() {
+export function NavbarBus() {
     const [isOpen, setIsOpen] = useState(false);
     const toggleMenu = () => setIsOpen(!isOpen);
-    const sUserCitaFix = fetchData("UserCitaFix") ?? [];
-    const numNoti = fetchData("numNot") ?? 0;
-    const [numNotificaciones, setNumNotificaciones] = useState(numNoti);
-
+    const stored = JSON.parse(localStorage.getItem("homeBusiness"));
     const arrayBufferToBase64 = (buffer) => {
         var binary = '';
         var bytes = [].slice.call(new Uint8Array(buffer));
         bytes.forEach((b) => binary += String.fromCharCode(b));
         return btoa(binary);
     };
-
+    
     const [linksArray, setLinksArray] = useState([
         {
             label: 'Inicio',
-            icon: (sUserCitaFix['PHOTO'].data == null || sUserCitaFix['PHOTO'].data.length == 0
-                ? <HomeIcon className='w-8 h-8 mx-1 md:w-5 md:h-5 lg:w-10 lg:h-10 ms:mx-2 md:mx-2 lg:mx-2' />
+            icon: (stored.photo.data == null || stored.photo.data.length == 0
+                ? <BuildingOfficeIcon className='w-8 h-8 mx-1 md:w-5 md:h-5 lg:w-10 lg:h-10 ms:mx-2 md:mx-2 lg:mx-2' />
                 : <img className="w-8 h-8 mx-1 md:w-5 md:h-5 lg:w-10 lg:h-10 ms:mx-2 md:mx-2 lg:mx-2 rounded-full object-cover border" 
-                src={'data:image/jpeg;base64,' + arrayBufferToBase64(sUserCitaFix['PHOTO'].data)} />),
+                src={'data:image/jpeg;base64,' + arrayBufferToBase64(stored.photo.data)} />),
             to: "home"
         },
         {
             label: 'Buscar',
             icon: <MagnifyingGlassIcon className='w-8 h-8 mx-1 md:w-5 md:h-5 lg:w-10 lg:h-10 ms:mx-2 md:mx-2 lg:mx-2' />,
-            to: "/findBusiness"
-        },
-        {
-            label: "Notificaciones",
-            icon: (
-                <div className="relative">
-                    <BellIcon className='w-8 h-8 mx-1 md:w-5 md:h-5 lg:w-10 lg:h-10 ms:mx-2 md:mx-2 lg:mx-2' />
-                    {numNotificaciones > 0 && (
-                        <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">
-                            {numNotificaciones > 9 ? "9+" : numNotificaciones}
-                        </span>
-                    )}
-                </div>
-            ),
-            to: "notification"
+            to: "/findUser"
         },
     ]);
 
@@ -92,4 +75,4 @@ export function Navbar() {
     );
 }
 
-export default Navbar;
+export default NavbarBus;

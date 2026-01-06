@@ -90,7 +90,7 @@ export function UpdateEvento({ onSubmit }) {
 
     function formatPhone(number) {
         const n = form.phone.replace(/\D/g, '');
-        if (n.length === 10) {
+        if (n.length == 10) {
             const formatted = `(${n.slice(0, 3)}) ${n.slice(3, 6)}-${n.slice(6, 10)}`;
             setForm(prev => ({ ...prev, phone: formatted }));
         }
@@ -318,7 +318,7 @@ export function UpdateEvento({ onSubmit }) {
                 });
             }
 
-            if (onSubmit && typeof onSubmit === "function") onSubmit(payload);
+            if (onSubmit && typeof onSubmit == "function") onSubmit(payload);
             // else console.log("Invitation form submitted:", payload);
 
             setSubmitted(true);
@@ -465,7 +465,7 @@ export function UpdateEvento({ onSubmit }) {
     return (
         <div className="min-h-screen bg-gradient-to-br from-orange-600 to-orange-800 py-8 px-4 sm:px-6 lg:px-8">
             {/* <InvitationPreview /> */}
-            {bESTATUS == '1' ?
+            {bESTATUS == 1 ?
                 <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-8 mt-12">
                     {/* Preview Card Evento */}
                     <div className="flex flex-col gap-4">
@@ -725,11 +725,11 @@ export function UpdateEvento({ onSubmit }) {
                                                 >
                                                     <div className='flex justify-center items-center ms:ml-3 lg:ml-4 '>
                                                         {
-                                                            index['PHOTO'] === null ?
+                                                            index['PHOTO'] == null ?
                                                                 <UserCircleIcon className='w-12 h-12'
-                                                                    color={index['ESTATUS'] == '-1' || index['APPOINTMENT_CONFIRM'] == '2' ? '#B71C1C' :
-                                                                        index['ESTATUS'] == '1' ? '#32325d' :
-                                                                            index['ESTATUS'] == '3' || index['APPOINTMENT_CONFIRM'] == '1' ? '#4472C4' : '#fc6500'
+                                                                    color={index['ESTATUS'] == -1 || index['APPOINTMENT_CONFIRM'] == 2 ? '#B71C1C' :
+                                                                        index['ESTATUS'] == 1 ? '#32325d' :
+                                                                            index['ESTATUS'] == 3 || index['APPOINTMENT_CONFIRM'] == 1 ? '#4472C4' : '#fc6500'
                                                                     } /> :
                                                                 <img id='imgS' src={'data:image/jpeg;base64,' + arrayBufferToBase64(index['PHOTO'].data)} />
                                                         }
@@ -745,7 +745,7 @@ export function UpdateEvento({ onSubmit }) {
                                                         <button className="px-4 py-2 mt-3 mb-3 mr-2 rounded-lg bg-red-600 text-white">
                                                             <div className='circleWhiteRed'></div></button>
                                                         : <TrashIcon className="mr-4" width={25} color="#B71C1C" onClick={() => {
-                                                            if (index['ESTATUS'] !== '-1' && index['ESTATUS'] !== '2') {
+                                                            if (index['ESTATUS'] !== -1 && index['ESTATUS'] !== 2) {
                                                                 _buildCancelar(index);
                                                             }
                                                         }} />}
@@ -916,7 +916,7 @@ export function UpdateEvento({ onSubmit }) {
                             Evento no disponible
                         </h2>
                         <p className="text-lg text-gray-600">
-                            Este evento fue {bESTATUS == '2' ? 'finalizó' : bESTATUS == '-1' ? 'cancelado' : '.'}
+                            Este evento fue {bESTATUS == 2 ? 'finalizó' : bESTATUS == -1 ? 'cancelado' : '.'}
                         </p>
                     </div>
                 </div>}

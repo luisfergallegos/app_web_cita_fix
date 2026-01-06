@@ -93,11 +93,11 @@ export function CardBusiness({
         <div
             className="bg-white shadow-xl rounded-3xl p-6 w-full max-w-lg mx-auto cursor-pointer border border-white hover:shadow-2xl transition-all"
             onClick={() => {
-                setSelectBusiness(selectBusiness === BUSSINESS_ID ? null : BUSSINESS_ID);
+                setSelectBusiness(selectBusiness == BUSSINESS_ID ? null : BUSSINESS_ID);
             }}
         >
             {/* BOTÓN AddAppoin */}
-            {selectBusiness === BUSSINESS_ID ? <button
+            {selectBusiness == BUSSINESS_ID ? <button
                 onClick={desplegarPantallaAddAppoin}
                 className="w-full flex items-center justify-end"
             >
@@ -106,7 +106,7 @@ export function CardBusiness({
             {/* ICONO GRANDE */}
             <div
                 className="w-40 h-40 md:w-56 md:h-56 rounded-full bg-white shadow-lg mx-auto flex items-center justify-center overflow-hidden">
-                {PHOTO === null ? (
+                {PHOTO == null ? (
                     <img
                         src={Store}
                         className="w-full h-full object-contain opacity-70 bg-gray-400"

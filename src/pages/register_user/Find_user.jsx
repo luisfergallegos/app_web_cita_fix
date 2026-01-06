@@ -32,10 +32,11 @@ function selectableFavorites(_usuarios) {
 export function FindUser() {
     const location = useLocation();
     const navigate = useNavigate();
-
-    const userId = location.state?.userId;
-    const businessId = location.state?.businessId ?? '';
-    const dorsl = location.state?.dorsl;
+    const stored = JSON.parse(localStorage.getItem("homeBusiness"));
+    const sUserCitaFix = fetchData("UserCitaFix") ?? [];
+    const userId = sUserCitaFix['USER_ID'];
+    const businessId = stored.businessId ?? '';
+    const dorsl = stored.dorsl;
 
     const { sCorreo, sPassword } = useLoaderData();
     const [loading, setLoading] = useState(true);
@@ -75,10 +76,10 @@ export function FindUser() {
 
     useEffect(() => {
         const fData = async () => {
-            if (businessId === '') {
+            if (businessId == '') {
                 navigate("/");
             }
-            else if (sCorreo === null && sPassword === null) {
+            else if (sCorreo == null && sPassword == null) {
                 navigate("/");
             }
             //Solicitar por GET
@@ -137,7 +138,7 @@ export function FindUser() {
                             >
                                 <div className="flex items-center space-x-4 mr-20" >
                                     {
-                                        index['PHOTO'] === null ? <UserCircleIcon width={50} color={'#fc6500'} /> :
+                                        index['PHOTO'] == null ? <UserCircleIcon width={50} color={'#fc6500'} /> :
                                             <img id='imgS' src={'data:image/jpeg;base64,' + arrayBufferToBase64(index['PHOTO'].data)} />
                                     }
                                     <div>
@@ -167,7 +168,7 @@ export function FindUser() {
                                         }}
                                     >
                                         {
-                                            favo['PHOTO'] === null ? <UserCircleIcon width={40} color={'#fc6500'} /> :
+                                            favo['PHOTO'] == null ? <UserCircleIcon width={40} color={'#fc6500'} /> :
                                                 <img id='imgS' src={'data:image/jpeg;base64,' + arrayBufferToBase64(favo['PHOTO'].data)} />
                                         }
                                         <div>

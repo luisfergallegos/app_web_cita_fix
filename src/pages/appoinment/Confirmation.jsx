@@ -58,7 +58,7 @@ export function Confirmation() {
             minute: '2-digit',
             hour12: true,
         });
-        if (flag === 0) {
+        if (flag == 0) {
             return dateSpanish(formattedDate);
         }
         else {
@@ -251,7 +251,7 @@ export function Confirmation() {
                 <div className="bg-white rounded-3xl shadow-xl mt-20 p-10 max-w-2xl w-full text-center animate-fade-in-up">
                     <div className='flex justify-center mb-4'>
                         {
-                            cita.BUS_PHOTO === null ?
+                            cita.BUS_PHOTO == null ?
                                 <img className="w-64 h-64 object-cover rounded-2xl border" id='store' src={flagEvent ? EventoPng : Store} /> :
                                 <img className="w-64 h-64 object-cover rounded-2xl border" src={'data:image/jpeg;base64,' + arrayBufferToBase64(cita.BUS_PHOTO.data)} />
                         }
