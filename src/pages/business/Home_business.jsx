@@ -236,7 +236,7 @@ export function HomeBusiness() {
             </div>
             {
                 empresa.DORSL == '' ? <div></div> :
-                    <div class="fab-container3">                        
+                    <div class="fab-container2">                        
                         <div class="button iconbutton">
                             <button
                                 onClick={() => navigate("/addAppoinBusinessAnon", { state: { businessId: businessId, dorsl: empresa.DORSL } })} //Cambiar
@@ -249,18 +249,18 @@ export function HomeBusiness() {
             }
             {
                 empresa.DORSL == '' ? <div></div> :
-                    <div class="fab-container2">
+                    <div class="fab-container">
                         <div class="button iconbutton">
                             <button
                                 onClick={() => navigate("/findUser")}
                                 class="fa-solid fa-plus">
                                 <MagnifyingGlassPlusIcon width={40} />
                             </button>
-                            <label class="text-white px-1 font-bold">Nueva</label>
+                            <label class="text-white px-1 font-bold">Clientes</label>
                         </div>
                     </div>
             }
-            {
+            {/* {
                 empresa.DORSL == '' ? <div></div> :
                     <div class="fab-container">                        
                         <div class="button iconbutton text-center">
@@ -275,7 +275,7 @@ export function HomeBusiness() {
                             <label class="text-white px-1 font-bold">{sUserCitaFix['first_name']}</label>
                         </div>
                     </div>
-            }
+            } */}
         </div>
     );
 }

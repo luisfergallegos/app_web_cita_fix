@@ -12,25 +12,13 @@ import logo from "../assets/splash.png";
 
 export function Navbar() {
     const [isOpen, setIsOpen] = useState(false);
-    const toggleMenu = () => setIsOpen(!isOpen);
-    const sUserCitaFix = fetchData("UserCitaFix") ?? [];
+    const toggleMenu = () => setIsOpen(!isOpen);    
     const numNoti = fetchData("numNot") ?? 0;
     const [numNotificaciones, setNumNotificaciones] = useState(numNoti);
-
-    const arrayBufferToBase64 = (buffer) => {
-        var binary = '';
-        var bytes = [].slice.call(new Uint8Array(buffer));
-        bytes.forEach((b) => binary += String.fromCharCode(b));
-        return btoa(binary);
-    };
-
     const [linksArray, setLinksArray] = useState([
         {
             label: 'Inicio',
-            icon: (sUserCitaFix['PHOTO'].data == null || sUserCitaFix['PHOTO'].data.length == 0
-                ? <HomeIcon className='w-8 h-8 mx-1 md:w-5 md:h-5 lg:w-10 lg:h-10 ms:mx-2 md:mx-2 lg:mx-2' />
-                : <img className="w-8 h-8 mx-1 md:w-5 md:h-5 lg:w-10 lg:h-10 ms:mx-2 md:mx-2 lg:mx-2 rounded-full object-cover border" 
-                src={'data:image/jpeg;base64,' + arrayBufferToBase64(sUserCitaFix['PHOTO'].data)} />),
+            icon: <HomeIcon className='w-8 h-8 mx-1 md:w-5 md:h-5 lg:w-10 lg:h-10 ms:mx-2 md:mx-2 lg:mx-2' />,
             to: "home"
         },
         {

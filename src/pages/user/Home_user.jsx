@@ -424,8 +424,7 @@ export function Home() {
                                         const data = {
                                             businessId: businessId,
                                             tipo: true,
-                                            dorsl: dorsl,
-                                            photo: PhotoDorsl
+                                            dorsl: dorsl
                                         };
                                         localStorage.setItem("homeBusiness", JSON.stringify(data));
                                         navigate("/home");
@@ -452,8 +451,7 @@ export function Home() {
                                                 const data = {
                                                     businessId: index.BUSSINESS_ID,
                                                     tipo: index.TIPO == 0 ? false : true,
-                                                    dorsl: index.DORSL,
-                                                    photo: index.PHOTO
+                                                    dorsl: index.DORSL
                                                 };
                                                 localStorage.setItem("homeBusiness", JSON.stringify(data));
                                                 navigate("/home");
