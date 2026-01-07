@@ -28,12 +28,14 @@ export function NavbarBus() {
         {
             label: 'Inicio',
             icon: <BuildingOfficeIcon className='w-8 h-8 mx-1 md:w-5 md:h-5 lg:w-10 lg:h-10 ms:mx-2 md:mx-2 lg:mx-2' />,
-            to: "home"
+            to: "home",
+            id: 0
         },
         {
             label: 'Buscar',
             icon: <MagnifyingGlassIcon className='w-8 h-8 mx-1 md:w-5 md:h-5 lg:w-10 lg:h-10 ms:mx-2 md:mx-2 lg:mx-2' />,
-            to: "/findUser"
+            to: "/findUser",
+            id: 1
         },
         {
             label: (sUserCitaFix['first_name'] == "" || sUserCitaFix.length == 0
@@ -48,7 +50,8 @@ export function NavbarBus() {
                     />
                     <ArrowPathIcon className="absolute inset-0 m-auto w-8 h-8 text-white bg-black/10 rounded-full p-1" />
                 </div>),
-            to: "home"
+            to: "home",
+            id: 2
         },
     ]);
 
@@ -63,21 +66,17 @@ export function NavbarBus() {
                 </button>
                 {/* Menú desktop */}
                 <ul className="hidden lg:flex space-x-6 text-orange-600 font-medium">
-                    {linksArray.map(({ icon, label, to }) => {
-                        if (label.substring(0, 7) == 'Cambiar') {
-                            console.log(label.substring(0, 7));
-                            return (
-                                <NavLink onClick={() => {
-                                        setProfile("user");
-                                        navigate("/home");
-                                    }}
-                                    className={({ isActive }) => `${isActive ? `flex items-center text-orange-800 hover:text-orange-600` : `flex items-center hover:text-orange-800`}`}
-                                >
-                                    {icon}
-                                    <span>{label}</span>
-                                </NavLink>
-                            );
-                        }
+                    {linksArray.map(({ icon, label, to, id }) => {
+                        if (id == 2) return (
+                            <NavLink to={to} onClick={() => {
+                                setProfile("user");
+                            }}
+                                className={({ isActive }) => `${isActive ? `flex items-center text-orange-800 hover:text-orange-600` : `flex items-center hover:text-orange-800`}`}
+                            >
+                                {icon}
+                                <span>{label}</span>
+                            </NavLink>
+                        );
                         return (
                             <NavLink to={to}
                                 className={({ isActive }) => `${isActive ? `flex items-center text-orange-800 hover:text-orange-600` : `flex items-center hover:text-orange-800`}`}
@@ -92,23 +91,20 @@ export function NavbarBus() {
             {/* Menú móvil */}
             {isOpen && (
                 <ul className="lg:hidden bg-white px-4 pt-2 pb-4 space-y-2 text-orange-600 font-medium shadow-md">
-                    {linksArray.map(({ icon, label, to }) => {
-                        if (label.substring(0, 7) == 'Cambiar') {
-                            console.log(label.substring(0, 7));
-                            return (
-                                <NavLink onClick={() => {
-                                        setProfile("user");
-                                        navigate("/home");
-                                    }}
-                                    className={({ isActive }) => `${isActive ? `flex items-center text-orange-800 hover:text-orange-600` : `flex items-center hover:text-orange-800`}`}
-                                >
-                                    {icon}
-                                    <span>{label}</span>
-                                </NavLink>
-                            );
-                        }
+                    {linksArray.map(({ icon, label, to, id }) => {
+                        if (id == 2) return (
+                            <NavLink to={to} onClick={() => {
+                                toggleMenu();
+                                setProfile("user");
+                            }}
+                                className={({ isActive }) => `${isActive ? `flex items-center text-orange-800 hover:text-orange-600` : `flex items-center hover:text-orange-800`}`}
+                            >
+                                {icon}
+                                <span>{label}</span>
+                            </NavLink>
+                        );
                         return (
-                            <NavLink to={to}
+                            <NavLink to={to} onClick={toggleMenu}
                                 className={({ isActive }) => `${isActive ? `flex items-center text-orange-800 hover:text-orange-600` : `flex items-center hover:text-orange-800`}`}
                             >
                                 {icon}
