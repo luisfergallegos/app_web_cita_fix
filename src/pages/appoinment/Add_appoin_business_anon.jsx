@@ -64,7 +64,7 @@ export function AddAppoinBusinesssAnon() {
     var _today = new Date();
     const initialDate = new Date(_today);
     const lastDate = new Date(_today.setDate(_today.getDate() + 31));
-    const [bSwitchPhoneEmail, setbSwitchPhoneEmail] = useState(false);
+    const [bSwitchPhoneEmail, setbSwitchPhoneEmail] = useState(true);
     const [showAlert, setShowAlert] = useState(false);
     const [errorMsg, setErrorMsg] = useState('');
 
@@ -265,7 +265,7 @@ export function AddAppoinBusinesssAnon() {
                         <div className='flex items-center mt-4 mb-4'>
                             <h4>¿Deseas que sea por número de teléfono?</h4>
                             <label className="switch">
-                                <input type="checkbox" onClick={ModSwitchPhoneEmail} />
+                                <input type="checkbox" checked={bSwitchPhoneEmail} onClick={ModSwitchPhoneEmail} />
                                 <span class="slider round"></span>
                             </label>
                         </div>

@@ -157,6 +157,22 @@ export function HomeBusiness() {
                         </div>
                     </div>
                 </div>
+                <div className="bg-white text-black shadow rounded-xl p-4 cursor-pointer hover:shadow-lg transition"
+                    onClick={() => navigate("/addAppoinBusinessAnon", { state: { businessId: businessId, dorsl: empresa.DORSL } })}
+                >
+                    <div className="flex items-center gap-3">
+                        <UserPlusIcon width={36} color='#fc6500' />
+                        <div>
+                            <p className="font-bold text-lg">Crear cita para persona no registrada</p>
+                            <p className="text-sm text-gray-600 mt-1">
+                                Agenda una cita para alguien que no tiene cuenta.
+                            </p>
+                            <p className="text-sm text-gray-600 mt-1">
+                                Recibirá un recordatorio por correo o WhatsApp.
+                            </p>
+                        </div>
+                    </div>
+                </div>
                 {
                     citas.length > 0 ?
                         <div>
@@ -234,9 +250,9 @@ export function HomeBusiness() {
                         </div>
                 }
             </div>
-            {
+            {/* {
                 empresa.DORSL == '' ? <div></div> :
-                    <div class="fab-container2">                        
+                    <div class="fab-container2">
                         <div class="button iconbutton">
                             <button
                                 onClick={() => navigate("/addAppoinBusinessAnon", { state: { businessId: businessId, dorsl: empresa.DORSL } })} //Cambiar
@@ -246,7 +262,7 @@ export function HomeBusiness() {
                             <label class="text-white px-1 font-bold">Invitar</label>
                         </div>
                     </div>
-            }
+            } */}
             {
                 empresa.DORSL == '' ? <div></div> :
                     <div class="fab-container">
