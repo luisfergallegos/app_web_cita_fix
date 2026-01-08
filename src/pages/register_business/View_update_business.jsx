@@ -13,7 +13,9 @@ import PersonIcon from "../../assets/business.png";
 import {
     UserCircleIcon, MagnifyingGlassIcon, BuildingOfficeIcon, ChevronDownIcon,
     ChevronUpIcon, ClockIcon, MapPinIcon, Squares2X2Icon, CameraIcon, CheckCircleIcon,
-    HomeIcon, UserPlusIcon, XMarkIcon
+    HomeIcon, UserPlusIcon, XMarkIcon,
+    RectangleGroupIcon,
+    TagIcon
 } from '@heroicons/react/24/solid';
 import RegisterSchedule from '../schedule/register_schedule.jsx';
 import UpdateSchedule from '../schedule/update_schedule.jsx';
@@ -60,6 +62,11 @@ export function ViewUpdateBusiness() {
     const [usuariosbkq, setUsuariosbkq] = useState([]);
     const [selectUser, setSelectUser] = useState(null);
     const [colaboraciones, setColaboraciones] = useState([]);
+    const [espacioGroup, setEspacioGroup] = useState(true);
+    const [spaceName, setSpaceName] = useState('Consultorio');
+    const [spaceNameAlias, setSpaceNameAlias] = useState('');
+    const [spaceNameFree, setSpaceNameFree] = useState('');
+    const [spaces, setSpaces] = useState([]);
 
     const [showAlertConfirmation, setshowAlertConfirmation] = useState(false);
     const [imagen, setImagen] = useState(null);
@@ -70,8 +77,7 @@ export function ViewUpdateBusiness() {
     const [bAccederName, setbAccederName] = useState(true);
     const [bAccederCategoria, setbAccederCategoria] = useState(true);
     const [bAccederCollaborator, setbAccederCollaborator] = useState(true);
-
-
+    const [bAccederEspacio, setbAccederEspacio] = useState(true);
 
     const arrayBufferToBase64 = (buffer) => {
         var binary = '';
@@ -328,6 +334,62 @@ export function ViewUpdateBusiness() {
                     return;
                 }
                 setbAccederCategoria(true);
+            }
+        }
+    };
+
+    const AddEspacioGroupOpen = async (e) => {
+        e.stopPropagation();
+        if (spaceNameAlias != '') {
+            if (bAccederEspacio) {
+                setbAccederEspacio(false);
+                const sname = spaceNameFree == '' ? spaceName : spaceNameFree;
+                //Enviar por POST
+                var options = {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(
+                        {
+                            "bussiness_id": bussiness.BUSSINESS_ID,
+                            'name_space': sname,
+                            'alias': spaceNameAlias,
+                        })
+                }
+                try {
+                    const response = await fetch(`${urlApi}spaceBusiness`, options);
+                    const json = await response.json();
+                    if (json['sucess'] == false) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    else {
+                        //Solicitar por GET
+                        try {
+                            const response = await fetch(`${urlApi}spaceBusinessId?bussiness_id=${businessId}`);
+                            if (response.status == 200) {
+                                const json = await response.json();
+                                setSpaces(json['data']);
+                            } else {
+                                throw new Error(`HTTP error! status: ${response.status}`);
+                            }
+                        }
+                        catch (e) {
+                            return;
+                        }
+                    }
+                }
+                catch (e) {
+                    setSelectSpace(null);
+                    setbAccederEspacio(true);
+                    setSpaceName('Consultorio');
+                    setSpaceNameAlias('');
+                    setSpaceNameFree('');
+                    return;
+                }
+                setSelectSpace(null);
+                setbAccederEspacio(true);
+                setSpaceName('Consultorio');
+                setSpaceNameAlias('');
+                setSpaceNameFree('');
             }
         }
     };
@@ -604,7 +666,21 @@ export function ViewUpdateBusiness() {
                                         } else {
                                             throw new Error(`HTTP error! status: ${response.status}`);
                                         }
-                                        setLoading(false);
+                                        //Solicitar por GET
+                                        try {
+                                            const response = await fetch(`${urlApi}spaceBusinessId?bussiness_id=${businessId}`);
+                                            if (response.status == 200) {
+                                                const json = await response.json();
+                                                setSpaces(json['data']);
+                                            } else {
+                                                throw new Error(`HTTP error! status: ${response.status}`);
+                                            }
+                                            setLoading(false);
+                                        }
+                                        catch (e) {
+                                            setLoading(false);
+                                            return;
+                                        }
                                     }
                                     catch (e) {
                                         setLoading(false);
@@ -752,6 +828,68 @@ export function ViewUpdateBusiness() {
                             <button className="mt-2 bg-orange-500 text-white px-4 py-2 rounded-md hover:bg-orange-600 disabled:border-gray-50 disabled:bg-gray-200 disabled:text-gray-500"
                                 disabled={bussiness.SUBCATEGORY != sSubCategoriaName.label ? false : true}
                                 onClick={ModCategoriaGroupOpen}>Guardar</button>
+                        </div>
+                    )) : <div className="mt-4 space-y-4">
+                        <div className='circle' ></div>
+                    </div>}
+                </div>
+                {/* Grupo Espacios */}
+                <div className="bg-white text-black shadow rounded-xl p-4">
+                    <div
+                        className="flex items-center justify-between cursor-pointer"
+                        onClick={() => toggle(setEspacioGroup)}
+                    >
+                        <div className="flex items-center gap-2">
+                            <RectangleGroupIcon className='w-5 h-5 text-orange-600' />
+                            <span className="font-semibold">Espacio de servicio</span>
+                        </div>
+                        {espacioGroup ? <ChevronDownIcon className="w-5 h-5" /> : <ChevronUpIcon className="w-5 h-5" />}
+                    </div>
+                    {bAccederEspacio ? (!espacioGroup && (
+                        <div className="mt-4 space-y-4">
+                            {/* Lista de Espacios */}
+                            {spaces.length > 0 ? spaces.map((index) => (
+                                <div className="font-semibold py-2 px-2 rounded-md shadow-md transition flex items-center justify-between">
+                                    <div className="flex items-center space-x-4" >
+                                        <TagIcon className="w-6 h-6 text-orange-600 ml-2" />
+                                        <div className='flex flex-col'>
+                                            <label className="text-black">{index.ALIAS}</label>
+                                            <p className="text-gray-400">{index.NAME_SPACE}</p>
+                                        </div>
+                                    </div>
+                                    {/* <PencilIcon className="w-6 h-6 text-gray-500 ml-2" /> */}
+                                </div>
+                            )) : <></>}
+                            <div>
+                                <label className="block text-sm font-medium mb-1">¿Cómo quieres llamar a tus espacios de atención?</label>
+                                <select
+                                    name="space_name"                                    
+                                    onChange={(e) => { 
+                                        setSpaceName(e.target.value); setSpaceNameFree(''); setSpaceNameAlias('');
+                                    }}
+                                    className="w-full border px-4 py-2 rounded-md"
+                                >
+                                    <option>Consultorio</option>
+                                    <option>Espacio</option>
+                                    <option>Estación</option>
+                                    <option>Cabina</option>
+                                    <option>Silla</option>
+                                    <option>Sala</option>
+                                    <option>Personalizado (Campo libre)</option>
+                                </select>
+                                {
+                                    spaceName == 'Personalizado (Campo libre)' && <>
+                                        <label className="block text-sm font-medium mb-1 mt-1">Campo libre</label>
+                                        <input className="w-full border px-4 py-2 rounded-md" type="text" placeholder="Ejemplo: Área de estética, Área dental" value={spaceNameFree} onChange={(e) => setSpaceNameFree(e.target.value)} required />
+                                    </>
+                                }
+                                <label className="block text-sm font-medium mb-1 mt-1">Alias</label>
+                                <input className="w-full border px-4 py-2 rounded-md" type="text" placeholder="Ejemplo: Lic. Carolina - Psicólogo " value={spaceNameAlias} onChange={(e) => setSpaceNameAlias(e.target.value)} required />
+                                {spaceNameAlias == '' && <p className="mt-1 text-xs text-red-600">El Alias es obligatorio.</p>}
+                            </div>
+                            <button className="mt-2 bg-orange-500 text-white px-4 py-2 rounded-md hover:bg-orange-600 disabled:border-gray-50 disabled:bg-gray-200 disabled:text-gray-500"
+                                disabled={spaceNameAlias != '' ? spaceName == 'Personalizado (Campo libre)' ? spaceNameFree != '' ? false : true : false : true}
+                                onClick={AddEspacioGroupOpen}>Agregar</button>
                         </div>
                     )) : <div className="mt-4 space-y-4">
                         <div className='circle' ></div>

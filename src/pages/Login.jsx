@@ -1,6 +1,7 @@
 // rrd imports
 import { useLoaderData } from "react-router-dom";
 import { useEffect } from "react";
+import { useProfile } from "../ProfileContext.jsx";
 
 import SingIn from './authenticate/SignIn.jsx';
 // assents
@@ -10,6 +11,7 @@ import { urlApi } from "../styles/Constants.jsx";
 // Routes
 // import Home from "../pages/Home.jsx";
 import FindBusiness from "../pages/business/Find_business.jsx";
+import HomeBusiness from "../pages/business/Home_business.jsx";
 
 // helper funtions
 import { fetchData } from "../Wrapper.js";
@@ -26,6 +28,7 @@ export function loginFormLoader() {
 
 export function LoginForm() {
     const { sCorreo, sPassword, slastSession, userId } = useLoaderData();
+    const { profile } = useProfile();
 
     useEffect(() => {
         const fData = async () => {
@@ -103,7 +106,7 @@ export function LoginForm() {
 
     return (
         <>
-            {sCorreo && sPassword ? <FindBusiness /> :
+            {sCorreo && sPassword ? (profile == "business" ? <HomeBusiness /> : <FindBusiness />) :
                 <div id="containerLogin">
                     <div className="containerLogin">
                         <SingIn />
