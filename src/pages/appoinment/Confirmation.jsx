@@ -262,7 +262,8 @@ export function Confirmation() {
                             Vestimenta: {evento.DRESSCODE || 'Código de vestimenta'}
                         </b> : <></>}
                         {flagEvent ? <></> : <b className='text-2xl font-bold mb-4'>{ConvertDateTime(cita.APPOINTMENT_DATE, cita.APPOINTMENT_TIME, 1)}  -  {ConvertDateTime(cita.APPOINTMENT_DATE, cita.APPOINTMENT_TIME, 0)}</b>}
-
+                        {flagEvent ? <></> : <b className='text-2xl ml-10 mr-10 text-gray-400'>{cita.ALIAS}</b>}
+                        {flagEvent ? <></> : <b className='text-2xl ml-10 mr-10 text-gray-400 mb-4'>{cita.NAME_SPACE}</b>}
                     </div>
                     {flagEvent ?
                         <div className="bg-white rounded-lg p-6">

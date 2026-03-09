@@ -15,7 +15,8 @@ import {
     ChevronUpIcon, ClockIcon, MapPinIcon, Squares2X2Icon, CameraIcon, CheckCircleIcon,
     HomeIcon, UserPlusIcon, XMarkIcon,
     RectangleGroupIcon,
-    TagIcon
+    TagIcon,
+    PencilSquareIcon
 } from '@heroicons/react/24/solid';
 import RegisterSchedule from '../schedule/register_schedule.jsx';
 import UpdateSchedule from '../schedule/update_schedule.jsx';
@@ -67,6 +68,7 @@ export function ViewUpdateBusiness() {
     const [spaceNameAlias, setSpaceNameAlias] = useState('');
     const [spaceNameFree, setSpaceNameFree] = useState('');
     const [spaces, setSpaces] = useState([]);
+    const [selectSpace, setSelectSpace] = useState(null);
 
     const [showAlertConfirmation, setshowAlertConfirmation] = useState(false);
     const [imagen, setImagen] = useState(null);
@@ -849,22 +851,31 @@ export function ViewUpdateBusiness() {
                         <div className="mt-4 space-y-4">
                             {/* Lista de Espacios */}
                             {spaces.length > 0 ? spaces.map((index) => (
-                                <div className="font-semibold py-2 px-2 rounded-md shadow-md transition flex items-center justify-between">
+                                <div className={`font-semibold py-2 px-2 rounded-md shadow-md transition-all duration-300 cursor-pointer hover:scale-105 hover:shadow-2xl flex items-center justify-between
+                                            ${selectSpace == index.BUS_SPACES_ID ? "bg-orange-500" : "bg-white hover:bg-gray-200"}`}
+                                    onClick={() => {
+                                        setSelectSpace(selectSpace == index.BUS_SPACES_ID ? null : index.BUS_SPACES_ID);
+                                    }}
+                                >
                                     <div className="flex items-center space-x-4" >
-                                        <TagIcon className="w-6 h-6 text-orange-600 ml-2" />
+                                        <TagIcon className="w-6 h-6 text-orange-700 ml-2" />
                                         <div className='flex flex-col'>
                                             <label className="text-black">{index.ALIAS}</label>
-                                            <p className="text-gray-400">{index.NAME_SPACE}</p>
+                                            <p className={`${selectSpace == index.BUS_SPACES_ID ? "text-white" : "text-gray-400"}`}>{index.NAME_SPACE}</p>
                                         </div>
                                     </div>
-                                    {/* <PencilIcon className="w-6 h-6 text-gray-500 ml-2" /> */}
+                                    {selectSpace == index.BUS_SPACES_ID ?
+                                        <PencilSquareIcon className="w-6 h-6 text-white mr-4"
+                                            onClick={() => {
+                                                navigate("/updateSpace", { state: { space: index, businessId: businessId } });
+                                            }} /> : <></>}
                                 </div>
                             )) : <></>}
                             <div>
                                 <label className="block text-sm font-medium mb-1">¿Cómo quieres llamar a tus espacios de atención?</label>
                                 <select
-                                    name="space_name"                                    
-                                    onChange={(e) => { 
+                                    name="space_name"
+                                    onChange={(e) => {
                                         setSpaceName(e.target.value); setSpaceNameFree(''); setSpaceNameAlias('');
                                     }}
                                     className="w-full border px-4 py-2 rounded-md"
@@ -946,7 +957,7 @@ export function ViewUpdateBusiness() {
                                 // <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                                 <div className="flex flex-col grap-3">
                                     {filteredNames.map((index) => (
-                                        <div className={` font-semibold py-2 px-2 rounded-md shadow-md transition flex items-center justify-between
+                                        <div className={` font-semibold py-2 px-2 rounded-md shadow-md transition-all duration-300 cursor-pointer hover:scale-105 hover:shadow-2xl flex items-center justify-between
                                             ${selectUser == index.USER_ID ? "bg-orange-500 text-white" : "bg-white hover:bg-gray-200 text-orange-500"}`}
                                             key={index.USER_ID}
                                             onClick={() => {

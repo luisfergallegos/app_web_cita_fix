@@ -10,7 +10,7 @@ import Loaging from '../../components/Loading.jsx';
 import { urlApi } from "../../styles/Constants.jsx";
 import RatingBar from "../../components/RatingBar.jsx";
 import User from "../../assets/e.png";
-import { BuildingStorefrontIcon, EnvelopeIcon, InformationCircleIcon, MapPinIcon, XMarkIcon as CloseIcon, ChatBubbleLeftEllipsisIcon } from '@heroicons/react/24/solid';
+import { BuildingStorefrontIcon, EnvelopeIcon, InformationCircleIcon, MapPinIcon, XMarkIcon as CloseIcon, ChatBubbleLeftEllipsisIcon, TagIcon } from '@heroicons/react/24/solid';
 
 // loader
 export async function CancelarAppoinLoader({ params }) {
@@ -329,6 +329,13 @@ export function CancelarAppoin() {
                 {flagEvent ? <></> : <hr className="my-4" />}
                 <div className="text-left px-4">
                     {flagEvent ? <></> : <div className="w-full flex items-center gap-3 px-4 mt-2">
+                        {cita.ALIAS == '' ? <></> : <TagIcon className="w-6 h-6 text-orange-500" /> }
+                        <div>
+                            <p className='text-gray-400'>{cita.ALIAS}</p>
+                            <p className='text-gray-400'>{cita.NAME_SPACE}</p>
+                        </div>
+                    </div>}
+                    {flagEvent ? <></> : <div className="w-full flex items-center gap-3 px-4 mt-2">
                         <BuildingStorefrontIcon className="w-6 h-6 text-orange-500" />
                         <div>
                             <p className='text-gray-400'>{cita.CATEGORIA}</p>
@@ -340,7 +347,6 @@ export function CancelarAppoin() {
                             <p className='text-gray-400'>{cita.MENSSAGE ? cita.MENSSAGE : 'Sin Motivo de la visita/Servicio'}</p>
                         </div>
                     </div>}
-
                 </div>
                 {flagEvent ? <></> : <hr className="my-4" />}
                 <div className="text-left px-4">
@@ -367,18 +373,18 @@ export function CancelarAppoin() {
                 <div className="mt-6 px-4 mb-6">
                     {bAcceder ? (
                         cita.ESTATUS == -1 ? <></> :
-                        <button
-                            onClick={() => {
-                                if (cita.ESTATUS == '2' && cita.FLAG_SERVICE_LEVEL == '0') {
-                                    setIsOpenC(true);
-                                } else {
-                                    setIsOpen(true);
-                                }
-                            }}
-                            className="w-full py-3 rounded-md font-bold text-white bg-orange-500 hover:bg-orange-600">
-                            {cita.ESTATUS == '2' && cita.FLAG_SERVICE_LEVEL == '0' ? 'Calificar'
-                                : 'Cancelar'}
-                        </button>
+                            <button
+                                onClick={() => {
+                                    if (cita.ESTATUS == '2' && cita.FLAG_SERVICE_LEVEL == '0') {
+                                        setIsOpenC(true);
+                                    } else {
+                                        setIsOpen(true);
+                                    }
+                                }}
+                                className="w-full py-3 rounded-md font-bold text-white bg-orange-500 hover:bg-orange-600">
+                                {cita.ESTATUS == '2' && cita.FLAG_SERVICE_LEVEL == '0' ? 'Calificar'
+                                    : 'Cancelar'}
+                            </button>
                     ) : (
                         <button className="w-full py-3 rounded-md bg-gray-300">
                             <span className="animate-pulse">Procesando...</span>

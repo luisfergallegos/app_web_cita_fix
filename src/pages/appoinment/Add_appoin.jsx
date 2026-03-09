@@ -11,7 +11,7 @@ import Store from "../../assets/business.png";
 import Loaging from '../../components/Loading.jsx';
 import { urlApi } from "../../styles/Constants.jsx";
 // Library
-import { MapPinIcon, PhoneIcon, CalendarDaysIcon, CalendarDateRangeIcon, XMarkIcon as CloseIcon } from '@heroicons/react/24/solid';
+import { MapPinIcon, PhoneIcon, CalendarDaysIcon, CalendarDateRangeIcon, XMarkIcon as CloseIcon, TagIcon, CheckCircleIcon, PlusCircleIcon } from '@heroicons/react/24/solid';
 import DatePicker from 'react-datepicker';
 import "react-datepicker/dist/react-datepicker.css";
 //import moment from 'moment';
@@ -79,6 +79,10 @@ export function AddAppoin() {
     var _today = new Date();
     const initialDate = new Date(_today);
     const lastDate = new Date(_today.setDate(_today.getDate() + 31));
+    const [spaces, setSpaces] = useState([]);
+    const [selectSpace, setSelectSpace] = useState(null);
+    const [bAcceder, setbAcceder] = useState(true);
+    const [bFin, setbFin] = useState(false);
 
     const toggleAddress = () => setbMostrarAddress((v) => !v);
 
@@ -98,7 +102,7 @@ export function AddAppoin() {
         return e;
     }
 
-    
+
 
     // Function to convert Base64 string to binary data
     const arrayBufferToBase64 = (buffer) => {
@@ -146,6 +150,7 @@ export function AddAppoin() {
         const month = (`0` + (startDate.getMonth() + 1)).slice(-2);
         const day = (`0` + startDate.getDate()).slice(-2);
         const selectedDate = `${startDate.getFullYear()}-${month}-${day}`;
+        const bus_spaces_id = selectSpace == null ? '' : selectSpace;
 
         const bodyBase = {
             user_id: userId,
@@ -157,7 +162,8 @@ export function AddAppoin() {
             message,
             estatus: '0',
             dorsl: location.state.userName,
-            for_who: 'Bus'
+            for_who: 'Bus',
+            bus_spaces_id: bus_spaces_id
         };
 
         const endpoint = bMostrarAddress ? 'appoinAddress' : 'appoin';
@@ -211,10 +217,47 @@ export function AddAppoin() {
         }
     };
 
-    function handleChange(e){
+    function handleChange(e) {
         const { name, value } = e.target;
         setAddress((prev) => ({ ...prev, [name]: value }));
         setErrors((prev) => ({ ...prev, [name]: undefined }));
+    };
+
+    const actulizarFechasHoras = async (e, busSpacesId) => {
+        e.stopPropagation();
+        setbAcceder(false);
+        //Solicitar por GET
+        try {
+            // bussiness_id=1&busSpacesId=2
+            const response = await fetch(`${urlApi}appoinBussDateDays?bussiness_id=${BUSSINESS_ID}&busSpacesId=${busSpacesId}`);
+            if (!response.ok) {
+                console.log(`Error getting getDaysInactive.`);
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            const json = await response.json();
+            setExcludeDates(selectableDayPredicate(json.data || []));
+
+            //Solicitar por GET
+            try {
+                const response = await fetch(`${urlApi}appoinBussDate?bussiness_id=${BUSSINESS_ID}&busSpacesId=${busSpacesId}`);
+                if (!response.ok) {
+                    console.log(`Error getting getDaysInactive.`);
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                const json = await response.json();
+                setCitas(json['data']);
+
+            }
+            catch (e) {
+                return;
+            }
+            setbAcceder(true);
+            setbFin(true);
+        }
+        catch (e) {
+            return;
+        }
+
     };
 
 
@@ -228,41 +271,53 @@ export function AddAppoin() {
             }
             //Solicitar por GET
             try {
-                const response = await fetch(`${urlApi}appoinBussDateDays?bussiness_id=${BUSSINESS_ID}`);
-                if (!response.ok) {
-                    console.log(`Error getting getDaysInactive.`);
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-                const json = await response.json();
-                setExcludeDates(selectableDayPredicate(json.data || []));
-
-                //Solicitar por GET
-                try {
-                    const response = await fetch(`${urlApi}appoinBussDate?bussiness_id=${BUSSINESS_ID}`);
-                    if (!response.ok) {
-                        console.log(`Error getting getDaysInactive.`);
-                        throw new Error(`HTTP error! status: ${response.status}`);
-                    }
+                const response = await fetch(`${urlApi}spaceBusinessId?bussiness_id=${BUSSINESS_ID}`);
+                if (response.status == 200) {
                     const json = await response.json();
-                    setCitas(json['data']);
+                    setSpaces(json['data']);
                     setLoading(false);
                 }
-                catch (e) {
-                    return;
+                else if (response.status == 500) {
+                    //Solicitar por GET
+                    try {
+                        // bussiness_id=1&busSpacesId=2
+                        const response = await fetch(`${urlApi}appoinBussDateDays?bussiness_id=${BUSSINESS_ID}`);
+                        if (!response.ok) {
+                            console.log(`Error getting getDaysInactive.`);
+                            throw new Error(`HTTP error! status: ${response.status}`);
+                        }
+                        const json = await response.json();
+                        setExcludeDates(selectableDayPredicate(json.data || []));
+
+                        //Solicitar por GET
+                        try {
+                            const response = await fetch(`${urlApi}appoinBussDate?bussiness_id=${BUSSINESS_ID}`);
+                            if (!response.ok) {
+                                console.log(`Error getting getDaysInactive.`);
+                                throw new Error(`HTTP error! status: ${response.status}`);
+                            }
+                            const json = await response.json();
+                            setCitas(json['data']);
+
+                        }
+                        catch (e) {
+                            return;
+                        }
+
+                        setLoading(false);
+                    }
+                    catch (e) {
+                        return;
+                    }
                 }
 
-                setLoading(false);
             }
             catch (e) {
                 return;
             }
-
-
         };
         fData();
     }, []);
-
-
 
 
     if (loading) {
@@ -303,50 +358,136 @@ export function AddAppoin() {
                     </div>
                 </div>
 
-                <hr className="my-4" />
+                {spaces.length > 0 ? <hr className="my-4" /> : <></>}
 
-                <div className="text-left px-4">
-                    <h4 className="text-lg font-semibold">Agendar</h4>
-                </div>
+                {spaces.length > 0 ? <div className="text-left px-4">
+                    <h4 className="text-lg font-semibold">Espacio de servicio</h4>
+                </div> : <></>}
 
-                <div className='flex justify-start items-center ms-4'>
-                    <CalendarDateRangeIcon className='w-8 h-8 md:w-10 md:h-10 lg:w-10 lg:h-10 mx-4 text-orange-500' />
-                    <div>
-                        <DatePicker className='text-gray-400 text-left'
-                            dateFormat="dd/MM/yyyy"
-                            excludeDates={_excludeDates}
-                            selected={startDate}
-                            onChange={(date) => { setStartDate(date); SelectDateTime(date); setselectedTime(''); setselectedIndex(); }}
-                            minDate={initialDate}
-                            maxDate={lastDate}
-                            customInput={<ExampleCustomInput className="example-custom-input" />}
-                        />
+                {spaces.length > 0 ? spaces.map((index) => (
+                    // <div className="font-semibold   shadow-md transition flex items-center justify-between"
+                    <div className={`bg-white py-2 px-2 rounded-md shadow-xl p-10 text-center mb-2
+                                transition-all duration-300 cursor-pointer hover:scale-105 hover:shadow-2xl 
+                                ${selectSpace == index.BUS_SPACES_ID ? "ring-2 ring-blue-500" : ""} `}
+                        onClick={() => {
+                            setSelectSpace(selectSpace == index.BUS_SPACES_ID ? null : index.BUS_SPACES_ID);
+                            setbFin(false);
+                            setStartDate(null);
+                            setselectedTime('');
+                            setselectedIndex();
+                            setcita([]);
+                        }}>
+                        <div className="flex items-center space-x-4" >
+                            <TagIcon className={`w-6 h-6 ml-2" ${selectSpace == index.BUS_SPACES_ID ? "text-blue-500" : "text-orange-600"} `} />
+                            <div className='flex flex-col'>
+                                <label className="text-black">{index.ALIAS}</label>
+                                <p className="text-gray-400">{index.NAME_SPACE}</p>
+                            </div>
+                            {selectSpace == index.BUS_SPACES_ID ?
+                                bFin ? <></> :
+                                    /* <button
+                                            onClick={(e) => actulizarFechasHoras(e, index.BUS_SPACES_ID)} ><CheckCircleIcon 
+                                            className="w-8 h-8 text-green-500 flex-shrink-0" /></button> */
+                                    <button className="px-4 py-2 rounded-lg bg-gray-500 text-white hover:bg-gray-600 transition"
+                                        onClick={(e) => actulizarFechasHoras(e, index.BUS_SPACES_ID)}
+                                    >Ver horarios</button>
+                                : <></>}
+                        </div>
                     </div>
+                )) : <></>}
 
-                </div>
-                {/* Horarios */}
-                <div className="grid grid-cols-4 gap-3 p-6">
-                    {cita[0] && cita[0].map(({ APPOINTMENT_TIME, STATUS }, idx) => {
-                        const disabled = STATUS !== 'free';
-                        const selected = idx == selectedIndex;
-                        return (
-                            <button
-                                key={idx}
-                                type="button"
-                                disabled={disabled}
-                                onClick={() => {
-                                    if (!disabled) {
-                                        setselectedTime(APPOINTMENT_TIME);
-                                        setselectedIndex(idx);
-                                    }
-                                }}
-                                className={`py-3 px-2 rounded-md shadow-sm text-sm ${selected ? 'bg-white text-orange-500 border' : disabled ? 'bg-gray-300 cursor-not-allowed' : 'bg-gray-100'}`}
-                            >
-                                {APPOINTMENT_TIME}
-                            </button>
-                        );
-                    })}
-                </div>
+                {/* Div - Agendar */}
+                {bAcceder ? 
+                <div>
+
+                    {spaces.length == 0 ? <hr className="my-4" /> : bFin ? <hr className="my-4" /> : <></>}
+
+                    {spaces.length == 0 ? <div className="text-left px-4">
+                        <h4 className="text-lg font-semibold">Agendar</h4>
+                    </div> : bFin ? <div className="text-left px-4">
+                        <h4 className="text-lg font-semibold">Agendar</h4>
+                    </div> : <></>}
+
+                    {spaces.length == 0 ? <div className='flex justify-start items-center ms-4'>
+                        <CalendarDateRangeIcon className='w-8 h-8 md:w-10 md:h-10 lg:w-10 lg:h-10 mx-4 text-orange-500' />
+                        <div>
+                            <DatePicker className='text-gray-400 text-left'
+                                dateFormat="dd/MM/yyyy"
+                                excludeDates={_excludeDates}
+                                selected={startDate}
+                                onChange={(date) => { setStartDate(date); SelectDateTime(date); setselectedTime(''); setselectedIndex(); }}
+                                minDate={initialDate}
+                                maxDate={lastDate}
+                                customInput={<ExampleCustomInput className="example-custom-input" />}
+                            />
+                        </div>
+
+                    </div> : bFin ? <div className='flex justify-start items-center ms-4'>
+                        <CalendarDateRangeIcon className='w-8 h-8 md:w-10 md:h-10 lg:w-10 lg:h-10 mx-4 text-orange-500' />
+                        <div>
+                            <DatePicker className='text-gray-400 text-left'
+                                dateFormat="dd/MM/yyyy"
+                                excludeDates={_excludeDates}
+                                selected={startDate}
+                                onChange={(date) => { setStartDate(date); SelectDateTime(date); setselectedTime(''); setselectedIndex(); }}
+                                minDate={initialDate}
+                                maxDate={lastDate}
+                                customInput={<ExampleCustomInput className="example-custom-input" />}
+                            />
+                        </div>
+
+                    </div> : <></>}
+
+                    {/* Horarios */}
+                    {spaces.length == 0 ? <div className="grid grid-cols-4 gap-3 p-6">
+                        {cita[0] && cita[0].map(({ APPOINTMENT_TIME, STATUS }, idx) => {
+                            const disabled = STATUS !== 'free';
+                            const selected = idx == selectedIndex;
+                            return (
+                                <button
+                                    key={idx}
+                                    type="button"
+                                    disabled={disabled}
+                                    onClick={() => {
+                                        if (!disabled) {
+                                            setselectedTime(APPOINTMENT_TIME);
+                                            setselectedIndex(idx);
+                                        }
+                                    }}
+                                    className={`py-3 px-2 rounded-md shadow-sm text-sm ${selected ? 'bg-white text-orange-500 border' : disabled ? 'bg-gray-300 cursor-not-allowed' : 'bg-gray-100'}`}
+                                >
+                                    {APPOINTMENT_TIME}
+                                </button>
+                            );
+                        })}
+                    </div> : bFin ? <div className="grid grid-cols-4 gap-3 p-6">
+                        {cita[0] && cita[0].map(({ APPOINTMENT_TIME, STATUS }, idx) => {
+                            const disabled = STATUS !== 'free';
+                            const selected = idx == selectedIndex;
+                            return (
+                                <button
+                                    key={idx}
+                                    type="button"
+                                    disabled={disabled}
+                                    onClick={() => {
+                                        if (!disabled) {
+                                            setselectedTime(APPOINTMENT_TIME);
+                                            setselectedIndex(idx);
+                                        }
+                                    }}
+                                    className={`py-3 px-2 rounded-md shadow-sm text-sm ${selected ? 'bg-white text-orange-500 border' : disabled ? 'bg-gray-300 cursor-not-allowed' : 'bg-gray-100'}`}
+                                >
+                                    {APPOINTMENT_TIME}
+                                </button>
+                            );
+                        })}
+                    </div> : <></>}
+
+                </div> : <div>
+                    <hr className="my-4" />
+                    <div className='circle' ></div>
+                </div>}
+
                 <hr className="my-4" />
                 {HOME_SERVICE == '1' && (
                     <div className="px-4">

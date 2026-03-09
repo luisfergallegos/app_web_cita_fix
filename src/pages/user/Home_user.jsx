@@ -555,6 +555,7 @@ export function Home() {
                                                 }
                                                 <div className="grid">
                                                     <label className="text-lg text-black">{index['DORSL']} </label>
+                                                    <label className="text-base text-gray-700">{index['ALIAS']} </label>
                                                     <label className="text-gray-400">{ConvertDateTime(index['APPOINTMENT_DATE'], index['APPOINTMENT_TIME'], 0)} </label>
                                                     <label className="text-gray-400">{ConvertDateTime(index['APPOINTMENT_DATE'], index['APPOINTMENT_TIME'], 1)} </label>
                                                     <label className="text-gray-400">{index['ESTATUS'] == 1 ? 'Cita modificada por la empresa.' : ''} </label>

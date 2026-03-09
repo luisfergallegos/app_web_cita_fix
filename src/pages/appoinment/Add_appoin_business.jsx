@@ -11,7 +11,7 @@ import Store from "../../assets/business.png";
 import Loaging from '../../components/Loading.jsx';
 import { urlApi } from "../../styles/Constants.jsx";
 // Library
-import { CalendarDateRangeIcon, XMarkIcon as CloseIcon, StarIcon } from '@heroicons/react/24/solid';
+import { CalendarDateRangeIcon, XMarkIcon as CloseIcon, StarIcon, TagIcon } from '@heroicons/react/24/solid';
 import DatePicker from 'react-datepicker';
 import "react-datepicker/dist/react-datepicker.css";
 import { StarIcon as StarIcon_Outline } from '@heroicons/react/24/outline';
@@ -56,9 +56,11 @@ export function AddAppoinBusinesss() {
     const [showAlert, setShowAlert] = useState(false);
     const [showAlertError, setShowAlertError] = useState(false);
     const [errorMsg, setErrorMsg] = useState('');
-    const [confirmMsg, setConfirmMsg] = useState('');    
+    const [confirmMsg, setConfirmMsg] = useState('');
     const [loading, setLoading] = useState(true);
     const [isOpen, setIsOpen] = useState(false);
+    const [bFin, setbFin] = useState(false);
+    const [bAccederHo, setbAccederHo] = useState(true);
 
 
     const { USER_ID, first_name, last_name,
@@ -66,6 +68,9 @@ export function AddAppoinBusinesss() {
     const [bFavorite, setbFav] = useState(FAVORITE == 1 ? false : true);
     const businessId = location.state?.businessId ?? '';
     const dorsl = location.state?.dorsl;
+    // const selectSpace = location.state?.selectSpace;
+    const [selectSpace, setSelectSpace] = useState(location.state?.selectSpace ?? null);
+    const [spaces, setSpaces] = useState([]);
     var _today = new Date();
     const initialDate = new Date(_today);
     const lastDate = new Date(_today.setDate(_today.getDate() + 31));
@@ -110,6 +115,8 @@ export function AddAppoinBusinesss() {
                 setIsOpen(false);
                 var dateFormat = startDate.getMonth() + 1;
                 var _selectedDate = `${startDate.getFullYear()}-${('0' + dateFormat).slice(-2)}-${startDate.getDate()}`;
+                const bus_spaces_id = selectSpace == null ? '' : selectSpace.BUS_SPACES_ID == null ? selectSpace : selectSpace.BUS_SPACES_ID;
+                
                 //Enviar por POST
                 var options = {
                     method: 'POST',
@@ -125,7 +132,8 @@ export function AddAppoinBusinesss() {
                             'message': message,
                             'estatus': '0',
                             'dorsl': dorsl,
-                            'for_who': 'Usr'
+                            'for_who': 'Usr',
+                            'bus_spaces_id': bus_spaces_id
                         })
                 }
                 try {
@@ -230,6 +238,43 @@ export function AddAppoinBusinesss() {
         setMessage(value);
     };
 
+    const actulizarFechasHoras = async (e, busSpacesId) => {
+        e.stopPropagation();
+        setbAccederHo(false);
+        //Solicitar por GET
+        try {
+            // bussiness_id=1&busSpacesId=2
+            const response = await fetch(`${urlApi}appoinBussDateDays?bussiness_id=${businessId}&busSpacesId=${busSpacesId}`);
+            if (!response.ok) {
+                console.log(`Error getting getDaysInactive.`);
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            const json = await response.json();
+            setExcludeDates(selectableDayPredicate(json.data || []));
+
+            //Solicitar por GET
+            try {
+                const response = await fetch(`${urlApi}appoinBussDate?bussiness_id=${businessId}&busSpacesId=${busSpacesId}`);
+                if (!response.ok) {
+                    console.log(`Error getting getDaysInactive.`);
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                const json = await response.json();
+                setCitas(json['data']);
+
+            }
+            catch (e) {
+                return;
+            }
+            setbAccederHo(true);
+            setbFin(true);
+        }
+        catch (e) {
+            return;
+        }
+
+    };
+
     useEffect(() => {
         const fData = async () => {
             if (businessId == '') {
@@ -238,38 +283,84 @@ export function AddAppoinBusinesss() {
             else if (sCorreo == null && sPassword == null) {
                 navigate("/");
             }
-            //Solicitar por GET
-            try {
-                const response = await fetch(`${urlApi}appoinBussDateDays?bussiness_id=${businessId}`);
-                if (!response.ok) {
-                    console.log(`Error getting getDaysInactive.`);
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-                const json = await response.json();
-                setExcludeDates(selectableDayPredicate(json['data']));
-
+            if (selectSpace == null) {
                 //Solicitar por GET
                 try {
-                    const response = await fetch(`${urlApi}appoinBussDate?bussiness_id=${businessId}`);
+                    const response = await fetch(`${urlApi}spaceBusinessId?bussiness_id=${businessId}`);
+                    if (response.status == 200) {
+                        const json = await response.json();
+                        setSpaces(json['data']);
+                        setLoading(false);
+                    }
+                    else if (response.status == 500) {
+                        //Solicitar por GET
+                        try {
+                            const response = await fetch(`${urlApi}appoinBussDateDays?bussiness_id=${businessId}`);
+                            if (!response.ok) {
+                                console.log(`Error getting getDaysInactive.`);
+                                throw new Error(`HTTP error! status: ${response.status}`);
+                            }
+                            const json = await response.json();
+                            setExcludeDates(selectableDayPredicate(json['data']));
+
+                            //Solicitar por GET
+                            try {
+                                const response = await fetch(`${urlApi}appoinBussDate?bussiness_id=${businessId}`);
+                                if (!response.ok) {
+                                    console.log(`Error getting getDaysInactive.`);
+                                    throw new Error(`HTTP error! status: ${response.status}`);
+                                }
+                                const json = await response.json();
+                                setCitas(json['data']);
+                                setLoading(false);
+                            }
+                            catch (e) {
+                                return;
+                            }
+
+                            setLoading(false);
+                        }
+                        catch (e) {
+                            return;
+                        }
+                    }
+                }
+                catch (e) {
+                    return;
+                }
+            }
+            else {
+                //Solicitar por GET
+                try {
+                    const response = await fetch(`${urlApi}appoinBussDateDays?bussiness_id=${businessId}&busSpacesId=${selectSpace.BUS_SPACES_ID}`);
                     if (!response.ok) {
                         console.log(`Error getting getDaysInactive.`);
                         throw new Error(`HTTP error! status: ${response.status}`);
                     }
                     const json = await response.json();
-                    setCitas(json['data']);
+                    setExcludeDates(selectableDayPredicate(json['data']));
+
+                    //Solicitar por GET
+                    try {
+                        const response = await fetch(`${urlApi}appoinBussDate?bussiness_id=${businessId}&busSpacesId=${selectSpace.BUS_SPACES_ID}`);
+                        if (!response.ok) {
+                            console.log(`Error getting getDaysInactive.`);
+                            throw new Error(`HTTP error! status: ${response.status}`);
+                        }
+                        const json = await response.json();
+                        setCitas(json['data']);
+                        setLoading(false);
+                    }
+                    catch (e) {
+                        return;
+                    }
+
                     setLoading(false);
                 }
                 catch (e) {
                     return;
                 }
-
-                setLoading(false);
             }
-            catch (e) {
-                return;
-            }
-
-
         };
         fData();
     }, []);
@@ -279,8 +370,10 @@ export function AddAppoinBusinesss() {
     }
 
     return (
-        <div className="min-h-screen grid items-center justify-center bg-gradient-to-br from-gray-600 to-gray-800 px-4">
-            <div className="bg-white rounded-3xl shadow-xl mt-20 mb-10  text-center animate-fade-in-up w-full max-w-md">
+        // <div className="min-h-screen grid items-center justify-center bg-gradient-to-br from-gray-600 to-gray-800 px-4">
+        //     <div className="bg-white rounded-3xl shadow-xl mt-20 mb-10  text-center animate-fade-in-up w-full max-w-md">
+        <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-600 to-gray-800 p-4">
+            <div className="w-full max-w-lg bg-white rounded-3xl shadow-xl p-6 text-center mt-20">
                 {showAlert && (
                     <div className="absolute top-8 justify-center bg-green-600 text-white px-6 py-3 rounded-lg shadow-lg text-sm animate-bounce z-50">
                         {confirmMsg}
@@ -308,13 +401,16 @@ export function AddAppoinBusinesss() {
                     }
                 </div>
                 <div>
+                    <p className='ml-10 mr-10 text-gray-400'>{selectSpace == null ? '' : selectSpace.ALIAS}</p>
+                    <p className='ml-10 mr-10 text-gray-400 mb-4'>{selectSpace == null ? '' : selectSpace.NAME_SPACE}</p>
                     <h4 className='text-2xl font-bold text-black mb-1'>{first_name} {last_name}</h4>
                     <p className='ml-10 mr-10 text-gray-400 mb-4'>Este usuario recibirá un recordatorio de su vista</p>
                 </div>
+                {/* 
                 <hr className="mb-4 mt-4" />
                 <div className='businessTitle'>
                     <h4>Agendar</h4>
-                </div>
+                </div> 
                 <div className='flex justify-start items-center ms-4'>
                     <CalendarDateRangeIcon className='w-8 h-8 md:w-10 md:h-10 lg:w-10 lg:h-10 mx-4 text-orange-500' />
                     <div>
@@ -351,6 +447,136 @@ export function AddAppoinBusinesss() {
                         ))
                     }
                 </div>
+                
+                */}
+                {spaces.length > 0 ? <hr className="my-4" /> : <></>}
+                {spaces.length > 0 ? <div className="text-left px-4">
+                    <h4 className="text-lg font-semibold">Espacio de servicio</h4>
+                </div> : <></>}
+                {spaces.length > 0 ? spaces.map((index) => (
+                    // <div className="font-semibold   shadow-md transition flex items-center justify-between"
+                    <div className={`bg-white py-2 px-2 rounded-md shadow-xl p-10 text-center mb-2
+                                transition-all duration-300 cursor-pointer hover:scale-105 hover:shadow-2xl 
+                                ${selectSpace == index.BUS_SPACES_ID ? "ring-2 ring-blue-500" : ""} `}
+                        onClick={() => {
+                            setSelectSpace(selectSpace == index.BUS_SPACES_ID ? null : index.BUS_SPACES_ID);
+                            setbFin(false);
+                            setStartDate(null);
+                            setselectedTime('');
+                            setselectedIndex();
+                            setcita([]);
+                        }}>
+                        <div className="flex items-center space-x-4" >
+                            <TagIcon className={`w-6 h-6 ml-2" ${selectSpace == index.BUS_SPACES_ID ? "text-blue-500" : "text-orange-600"} `} />
+                            <div className='flex flex-col'>
+                                <label className="text-black">{index.ALIAS}</label>
+                                <p className="text-gray-400">{index.NAME_SPACE}</p>
+                            </div>
+                            {selectSpace == index.BUS_SPACES_ID ?
+                                bFin ? <></> :
+                                    /* <button
+                                            onClick={(e) => actulizarFechasHoras(e, index.BUS_SPACES_ID)} ><CheckCircleIcon 
+                                            className="w-8 h-8 text-green-500 flex-shrink-0" /></button> */
+                                    <button className="px-4 py-2 rounded-lg bg-gray-500 text-white hover:bg-gray-600 transition"
+                                        onClick={(e) => actulizarFechasHoras(e, index.BUS_SPACES_ID)}
+                                    >Ver horarios</button>
+                                : <></>}
+                        </div>
+                    </div>
+                )) : <></>}
+
+                {/* Div - Agendar */}
+                {bAccederHo ?
+                    <div>
+
+                        {spaces.length == 0 ? <hr className="my-4" /> : bFin ? <hr className="my-4" /> : <></>}
+
+                        {spaces.length == 0 ? <div className="text-left px-4">
+                            <h4 className="text-lg font-semibold">Agendar</h4>
+                        </div> : bFin ? <div className="text-left px-4">
+                            <h4 className="text-lg font-semibold">Agendar</h4>
+                        </div> : <></>}
+
+                        {spaces.length == 0 ? <div className='flex justify-start items-center ms-4'>
+                            <CalendarDateRangeIcon className='w-8 h-8 md:w-10 md:h-10 lg:w-10 lg:h-10 mx-4 text-orange-500' />
+                            <div>
+                                <DatePicker className='text-gray-400 text-left'
+                                    dateFormat="dd/MM/yyyy"
+                                    excludeDates={_excludeDates}
+                                    selected={startDate}
+                                    onChange={(date) => { setStartDate(date); SelectDateTime(date); setselectedTime(''); setselectedIndex(); }}
+                                    minDate={initialDate}
+                                    maxDate={lastDate}
+                                    customInput={<ExampleCustomInput className="example-custom-input" />}
+                                />
+                            </div>
+
+                        </div> : bFin ? <div className='flex justify-start items-center ms-4'>
+                            <CalendarDateRangeIcon className='w-8 h-8 md:w-10 md:h-10 lg:w-10 lg:h-10 mx-4 text-orange-500' />
+                            <div>
+                                <DatePicker className='text-gray-400 text-left'
+                                    dateFormat="dd/MM/yyyy"
+                                    excludeDates={_excludeDates}
+                                    selected={startDate}
+                                    onChange={(date) => { setStartDate(date); SelectDateTime(date); setselectedTime(''); setselectedIndex(); }}
+                                    minDate={initialDate}
+                                    maxDate={lastDate}
+                                    customInput={<ExampleCustomInput className="example-custom-input" />}
+                                />
+                            </div>
+
+                        </div> : <></>}
+
+                        {/* Horarios */}
+                        {spaces.length == 0 ? <div className="grid grid-cols-4 gap-3 p-6">
+                            {cita[0] && cita[0].map(({ APPOINTMENT_TIME, STATUS }, idx) => {
+                                const disabled = STATUS !== 'free';
+                                const selected = idx == selectedIndex;
+                                return (
+                                    <button
+                                        key={idx}
+                                        type="button"
+                                        disabled={disabled}
+                                        onClick={() => {
+                                            if (!disabled) {
+                                                setselectedTime(APPOINTMENT_TIME);
+                                                setselectedIndex(idx);
+                                            }
+                                        }}
+                                        className={`py-3 px-2 rounded-md shadow-sm text-sm ${selected ? 'bg-white text-orange-500 border' : disabled ? 'bg-gray-300 cursor-not-allowed' : 'bg-gray-100'}`}
+                                    >
+                                        {APPOINTMENT_TIME}
+                                    </button>
+                                );
+                            })}
+                        </div> : bFin ? <div className="grid grid-cols-4 gap-3 p-6">
+                            {cita[0] && cita[0].map(({ APPOINTMENT_TIME, STATUS }, idx) => {
+                                const disabled = STATUS !== 'free';
+                                const selected = idx == selectedIndex;
+                                return (
+                                    <button
+                                        key={idx}
+                                        type="button"
+                                        disabled={disabled}
+                                        onClick={() => {
+                                            if (!disabled) {
+                                                setselectedTime(APPOINTMENT_TIME);
+                                                setselectedIndex(idx);
+                                            }
+                                        }}
+                                        className={`py-3 px-2 rounded-md shadow-sm text-sm ${selected ? 'bg-white text-orange-500 border' : disabled ? 'bg-gray-300 cursor-not-allowed' : 'bg-gray-100'}`}
+                                    >
+                                        {APPOINTMENT_TIME}
+                                    </button>
+                                );
+                            })}
+                        </div> : <></>}
+
+                    </div> : <div>
+                        <hr className="my-4" />
+                        <div className='circle' ></div>
+                    </div>}
+
 
                 {bAcceder ? <div className='businessBtn'>
                     <button className='mb-10' onClick={() => {

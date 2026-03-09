@@ -37,6 +37,7 @@ export function FindUser() {
     const userId = sUserCitaFix['USER_ID'];
     const businessId = stored.businessId ?? '';
     const dorsl = stored.dorsl;
+    const selectSpace = location.state?.selectSpace;
 
     const { sCorreo, sPassword } = useLoaderData();
     const [loading, setLoading] = useState(true);
@@ -133,7 +134,7 @@ export function FindUser() {
                             <div className="hover:bg-gray-200 text-orange-500 bg-white font-semibold py-2 px-2 rounded-md shadow-md transition flex items-center"
                                 key={index.USER_ID}
                                 onClick={() => {
-                                    navigate("/addAppoinBusiness", { state: { userCita: index, businessId: businessId, dorsl: dorsl } });
+                                    navigate("/addAppoinBusiness", { state: { userCita: index, businessId: businessId, dorsl: dorsl, selectSpace: selectSpace } });
                                 }}
                             >
                                 <div className="flex items-center space-x-4 mr-20" >
@@ -164,7 +165,7 @@ export function FindUser() {
                                     <div className="inline-flex bg-white p-4 border border-gray-300 rounded-md mb-2 scale-95 hover:scale-100"
                                         key={favo.USER_ID}
                                         onClick={() => {
-                                            navigate("/addAppoinBusiness", { state: { userCita: favo, businessId: businessId, dorsl: dorsl } });
+                                            navigate("/addAppoinBusiness", { state: { userCita: favo, businessId: businessId, dorsl: dorsl, selectSpace: selectSpace } });
                                         }}
                                     >
                                         {

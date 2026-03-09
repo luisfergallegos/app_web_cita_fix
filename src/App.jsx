@@ -28,6 +28,7 @@ import DeleteUser, { DeleteUserLoader } from './pages/register_user/Delete_user.
 import Confirmation, { ConfirmationLoader } from './pages/appoinment/Confirmation.jsx';
 import AddEvento, { AddEventoLoader } from './pages/evento/add_evento.jsx';
 import UpdateEvento, { UpdateEventoLoader } from './pages/evento/update_evento.jsx';
+import UpdateSpace, {UpdateSpaceLoader} from './pages/register_business/UpdateSpace.jsx';
 // Actions
 import { logoutAction } from "./actions/logout.js";
 import RequireBusiness from "./components/RequireBusiness.jsx";
@@ -159,6 +160,13 @@ const router = createBrowserRouter([
         path: "updateEvent",
         element: <UpdateEvento />,
         loader: UpdateEventoLoader,
+        /*action: expensesAction, */
+        errorElement: <Error />
+      },
+      {
+        path: "updateSpace",
+        element: <UpdateSpace />,
+        loader: UpdateSpaceLoader,
         /*action: expensesAction, */
         errorElement: <Error />
       },

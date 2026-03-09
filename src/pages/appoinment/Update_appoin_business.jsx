@@ -109,38 +109,73 @@ export function UpdateAppoinBusiness() {
 
     const getDaysInactive = async () => {
         setLoading(true);
-        //Solicitar por GET
-        try {
-
-            const response = await fetch(`${urlApi}appoinBussDateDays?bussiness_id=${cita.BUSSINESS_ID}`);
-            if (!response.ok) {
-                console.log(`Error getting appoinBussDateDays.`);
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-
-            const json = await response.json();
-            setExcludeDates(selectableDayPredicate(json['data']));
-
+        if (cita.ID_SPACE == '') {
             //Solicitar por GET
             try {
-                const response = await fetch(`${urlApi}appoinBussDate?bussiness_id=${cita.BUSSINESS_ID}`);
+                const response = await fetch(`${urlApi}appoinBussDateDays?bussiness_id=${cita.BUSSINESS_ID}`);
                 if (!response.ok) {
-                    console.log(`Error getting appoinBussDate.`);
+                    console.log(`Error getting appoinBussDateDays.`);
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
+
                 const json = await response.json();
-                setCitas(json['data']);
+                setExcludeDates(selectableDayPredicate(json['data']));
+
+                //Solicitar por GET
+                try {
+                    const response = await fetch(`${urlApi}appoinBussDate?bussiness_id=${cita.BUSSINESS_ID}`);
+                    if (!response.ok) {
+                        console.log(`Error getting appoinBussDate.`);
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    const json = await response.json();
+                    setCitas(json['data']);
+                    setLoading(false);
+                }
+                catch (e) {
+                    setLoading(false);
+                    return;
+                }
+            }
+            catch (e) {
                 setLoading(false);
+                return;
+            }
+        } else {
+            //Solicitar por GET
+            try {
+                const response = await fetch(`${urlApi}appoinBussDateDays?bussiness_id=${cita.BUSSINESS_ID}&busSpacesId=${cita.ID_SPACE}`);
+                if (!response.ok) {
+                    console.log(`Error getting appoinBussDateDays.`);
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const json = await response.json();
+                setExcludeDates(selectableDayPredicate(json['data']));
+
+                //Solicitar por GET
+                try {
+                    const response = await fetch(`${urlApi}appoinBussDate?bussiness_id=${cita.BUSSINESS_ID}&busSpacesId=${cita.ID_SPACE}`);
+                    if (!response.ok) {
+                        console.log(`Error getting appoinBussDate.`);
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    const json = await response.json();
+                    setCitas(json['data']);
+                    setLoading(false);
+                }
+                catch (e) {
+                    setLoading(false);
+                    return;
+                }
             }
             catch (e) {
                 setLoading(false);
                 return;
             }
         }
-        catch (e) {
-            setLoading(false);
-            return;
-        }
+
+
     }
 
     function ConvertDateTime(date, time, flag) {
@@ -169,6 +204,7 @@ export function UpdateAppoinBusiness() {
             var dateFormat = startDate.getMonth() + 1;
             var _selectedDate = `${startDate.getFullYear()}-${('0' + dateFormat).slice(-2)}-${startDate.getDate()}`;
             var anonimo = cita.ANONIMO.length == 0 ? '' : cita.ANONIMO;
+            const bus_spaces_id = cita.ID_SPACE == '' ? null : cita.ID_SPACE;
 
             //Enviar por PUT
             var options = {
@@ -185,7 +221,8 @@ export function UpdateAppoinBusiness() {
                         'anonimo': anonimo,
                         'message': message,
                         'estatus': '1',
-                        'dorsl': cita.DORSL
+                        'dorsl': cita.DORSL,
+                        'bus_spaces_id': bus_spaces_id
                     })
             }
             try {
@@ -366,8 +403,10 @@ export function UpdateAppoinBusiness() {
                     )}
                     <h3 className="text-2xl font-bold mt-4 text-black">{cita.ANONIMO == '' ? cita.USER_NAME : cita.ANONIMO.substring(0, cita.ANONIMO.indexOf(","))}</h3>
                     <h4 className='text-black mb-1'>{cita.ANONIMO == '' ? '' : cita.ANONIMO.substring(cita.ANONIMO.indexOf(",") + 1, cita.ANONIMO.length)}</h4>
-                    <p className='w-full text-gray-400 mb-4'>{ConvertDateTime(cita.APPOINTMENT_DATE, cita.APPOINTMENT_TIME, 1)} -
+                    <p className='w-full text-gray-400'>{ConvertDateTime(cita.APPOINTMENT_DATE, cita.APPOINTMENT_TIME, 1)} -
                         {ConvertDateTime(cita.APPOINTMENT_DATE, cita.APPOINTMENT_TIME, 0)}</p>
+                    <p className='ml-10 mr-10 text-gray-400'>{cita.ALIAS}</p>
+                    <p className='ml-10 mr-10 text-gray-400 mb-4'>{cita.NAME_SPACE}</p>
                     {flagAnonPhone != '' ?
                         <div className="w-full flex items-center gap-3 px-4 mt-2">
                             <PhoneIcon className="w-6 h-6 text-orange-500" />

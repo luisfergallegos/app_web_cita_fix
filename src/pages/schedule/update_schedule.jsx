@@ -6,7 +6,7 @@ import { toast } from "react-toastify";
 import DatePicker from 'react-datepicker';
 import "react-datepicker/dist/react-datepicker.css";
 
-export function UpdateSchedule({ excludeTimes, horario, businessId, setshowAlertConfirmation }) {
+export function UpdateSchedule({ excludeTimes, horario, businessId, setshowAlertConfirmation, busSpacesId }) {
     const listIntervaloDes = ['30 min', '45 min', '1 hora', '2 horas'];
     const [valuesDefault, setValuesDefault] = useState(horario);
 
@@ -74,6 +74,7 @@ export function UpdateSchedule({ excludeTimes, horario, businessId, setshowAlert
                 body: JSON.stringify(
                     {
                         "bussiness_id": businessId,
+                        "bus_spaces_id": busSpacesId,
                         "data": valuesDefault,
                     })
             }
@@ -103,8 +104,8 @@ export function UpdateSchedule({ excludeTimes, horario, businessId, setshowAlert
     return (
         <div>
             <div className="grid">
-                <span>Las personas pueden elegir la fecha y la hora de su cita en función del calendario que configures.</span>
-                <span>CALENDARIO</span>
+                <span className="mb-2">Las personas pueden elegir la fecha y la hora de su cita en función del calendario que configures.</span>
+                <span className="mb-2">CALENDARIO</span>
                 <span>Elige los días y horarios disponibles para realizar citas en tu calendario.</span>
             </div>
             {

@@ -759,7 +759,8 @@ export function UpdateEvento({ onSubmit }) {
                     </div>
 
                     {/* Invitar Card */}
-                    {bAcceder && <div ref={formRef} className="flex flex-col gap-4">
+                    {bAcceder && 
+                    <div ref={formRef} className="flex flex-col gap-4">
                         <div className="bg-gradient-to-br from-gray-50 to-white border border-gray-100 rounded-2xl p-6 shadow-sm">
                             <div className="flex items-center justify-between">
                                 <div>

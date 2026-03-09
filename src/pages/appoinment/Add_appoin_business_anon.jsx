@@ -61,6 +61,7 @@ export function AddAppoinBusinesssAnon() {
 
     const businessId = location.state?.businessId ?? '';
     const dorsl = location.state?.dorsl;
+    const selectSpace = location.state?.selectSpace;
     var _today = new Date();
     const initialDate = new Date(_today);
     const lastDate = new Date(_today.setDate(_today.getDate() + 31));
@@ -106,6 +107,8 @@ export function AddAppoinBusinesssAnon() {
                 var anonimo = bSwitchPhoneEmail ? `${nombre},+52 ${phone}` : `${nombre},${correo}`;
                 var dateFormat = startDate.getMonth() + 1;
                 var _selectedDate = `${startDate.getFullYear()}-${('0' + dateFormat).slice(-2)}-${startDate.getDate()}`;
+                const bus_spaces_id = selectSpace == null ? '' : selectSpace.BUS_SPACES_ID;
+                const name_space = selectSpace == null ? '' : selectSpace.ALIAS;
                 //Enviar por POST
                 var options = {
                     method: 'POST',
@@ -121,11 +124,14 @@ export function AddAppoinBusinesssAnon() {
                             'message': message,
                             'estatus': '0',
                             'dorsl': dorsl,
-                            'for_who': 'Bus'
+                            'for_who': 'Bus',
+                            'bus_spaces_id': bus_spaces_id,
+                            'name_space': name_space
                         })
                 }
                 try {
                     var url = bSwitchPhoneEmail ? `${urlApi}appoinW` : `${urlApi}appoin`;
+                    console.log(options);
                     const response = await fetch(url, options);
                     const json = await response.json();
                     if (json['sucess'] == false) {
@@ -137,7 +143,6 @@ export function AddAppoinBusinesssAnon() {
                     else {
                         navigate("/");
                     }
-
                 }
                 catch (e) {
                     setbAcceder(true);
@@ -193,36 +198,71 @@ export function AddAppoinBusinesssAnon() {
             else if (sCorreo == null && sPassword == null) {
                 navigate("/");
             }
-            //Solicitar por GET
-            try {
-                const response = await fetch(`${urlApi}appoinBussDateDays?bussiness_id=${businessId}`);
-                if (!response.ok) {
-                    console.log(`Error getting getDaysInactive.`);
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-                const json = await response.json();
-                setExcludeDates(selectableDayPredicate(json['data']));
-
+            if (selectSpace == null) {
                 //Solicitar por GET
                 try {
-                    const response = await fetch(`${urlApi}appoinBussDate?bussiness_id=${businessId}`);
+                    const response = await fetch(`${urlApi}appoinBussDateDays?bussiness_id=${businessId}`);
                     if (!response.ok) {
                         console.log(`Error getting getDaysInactive.`);
                         throw new Error(`HTTP error! status: ${response.status}`);
                     }
                     const json = await response.json();
-                    setCitas(json['data']);
+                    setExcludeDates(selectableDayPredicate(json['data']));
+
+                    //Solicitar por GET
+                    try {
+                        const response = await fetch(`${urlApi}appoinBussDate?bussiness_id=${businessId}`);
+                        if (!response.ok) {
+                            console.log(`Error getting getDaysInactive.`);
+                            throw new Error(`HTTP error! status: ${response.status}`);
+                        }
+                        const json = await response.json();
+                        setCitas(json['data']);
+                        setLoading(false);
+                    }
+                    catch (e) {
+                        return;
+                    }
+
                     setLoading(false);
                 }
                 catch (e) {
                     return;
                 }
+            }
+            else {
+                //Solicitar por GET
+                try {
+                    const response = await fetch(`${urlApi}appoinBussDateDays?bussiness_id=${businessId}&busSpacesId=${selectSpace.BUS_SPACES_ID}`);
+                    if (!response.ok) {
+                        console.log(`Error getting getDaysInactive.`);
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    const json = await response.json();
+                    setExcludeDates(selectableDayPredicate(json['data']));
 
-                setLoading(false);
+                    //Solicitar por GET
+                    try {
+                        const response = await fetch(`${urlApi}appoinBussDate?bussiness_id=${businessId}&busSpacesId=${selectSpace.BUS_SPACES_ID}`);
+                        if (!response.ok) {
+                            console.log(`Error getting getDaysInactive.`);
+                            throw new Error(`HTTP error! status: ${response.status}`);
+                        }
+                        const json = await response.json();
+                        setCitas(json['data']);
+                        setLoading(false);
+                    }
+                    catch (e) {
+                        return;
+                    }
+
+                    setLoading(false);
+                }
+                catch (e) {
+                    return;
+                }
             }
-            catch (e) {
-                return;
-            }
+
 
 
         };
@@ -248,7 +288,8 @@ export function AddAppoinBusinesssAnon() {
                 </div>
                 <div>
                     <h4 className='text-2xl font-bold text-black mb-1'>Usuario no registrado.</h4>
-                    <p className='ml-10 mr-10 text-gray-400 mb-4'>{dorsl}</p>
+                    <p className='ml-10 mr-10 text-gray-400'>{dorsl}</p>
+                    <p className='ml-10 mr-10 text-gray-400 mb-4'>{selectSpace == null ? '' : selectSpace.ALIAS}</p>
                 </div>
                 <hr className="mb-4 mt-4" />
                 <div className='businessTitle'>
