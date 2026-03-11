@@ -119,7 +119,7 @@ export function FindBusiness() {
             {
                 correo == null & pwd == null ? <div className="flex justify-between items-center w-full bg-white">
                     <a href="https://www.plannersday.com/"><img className='h-10 w-auto' src={Logo} alt="" /></a>
-                    <a href="https://app.plannersday.com/"><span className='mr-10 text-orange-600 text-auto'>Iniciar sesión</span></a>
+                    <a href="https://app.plannersday.com/login"><span className='mr-10 text-orange-600 text-auto'>Iniciar sesión</span></a>
                 </div> : <div></div>
             }
             <div className="min-h-screen bg-gradient-to-br from-orange-600 to-orange-800 px-4 py-10">
