@@ -52,10 +52,17 @@ export function CardBusiness({
         Horario,
     } = empresa;
 
-    const desplegarPantallaAddAppoin = () => {
-        navigate("/addAppoin", {
-            state: { userId: userId, userName: userName, business: empresa },
-        });
+    const desplegarPantallaAddAppoin = async (e) => {
+        e.stopPropagation();
+        if (!userName) {
+            navigate("/addAppoinBusinessAnon", { state: { businessId: BUSSINESS_ID, dorsl: DORSL, selectSpace: [] } });
+        }
+        else {
+            navigate("/addAppoin", {
+                state: { userId: userId, userName: userName, business: empresa },
+            });
+        }
+
     };
 
     const handleButtonIcon = async (e) => {

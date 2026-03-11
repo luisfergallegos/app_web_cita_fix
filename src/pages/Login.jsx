@@ -109,7 +109,7 @@ export function LoginForm() {
             {sCorreo && sPassword ? (profile == "business" ? <HomeBusiness /> : <FindBusiness />) :
                 <div id="containerLogin">
                     <div className="containerLogin">
-                        <SingIn />
+                        <FindBusiness />{/* <SingIn /> */}
                     </div>
                 </div>
             }
