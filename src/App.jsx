@@ -14,7 +14,7 @@ import FindBusiness, { findBusinessLoader } from "./pages/business/Find_business
 import Notification, { notificationLoader } from "./pages/Notification.jsx";
 import RegisterUser, { registerUserLoader } from "./pages/register_user/Register_user.jsx";
 import LoginForm, { loginFormLoader } from "./pages/Login";
-import SingIn from './pages/authenticate/SignIn.jsx';
+import SingIn, {loginLoader} from './pages/authenticate/SignIn.jsx';
 import Error from "./pages/Error.jsx";
 import AddAppoin, { AddAppoinLoader } from './pages/appoinment/Add_appoin.jsx';
 import CancelarAppoin, { CancelarAppoinLoader } from './pages/appoinment/Cancel_appoin.jsx';
@@ -50,7 +50,7 @@ const router = createBrowserRouter([
       {
         path: "login",
         element: <SingIn />,
-        // loader: findBusinessLoader,
+        loader: loginLoader,
         /* action: findBusinessAction, */
         errorElement: <Error />
       },

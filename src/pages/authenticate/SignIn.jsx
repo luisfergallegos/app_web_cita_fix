@@ -1,10 +1,12 @@
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { urlApi } from '../../styles/Constants';
 import { toast } from "react-toastify";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLoaderData } from "react-router-dom";
 // assents
 import Logo from "../../assets/menu.png";
+// helper funtions
+import { fetchData } from "../../Wrapper.js";
 import {
   EyeIcon,
   EyeSlashIcon,
@@ -12,7 +14,14 @@ import {
 } from "@heroicons/react/24/solid";
 import Loaging from '../../components/Loading.jsx';
 
-export default function Login() {
+export function loginLoader() {
+  const sCorreo = fetchData("correo");
+  const sPassword = fetchData("pwd");
+  return { sCorreo, sPassword };
+}
+
+export function Login() {
+  const { sCorreo, sPassword } = useLoaderData();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showAlert, setShowAlert] = useState(false);
@@ -39,69 +48,69 @@ export default function Login() {
       setTimeout(() => setShowAlert(false), 3000); // ocultar alerta
       return;
     }
-    
-      setLoading(true);
-      var options = {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json',
-          'x-citafix-ps': password
-        }
-      }
-      try {
-        const response = await fetch(`${urlApi}login?email=${email}`, options);
-        if( response.status == 404 ){
-          setLoading(false);
-          return toast.error(`Usuario no registrado`);
-        }
-        if( response.status == 401 ){
-          setLoading(false);
-          return toast.error(`Contraseña incorrecta`);
-        }
-        if( response.status == 500 ){
-          setLoading(false);
-          return toast.error(`Error en el servidor, intenta más tarde`);
-        }
-        
-        const json = await response.json();
-        if (json['sucess']) {
-          localStorage.setItem("correo", '');
-          localStorage.setItem("pwd", '');
-          // localStorage.setItem("tokenH", '');
-          // localStorage.setItem("BusinessCitaFix", '');
-          localStorage.setItem("UserCitaFix", '');
 
-          localStorage.setItem("correo", JSON.stringify(email));
-          localStorage.setItem("pwd", JSON.stringify(password));
-          try {
-            const response = await fetch(`${urlApi}usr?email=${email}`, options);
-            if (!response.ok) {              
-              toast.error(`No se puede obtener la información del usuario`);
-              setLoading(false);
-              return;
-            }
-            const json = await response.json();
-            //obtener nombre
-            localStorage.setItem("UserCitaFix", JSON.stringify(json['data']));
-            var userName = json['data']['first_name'];
-            var dorsl = json['data']['DORSL'];
-            localStorage.setItem("dorsl", JSON.stringify(dorsl));
-            navigate('/', { replace: true }); // <-- redirect
-            setLoading(false);
-            return toast.success(`Bienvenido, ${userName}`);
-          }
-          catch (e) {
+    setLoading(true);
+    var options = {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        'x-citafix-ps': password
+      }
+    }
+    try {
+      const response = await fetch(`${urlApi}login?email=${email}`, options);
+      if (response.status == 404) {
+        setLoading(false);
+        return toast.error(`Usuario no registrado`);
+      }
+      if (response.status == 401) {
+        setLoading(false);
+        return toast.error(`Contraseña incorrecta`);
+      }
+      if (response.status == 500) {
+        setLoading(false);
+        return toast.error(`Error en el servidor, intenta más tarde`);
+      }
+
+      const json = await response.json();
+      if (json['sucess']) {
+        localStorage.setItem("correo", '');
+        localStorage.setItem("pwd", '');
+        // localStorage.setItem("tokenH", '');
+        // localStorage.setItem("BusinessCitaFix", '');
+        localStorage.setItem("UserCitaFix", '');
+
+        localStorage.setItem("correo", JSON.stringify(email));
+        localStorage.setItem("pwd", JSON.stringify(password));
+        try {
+          const response = await fetch(`${urlApi}usr?email=${email}`, options);
+          if (!response.ok) {
+            toast.error(`No se puede obtener la información del usuario`);
             setLoading(false);
             return;
           }
+          const json = await response.json();
+          //obtener nombre
+          localStorage.setItem("UserCitaFix", JSON.stringify(json['data']));
+          var userName = json['data']['first_name'];
+          var dorsl = json['data']['DORSL'];
+          localStorage.setItem("dorsl", JSON.stringify(dorsl));
+          navigate('/', { replace: true }); // <-- redirect
+          setLoading(false);
+          return toast.success(`Bienvenido, ${userName}`);
         }
-
-      } catch (e) {
-        setLoading(false);
-        return;
+        catch (e) {
+          setLoading(false);
+          return;
+        }
       }
-    
+
+    } catch (e) {
+      setLoading(false);
+      return;
+    }
+
   };
 
   const signInAction = async () => {
@@ -141,6 +150,13 @@ export default function Login() {
     }
 
   };
+
+  useEffect(() => {
+    // Redirección si no hay sesión
+    if (sCorreo || sPassword) {
+      navigate("/");
+    }
+  }, []);
 
   if (loading) {
     return <Loaging />;
@@ -251,3 +267,5 @@ export default function Login() {
     </div>
   );
 }
+
+export default Login;
