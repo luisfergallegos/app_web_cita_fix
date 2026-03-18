@@ -96,6 +96,16 @@ export function CardBusiness({
         }
     };
 
+    const handleViewProfile = async () => {
+        const baseUrl = '/viewBusiness';
+        const params = new URLSearchParams({
+            n: DORSL,
+            i: BUSSINESS_ID
+        });
+        navigate(`${baseUrl}?${params.toString()}`);
+
+    };
+
     return (
         <div
             className="bg-white shadow-xl rounded-3xl p-6 w-full max-w-lg mx-auto cursor-pointer border border-white hover:shadow-2xl transition-all"
@@ -137,6 +147,16 @@ export function CardBusiness({
             <p className={`text-center text-xl mb-4 ${SERVICE_LEVEL == 0 ? 'text-gray-500' : 'text-yellow-500'}`}>
                 {SERVICE_LEVEL == 0 ? StarRatingNot(5) : StarRating(SERVICE_LEVEL)}
             </p>
+            {/* BOTÓN VER PERFIL */}
+            <button
+                onClick={(e) => {
+                    e.stopPropagation(); // evita que active el onClick del card
+                    handleViewProfile();
+                }}
+                className="mt-2 mx-auto block bg-orange-500 hover:bg-orange-600 text-white font-semibold py-2 px-6 rounded-full transition-all"
+            >
+                Ver perfil
+            </button>
 
 
 

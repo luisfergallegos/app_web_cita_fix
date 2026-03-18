@@ -1,5 +1,5 @@
 // Library
-import { BuildingStorefrontIcon, MapPinIcon, PhoneIcon, ClockIcon, StarIcon, LinkIcon } from '@heroicons/react/24/solid';
+import { BuildingStorefrontIcon, MapPinIcon, PhoneIcon, ClockIcon, StarIcon, LinkIcon, ChevronRightIcon } from '@heroicons/react/24/solid';
 // import '../../components/CardBusiness.css';
 // assents
 import Store from "../../assets/business.png";
@@ -78,7 +78,7 @@ export function ViewBusiness() {
 
             if (navigator.canShare && navigator.canShare({ files: [file] })) {
                 await navigator.share({
-                    files: [file], 
+                    files: [file],
                     text: "Próximas citas disponibles",
                     url: sURL,
                 });
@@ -97,6 +97,11 @@ export function ViewBusiness() {
         }
 
     }
+
+    const desplegarPantallaAddAppoin = async (e) => {
+        e.stopPropagation();
+        navigate("/addAppoinBusinessAnon", { state: { businessId: empresa.BUSSINESS_ID, dorsl: empresa.DORSL, selectSpace: [] } });
+    };
 
     useEffect(() => {
         // Cargar user info desde loader
@@ -170,7 +175,7 @@ export function ViewBusiness() {
 
             {
                 sCorreo == null & sPassword == null ? <div className="flex justify-between items-center w-full bg-white">
-                    <a href="https://www.plannersday.com/"><img className='h-10 w-auto' src={Logo} alt="" /></a>
+                    <a href="https://app.plannersday.com/"><img className='h-10 w-auto' src={Logo} alt="" /></a>
                     <a href="https://app.plannersday.com/login"><span className='mr-10 text-orange-600 text-auto'>Iniciar sesión</span></a>
                 </div> : <div></div>
             }
@@ -267,7 +272,12 @@ export function ViewBusiness() {
                     </div>
                     {
                         sCorreo == null & sPassword == null ?
-                            <></> : <div>
+                            <button
+                                    onClick={desplegarPantallaAddAppoin}
+                                    className="mt-2 mx-auto block bg-orange-500 hover:bg-orange-600 text-white font-semibold py-2 px-6 rounded-full transition-all"
+            >
+                                    Reservar
+                                </button> : <div>
                                 <button
                                     onClick={downloadAsImage}
                                     className="w-full py-3 mt-4 rounded-md font-bold text-white bg-orange-500 hover:bg-orange-600"

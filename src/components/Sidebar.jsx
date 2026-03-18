@@ -76,7 +76,7 @@ export function Sidebar({ sidebarOpen, setSidebarOpen }) {
                 <div className="imgcontent">
                     {
                         sidebarOpen ?
-                            <a className='OpenMenu' href="https://www.plannersday.com/"><img  id='logo' src={MenuWhite} /></a>
+                            <a className='OpenMenu' href="https://app.plannersday.com/"><img  id='logo' src={MenuWhite} /></a>
                             : <img id='logo' src={logo} />
                     }
                 </div>

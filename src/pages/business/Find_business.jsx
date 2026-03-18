@@ -118,7 +118,7 @@ export function FindBusiness() {
         <div>
             {
                 correo == null & pwd == null ? <div className="flex justify-between items-center w-full bg-white">
-                    <a href="https://www.plannersday.com/"><img className='h-10 w-auto' src={Logo} alt="" /></a>
+                    <a href="https://app.plannersday.com/"><img className='h-10 w-auto' src={Logo} alt="" /></a>
                     <a href="https://app.plannersday.com/login"><span className='mr-10 text-orange-600 text-auto'>Iniciar sesión</span></a>
                 </div> : <div></div>
             }
