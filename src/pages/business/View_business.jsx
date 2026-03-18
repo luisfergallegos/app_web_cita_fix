@@ -110,7 +110,7 @@ export function ViewBusiness() {
             navigate("/addAppoin", {
                 state: { userId: userId, userName: userName, business: empresa },
             });
-        }        
+        }
     };
 
     useEffect(() => {
@@ -254,6 +254,15 @@ export function ViewBusiness() {
                             </div> : <div className="text-left px-4 mb-2">
                                 <h4 className="text-sm font-semibold">Comparte tus próximas citas disponibles.</h4>
                                 <h4 className="text-sm font-semibold">En tus redes sociales</h4>
+                                <button
+                                    onClick={(e) => {
+                                        desplegarPantallaAddAppoin();
+                                    }}
+                                    className="flex items-center justify-end gap-1 text-orange-500 text-sm font-semibold hover:underline w-full mt-2"
+                                >
+                                    <span>Reservar</span>
+                                    <ChevronRightIcon className="w-4 h-4 mt-[1px]" />
+                                </button>
                             </div>
                     }
                     <div
@@ -289,11 +298,11 @@ export function ViewBusiness() {
                     {
                         sCorreo == null & sPassword == null ?
                             <button
-                                    onClick={desplegarPantallaAddAppoin}
-                                    className="mt-2 mx-auto block bg-orange-500 hover:bg-orange-600 text-white font-semibold py-2 px-6 rounded-full transition-all"
-            >
-                                    Reservar
-                                </button> : <div>
+                                onClick={desplegarPantallaAddAppoin}
+                                className="mt-2 mx-auto block bg-orange-500 hover:bg-orange-600 text-white font-semibold py-2 px-6 rounded-full transition-all"
+                            >
+                                Reservar
+                            </button> : <div>
                                 <button
                                     onClick={downloadAsImage}
                                     className="w-full py-3 mt-4 rounded-md font-bold text-white bg-orange-500 hover:bg-orange-600"
