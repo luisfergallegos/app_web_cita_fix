@@ -256,7 +256,7 @@ export function ViewBusiness() {
                                 <h4 className="text-sm font-semibold">En tus redes sociales</h4>
                                 <button
                                     onClick={(e) => {
-                                        desplegarPantallaAddAppoin();
+                                        desplegarPantallaAddAppoin(e);
                                     }}
                                     className="flex items-center justify-end gap-1 text-orange-500 text-sm font-semibold hover:underline w-full mt-2"
                                 >
@@ -298,7 +298,9 @@ export function ViewBusiness() {
                     {
                         sCorreo == null & sPassword == null ?
                             <button
-                                onClick={desplegarPantallaAddAppoin}
+                                onClick={(e) => {
+                                        desplegarPantallaAddAppoin(e);
+                                    }}
                                 className="mt-2 mx-auto block bg-orange-500 hover:bg-orange-600 text-white font-semibold py-2 px-6 rounded-full transition-all"
                             >
                                 Reservar
