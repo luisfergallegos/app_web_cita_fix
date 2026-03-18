@@ -38,6 +38,9 @@ export function ViewBusiness() {
     const [empresa, SetEmpresa] = useState([]);
     const previewRef = useRef();
 
+    const [userId, setUserId] = useState("");
+    const [userName, setUserName] = useState("");
+
     // Function to convert Base64 string to binary data
     const arrayBufferToBase64 = (buffer) => {
         var binary = '';
@@ -100,13 +103,26 @@ export function ViewBusiness() {
 
     const desplegarPantallaAddAppoin = async (e) => {
         e.stopPropagation();
-        navigate("/addAppoinBusinessAnon", { state: { businessId: empresa.BUSSINESS_ID, dorsl: empresa.DORSL, selectSpace: [] } });
+        if (!userName) {
+            navigate("/addAppoinBusinessAnon", { state: { businessId: empresa.BUSSINESS_ID, dorsl: empresa.DORSL, selectSpace: [] } });
+        }
+        else {
+            navigate("/addAppoin", {
+                state: { userId: userId, userName: userName, business: empresa },
+            });
+        }        
     };
 
     useEffect(() => {
         // Cargar user info desde loader
         if (!businessId && !businessDORSL) {
             navigate("/");
+        }
+        var auxUser = fetchData("UserCitaFix") ?? "";
+        if (auxUser) {
+            setUserId(auxUser['USER_ID'] ?? "");
+            var auxName = `${auxUser['first_name'] ?? ""} ${auxUser['last_name'] ?? ""}`;
+            setUserName(auxName);
         }
         const fData = async () => {
             //Solicitar por GET
