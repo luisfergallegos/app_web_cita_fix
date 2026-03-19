@@ -3,7 +3,7 @@ import { ToastContainer } from 'react-toastify';
 import { createBrowserRouter, RouterProvider, BrowserRouter } from "react-router-dom";
 
 // Layouts
-import Main, { mainLoader } from "./layouts/Main.jsx";
+import Main from "./layouts/Main.jsx";
 import { ProfileProvider } from "./ProfileContext.jsx";
 
 // Routers
@@ -38,7 +38,7 @@ const router = createBrowserRouter([
   {
     path: "/",
     element: <Main />,
-    loader: mainLoader,
+    // loader: mainLoader,
     errorElement: <Error />,
     children: [
       {

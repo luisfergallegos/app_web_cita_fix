@@ -96,6 +96,7 @@ export function Login() {
           var userName = json['data']['first_name'];
           var dorsl = json['data']['DORSL'];
           localStorage.setItem("dorsl", JSON.stringify(dorsl));
+          window.dispatchEvent(new Event("authChanged"));
           navigate('/', { replace: true }); // <-- redirect
           setLoading(false);
           return toast.success(`Bienvenido, ${userName}`);

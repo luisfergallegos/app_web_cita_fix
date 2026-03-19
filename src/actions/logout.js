@@ -13,6 +13,8 @@ export async function logoutAction(){
     deleteItem({ key: "pwd"});
     deleteItem({ key: "dorsl"});
     deleteItem({ key: "UserCitaFix"});
+    // localStorage.removeItem("profileMode");
+    window.dispatchEvent(new Event("authChanged"));
     // localStorage.setItem("hasSeenSearchIndicator", JSON.stringify("Indicator"));
     toast.success("Regresa pronto!");
     // return redirect
