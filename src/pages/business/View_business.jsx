@@ -218,7 +218,7 @@ export function ViewBusiness() {
                             <img className="w-64 h-64 rounded-full object-cover border mt-4 bg-gray-200" src={Store} alt="default" />
                         )}
                         <h3 className="text-2xl font-bold mt-4 text-black">{empresa.DORSL}</h3>
-                        <p className="text-gray-500 mb-3">{empresa.CATEGORY}</p>
+                        <p className="text-gray-500 mb-3">{empresa.SUBCATEGORY}</p>
                         <p className={`text-center text-xl mb-4 ${empresa.SERVICE_LEVEL == 0 ? 'text-gray-500' : 'text-yellow-500'}`}>
                             {empresa.SERVICE_LEVEL == 0 ? StarRatingNot(5) : StarRating(empresa.SERVICE_LEVEL)}
                         </p>

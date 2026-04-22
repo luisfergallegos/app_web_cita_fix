@@ -194,7 +194,7 @@ export function CardBusiness({
                 className="w-full flex items-center justify-end text-gray-600 text-base py-3 mt-2"
             >
                 <ChevronRightIcon className="w-5 h-5 text-gray-800 mt-1 ml-4" />
-                <span className="mr-2">Calificaciones</span>
+                <span className="mr-2">Reseñas</span>
             </button>
         </div>
     );
