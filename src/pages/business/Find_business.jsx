@@ -124,18 +124,23 @@ export function FindBusiness() {
             }
             <div className="min-h-screen bg-gradient-to-br from-orange-600 to-orange-800 px-4 py-10">
                 <div className="max-w-6xl mt-8 mx-auto">
-                    <h2 className="text-xl text-white font-semibold mb-2">¿Buscas un servicio o deseas agendar una cita?</h2>
+                    <div className="text-center text-white space-y-4">
+                        <p className="text-lg mt-15 mb-4 ">Encuentra y agenda fácilmente</p>
+                    </div>
+                    <h2 className="text-2xl text-white font-semibold mb-8 text-center">Encuentra servicios y agenda tu cita</h2>
                     {/* Buscador */}
-                    <div className="relative mb-10">
+                    <div className="relative w-full max-w-lg mb-10 mx-auto">
+
                         <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                             <MagnifyingGlassIcon className="h-5 w-5 text-gray-400" />
                         </div>
+
                         <input
                             type="text"
                             name="searchText"
                             value={searchText}
                             onChange={handleChange}
-                            placeholder="Busca un negocio o categorías..."
+                            placeholder="Explorar servicios"
                             className="w-full pl-10 pr-4 py-3 rounded-xl shadow-sm focus:ring-2 focus:ring-orange-400 outline-none text-gray-800 placeholder-gray-400"
                         />
                     </div>
@@ -158,12 +163,19 @@ export function FindBusiness() {
                             ))}
                         </div>
                     ) : (
-                        <div className="text-center text-white space-y-4">
-                            <p className="text-lg">Elige un servicio para agendar tu cita de inmediato.</p>
-                            <div className="mt-10">
-                                <h3 className="text-lg font-semibold mb-4">Recomendado para ti</h3>
+                        <div className="text-white space-y-4">
+                            <p className="text-lg text-center">Explora opciones cerca de ti y reserva cuando quieras.</p>
+                            <div className="mt-10 max-w-5xl mx-auto">
+
+
                                 {empresas[index] && (
-                                    <div className="flex justify-center">
+                                    <div className="grid justify-center">
+                                        <div className="flex items-center mb-4 text-left">
+                                            <h3 className="inline-flex items-center gap-2 text-lg font-semibold text-white">
+                                                <span>✨</span>
+                                                <span>Servicios destacados</span>
+                                            </h3>
+                                        </div>
                                         <CardBusiness
                                             key={empresas[index].BUSSINESS_ID}
                                             userId={userId}

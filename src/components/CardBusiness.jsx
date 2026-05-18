@@ -108,7 +108,9 @@ export function CardBusiness({
 
     return (
         <div
-            className="bg-white shadow-xl rounded-3xl p-6 w-full max-w-lg mx-auto cursor-pointer border border-white hover:shadow-2xl transition-all"
+            className={`bg-white shadow-xl rounded-3xl p-6 w-full max-w-lg mx-auto cursor-pointer border border-white 
+                hover:scale-105 hover:shadow-2xl transition-all 
+                ${selectBusiness == BUSSINESS_ID ? "ring-2 ring-blue-500" : ""} `}
             onClick={() => {
                 setSelectBusiness(selectBusiness == BUSSINESS_ID ? null : BUSSINESS_ID);
             }}
