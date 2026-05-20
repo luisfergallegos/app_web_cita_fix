@@ -5,7 +5,7 @@ import { NavLink } from 'react-router-dom';
 import { useProfile } from "../ProfileContext.jsx";
 
 // Library
-import { Bars3Icon, XMarkIcon, BuildingOfficeIcon, MagnifyingGlassIcon, ArrowPathIcon } from '@heroicons/react/24/solid';
+import { Bars3Icon, XMarkIcon, BuildingOfficeIcon, HomeIcon, MagnifyingGlassIcon, ArrowPathIcon } from '@heroicons/react/24/solid';
 
 // assents
 import logo from "../assets/splash.png";
