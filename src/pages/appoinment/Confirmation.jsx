@@ -241,10 +241,21 @@ export function Confirmation() {
         <div>
 
             {
-                sCorreo == null & sPassword == null ? <div className="flex justify-between items-center w-full bg-white">
-                    <a href="https://app.plannersday.com/"><img className='h-10 w-auto' src={Logo} alt="" /></a>
-                    <a href="https://app.plannersday.com/login"><span className='mr-10 text-orange-600 text-auto'>Iniciar sesión</span></a>
-                </div> : <div></div>
+                sCorreo == null & sPassword == null ?
+                    /* Navbar */
+                    <header className="sticky top-0 z-50 border-b border-gray-100 bg-white/90 backdrop-blur">
+                        <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
+                            <div className="text-2xl font-bold tracking-tight">
+                                <a href="https://app.plannersday.com/"><img className='h-10 w-auto' src={Logo} alt="" /></a>
+                            </div>
+                            <nav className="hidden gap-8 md:flex">
+                            </nav>
+                            <button className="rounded-full bg-orange-600 px-5 py-2 text-sm font-semibold text-white transition hover:scale-105"
+                                onClick={() => navigate("/login")}>
+                                Iniciar sesión
+                            </button>
+                        </div>
+                    </header> : <div></div>
             }
             <div className="min-h-screen grid items-center justify-center bg-gradient-to-br from-gray-600 to-gray-800 px-4">
 

@@ -2,7 +2,7 @@
 import '../../components/CardBusiness.css';
 // assents
 import Store from "../../assets/business.png";
-import Logo from "../../assets/splash_white.png";
+import Logo from "../../assets/splash.png";
 import Loaging from '../../components/Loading.jsx';
 // rrd imports
 import { useLoaderData, useNavigate } from 'react-router-dom';
@@ -107,10 +107,21 @@ export function DeleteUser() {
     return (
         <div>
             {
-                sPassword == null ? <div className="flex justify-between items-center w-full bg-gradient-to-br from-orange-600 to-orange-800">
-                    <a href="https://www.plannersday.com/"><img className='w-58 h-14' src={Logo} alt="" /></a>
-                    <a href="https://app.plannersday.com/login"><span className='me-6 text-white text-xl'>Iniciar sesión</span></a>
-                </div> : <div></div>
+                sCorreo == null & sPassword == null ?
+                    /* Navbar */
+                    <header className="sticky top-0 z-50 border-b border-gray-100 bg-white/90 backdrop-blur">
+                        <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
+                            <div className="text-2xl font-bold tracking-tight">
+                                <a href="https://app.plannersday.com/"><img className='h-10 w-auto' src={Logo} alt="" /></a>
+                            </div>
+                            <nav className="hidden gap-8 md:flex">
+                            </nav>
+                            <button className="rounded-full bg-orange-600 px-5 py-2 text-sm font-semibold text-white transition hover:scale-105"
+                                onClick={() => navigate("/login")}>
+                                Iniciar sesión
+                            </button>
+                        </div>
+                    </header> : <div></div>
             }
             <div className="min-h-screen grid items-center justify-center bg-gradient-to-br from-orange-600 to-orange-800 px-4">
                 <div className="bg-white rounded-3xl shadow-xl p-10 max-w-2xl w-full text-center animate-fade-in-up">

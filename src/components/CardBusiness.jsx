@@ -4,7 +4,8 @@ import {
     PhoneIcon,
     CalendarDaysIcon,
     ChevronRightIcon,
-    PlusCircleIcon
+    PlusCircleIcon,
+    CheckBadgeIcon
 } from "@heroicons/react/24/solid";
 // assets
 import Store from "../assets/business.png";
@@ -120,7 +121,7 @@ export function CardBusiness({
                 onClick={desplegarPantallaAddAppoin}
                 className="w-full flex items-center justify-end"
             >
-                <PlusCircleIcon className="w-10 h-10 text-orange-500 flex-shrink-0" />
+                <CheckBadgeIcon className="w-10 h-10 text-blue-500 flex-shrink-0" />
             </button> : <></>}
             {/* ICONO GRANDE */}
             <div
