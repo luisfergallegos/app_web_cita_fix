@@ -33,6 +33,7 @@ import UpdateSpace, {UpdateSpaceLoader} from './pages/register_business/UpdateSp
 // Actions
 import { logoutAction } from "./actions/logout.js";
 import RequireBusiness from "./components/RequireBusiness.jsx";
+import Politicas, { PoliticasLoader } from './pages/Politicas.jsx';
 
 const router = createBrowserRouter([
   {
@@ -189,6 +190,13 @@ const router = createBrowserRouter([
         path: "deleteUser",
         element: <DeleteUser />,
         loader: DeleteUserLoader,
+        /*action: expensesAction, */
+        errorElement: <Error />
+      },
+      {
+        path: "politica-de-privacidad",
+        element: <Politicas />,
+        loader: PoliticasLoader,
         /*action: expensesAction, */
         errorElement: <Error />
       },

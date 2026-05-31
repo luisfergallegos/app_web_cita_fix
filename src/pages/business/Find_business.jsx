@@ -482,7 +482,8 @@ export function FindBusiness() {
                             </a>
 
                             <a
-                                href="https://www.plannersday.com/politica-de-privacidad"
+                                // href="https://www.plannersday.com/politica-de-privacidad"
+                                onClick={() => navigate("/politica-de-privacidad")}
                                 className="transition hover:text-gray-500"
                             >
                                 Política de privacidad
