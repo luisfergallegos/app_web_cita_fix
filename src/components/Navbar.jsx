@@ -46,7 +46,7 @@ export function Navbar() {
         <nav className="bg-white shadow-md fixed top-0 left-0 right-0 z-50">
             <div className="max-w-7xl mx-auto px-4 py-3 flex justify-between items-center">
                 {/* logo */}
-                <a href="https://app.plannersday.com/home"><img src={logo} className='h-10 w-auto' /></a>
+                <a href="https://www.plannersday.com/home"><img src={logo} className='h-10 w-auto' /></a>
                 {/* Botón para móvil */}
                 <button className="lg:hidden" onClick={toggleMenu}>
                     {isOpen ? <XMarkIcon width={24} /> : <Bars3Icon width={24} />}

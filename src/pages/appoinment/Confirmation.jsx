@@ -246,7 +246,7 @@ export function Confirmation() {
                     <header className="sticky top-0 z-50 border-b border-gray-100 bg-white/90 backdrop-blur">
                         <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
                             <div className="text-2xl font-bold tracking-tight">
-                                <a href="https://app.plannersday.com/"><img className='h-10 w-auto' src={Logo} alt="" /></a>
+                                <a href="https://www.plannersday.com/"><img className='h-10 w-auto' src={Logo} alt="" /></a>
                             </div>
                             <nav className="hidden gap-8 md:flex">
                             </nav>

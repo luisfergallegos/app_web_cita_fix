@@ -166,7 +166,7 @@ export function FindBusiness() {
                     <header className="sticky top-0 z-50 border-b border-gray-100 bg-white/90 backdrop-blur">
                         <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
                             <div className="text-2xl font-bold tracking-tight">
-                                <a href="https://app.plannersday.com/"><img className='h-10 w-auto' src={Logo} alt="" /></a>
+                                <a href="https://www.plannersday.com/"><img className='h-10 w-auto' src={Logo} alt="" /></a>
                             </div>
 
                             <nav className="hidden gap-8 md:flex">
@@ -474,7 +474,7 @@ export function FindBusiness() {
                         {/* Links */}
                         <div className="flex flex-wrap items-center gap-6 text-sm font-semibold">
                             <a
-                                // href="https://app.plannersday.com/deleteUser"
+                                // href="https://www.plannersday.com/deleteUser"
                                 onClick={() => navigate("/deleteUser")}
                                 className="cursor-pointer transition hover:text-gray-500"
                             >
