@@ -137,14 +137,12 @@ export function AddAppoinBusinesssAnon() {
                     'bus_spaces_id': bus_spaces_id,
                     'name_space': name_space
                 })
-        }
+        }        
         try {
-            var url = bSwitchPhoneEmail ? `${urlApi}appoinW` : `${urlApi}appoin`;
-            console.log(options);
+            var url = bSwitchPhoneEmail ? `${urlApi}appoinW` : `${urlApi}appoin`;            
             const response = await fetch(url, options);
             const json = await response.json();
             if (json['sucess'] == false) {
-                setCanSubmit(true);
                 toast.error(`Ya no se encuentra disponible Fecha : ${_selectedDate} Hora : ${selectedTime} Corríjalo e inténtelo nuevamente.`);
                 // console.log(`Error al guardar cita.`);
                 throw new Error(`HTTP error! status: ${response.status}`);
@@ -153,9 +151,11 @@ export function AddAppoinBusinesssAnon() {
                 navigate("/");
             }
         }
-        catch (e) {
-            setCanSubmit(true);
+        catch (e) {            
             return;
+        }
+        finally{
+            setCanSubmit(true);
         }
     };
 
@@ -909,16 +909,20 @@ export function AddAppoinBusinesssAnon() {
                                     <textarea value={message} onChange={(e) => setMessage(e.target.value)} className="w-full mt-3 border rounded-md p-2" rows={4} placeholder="Opcional" />
                                 </div>
 
-                                <div className="flex justify-end gap-3 mt-4">
-                                    <button onClick={() => setStep(4)} className="px-6 py-3 rounded-xl border border-gray-300 text-gray-600 font-medium hover:bg-gray-100 transition-all">← </button>
-                                    {canSubmit ? (
+
+                                {canSubmit ? (
+                                    <div className="flex justify-end gap-3 mt-4">
+                                        <button onClick={() => setStep(4)} className="px-6 py-3 rounded-xl border border-gray-300 text-gray-600 font-medium hover:bg-gray-100 transition-all">← </button>
                                         <button onClick={_buildConfirm} className="px-4 py-2 rounded-md bg-orange-500 text-white">Confirmar cita</button>
-                                    ) : (
+                                    </div>
+                                ) : (
+                                    <div className="flex justify-end gap-3 mt-4">
                                         <button className="w-full py-3 rounded-md bg-gray-300">
                                             <span className="animate-pulse">Procesando...</span>
                                         </button>
-                                    )}
-                                </div>
+                                    </div>
+                                )}
+
 
                             </>
 

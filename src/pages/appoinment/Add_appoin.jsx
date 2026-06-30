@@ -149,7 +149,7 @@ export function AddAppoin() {
         const month = (`0` + (startDate.getMonth() + 1)).slice(-2);
         const day = (`0` + startDate.getDate()).slice(-2);
         const selectedDate = `${startDate.getFullYear()}-${month}-${day}`;
-        const bus_spaces_id = selectSpace.length == 0 ? '' : selectSpace.BUS_SPACES_ID;
+        const bus_spaces_id = selectSpace == null ? '' : selectSpace.BUS_SPACES_ID;
 
         const bodyBase = {
             user_id: userId,
@@ -158,7 +158,7 @@ export function AddAppoin() {
             appointment_date: selectedDate,
             appointment_time: selectedTime,
             anonimo: '',
-            message,
+            message: message,
             estatus: '0',
             dorsl: location.state.userName,
             for_who: 'Bus',
@@ -179,13 +179,14 @@ export function AddAppoin() {
             const json = await resp.json();
             if (json.sucess == false) {
                 toast.error(`Fecha ${selectedDate} / Hora ${selectedTime} ya no está disponible.`);
-                setCanSubmit(true);
                 return;
             }
             navigate('/home');
         } catch (e) {
             console.error(e);
             toast.error('Ocurrió un error al guardar la cita. Intenta de nuevo.');
+        }
+        finally {
             setCanSubmit(true);
         }
     };
@@ -968,16 +969,18 @@ export function AddAppoin() {
                                         <p className="text-center text-gray-500 mt-1">Motivo de la visita/Servicio</p>
                                         <textarea value={message} onChange={(e) => setMessage(e.target.value)} className="w-full mt-3 border rounded-md p-2" rows={4} placeholder="Opcional" />
                                     </div>
-                                    <div className="flex justify-end gap-3 mt-4">
-                                        <button onClick={() => setStep(4)} className="px-6 py-3 rounded-xl border border-gray-300 text-gray-600 font-medium hover:bg-gray-100 transition-all">← </button>
-                                        {canSubmit ? (
+                                    {canSubmit ? (
+                                        <div className="flex justify-end gap-3 mt-4">
+                                            <button onClick={() => setStep(4)} className="px-6 py-3 rounded-xl border border-gray-300 text-gray-600 font-medium hover:bg-gray-100 transition-all">← </button>
                                             <button onClick={_buildConfirm} className="px-4 py-2 rounded-md bg-orange-500 text-white">Confirmar cita</button>
-                                        ) : (
+                                        </div>
+                                    ) : (
+                                        <div className="flex justify-end gap-3 mt-4">
                                             <button className="w-full py-3 rounded-md bg-gray-300">
                                                 <span className="animate-pulse">Procesando...</span>
                                             </button>
-                                        )}
-                                    </div>
+                                        </div>
+                                    )}
 
                                 </>
 
@@ -1000,16 +1003,21 @@ export function AddAppoin() {
                                     <p className="text-center text-gray-500 mt-1">Motivo de la visita/Servicio</p>
                                     <textarea value={message} onChange={(e) => setMessage(e.target.value)} className="w-full mt-3 border rounded-md p-2" rows={4} placeholder="Opcional" />
                                 </div>
-                                <div className="flex justify-end gap-3 mt-4">
-                                    <button onClick={() => setStep(3)} className="px-6 py-3 rounded-xl border border-gray-300 text-gray-600 font-medium hover:bg-gray-100 transition-all">← </button>
-                                    {canSubmit ? (
+
+
+                                {canSubmit ? (
+                                    <div className="flex justify-end gap-3 mt-4">
+                                        <button onClick={() => setStep(3)} className="px-6 py-3 rounded-xl border border-gray-300 text-gray-600 font-medium hover:bg-gray-100 transition-all">← </button>
                                         <button onClick={_buildConfirm} className="px-4 py-2 rounded-md bg-orange-500 text-white">Confirmar cita</button>
-                                    ) : (
+                                    </div>
+                                ) : (
+                                    <div className="flex justify-end gap-3 mt-4">
                                         <button className="w-full py-3 rounded-md bg-gray-300">
                                             <span className="animate-pulse">Procesando...</span>
                                         </button>
-                                    )}
-                                </div>
+                                    </div>
+                                )}
+
 
                             </>
 

@@ -500,7 +500,7 @@ export function Landing() {
                             </a>
 
                             <a
-                                href="https://api.whatsapp.com/send/?phone=8116048150&text=Hola, ¿Tengo una duda sobre la plataforma?&type=phone_number&app_absent=0"
+                                href="https://api.whatsapp.com/send/?phone=8130840800&text=Hola, ¿Tengo una duda sobre la plataforma?&type=phone_number&app_absent=0"
                                 className="transition hover:text-black"
                             >
                                 WhatsApp
