@@ -2,16 +2,12 @@
 import { useLoaderData } from "react-router-dom";
 import { Outlet } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { useProfile } from "../ProfileContext.jsx";
 // helper funtions
 import { fetchData } from "../Wrapper.js";
 // components
-// import { Sidebar } from '../components/Sidebar.jsx';
 import { XMarkIcon as CloseIcon } from '@heroicons/react/24/solid';
 
-// import './Main.css';
 import Navbar from "../components/Navbar.jsx";
-import NavbarBus from "../components/NavbarBus.jsx";
 
 // loader
 /* export function mainLoader() {
@@ -25,31 +21,28 @@ function Main() {
   // 🔐 Auth state (reactivo)
   const [isLogged, setIsLogged] = useState(false);
 
-  const { profile } = useProfile();
-  // const [sidebarOpen, setSidebarOpen] = useState(false);
-
   // 📱 Detector de móvil
-    const [isMobileBrowser, setIsMobileBrowser] = useState(false);
-    const [showMobileBanner, setShowMobileBanner] = useState(true);
+  const [isMobileBrowser, setIsMobileBrowser] = useState(false);
+  const [showMobileBanner, setShowMobileBanner] = useState(true);
 
-    useEffect(() => {
-        const isMobile =
-            /Android|iPhone|iPad|iPod/i.test(navigator.userAgent) ||
-            window.innerWidth < 768;
+  useEffect(() => {
+    const isMobile =
+      /Android|iPhone|iPad|iPod/i.test(navigator.userAgent) ||
+      window.innerWidth < 768;
 
-        setIsMobileBrowser(isMobile);
-        const checkAuth = () => {
-          const correo = fetchData("correo");
-          const pwd = fetchData("pwd");
-          setIsLogged(!!correo && !!pwd);
-        };
-        // primera carga
-        checkAuth();
-        // escuchar cambios
-        window.addEventListener("authChanged", checkAuth);
-        return () => window.removeEventListener("authChanged", checkAuth);
-    }, []);
-  
+    setIsMobileBrowser(isMobile);
+    const checkAuth = () => {
+      const correo = fetchData("correo");
+      const pwd = fetchData("pwd");
+      setIsLogged(!!correo && !!pwd);
+    };
+    // primera carga
+    checkAuth();
+    // escuchar cambios
+    window.addEventListener("authChanged", checkAuth);
+    return () => window.removeEventListener("authChanged", checkAuth);
+  }, []);
+
   return (
     <>
       {!isLogged ? (
@@ -59,7 +52,7 @@ function Main() {
 
           {/* 📱 Banner */}
           {isMobileBrowser && showMobileBanner && (
-            <div className="fixed bottom-4 left-1/2 transform -translate-x-1/2 w-[90%] max-w-md bg-white shadow-xl rounded-2xl p-4 flex items-center justify-between z-50 animate-fade-in">
+            <div className="fixed bottom-20 left-1/2 transform -translate-x-1/2 w-[90%] max-w-md bg-white shadow-xl rounded-2xl p-4 flex items-center justify-between z-50 animate-fade-in">
               <div>
                 <p className="font-semibold text-gray-900">
                   ¿Tienes nuestra app móvil?
@@ -92,9 +85,11 @@ function Main() {
           )}
 
           {/* Navbar */}
-          {profile === "business" ? <NavbarBus /> : <Navbar />}
+          <Navbar />
 
-          <Outlet />
+          <div className="pt-2 pb-20 lg:pb-0">
+            <Outlet />
+          </div>
         </div>
       )}
     </>

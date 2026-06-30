@@ -1,8 +1,0 @@
-.NotificationContainer {
-     height: 100vh;
-    background: white;
-    color: var(--second);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}

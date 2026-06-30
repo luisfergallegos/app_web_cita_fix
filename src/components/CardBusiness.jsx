@@ -17,6 +17,7 @@ import { urlApi } from "../styles/Constants.jsx";
 const StarRating = (stars) => "⭐".repeat(stars);
 const StarRatingNot = (stars) => "✰".repeat(stars);
 
+
 export function CardBusiness({
     key,
     userId,
@@ -29,6 +30,7 @@ export function CardBusiness({
     selectBusiness
 }) {
     const navigate = useNavigate();
+
 
     const arrayBufferToBase64 = (buffer) => {
         let binary = "";
@@ -56,7 +58,7 @@ export function CardBusiness({
     const desplegarPantallaAddAppoin = async (e) => {
         e.stopPropagation();
         if (!userName) {
-            navigate("/addAppoinBusinessAnon", { state: { businessId: BUSSINESS_ID, dorsl: DORSL, selectSpace: [] } });
+            navigate("/addAppoinBusinessAnon", { state: { empresa: empresa, selectSpace: [] } });
         }
         else {
             navigate("/addAppoin", {
@@ -107,11 +109,56 @@ export function CardBusiness({
 
     };
 
+    const getBusinessStatus = (Horario) => {
+        const horario = Horario == "Siempre abierto" ? "Lu 01-23, Ma 01-23, Mi 01-23, Ju 01-23, Vi 01-23, Sá 01-23, Do 01-23" : Horario;
+        const dias = ['Do', 'Lu', 'Ma', 'Mi', 'Ju', 'Vi', 'Sá'];
+
+        const now = new Date();
+
+        const diaActual = dias[now.getDay()];
+        const horaActual = now.getHours() + now.getMinutes() / 60;
+
+        const bloques = horario.split(',');
+
+        const horarioHoy = bloques.find(
+            item => item.trim().startsWith(diaActual)
+        );
+
+        if (!horarioHoy) {
+            return {
+                abierto: false,
+                mensaje: "Cerrado hoy"
+            };
+        }
+
+        const match = horarioHoy.match(/(\d+)-(\d+)/);
+
+        if (!match) {
+            return {
+                abierto: false,
+                mensaje: "Horario no disponible"
+            };
+        }
+
+        const apertura = parseInt(match[1]);
+        const cierre = parseInt(match[2]);
+
+        const abierto = horaActual >= apertura && horaActual < cierre;
+
+        return {
+            abierto,
+            mensaje: abierto
+                ? `Abierto hasta las ${cierre}:00`
+                : `Cerrado`
+        };
+    };
+
+    const { abierto, mensaje } = getBusinessStatus(Horario);
+
     return (
         <div
-            className={`bg-white shadow-xl rounded-3xl p-6 w-full max-w-lg mx-auto cursor-pointer border border-white 
-                hover:scale-105 hover:shadow-2xl transition-all 
-                ${selectBusiness == BUSSINESS_ID ? "ring-2 ring-blue-500" : ""} `}
+            className="bg-white shadow-xl rounded-3xl p-6 w-full max-w-lg mx-auto cursor-pointer border border-white 
+                hover:scale-105 hover:shadow-2xl transition-all "
             onClick={() => {
                 setSelectBusiness(selectBusiness == BUSSINESS_ID ? null : BUSSINESS_ID);
             }}
@@ -119,13 +166,13 @@ export function CardBusiness({
             {/* BOTÓN AddAppoin */}
             {selectBusiness == BUSSINESS_ID ? <button
                 onClick={desplegarPantallaAddAppoin}
-                className="w-full flex items-center justify-end"
+                className="w-full mt-4 mb-4 bg-emerald-600 hover:bg-emerald-700 text-white py-3 rounded-2xl font-semibold transition"
             >
-                <CheckBadgeIcon className="w-10 h-10 text-blue-500 flex-shrink-0" />
+                Agendar cita
             </button> : <></>}
             {/* ICONO GRANDE */}
             <div
-                className="w-40 h-40 md:w-56 md:h-56 rounded-full bg-white shadow-lg mx-auto flex items-center justify-center overflow-hidden">
+                className="w-28 h-28 md:w-32 md:h-32 rounded-full bg-white shadow-lg mx-auto flex items-center justify-center overflow-hidden">
                 {PHOTO == null ? (
                     <img
                         src={Store}
@@ -140,16 +187,42 @@ export function CardBusiness({
                 )}
             </div>
 
+            {/* CALIFICACIÓN */}
+            <p className={`text-center text-xl ${SERVICE_LEVEL == 0 ? 'text-gray-500' : 'text-yellow-500'}`}>
+                {SERVICE_LEVEL == 0 ? StarRatingNot(5) : StarRating(SERVICE_LEVEL)}
+            </p>
+            {/* BOTÓN CALIFICACIONES */}
+            <button
+                onClick={handleButtonIcon}
+                className="w-full flex items-center justify-center text-gray-600 text-base"
+            >
+                <span className="mr-2">Ver reseñas</span>
+            </button>
+            {/* HORARIO */}
+            <div className="flex items-center justify-center gap-2 mt-2">
+                <div
+                    className={`w-3 h-3 rounded-full ${abierto
+                            ? "bg-green-500"
+                            : "bg-red-500"
+                        }`}
+                />
+                <span
+                    className={`font-medium ${abierto
+                            ? "text-green-600"
+                            : "text-red-600"
+                        }`}
+                >
+                    {mensaje}
+                </span>
+            </div>
+
             {/* TITULO */}
             <h4 className="text-2xl font-bold text-center text-gray-900 mt-6">
                 {DORSL}
             </h4>
             <p className="text-center text-gray-500 text-lg mb-2">{SUBCATEGORY}</p>
 
-            {/* CALIFICACIÓN */}
-            <p className={`text-center text-xl mb-4 ${SERVICE_LEVEL == 0 ? 'text-gray-500' : 'text-yellow-500'}`}>
-                {SERVICE_LEVEL == 0 ? StarRatingNot(5) : StarRating(SERVICE_LEVEL)}
-            </p>
+
             {/* BOTÓN VER PERFIL */}
             <button
                 onClick={(e) => {
@@ -158,7 +231,7 @@ export function CardBusiness({
                 }}
                 className="mt-2 mx-auto block bg-orange-500 hover:bg-orange-600 text-white font-semibold py-2 px-6 rounded-full transition-all"
             >
-                Ver perfil
+                Más información
             </button>
 
 
@@ -167,38 +240,23 @@ export function CardBusiness({
 
             {/* DIRECCIÓN */}
             <div className="flex gap-4 mb-3 items-start">
-                <MapPinIcon className="w-8 h-8 text-orange-500 flex-shrink-0" />
                 <p
-                    className="text-gray-700 text-sm leading-tight cursor-pointer"
+                    className="text-gray-500 text-sm leading-tight cursor-pointer"
                     onClick={handleADDRESS}
                 >
-                    {ADDRESS_FIRST}, {ADDRESS_SECOND}, {POSTAL_CODE} {CITY}, {STATE},
-                    México
+                   📍 {CITY}, {STATE}
                 </p>
             </div>
 
             {/* TELÉFONO */}
             <div className="flex gap-4 mb-3 items-center">
-                <PhoneIcon className="w-8 h-8 text-orange-500 flex-shrink-0" />
-                <p className="text-gray-700 text-sm">
-                    {phone !== "" ? phone : "Este negocio aún no ha agregado información de contacto."}
-                </p>
+                {phone !== "" ? <a href={`tel:${phone}`} className="text-gray-500 text-sm">
+                    📞 Llamar ahora
+                </a> : <div className="text-gray-500 text-sm">
+                    Este negocio aún no ha agregado información de contacto.
+                </div>}                
             </div>
 
-            {/* HORARIO */}
-            <div className="flex gap-4 items-center">
-                <CalendarDaysIcon className="w-8 h-8 text-orange-500 flex-shrink-0" />
-                <p className="text-gray-700 text-sm">{Horario}</p>
-            </div>
-
-            {/* BOTÓN CALIFICACIONES */}
-            <button
-                onClick={handleButtonIcon}
-                className="w-full flex items-center justify-end text-gray-600 text-base py-3 mt-2"
-            >
-                <ChevronRightIcon className="w-5 h-5 text-gray-800 mt-1 ml-4" />
-                <span className="mr-2">Reseñas</span>
-            </button>
         </div>
     );
 }

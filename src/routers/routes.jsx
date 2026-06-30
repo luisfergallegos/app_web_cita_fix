@@ -4,7 +4,6 @@ import Main, { mainLoader } from "../layouts/Main.jsx";
 // Routers
 import Home from "../pages/Home.jsx";
 import ViewUpdateUser from "../pages/register_user/View_update_user.jsx";
-import ViewUpdateBusiness from "../pages/register_business/View_update_business.jsx";
 import FindBusiness from "../pages/business/Find_business.jsx";
 import Notification from "../pages/Notification.jsx";
 import RegisterUser from "../pages/register_user/Register_user.jsx";
@@ -20,7 +19,6 @@ export function MyRoutes() {
             <Route path="/registerUser" element={<RegisterUser />} errorElement={<Error/>}/>
             <Route path="/viewUpdateUser" element={<ViewUpdateUser />} errorElement={<Error/>}/>
             <Route path="/findBusiness" element={<FindBusiness />} errorElement={<Error/>}/>
-            <Route path="/viewUpdateBusiness" element={<ViewUpdateBusiness />} errorElement={<Error/>} />
             <Route path="/notification" element={<Notification />} errorElement={<Error/>} />
         </Routes>
     );

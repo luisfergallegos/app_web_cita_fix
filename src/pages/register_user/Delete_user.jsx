@@ -1,5 +1,4 @@
 // Library
-import '../../components/CardBusiness.css';
 // assents
 import Store from "../../assets/business.png";
 import Logo from "../../assets/splash.png";

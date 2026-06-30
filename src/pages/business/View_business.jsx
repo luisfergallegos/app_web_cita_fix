@@ -1,6 +1,5 @@
 // Library
 import { BuildingStorefrontIcon, MapPinIcon, PhoneIcon, ClockIcon, StarIcon, LinkIcon, ChevronRightIcon } from '@heroicons/react/24/solid';
-// import '../../components/CardBusiness.css';
 // assents
 import Store from "../../assets/business.png";
 import Logo from "../../assets/splash.png";
@@ -104,7 +103,7 @@ export function ViewBusiness() {
     const desplegarPantallaAddAppoin = async (e) => {
         e.stopPropagation();
         if (!userName) {
-            navigate("/addAppoinBusinessAnon", { state: { businessId: empresa.BUSSINESS_ID, dorsl: empresa.DORSL, selectSpace: [] } });
+            navigate("/addAppoinBusinessAnon", { state: { empresa: empresa, selectSpace: [] } });
         }
         else {
             navigate("/addAppoin", {

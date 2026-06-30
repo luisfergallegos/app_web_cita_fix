@@ -1,32 +1,26 @@
 // rrd imports
-import { useProfile } from "../../ProfileContext.jsx";
 import { useLoaderData, useNavigate } from "react-router-dom";
 import { fetchData } from "../../Wrapper.js";
 import { useEffect, useState } from "react";
+import { toast } from "react-toastify";
 import CountUp from "react-countup";
 
 // assets
-import illustration from "../../assets/clock_green.svg";
+import illustration from "../../assets/clock_orange.png";
+import Store from "../../assets/business.png";
 import Loaging from '../../components/Loading.jsx';
 import { urlApi } from "../../styles/Constants.jsx";
-import { ClockIcon, Cog6ToothIcon, PlusCircleIcon, ChevronDownIcon, ChevronUpIcon, XMarkIcon as CloseIcon, CalendarDateRangeIcon } from '@heroicons/react/24/outline';
+import { ClockIcon, Cog6ToothIcon, ChevronDownIcon, ChevronUpIcon, XMarkIcon as CloseIcon, CalendarDateRangeIcon } from '@heroicons/react/24/outline';
 import {
     BuildingOffice2Icon,
     BuildingOfficeIcon,
-    CalendarDaysIcon
+    CalendarDaysIcon,
+    PlusCircleIcon
 } from '@heroicons/react/24/solid';
-import './../Home.css';
+import CardCita from "../../components/CardCita.jsx";
 
-
-// loader
-// export function homeLoader() {
-//     const sCorreo = fetchData("correo");
-//     const sPassword = fetchData("pwd");
-//     return { sCorreo, sPassword };
-// }
 
 export function Home() {
-    const { setProfile } = useProfile();
     const navigate = useNavigate();
     // const { sCorreo, sPassword } = useLoaderData();
     const sCorreo = fetchData("correo");
@@ -35,6 +29,7 @@ export function Home() {
 
 
     const [citas, setCitas] = useState([]);
+    const [upcoming, setUpcoming] = useState([]);
     const [userAdditInf, setUserAdditInf] = useState([]);
     const [colaboraciones, setColaboraciones] = useState([]);
     const [eventosUser, setEventosUser] = useState([]);
@@ -48,6 +43,7 @@ export function Home() {
 
     const [bAccederIndex, setbAccederIndex] = useState('');
     const [bAccederIndexCol, setbAccederIndexCol] = useState('');
+    const [bAccederIndexCancelarEvento, setbAccederIndexCancelarEvento] = useState('');
     const [bAccederIndexCancelar, setbAccederIndexCancelar] = useState('');
     const [selectEvento, setSelectEvento] = useState(null);
     const [aIndexCol, setaIndexCol] = useState('');
@@ -56,6 +52,10 @@ export function Home() {
     const [isOpen, setIsOpen] = useState(false);
     const [isOpenCancelar, setIsOpenCancelar] = useState(false);
     const [bPopupMenuButton, setPopupMenuButton] = useState(false);
+    const [bAccederIndexConfirm, setbAccederIndexConfirm] = useState(true);
+    const [todayGroup, setTodayGroup] = useState(false);
+    const [tomorrowGroup, setTomorrowGroup] = useState(false);
+    const [thisWeekGroup, setThisWeekGroup] = useState(false);
 
     const arrayBufferToBase64 = (buffer) => {
         var binary = '';
@@ -84,7 +84,30 @@ export function Home() {
 
     }
 
+    const appoinUserid = async () => {
+        //Solicitar por GET
+        try {
+            const response = await fetch(`${urlApi}appoin?userid=${userId}`);
+            if (response.status == 200) {
+                const json = await response.json();
+                const [primerValor, ...restoDeValores] = json['data'];
+                setUpcoming(primerValor);
+                setCitas(restoDeValores);
+            } else if (response.status == 404) {
+                setCitas([]);
+                setUpcoming([]);
+            } else {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+        }
+        catch (e) {
+            return;
+        }
+    };
+
     const indexConfirm = async (cita) => {
+        if (!bAccederIndex === '') return;
+
         setbAccederIndex(cita['APOINMENT_ID']);
 
         //Enviar por UPDATE
@@ -108,27 +131,46 @@ export function Home() {
             }
             else {
                 setbAccederIndex('');
-                //Solicitar por GET
-                try {
-                    const response = await fetch(`${urlApi}appoin?userid=${userId}`);
-                    if (response.status == 200) {
-                        const json = await response.json();
-                        setCitas(json['data']);
-                    } else if (response.status == 404) {
-                        setCitas([]);
-                    } else {
-                        throw new Error(`HTTP error! status: ${response.status}`);
-                    }
-                    setLoading(false);
-                }
-                catch (e) {
-                    return;
-                }
+                appoinUserid();
             }
         }
         catch (e) {
             setbAccederIndex('');
             return;
+        }
+    };
+
+    const indexCancelar = async (cita) => {
+        if (!bAccederIndexCancelar === '') return;
+
+        setbAccederIndexCancelar(cita['APOINMENT_ID']);
+        //Enviar por DELETE
+        var options = {
+            method: 'DELETE',
+            headers: { 'Content-Type': 'application/json' }
+        }
+        const userName = `${sUserCitaFix.first_name} ${sUserCitaFix.last_name}`;
+
+        try {
+            const response = await fetch(`${urlApi}appoin?apoinment_id=${cita.APOINMENT_ID}&usernotification_id=${cita.USER_ID}&dorsl=${userName}&for_who=Bus`, options);
+            const json = await response.json();
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            if (json['sucess'] == false) {
+                toast.error("No fue posible cancelar tu cita");
+                return;
+            }
+            else {
+                toast.success("Cita cancelada");
+                appoinUserid();
+            }
+        }
+        catch (e) {
+            return;
+        }
+        finally {
+            setbAccederIndexCancelar('');
         }
     };
 
@@ -194,7 +236,7 @@ export function Home() {
         setPopupMenuButton(!bPopupMenuButton);
     };
 
-    const indexCancelar = async () => {
+    const indexCancelarCol = async () => {
         //Enviar por DELETE
         var options = {
             method: 'DELETE',
@@ -237,8 +279,8 @@ export function Home() {
         }
     };
 
-    const _buildCancelar = async () => {
-        setbAccederIndexCancelar(selectEvento);
+    const _buildCancelarEvento = async () => {
+        setbAccederIndexCancelarEvento(selectEvento);
         setIsOpenCancelar(false);
         //Enviar por DELETE
         var options = {
@@ -254,13 +296,13 @@ export function Home() {
             const json = await response.json();
             if (json['sucess'] == false) {
                 setSelectEvento(null);
-                setbAccederIndexCancelar('');
+                setbAccederIndexCancelarEvento('');
                 // console.log(`Error al cancelar cita.`);
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
             else {
                 setSelectEvento(null);
-                setbAccederIndexCancelar('');
+                setbAccederIndexCancelarEvento('');
                 try {
                     const response = await fetch(`${urlApi}event?userid=${userId}`);
                     if (response.status == 200) {
@@ -278,7 +320,7 @@ export function Home() {
         }
         catch (e) {
             setSelectEvento(null);
-            setbAccederIndexCancelar('');
+            setbAccederIndexCancelarEvento('');
             return;
         }
     };
@@ -316,8 +358,35 @@ export function Home() {
                 const response = await fetch(`${urlApi}appoin?userid=${userId}`);
                 if (response.status == 200) {
                     const json = await response.json();
-                    setCitas(json['data']);
+                    const todasLasCitas = json['data'] || [];
+
+                    // 1. Obtener la fecha de hoy en formato local "YYYY-MM-DD"
+                    const hoy = new Date().toLocaleDateString('sv-SE').split('T')[0];
+                    // console.log(hoy);
+                    // 2. Buscar la primera cita que sea de hoy
+                    let primerValor = todasLasCitas.find(cita => cita.APPOINTMENT_DATE === hoy);
+
+                    let restoDeValores;
+
+                    if (primerValor) {
+                        // 3. Si hay una cita de hoy, el resto serán todas las demás citas
+                        restoDeValores = todasLasCitas.filter(cita => cita !== primerValor);
+                        // 5. Actualizar tus estados de React
+                        // console.log(primerValor);
+                        setUpcoming(primerValor);
+                        // console.log(restoDeValores);
+                        setCitas(restoDeValores);
+                    } else {
+                        // 4. Si NO hay citas de hoy, mantener tu lógica original (tomar la primera de la lista)
+                        // [primerValor, ...restoDeValores] = todasLasCitas;                        
+                        setUpcoming([]);
+                        setCitas(todasLasCitas);
+                    }
+
+
+
                 } else if (response.status == 404) {
+                    setUpcoming([]);
                     setCitas([]);
                 } else {
                     console.log(`Error getting appoin.`);
@@ -376,123 +445,321 @@ export function Home() {
         fData();
     }, []);
 
+    const agruparCitas = (citas) => {
+        const hoy = new Date();
+        hoy.setHours(0, 0, 0, 0);
+
+        const manana = new Date(hoy);
+        manana.setDate(manana.getDate() + 1);
+
+        const finSemana = new Date(hoy);
+        finSemana.setDate(finSemana.getDate() + (7 - hoy.getDay())); // Domingo
+
+        const resultado = {
+            hoy: [],
+            manana: [],
+            semana: []
+        };
+
+        citas.forEach(cita => {
+            const fecha = new Date(`${cita.APPOINTMENT_DATE}T00:00:00`);
+
+            if (fecha.getTime() === hoy.getTime()) {
+                resultado.hoy.push(cita);
+            }
+            else if (fecha.getTime() === manana.getTime()) {
+                resultado.manana.push(cita);
+            }
+            else if (fecha > manana && fecha <= finSemana) {
+                resultado.semana.push(cita);
+            }
+        });
+
+        return resultado;
+    };
+
+    const { hoy, manana, semana } = agruparCitas(citas);
+
     if (loading) {
         return <Loaging />;
     }
 
     return (
-        <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-orange-600 to-orange-800 px-4">
-            <div className="max-w-3xl mx-auto mt-20 p-6 space-y-6 text-gray-800">
-                <div className="bg-white text-black shadow rounded-xl p-4">
-                    <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-2">
-                            <h2 className="text-2xl font-bold text-gray-800">{firstName.charAt(0).toUpperCase() + firstName.slice(1)}</h2>
+        <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
+            <div className="max-w-6xl mx-auto mt-14 p-6 space-y-6 text-gray-800">
+                <div className="bg-white rounded-[2rem] p-8 shadow-sm border border-gray-100">
+                    <div className="flex justify-between items-start mb-4">
+                        <div>
+                            <p className="text-gray-400 text-sm">
+                                Bienvenido de nuevo
+                            </p>
+                            <h1 className="text-4xl font-black text-gray-900">
+                                {firstName.charAt(0).toUpperCase() + firstName.slice(1)}
+                            </h1>
                         </div>
-                        <div className='flex items-center justify-between'>
-                            <button className='mr-2' onClick={() => navigate("/viewUpdateUser")} >
-                                <Cog6ToothIcon width={24} />
-                            </button>
 
-                        </div>
+                        <button
+                            onClick={() =>
+                                navigate("/addEvent", {
+                                    state: { userId }
+                                })
+                            }
+                            className="flex items-center gap-2 bg-white px-4 py-2 rounded-xl shadow-lg whitespace-nowrap">
+                            <CalendarDateRangeIcon width={20} />
+                            <span className="hidden sm:inline">
+                                Crear evento
+                            </span>
+                        </button>
                     </div>
-                    <div className='flex items-center justify-between mt-2 mb-2'>
-                        <BuildingOffice2Icon className="w-8 h-8 ml-2" color={'#fc6500'} />
-                        <div className='grid text-center'>
-                            <h1 className="text-1xl font-bold text-black">
-                                <CountUp start={0} end={userAdditInf.amount_business} duration={2} /></h1>
-                            <h1>Lugares visitados</h1>
-                        </div>
-                        <CalendarDaysIcon className="w-8 h-8" color={'#fc6500'} />
-                        <div className='grid text-center mr-4' >
-                            <h1 className="text-1xl font-bold text-black">
-                                <CountUp start={0} end={userAdditInf.amount_appointment} duration={2} /></h1>
-                            <h1 >Citas totales</h1>
-                        </div>
-                    </div>
-                    <div className='cursor-pointer flex items-center' onClick={() => toggle(setUserGroup)}>
-                        <h1 className='mr-2 text-gray-800'>Empresas que administras</h1>
-                        {userGroup ? <ChevronDownIcon className="w-5 h-5 text-gray-800 mt-1" /> : <ChevronUpIcon className="w-5 h-5 text-gray-800 mt-1" />}
-                    </div>
-                    {!userGroup && (
-                        <div className="grid mt-4 space-y-4">
-                            <button
-                                onClick={() => {
-                                    if (dorsl == '') {
-                                        navigate("/registerBusiness");
-                                    } else {
-                                        setProfile("business");
-                                        const data = {
-                                            businessId: businessId,
-                                            tipo: true,
-                                            dorsl: dorsl
-                                        };
-                                        localStorage.setItem("homeBusiness", JSON.stringify(data));
-                                        navigate("/home");
-                                        // navigate("/homeBusiness", { state: { businessId: businessId, tipo: true } })
-                                    }
-                                }}
-                                className="hover:bg-gray-200 text-orange-500 font-semibold py-2 px-2 rounded-md shadow-md transition flex items-center"
-                            >
-                                {
-                                    PhotoDorsl.data.length == 0 ?
-                                        <BuildingOfficeIcon className='w-8 h-8 mx-1 md:w-5 md:h-5 lg:w-10 lg:h-10 ms:mx-2 md:mx-2 lg:mx-2' />
-                                        : <img className="w-8 h-8 mx-1 md:w-5 md:h-5 lg:w-10 lg:h-10 ms:mx-2 md:mx-2 lg:mx-2 rounded-full object-cover border"
-                                            src={'data:image/jpeg;base64,' + arrayBufferToBase64(PhotoDorsl.data)} />
-                                }
-                                <label className="mr-4">{dorsl == '' ? 'Crear empresa' : dorsl.charAt(0).toUpperCase() + dorsl.slice(1)}</label>
-                            </button>
-                            {colaboraciones.length > 0 && <h1 className='mr-2 text-gray-800'>Empresas donde colaboras</h1>}
-                            {
-                                colaboraciones.length > 0 ? colaboraciones.map((index) => (
-                                    <div
-                                        onClick={() => {
-                                            if (index.CONFIRM == 1) {
-                                                setProfile("business");
-                                                const data = {
-                                                    businessId: index.BUSSINESS_ID,
-                                                    tipo: index.TIPO == 0 ? false : true,
-                                                    dorsl: index.DORSL
-                                                };
-                                                localStorage.setItem("homeBusiness", JSON.stringify(data));
-                                                navigate("/home");
-                                                // navigate("/homeBusiness", { state: { businessId: index.BUSSINESS_ID, tipo: index.TIPO == 0 ? false : true } });
-                                            } else {
-                                                setaIndexCol(index);
-                                                setIsOpen(true);
-                                            }
-                                        }}
-                                        className="hover:bg-gray-200 text-orange-500 font-semibold py-2 px-2 rounded-md shadow-md transition flex items-center"
-                                    >
-                                        <div className="flex items-center space-x-4 mr-20" >
-                                            {
-                                                index.PHOTO == null ?
-                                                    <BuildingOfficeIcon className='w-8 h-8 mx-1 md:w-5 md:h-5 lg:w-10 lg:h-10 ms:mx-2 md:mx-2 lg:mx-2' />
-                                                    : <img className="w-8 h-8 mx-1 md:w-5 md:h-5 lg:w-10 lg:h-10 ms:mx-2 md:mx-2 lg:mx-2 rounded-full object-cover border"
-                                                        src={'data:image/jpeg;base64,' + arrayBufferToBase64(index.PHOTO.data)} />
-                                            }
-                                            <div className="grid">
-                                                <label className="mr-4">{index.DORSL.charAt(0).toUpperCase() + index.DORSL.slice(1)}</label>
-                                            </div>
+                    {
+                        upcoming.length === 0 ?
+                            <div className="bg-white rounded-[2rem] p-8 border border-gray-100 shadow-sm text-center">
+                                <div className="w-20 h-20 mx-auto rounded-full bg-emerald-50 flex items-center justify-center">
+                                    <span className="text-4xl">🎉</span>
+                                </div>
+
+                                <h3 className="mt-4 text-xl font-bold text-gray-900">
+                                    No tienes citas para hoy
+                                </h3>
+
+                                <p className="mt-2 text-gray-500">
+                                    Tu agenda está libre por el momento.
+                                    Aprovecha el día para organizar nuevas actividades.
+                                </p>
+                            </div> : (
+                                <div className="bg-white rounded-[2rem] p-8 border border-gray-100 shadow-sm text-center hover:shadow-xl transition-all">
+                                    <div className="flex items-center justify-between mb-6">
+                                        <div>
+                                            <h3 className="text-xl font-bold text-gray-900">
+                                                Próximo compromiso
+                                            </h3>
+
+                                            <p className="text-sm text-gray-500">
+                                                Tu siguiente actividad programada
+                                            </p>
                                         </div>
-                                        <div className="flex justify-end space-x-3 ml-4">
-                                            {bAccederIndexCol == index.ID ?
-                                                <button className="px-4 py-2 rounded-lg bg-orange-500 text-white">
-                                                    <div className='circleWhite'></div>
-                                                </button>
-                                                : index.CONFIRM == 0 ?
-                                                    <button className="px-4 py-2 rounded-lg bg-orange-500 text-white hover:bg-orange-600 transition"
-                                                        onClick={(e) => { indexConfirmCol(e, index); }}>Aceptar
-                                                    </button> : <></>}
+
+                                        <div className="flex justify-center mt-3">
+                                            <span className="px-3 py-1 rounded-full bg-blue-50 text-blue-700 text-sm">
+                                                📅 Hoy
+                                            </span>
                                         </div>
                                     </div>
-                                )) : <></>
-                            }
+                                    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+
+                                        <div className="flex items-center gap-4 flex-1 min-w-0">
+                                            {/* Foto */}
+                                            <div className="flex-shrink-0">
+                                                {upcoming.BUS_PHOTO == null ? (
+                                                    <div className="w-20 h-20 rounded-2xl bg-orange-50 flex items-center justify-center">
+                                                        <img className="w-20 h-20 bg-gray-500 object-cover rounded-2xl border" id='store' src={Store} />
+                                                    </div>
+                                                ) : (
+                                                    <img
+                                                        className="w-16 h-16 rounded-2xl object-cover"
+                                                        src={
+                                                            'data:image/jpeg;base64,' +
+                                                            arrayBufferToBase64(upcoming.BUS_PHOTO.data)
+                                                        }
+                                                    />
+                                                )}
+                                            </div>
+                                            {/* Información */}
+                                            <div className="min-w-0">
+                                                <h3 className="font-bold text-lg text-gray-900">
+                                                    {upcoming.DORSL}
+                                                </h3>
+
+                                                <p className="text-sm text-gray-500">
+                                                    {upcoming.ALIAS}
+                                                </p>
+
+                                                <div className="mt-2">
+                                                    {upcoming.APPOINTMENT_CONFIRM === 1 ? (
+                                                        <span className="px-2 py-1 rounded-full bg-emerald-50 text-emerald-700 text-xs font-medium">
+                                                            Confirmada
+                                                        </span>
+                                                    ) : (
+                                                        <span className="px-2 py-1 rounded-full bg-amber-50 text-amber-700 text-xs font-medium">
+                                                            ⏳ Por confirmar
+                                                        </span>
+                                                    )}
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                        {/* Hora */}
+                                        <div className="flex-shrink-0">
+                                            <div className="bg-slate-50 rounded-2xl px-4 py-3 text-center">
+                                                <p className="text-xs uppercase tracking-wide text-slate-500">
+                                                    Hora
+                                                </p>
+
+                                                <p className="font-bold text-slate-900">
+                                                    {ConvertDateTime(
+                                                        upcoming.APPOINTMENT_DATE,
+                                                        upcoming.APPOINTMENT_TIME,
+                                                        1
+                                                    )}
+                                                </p>
+                                            </div>
+                                        </div>
+
+                                    </div>
+
+                                    {/* Botones */}
+                                    <div className="mt-6 space-y-3">
+                                        {bAccederIndex == upcoming.APOINMENT_ID ? (
+                                            <button
+                                                className="w-full px-5 py-3 rounded-2xl bg-gray-300 text-white hover:bg-gray-400 transition font-medium"
+                                            >
+                                                <span className="animate-pulse">Confirmando...</span>
+                                            </button>
+                                        ) : upcoming.APPOINTMENT_CONFIRM === 0 &&
+                                        <button
+                                            className="w-full px-5 py-3 rounded-2xl bg-emerald-600 text-white hover:bg-emerald-700 transition font-medium"
+                                            onClick={() => indexConfirm(upcoming)}
+                                        >
+                                            ✓ Confirmar asistencia
+                                        </button>}
+
+                                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                                            <button
+                                                className="px-5 py-3 rounded-2xl border border-slate-200 text-slate-700 hover:bg-slate-50 transition"
+                                                onClick={() => {
+                                                    if (upcoming.ESTATUS !== -1 && upcoming.ESTATUS !== 2) {
+                                                        navigate(
+                                                            `/cancelAppoin/${upcoming.APOINMENT_ID}`,
+                                                            {
+                                                                state: {
+                                                                    flagEvent: upcoming.FLAG_EVENT
+                                                                }
+                                                            }
+                                                        );
+                                                    }
+                                                }}
+                                            >
+                                                Ver detalles
+                                            </button>
+                                            {/* <button
+                                                className="px-5 py-3 rounded-2xl border border-amber-300 text-amber-700 hover:bg-amber-50 transition"
+                                            >
+                                                Reagendar
+                                            </button> */}
+                                            {bAccederIndexCancelar == upcoming.APOINMENT_ID ?
+                                                <button
+                                                    className="px-5 py-3 rounded-2xl border border-gray-300 text-gray-600 hover:bg-gray-50 transition"
+                                                >
+                                                    <span className="animate-pulse">Cancelando...</span>
+                                                </button>
+                                                : <button
+                                                    className="px-5 py-3 rounded-2xl border border-red-300 text-red-600 hover:bg-red-50 transition"
+                                                    onClick={() => indexCancelar(upcoming)}>
+                                                    Cancelar
+                                                </button>
+                                            }
+
+                                        </div>
+
+                                    </div>
+                                </div>
+                            )
+
+                    }
+                    <div className="grid grid-cols-2 gap-4 mt-8">
+                        <div className="bg-orange-50 rounded-3xl p-6 border border-gray-100 shadow-sm">
+                            <div className="flex items-center justify-between">
+                                <BuildingOffice2Icon className="w-8 h-8 text-orange-600" />
+                                <h2 className="text-4xl font-black text-gray-900">
+                                    <CountUp
+                                        start={0}
+                                        end={userAdditInf.amount_business}
+                                        duration={2}
+                                    />
+                                </h2>
+                            </div>
+                            <p className="mt-4 text-sm text-gray-500">
+                                Lugares visitados
+                            </p>
                         </div>
-                    )}
+                        <div className="bg-orange-50 rounded-3xl p-6 border border-gray-100 shadow-sm">
+                            <div className="flex items-center justify-between">
+                                <CalendarDaysIcon className="w-8 h-8 text-orange-600" />
+                                <h2 className="text-4xl font-black text-gray-900">
+                                    <CountUp
+                                        start={0}
+                                        end={userAdditInf.amount_appointment}
+                                        duration={2}
+                                    />
+                                </h2>
+                            </div>
+                            <p className="mt-4 text-sm text-gray-500">
+                                Citas totales
+                            </p>
+                        </div>
+                    </div>
                 </div>
+                <div className="bg-white rounded-[2rem] p-8 shadow-sm border border-gray-100">
+                    {hoy.length > 0 && (
+                    <>                        
+                        <div className='mt-4 mb-4 cursor-pointer flex items-center border-b pb-2' onClick={() => toggle(setTodayGroup)}>
+                            <h2 className="text-xl font-bold mr-4" >
+                            Hoy ({hoy.length})
+                        </h2>
+                            {todayGroup ? <ChevronDownIcon className="w-5 h-5 text-gray-800 mt-1" /> : <ChevronUpIcon className="w-5 h-5 text-gray-800 mt-1" />}
+                        </div>
+                        {!todayGroup && hoy.map(cita => (
+                            <CardCita
+                                key={cita.APOINMENT_ID}
+                                index={cita}
+                                bAccederIndex={bAccederIndex}
+                                indexConfirm={indexConfirm}
+                            />
+                        ))}
+                    </>
+                )}
+                {manana.length > 0 && (
+                    <>
+                        <div className='mt-4 mb-4 cursor-pointer flex items-center border-b pb-2' onClick={() => toggle(setTomorrowGroup)}>
+                            <h2 className="text-xl font-bold mr-4" >
+                                Mañana ({manana.length})
+                            </h2>
+                            {tomorrowGroup ? <ChevronDownIcon className="w-5 h-5 text-gray-800 mt-1" /> : <ChevronUpIcon className="w-5 h-5 text-gray-800 mt-1" />}
+                        </div>
+                        {!tomorrowGroup && manana.map(cita => (
+                            <CardCita
+                                key={cita.APOINMENT_ID}
+                                index={cita}
+                                bAccederIndex={bAccederIndex}
+                                indexConfirm={indexConfirm}
+                            />
+                        ))}
+                    </>
+                )}
+                {semana.length > 0 && (
+                    <>                        
+                        <div className='mt-4 mb-4 cursor-pointer flex items-center border-b pb-2' onClick={() => toggle(setThisWeekGroup)}>
+                            <h2 className="text-xl font-bold mr-4">
+                            Esta semana ({semana.length})
+                        </h2>
+                            {thisWeekGroup ? <ChevronDownIcon className="w-5 h-5 text-gray-800 mt-1" /> : <ChevronUpIcon className="w-5 h-5 text-gray-800 mt-1" />}
+                        </div>
+                        {!thisWeekGroup && semana.map(cita => (
+                            <CardCita
+                                key={cita.APOINMENT_ID}
+                                index={cita}
+                                bAccederIndex={bAccederIndex}
+                                indexConfirm={indexConfirm}
+                                bWeek={1}
+                            />
+                        ))}
+
+                        
+                    </>
+                )}
                 {
                     eventosUser.length > 0 &&
-                    <div className="bg-white rounded-3xl shadow-xl mt-20 p-10 max-w-2xl w-full text-center animate-fade-in-up">
+                    <div className="bg-white rounded-3xl shadow-xl space-y-8 p-10 max-w-2xl w-full text-center animate-fade-in-up">
                         <div className='cursor-pointer flex items-center' onClick={() => toggle(setEventosGroup)}>
                             <h1 className='mr-2 text-gray-800'>Tus próximos eventos</h1>
                             {eventosGroup ? <ChevronDownIcon className="w-5 h-5 text-gray-800 mt-1" /> : <ChevronUpIcon className="w-5 h-5 text-gray-800 mt-1" />}
@@ -501,20 +768,31 @@ export function Home() {
                             <div className="p-3 flex flex-col space-y-4 items-center">
                                 {eventosUser.map((index) =>
                                 (
-                                    <div className="bg-gray-100 shadow-lg rounded-lg overflow-hidden scale-95 hover:scale-100 transition-all duration-300"
+                                    <div className="bg-white border border-gray-100 rounded-[2rem] p-6 shadow-sm"
                                         key={index['BUSSINESS_ID']}
                                     >
-                                        <div className="flex items-center space-x-4 mr-20 mt-5" >
-                                            <ClockIcon width={80} className="ml-5"
+                                        <div className="flex items-center gap-4">
+                                            <div className="w-14 h-14 rounded-2xl bg-orange-100 flex items-center justify-center">
+                                                <CalendarDaysIcon className="w-8 h-8 text-orange-600" />
+                                            </div>
+                                            <div>
+                                                <h3 className="font-bold text-lg">
+                                                    {index.EVENTO}
+                                                </h3>
+                                                <p className="text-gray-500">
+                                                    {index.ANFITRION}
+                                                </p>
+                                            </div>
+                                            {/* <ClockIcon width={80} className="ml-5"
                                                 color={'#32325d'} />
                                             <div className="grid">
                                                 <label className="text-lg font-semibold text-black">{index['EVENTO']} de {index['ANFITRION']} </label>
                                                 <label className="text-gray-400">{ConvertDateTime(index['EVENT_DATE'], index['EVENT_TIME'], 0)} </label>
                                                 <label className="text-gray-400">{ConvertDateTime(index['EVENT_DATE'], index['EVENT_TIME'], 1)} </label>
-                                            </div>
+                                            </div> */}
                                         </div>
                                         <div className="mt-6 flex justify-end space-x-3 mr-2 mb-2">
-                                            {bAccederIndexCancelar == index['BUSSINESS_ID'] ?
+                                            {bAccederIndexCancelarEvento == index['BUSSINESS_ID'] ?
                                                 <button className="px-4 py-2 rounded-lg bg-red-600 text-white">
                                                     <div className='circleWhiteRed'></div></button>
                                                 : <button className="px-4 py-2 rounded-lg text-white bg-red-600 hover:bg-red-700 transition"
@@ -530,91 +808,27 @@ export function Home() {
                         }
                     </div>
                 }
-                <div className="bg-white rounded-3xl shadow-xl mt-20 p-10 max-w-2xl w-full text-center animate-fade-in-up">
-                    {
-                        citas.length > 0 ? (
-                            <div>
-                                <h2 className="text-5xl font-bold text-orange-600 mb-8">{citas.length == 1
-                                    ? `${citas.length} cita`
-                                    : `${citas.length} citas`}</h2>
-
-                                <div className="p-3 flex flex-col space-y-4 items-center">
-                                    {citas.map((index) =>
-                                    (
-                                        <div className="bg-gray-100 shadow-lg rounded-lg overflow-hidden scale-95 hover:scale-100 transition-all duration-300"
-                                            key={index['APOINMENT_ID']}
-                                        >
-                                            <div className="flex items-center space-x-4 mr-20 mt-5" >
-                                                {
-                                                    index['BUS_PHOTO'] == null ? <ClockIcon width={80} className="ml-5"
-                                                        color={index['ESTATUS'] == -1 ? '#B71C1C' :
-                                                            index['ESTATUS'] == 1 ? '#32325d' :
-                                                                index['ESTATUS'] == 3 ? '#4472C4' : 'grey'
-                                                        } /> :
-                                                        <img className="ml-5" id="imgSH" src={'data:image/jpeg;base64,' + arrayBufferToBase64(index['BUS_PHOTO'].data)} />
-                                                }
-                                                <div className="grid">
-                                                    <label className="text-lg text-black">{index['DORSL']} </label>
-                                                    <label className="text-base text-gray-700">{index['ALIAS']} </label>
-                                                    <label className="text-gray-400">{ConvertDateTime(index['APPOINTMENT_DATE'], index['APPOINTMENT_TIME'], 0)} </label>
-                                                    <label className="text-gray-400">{ConvertDateTime(index['APPOINTMENT_DATE'], index['APPOINTMENT_TIME'], 1)} </label>
-                                                    <label className="text-gray-400">{index['ESTATUS'] == 1 ? 'Cita modificada por la empresa.' : ''} </label>
-                                                </div>
-                                            </div>
-                                            <div className="mt-6 flex justify-end space-x-3 mr-2 mb-2">
-                                                {bAccederIndex == index['APOINMENT_ID'] ?
-                                                    <button className="px-4 py-2 rounded-lg bg-blue-500 text-white">
-                                                        <div className='circleWhite'></div></button>
-                                                    : index['APPOINTMENT_CONFIRM'] == 0 ?
-                                                        <button className="px-4 py-2 rounded-lg bg-blue-500 text-white hover:bg-blue-600 transition"
-                                                            onClick={() => { indexConfirm(index) }}>Confirmar</button> : <></>}
-                                                <button className="px-4 py-2 rounded-lg bg-gray-500 text-white hover:bg-gray-600 transition"
-                                                    onClick={() => {
-                                                        if (index['ESTATUS'] !== -1 && index['ESTATUS'] !== 2) {
-                                                            navigate(`/cancelAppoin/${index['APOINMENT_ID']}`, { state: { flagEvent: index['FLAG_EVENT'] } });
-                                                        }
-                                                    }}>Ver más</button>
-                                            </div>
-                                        </div>
-                                    ))
-                                    }
-                                </div>
-                            </div>
-                        ) : (
-                            <div className="space-y-4">
-                                {/* <h2 className="text-2xl font-bold text-gray-800">¡Hola {firstName}!</h2> */}
-                                <img src={illustration} alt="Planners Day" className="mx-auto w-56" />
-                                <p className="text-orange-600 font-bold">¡No olvides crear tu cita!</p>
-                                <p className="text-gray-600">Genera tus próximas citas de manera fácil y al instante.</p>
-                                <p className="text-gray-600 mb-4">Dirígete al buscador para empezar.</p>
-                                <button
-                                    onClick={() => navigate("/findBusiness")}
-                                    className="bg-orange-500 hover:bg-orange-600 text-white font-semibold py-2 px-6 rounded-md shadow-md transition"
-                                >
-                                    Ir al Buscador
-                                </button>
-                            </div>
-                        )
-                    }
-                </div>
-            </div>
-            {!bPopupMenuButton ? <></> : <div class="fab-container2">
-                <div class="button iconbutton">
-                    <button onClick={() => navigate("/addEvent", { state: { userId: userId } })} class="fa-solid fa-plus">
-                        <CalendarDateRangeIcon width={40} />
-                    </button>
-                    <label class="text-white px-1 font-bold">Evento</label>
-                </div>
-            </div>}
-            <div class="fab-container">
-                <div class="button iconbutton">
+                {/* Agenda */}
+                {citas.length === 0 && (<div className="bg-white rounded-[2rem] p-8 border border-gray-100 shadow-sm text-center">
+                    <div className="w-20 h-20 mx-auto rounded-full bg-blue-50 flex items-center justify-center">
+                        <img src={illustration} alt="Planners Day" className="mx-auto w-56" />
+                    </div>
+                    <h3 className="mt-4 text-xl font-bold text-gray-900">
+                        Aún no tienes citas programadas
+                    </h3>
+                    <p className="mt-2 text-gray-500">
+                        Encuentra negocios o crea un evento para comenzar a organizar tu agenda.
+                    </p>
                     <button
-                        onClick={() => ModPopupMenu()}
-                        class="fa-solid fa-plus"
+                        onClick={() => navigate("/findBusiness")}
+                        className="mt-5 px-5 py-3 rounded-2xl bg-orange-500 hover:bg-orange-600 text-white transition"
                     >
-                        {bPopupMenuButton ? <CloseIcon width={40} /> : <PlusCircleIcon width={40} />}
+                        Explorar servicios
                     </button>
+                </div>)}
+
                 </div>
+                
             </div>
             {/* Modal */}
             {isOpen ?
@@ -632,7 +846,7 @@ export function Home() {
                             <p className="text-center text-yellow-500 mb-1">¿Quieres aceptar la invitación a colaborar?</p>
                             <div className='flex justify-end mt-2'>
                                 <button className='bg-gray-500 text-white px-4 py-2 rounded-md hover:bg-gray-600 mx-2' onClick={() => {
-                                    indexCancelar();
+                                    indexCancelarCol();
                                 }}>Rechazar</button>
                                 <button className='bg-orange-500 text-white px-4 py-2 rounded-md hover:bg-orange-600' onClick={(e) => {
                                     indexConfirmCol(e, '');
@@ -661,7 +875,7 @@ export function Home() {
                                     setSelectEvento(null);
                                 }}>Cancelar</button>
                                 <button className='bg-orange-500 text-white px-4 py-2 rounded-md hover:bg-orange-600' onClick={(e) => {
-                                    _buildCancelar();
+                                    _buildCancelarEvento();
                                 }}>Aceptar</button>
                             </div>
                         </div>

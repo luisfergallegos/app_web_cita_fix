@@ -7,9 +7,8 @@ import Main from "./layouts/Main.jsx";
 import { ProfileProvider } from "./ProfileContext.jsx";
 
 // Routers
-import Home from "./pages/Home.jsx";
+import Home from "./pages/user/Home_user.jsx";
 import ViewUpdateUser, { viewUpdateUserLoader } from "./pages/register_user/View_update_user.jsx";
-import ViewUpdateBusiness, { viewUpdateBusinessLoader } from "./pages/register_business/View_update_business.jsx";
 import FindBusiness, { findBusinessLoader } from "./pages/business/Find_business.jsx";
 import Notification, { notificationLoader } from "./pages/Notification.jsx";
 import RegisterUser, { registerUserLoader } from "./pages/register_user/Register_user.jsx";
@@ -18,22 +17,16 @@ import SingIn, {loginLoader} from './pages/authenticate/SignIn.jsx';
 import Error from "./pages/Error.jsx";
 import AddAppoin, { AddAppoinLoader } from './pages/appoinment/Add_appoin.jsx';
 import CancelarAppoin, { CancelarAppoinLoader } from './pages/appoinment/Cancel_appoin.jsx';
-import HomeBusiness from './pages/business/Home_business.jsx';
-import RegisterBusiness, { registerBusinessLoader } from './pages/register_business/Register_business.jsx';
-import FindUser, { findUserLoader } from './pages/register_user/Find_user.jsx';
-import AddAppoinBusinesss, { AddAppoinBusinesssLoader } from './pages/appoinment/Add_appoin_business.jsx';
 import AddAppoinBusinesssAnon, { AddAppoinBusinesssAnonLoader } from './pages/appoinment/Add_appoin_business_anon.jsx';
-import UpdateAppoinBusiness, { UpdateAppoinLoader } from './pages/appoinment/Update_appoin_business.jsx';
 import ViewBusiness, { ViewBusinessLoader } from './pages/business/View_business.jsx';
 import DeleteUser, { DeleteUserLoader } from './pages/register_user/Delete_user.jsx';
 import Confirmation, { ConfirmationLoader } from './pages/appoinment/Confirmation.jsx';
 import AddEvento, { AddEventoLoader } from './pages/evento/add_evento.jsx';
 import UpdateEvento, { UpdateEventoLoader } from './pages/evento/update_evento.jsx';
-import UpdateSpace, {UpdateSpaceLoader} from './pages/register_business/UpdateSpace.jsx';
 // Actions
 import { logoutAction } from "./actions/logout.js";
-import RequireBusiness from "./components/RequireBusiness.jsx";
 import Politicas, { PoliticasLoader } from './pages/Politicas.jsx';
+import Landing, { LandingLoader } from './pages/Landing.jsx';
 
 const router = createBrowserRouter([
   {
@@ -52,6 +45,13 @@ const router = createBrowserRouter([
         path: "login",
         element: <SingIn />,
         loader: loginLoader,
+        /* action: findBusinessAction, */
+        errorElement: <Error />
+      },
+      {
+        path: "landing",
+        element: <Landing />,
+        loader: LandingLoader,
         /* action: findBusinessAction, */
         errorElement: <Error />
       },
@@ -82,35 +82,6 @@ const router = createBrowserRouter([
         /*action: expensesAction, */
         errorElement: <Error />
       },
-      {
-        path: "findUser",
-        element: <FindUser />,
-        loader: findUserLoader,
-        /* action: findBusinessAction, */
-        errorElement: <Error />
-      },
-      {
-        path: "homeBusiness",
-        element: <HomeBusiness />,
-        // loader: HomeBusinessLoader,
-        /* action: findBusinessAction, */
-        errorElement: <Error />
-      },
-
-      {
-        path: "viewUpdateBusiness",
-        element: <ViewUpdateBusiness />,
-        loader: viewUpdateBusinessLoader,
-        /* action: expensesAction, */
-        errorElement: <Error />
-      },
-      {
-        path: "registerBusiness",
-        element: <RegisterBusiness />,
-        loader: registerBusinessLoader,
-        /*action: expensesAction, */
-        errorElement: <Error />
-      },
 
       {
         path: "notification",
@@ -134,27 +105,9 @@ const router = createBrowserRouter([
         errorElement: <Error />
       },
       {
-        path: "addAppoinBusiness",
-        element: (
-          <RequireBusiness>
-            <AddAppoinBusinesss />
-          </RequireBusiness>
-        ),
-        loader: AddAppoinBusinesssLoader,
-        /*action: expensesAction, */
-        errorElement: <Error />
-      },
-      {
         path: "addAppoinBusinessAnon",
         element: <AddAppoinBusinesssAnon />,
         loader: AddAppoinBusinesssAnonLoader,
-        /*action: expensesAction, */
-        errorElement: <Error />
-      },
-      {
-        path: "updateAppoinBusiness/:id",
-        element: <UpdateAppoinBusiness />,
-        loader: UpdateAppoinLoader,
         /*action: expensesAction, */
         errorElement: <Error />
       },
@@ -169,13 +122,6 @@ const router = createBrowserRouter([
         path: "updateEvent",
         element: <UpdateEvento />,
         loader: UpdateEventoLoader,
-        /*action: expensesAction, */
-        errorElement: <Error />
-      },
-      {
-        path: "updateSpace",
-        element: <UpdateSpace />,
-        loader: UpdateSpaceLoader,
         /*action: expensesAction, */
         errorElement: <Error />
       },
