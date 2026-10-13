@@ -275,54 +275,97 @@ export function ViewBusiness() {
                                 </button>
                             </div>
                     }
-                    <div
-                        ref={previewRef}
-                        className="bg-gradient-to-br from-gray-200 to-indigo-50 border border-gray-100 rounded-2xl p-6 shadow-md"
-                    >
-                        <div className="flex justify-start">
-                            {photoBase64 ? (
-                                <img className="w-12 h-12 rounded-full object-cover border mt-4" src={`data:image/jpeg;base64,${photoBase64}`} alt="business" />
-                            ) : (
-                                <img className="w-12 h-12 rounded-full object-cover border mt-4 bg-gray-200" src={Store} alt="default" />
-                            )}
-                            <div className="text-start ml-4">
-                                <h3 className="text-2xl font-bold mt-4 text-black">{empresa.DORSL}</h3>
-                                <p className="text-gray-500 mb-3">{empresa.CATEGORY}</p>
+
+                    {/* Tarjeta de citas disponibles */}
+                    <div className="overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm">
+
+                        {/* Contenido que se exporta como imagen */}
+                        <div
+                            ref={previewRef}
+                            className="bg-gradient-to-br from-gray-100 to-indigo-50 p-5"
+                        >
+                            {/* Información del negocio */}
+                            <div className="flex items-center gap-3 mb-5">
+                                <img
+                                    src={photoBase64
+                                        ? `data:image/jpeg;base64,${photoBase64}`
+                                        : Store}
+                                    alt={empresa.DORSL}
+                                    className="w-12 h-12 rounded-full object-cover bg-gray-200"
+                                />
+
+                                <div className="min-w-0 text-left">
+                                    <h3 className="font-bold text-gray-900 truncate">
+                                        {empresa.DORSL}
+                                    </h3>
+                                    <p className="text-xs text-gray-500">
+                                        {empresa.CATEGORY}
+                                    </p>
+                                </div>
+                            </div>
+
+                            <div className="flex items-center justify-between mb-3">
+                                <h4 className="text-sm font-bold text-gray-800">
+                                    Próximas citas disponibles
+                                </h4>
+                                <ClockIcon className="w-5 h-5 text-orange-500" />
+                            </div>
+
+                            <div className="space-y-2">
+                                {horario.slice(0, 5).map((h, index) => {
+                                    const disponibles = h.APPOINTMENT.filter(
+                                        a => a.STATUS === "free"
+                                    ).length;
+
+                                    return (
+                                        <div
+                                            key={`${h.APPOINTMENT_DATE}-${index}`}
+                                            className="flex items-center justify-between gap-2 bg-white/80 rounded-xl px-3 py-3"
+                                        >
+                                            <div className="flex items-center gap-2">
+                                                <ClockIcon className="w-5 h-5 text-orange-500" />
+                                                <span className="text-sm font-medium text-gray-700">
+                                                    {formatDate(h.APPOINTMENT_DATE)}
+                                                </span>
+                                            </div>
+
+                                            <span className="shrink-0 rounded-full bg-orange-100 text-orange-700 px-3 py-1 text-xs font-semibold">
+                                                {disponibles} libres
+                                            </span>
+                                        </div>
+                                    );
+                                })}
                             </div>
                         </div>
-                        <div className="text-start">
-                            {horario.length > 0 ? (
-                                horario.slice(0, 5).map((h) => (
-                                    <div className="w-full flex items-center gap-3 px-4 mt-2 mb-2">
-                                        <ClockIcon className="w-10 h-10 text-orange-500" />
-                                        <div>
-                                            <p className="text-gray-500">{formatDate(h.APPOINTMENT_DATE)}</p>
-                                            <p className="text-gray-500">Disponibles : <strong>{h.APPOINTMENT.filter(a => a.STATUS == "free").length}</strong></p>
-                                        </div> </div>
-                                ))
-                            ) :
-                                <></>
-                            }
-                        </div>
-                    </div>
-                    {
-                        sCorreo == null & sPassword == null ?
-                            <button
-                                onClick={(e) => {
-                                    desplegarPantallaAddAppoin(e);
-                                }}
-                                className="mt-2 mx-auto block bg-orange-500 hover:bg-orange-600 text-white font-semibold py-2 px-6 rounded-full transition-all"
-                            >
-                                Reservar
-                            </button> : <div>
+
+                        {/* Acciones fuera de la imagen exportada */}
+                        <div className="p-4 bg-white">
+                            {sCorreo == null && sPassword == null ? (
                                 <button
+                                    type="button"
+                                    onClick={desplegarPantallaAddAppoin}
+                                    className="w-full flex items-center justify-center gap-2 rounded-xl bg-orange-500 hover:bg-orange-600 active:scale-[0.98] text-white font-semibold py-3.5 px-5 shadow-sm transition-all focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-orange-500"
+                                >
+                                    <span>Agendar una cita</span>
+                                    <ChevronRightIcon className="w-5 h-5" />
+                                </button>
+                            ) : (
+                                <button
+                                    type="button"
                                     onClick={downloadAsImage}
-                                    className="w-full py-3 mt-4 rounded-md font-bold text-white bg-orange-500 hover:bg-orange-600"
+                                    className="w-full rounded-xl bg-orange-500 hover:bg-orange-600 text-white font-semibold py-3.5 px-5 transition-colors"
                                 >
                                     Compartir imagen
                                 </button>
-                            </div>
-                    }
+                            )}
+
+                            <p className="text-center text-xs text-gray-500 mt-3">
+                                {sCorreo == null && sPassword == null
+                                    ? "Selecciona el día y horario que mejor te convenga"
+                                    : "Comparte tus horarios disponibles en redes sociales"}
+                            </p>
+                        </div>
+                    </div>
                     <hr className="my-4" />
                     <div className="text-left px-4">
                         <h4 className="text-lg font-semibold">Reseñas de clientes</h4>

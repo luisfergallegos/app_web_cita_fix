@@ -1,0 +1,76 @@
+
+/* Contenedor principal */
+.calendar-custom .react-datepicker {
+  font-family: inherit;
+  border: 1px solid #e5e7eb;
+  border-radius: 16px;
+  background: #fff;
+  padding: 14px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+}
+
+/* Encabezado */
+.calendar-custom .react-datepicker__header {
+  background: white;
+  border-bottom: 1px solid #f1f5f9;
+  padding: 12px 0;
+}
+
+.calendar-custom .react-datepicker__current-month {
+  color: #1f2937;
+  font-size: 16px;
+  font-weight: 700;
+  text-transform: capitalize;
+}
+
+/* Días de la semana */
+.calendar-custom .react-datepicker__day-name {
+  color: #64748b;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+/* Celdas de los días */
+.calendar-custom .react-datepicker__day,
+.calendar-custom .react-datepicker__day-name {
+  width: 2.5rem;
+  line-height: 2.5rem;
+  margin: 2px;
+}
+
+.calendar-custom .react-datepicker__day {
+  border-radius: 10px;
+  color: #334155;
+  transition: all 0.2s ease;
+}
+
+/* Día seleccionado */
+.calendar-custom .react-datepicker__day--selected,
+.calendar-custom .react-datepicker__day--keyboard-selected {
+  background: #f97316;
+  color: white;
+  font-weight: 700;
+}
+
+/* Hover */
+.calendar-custom .react-datepicker__day:hover {
+  background: #ffedd5;
+  color: #c2410c;
+}
+
+/* Mantener naranja el seleccionado al pasar el cursor */
+.calendar-custom .react-datepicker__day--selected:hover {
+  background: #ea580c;
+  color: white;
+}
+
+/* Fechas no disponibles */
+.calendar-custom .react-datepicker__day--disabled {
+  color: #cbd5e1;
+  cursor: not-allowed;
+}
+
+/* Navegación */
+.calendar-custom .react-datepicker__navigation {
+  top: 24px;
+}

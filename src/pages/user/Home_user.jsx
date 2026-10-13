@@ -498,7 +498,7 @@ export function Home() {
                             </h1>
                         </div>
 
-                        <button
+                        {/* <button
                             onClick={() =>
                                 navigate("/addEvent", {
                                     state: { userId }
@@ -509,7 +509,7 @@ export function Home() {
                             <span className="hidden sm:inline">
                                 Crear evento
                             </span>
-                        </button>
+                        </button> */}
                     </div>
                     {
                         upcoming.length === 0 ?

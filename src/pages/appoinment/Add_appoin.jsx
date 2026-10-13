@@ -12,6 +12,11 @@ import { urlApi } from "../../styles/Constants.jsx";
 import { MapPinIcon, PhoneIcon, CalendarDaysIcon, CalendarDateRangeIcon, XMarkIcon as CloseIcon, TagIcon, CheckCircleIcon, PlusCircleIcon } from '@heroicons/react/24/solid';
 import DatePicker from 'react-datepicker';
 import "react-datepicker/dist/react-datepicker.css";
+import "./DatePickerCustom.css";
+
+import { registerLocale } from "react-datepicker";
+import { es } from "date-fns/locale";
+registerLocale("es", es);
 //import moment from 'moment';
 
 // loader
@@ -82,6 +87,7 @@ export function AddAppoin() {
     const [bFin, setbFin] = useState(false);
     const [step, setStep] = useState(1);
     const [bAcceder, setbAcceder] = useState(true);
+    const [viewCalendario, setViewCalendario] = useState(false);
 
     const toggleAddress = () => setbMostrarAddress((v) => !v);
 
@@ -668,69 +674,190 @@ export function AddAppoin() {
                         <>
                             {bAcceder ?
                                 <div className='items-center justify-center '>
-                                    {showHours && <hr className="my-4" />}
+                                    {showHours && (
+                                        <>
+                                            {/* Encabezado */}
+                                            <div className="flex items-start gap-3 mb-5">
+                                                <CalendarDaysIcon className="w-7 h-7 text-orange-500" />
+                                                <div>
+                                                    <h3 className="text-lg font-bold text-gray-800">
+                                                        ¿Qué día deseas asistir?
+                                                    </h3>
+                                                    <p className="text-sm text-gray-500">
+                                                        Selecciona una fecha disponible
+                                                    </p>
+                                                </div>
+                                            </div>
 
-                                    {showHours && <div className="text-left px-4">
-                                        <h4 className="text-lg font-semibold mb-2">📅 ¿Qué día deseas asistir?</h4>
-                                    </div>}
-                                    {showHours && <div className='flex justify-center items-center ms-4'>
-                                        {/* <CalendarDateRangeIcon className='w-6 h-6 mx-4 text-orange-500' /> */}
-                                        <div>
-                                            <DatePicker className='text-gray-400 text-left'
-                                                inline
-                                                dateFormat="dd/MM/yyyy"
-                                                excludeDates={_excludeDates}
-                                                selected={startDate}
-                                                onChange={(date) => { setStartDate(date); SelectDateTime(date); setselectedTime(''); setselectedIndex(); }}
-                                                minDate={initialDate}
-                                                maxDate={lastDate}
-                                            // customInput={<ExampleCustomInput className="example-custom-input cursor-pointer" />}
-                                            />
-                                        </div>
-                                    </div>}
+                                            {/* Selector de vistas */}
+                                            <div className="flex bg-gray-100 p-1 rounded-xl mb-5">
+                                                <button
+                                                    type="button"
+                                                    onClick={() => setViewCalendario(false)}
+                                                    className={`flex-1 py-2.5 px-2 rounded-lg text-sm font-semibold transition-all ${!viewCalendario
+                                                        ? "bg-white text-orange-600 shadow-sm"
+                                                        : "text-gray-500 hover:text-gray-700"
+                                                        }`}
+                                                >
+                                                    Próximas fechas
+                                                </button>
 
+                                                <button
+                                                    type="button"
+                                                    onClick={() => setViewCalendario(true)}
+                                                    className={`flex-1 py-2.5 px-2 rounded-lg text-sm font-semibold transition-all ${viewCalendario
+                                                        ? "bg-white text-orange-600 shadow-sm"
+                                                        : "text-gray-500 hover:text-gray-700"
+                                                        }`}
+                                                >
+                                                    Calendario
+                                                </button>
+                                            </div>
 
+                                            {/* Próximas fechas */}
+                                            {!viewCalendario && (
+                                                <div className="grid grid-cols-3 gap-3">
+                                                    {citas
+                                                        .filter(h =>
+                                                            h.APPOINTMENT.some(a => a.STATUS === "free")
+                                                        )
+                                                        .slice(0, 5)
+                                                        .map((h, index) => {
+                                                            const disponibles = h.APPOINTMENT.filter(
+                                                                a => a.STATUS === "free"
+                                                            ).length;
 
-                                    {startDate && (
-                                        <div className="mb-1 text-sm text-green-600 font-medium">
-                                            ✓ Fecha seleccionada: {dateSpanish(startDate)}
-                                        </div>
+                                                            const [year, month, day] =
+                                                                h.APPOINTMENT_DATE.split("-").map(Number);
+
+                                                            const fecha = new Date(year, month - 1, day);
+
+                                                            const seleccionado =
+                                                                startDate &&
+                                                                startDate.toDateString() === fecha.toDateString();
+
+                                                            return (
+                                                                <button
+                                                                    type="button"
+                                                                    key={`${h.APPOINTMENT_DATE}-${index}`}
+                                                                    onClick={() => {
+                                                                        setStartDate(fecha);
+                                                                        SelectDateTime(fecha);
+                                                                        setselectedTime("");
+                                                                        setselectedIndex(null);
+                                                                    }}
+                                                                    className={`flex flex-col items-center justify-center rounded-xl border-2 px-2 py-4 transition-all duration-200 
+                                                                        ${seleccionado
+                                                                            ? "border-orange-500 bg-orange-50 shadow-sm"
+                                                                            : "border-gray-200 bg-white hover:border-orange-300"
+                                                                        }`}
+                                                                >
+                                                                    <span className="text-xs text-gray-500 capitalize">
+                                                                        {fecha.toLocaleDateString("es-MX", {
+                                                                            weekday: "short"
+                                                                        }).replace(".", "")}
+                                                                    </span>
+
+                                                                    <span className="text-2xl font-bold text-gray-800 my-1">
+                                                                        {day}
+                                                                    </span>
+
+                                                                    <span className="text-xs text-gray-500">
+                                                                        {fecha.toLocaleDateString("es-MX", {
+                                                                            month: "short"
+                                                                        }).replace(".", "")}
+                                                                    </span>
+
+                                                                    <span className={`mt-3 rounded-full px-2.5 py-1 text-xs font-semibold ${seleccionado
+                                                                        ? "bg-orange-500 text-white"
+                                                                        : "bg-orange-100 text-orange-700"
+                                                                        }`}>
+                                                                        {disponibles} libres
+                                                                    </span>
+                                                                </button>
+                                                            );
+                                                        })}
+                                                </div>
+                                            )}
+
+                                            {/* Calendario completo */}
+                                            {viewCalendario && (
+                                                <div className="calendar-custom flex justify-center">
+                                                    <DatePicker
+                                                        className="text-gray-700"
+                                                        inline
+                                                        dateFormat="dd/MM/yyyy"
+                                                        excludeDates={_excludeDates}
+                                                        selected={startDate}
+                                                        onChange={(date) => {
+                                                            setStartDate(date);
+                                                            SelectDateTime(date);
+                                                            setselectedTime("");
+                                                            setselectedIndex(null);
+                                                        }}
+                                                        minDate={initialDate}
+                                                        maxDate={lastDate}
+                                                        locale="es"
+                                                    />
+                                                </div>
+                                            )}
+
+                                            {/* Fecha seleccionada */}
+                                            {startDate && (
+                                                <div className="flex items-center gap-3 mt-5 bg-green-50 border border-green-100 rounded-xl p-3">
+                                                    <CheckCircleIcon className="w-6 h-6 text-green-600 shrink-0" />
+
+                                                    <div className="flex-1 text-left">
+                                                        <p className="text-xs text-green-700">
+                                                            Fecha seleccionada
+                                                        </p>
+                                                        <p className="text-sm font-semibold text-gray-800 capitalize">
+                                                            {dateSpanish(startDate)}
+                                                        </p>
+                                                    </div>
+
+                                                    <button
+                                                        type="button"
+                                                        aria-label="Limpiar fecha"
+                                                        onClick={() => {
+                                                            setStartDate(null);
+                                                            setselectedTime(null);
+                                                            setselectedIndex(null);
+                                                        }}
+                                                        className="p-2 text-gray-400 hover:text-red-500"
+                                                    >
+                                                        <CloseIcon className="w-5 h-5" />
+                                                    </button>
+                                                </div>
+                                            )}
+                                        </>
                                     )}
 
-                                    {startDate && (
+                                    {/* Navegación */}
+                                    <div className="flex gap-3 mt-6">
                                         <button
-                                            onClick={() => {
-                                                setStartDate(null);
-                                                setselectedTime(null);
-                                                setselectedIndex(null);
-                                            }}
-                                            className="text-red-500 text-sm"
-                                        >
-                                            Limpiar fecha
-                                        </button>
-                                    )}
-
-                                    <div className="flex justify-between mt-4 mb-4">
-
-                                        <button className="px-6 py-3 rounded-xl border border-gray-300 text-gray-600 font-medium hover:bg-gray-100 transition-all"
+                                            type="button"
                                             onClick={() => {
                                                 if (spaces.length > 0)
                                                     setStep(1);
                                                 else setStep(2);
                                             }}
+                                            className="flex-1 px-4 py-3 rounded-xl border border-gray-300 text-gray-700 font-semibold hover:bg-gray-50 transition-all"
                                         >
                                             ← Atrás
                                         </button>
 
                                         <button
+                                            type="button"
                                             disabled={!startDate}
                                             onClick={() => setStep(3)}
-                                            className={`px-6 py-3 rounded-xl font-semibold transition-all shadow-md 
-                                            ${startDate ? "bg-orange-500 text-white hover:bg-orange-600 hover:shadow-lg"
-                                                    : "bg-gray-200 text-gray-400 cursor-not-allowed shadow-none"} `} >
-                                            Siguiente →
+                                            className={`flex-[1.4] flex items-center justify-center gap-2 px-4 py-3 rounded-xl font-semibold transition-all ${startDate
+                                                ? "bg-orange-500 text-white hover:bg-orange-600"
+                                                : "bg-gray-200 text-gray-400 cursor-not-allowed"
+                                                }`}
+                                        >
+                                            Continuar →
                                         </button>
-
                                     </div>
 
                                 </div>
@@ -783,23 +910,27 @@ export function AddAppoin() {
                                             ✓ Horario seleccionado: {selectedTime}
                                         </div>
                                     )}
-
-                                    <div className="flex justify-between">
-
-                                        <button className="px-6 py-3 rounded-xl border border-gray-300 text-gray-600 font-medium hover:bg-gray-100 transition-all"
-                                            onClick={() => setStep(2)} >
+                                    {/* Navegación */}
+                                    <div className="flex gap-3 mt-6">
+                                        <button
+                                            type="button"
+                                            onClick={() => setStep(2)}
+                                            className="flex-1 px-4 py-3 rounded-xl border border-gray-300 text-gray-700 font-semibold hover:bg-gray-50 transition-all"
+                                        >
                                             ← Atrás
                                         </button>
 
                                         <button
+                                            type="button"
                                             disabled={!selectedTime}
                                             onClick={() => setStep(4)}
-                                            className={`px-6 py-3 rounded-xl font-semibold transition-all shadow-md 
-                                            ${selectedTime ? "bg-orange-500 text-white hover:bg-orange-600 hover:shadow-lg"
-                                                    : "bg-gray-200 text-gray-400 cursor-not-allowed shadow-none"} `} >
-                                            Siguiente →
+                                            className={`flex-[1.4] flex items-center justify-center gap-2 px-4 py-3 rounded-xl font-semibold transition-all ${selectedTime
+                                                ? "bg-orange-500 text-white hover:bg-orange-600"
+                                                : "bg-gray-200 text-gray-400 cursor-not-allowed"
+                                                }`}
+                                        >
+                                            Continuar →
                                         </button>
-
                                     </div>
 
                                 </div>
@@ -922,15 +1053,20 @@ export function AddAppoin() {
                                         : <div className="mb-4 text-sm text-green-600 font-medium">
                                             ✓ Seleccionado: Acudir al establecimiento
                                         </div>}
-
-                                    <div className="flex justify-between">
-
-                                        <button className="px-6 py-3 rounded-xl border border-gray-300 text-gray-600 font-medium hover:bg-gray-100 transition-all"
-                                            onClick={() => setStep(3)} >
+                                    
+                                    {/* Navegación */}
+                                    <div className="flex gap-3 mt-6">
+                                        <button
+                                            type="button"
+                                            onClick={() => setStep(3)} 
+                                            className="flex-1 px-4 py-3 rounded-xl border border-gray-300 text-gray-700 font-semibold hover:bg-gray-50 transition-all"
+                                        >
                                             ← Atrás
                                         </button>
 
                                         <button
+                                            type="button"
+                                            disabled={!canContinue}
                                             onClick={(e) => {
                                                 if (bMostrarAddress) {
                                                     e.preventDefault();
@@ -941,12 +1077,13 @@ export function AddAppoin() {
                                                 setStep(5);
 
                                             }}
-                                            className={`px-6 py-3 rounded-xl font-semibold transition-all shadow-md 
-                                            ${canContinue ? "bg-orange-500 text-white hover:bg-orange-600 hover:shadow-lg"
-                                                    : "bg-gray-200 text-gray-400 cursor-not-allowed shadow-none"} `} >
-                                            Siguiente →
+                                            className={`flex-[1.4] flex items-center justify-center gap-2 px-4 py-3 rounded-xl font-semibold transition-all ${canContinue
+                                                ? "bg-orange-500 text-white hover:bg-orange-600"
+                                                : "bg-gray-200 text-gray-400 cursor-not-allowed"
+                                                }`}
+                                        >
+                                            Continuar →
                                         </button>
-
                                     </div>
 
                                 </div>

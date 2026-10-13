@@ -9,9 +9,14 @@ import Loaging from '../../components/Loading.jsx';
 import { urlApi } from "../../styles/Constants.jsx";
 import Logo from "../../assets/splash.png";
 // Library
-import { CalendarDateRangeIcon, UserCircleIcon, XMarkIcon as CloseIcon, TagIcon } from '@heroicons/react/24/solid';
+import { CalendarDateRangeIcon, UserCircleIcon, XMarkIcon as CloseIcon, ClockIcon, TagIcon, CalendarDaysIcon, CheckCircleIcon } from '@heroicons/react/24/solid';
 import DatePicker from 'react-datepicker';
-import "react-datepicker/dist/react-datepicker.css";
+// import "react-datepicker/dist/react-datepicker.css";
+import "./DatePickerCustom.css";
+
+import { registerLocale } from "react-datepicker";
+import { es } from "date-fns/locale";
+registerLocale("es", es);
 
 // loader
 export function AddAppoinBusinesssAnonLoader() {
@@ -35,6 +40,23 @@ function selectableDayPredicate(_dias) {
     return tempdias;
 }
 
+// Formatea la fecha en español (27 de noviembre de 2025)
+function formatDate(iso) {
+    if (!iso) return "";
+    try {
+        var parts = iso.split('-');
+        const d = new Date(parts[0], parts[1] - 1, parts[2]);
+        return d.toLocaleDateString("es-ES", {
+            weekday: "long",
+            day: "numeric",
+            month: "short",
+        })
+            .replace(".", "") // Quita puntos como "mié."
+            .replace(/\b\w/g, c => c.toLowerCase()); // Asegura minúsculas
+    } catch {
+        return iso;
+    }
+}
 
 export function AddAppoinBusinesssAnon() {
     const location = useLocation();
@@ -58,6 +80,7 @@ export function AddAppoinBusinesssAnon() {
 
     const [loading, setLoading] = useState(true);
     const [canSubmit, setCanSubmit] = useState(true);
+    const [viewCalendario, setViewCalendario] = useState(false);
 
     // const businessId = location.state?.businessId ?? '';
     // const dorsl = location.state?.dorsl;
@@ -65,7 +88,11 @@ export function AddAppoinBusinesssAnon() {
     const empresa = location.state?.empresa ?? '';
 
     const [spaces, setSpaces] = useState([]);
-    const [selectSpace, setSelectSpace] = useState(location.state?.selectSpace || []);
+    const [selectSpace, setSelectSpace] = useState(
+        location.state?.selectSpace?.BUS_SPACES_ID
+            ? location.state.selectSpace
+            : null
+    );
     const [bFin, setbFin] = useState(false);
     var _today = new Date();
     const initialDate = new Date(_today);
@@ -116,8 +143,8 @@ export function AddAppoinBusinesssAnon() {
         var anonimo = bSwitchPhoneEmail ? `${nombre},+52 ${phone}` : `${nombre},${correo}`;
         var dateFormat = startDate.getMonth() + 1;
         var _selectedDate = `${startDate.getFullYear()}-${('0' + dateFormat).slice(-2)}-${startDate.getDate()}`;
-        const bus_spaces_id = selectSpace.length == 0 ? '' : selectSpace.BUS_SPACES_ID;
-        const name_space = selectSpace.length == 0 ? '' : selectSpace.ALIAS;
+        const bus_spaces_id = selectSpace?.BUS_SPACES_ID ?? '';
+        const name_space = selectSpace?.ALIAS ?? '';
         //Enviar por POST
         var options = {
             method: 'POST',
@@ -137,9 +164,9 @@ export function AddAppoinBusinesssAnon() {
                     'bus_spaces_id': bus_spaces_id,
                     'name_space': name_space
                 })
-        }        
+        }
         try {
-            var url = bSwitchPhoneEmail ? `${urlApi}appoinW` : `${urlApi}appoin`;            
+            var url = bSwitchPhoneEmail ? `${urlApi}appoinW` : `${urlApi}appoin`;
             const response = await fetch(url, options);
             const json = await response.json();
             if (json['sucess'] == false) {
@@ -151,10 +178,10 @@ export function AddAppoinBusinesssAnon() {
                 navigate("/");
             }
         }
-        catch (e) {            
+        catch (e) {
             return;
         }
-        finally{
+        finally {
             setCanSubmit(true);
         }
     };
@@ -231,6 +258,9 @@ export function AddAppoinBusinesssAnon() {
         catch (e) {
             return;
         }
+        finally {
+            setbAcceder(true);
+        }
 
     };
 
@@ -242,7 +272,7 @@ export function AddAppoinBusinesssAnon() {
             // else if (sCorreo == null && sPassword == null) {
             //     navigate("/");
             // }
-            else if (selectSpace.length == 0) {
+            else if (!selectSpace) {
                 //Solicitar por GET
                 try {
                     const response = await fetch(`${urlApi}spaceBusinessId?bussiness_id=${empresa.BUSSINESS_ID}`);
@@ -615,7 +645,7 @@ export function AddAppoinBusinesssAnon() {
                                 <h4 className="text-lg font-semibold">Espacio de servicio</h4>
                             </div> : <></>}
 
-                            {spaces.length > 0 ? spaces.map((index) => (
+                            {spaces.length > 0 && !selectSpace ? spaces.map((index) => (
                                 // <div className="font-semibold   shadow-md transition flex items-center justify-between"
                                 <div className={`bg-white py-2 px-2 rounded-md shadow-xl p-10 text-center mb-2
                                 transition-all duration-300 cursor-pointer hover:scale-105 hover:shadow-2xl 
@@ -637,17 +667,52 @@ export function AddAppoinBusinesssAnon() {
                                     </div>
                                 </div>
                             )) : <></>}
-                            <button
-                                disabled={!selectSpace}
-                                onClick={(e) => {
-                                    actulizarFechasHoras(e, selectSpace.BUS_SPACES_ID);
-                                    setStep(2);
-                                }}
-                                className={`px-6 py-3 rounded-xl font-semibold transition-all shadow-md 
-                                            ${selectSpace ? "bg-orange-500 text-white hover:bg-orange-600 hover:shadow-lg"
-                                        : "bg-gray-200 text-gray-400 cursor-not-allowed shadow-none"} `} >
-                                Siguiente →
-                            </button>
+                            {/* Mostrar espacio seleccionado */}
+                            {selectSpace && (
+                                <div className="flex items-center gap-3 mt-5 bg-green-50 border border-green-100 rounded-xl p-3">
+                                    <CheckCircleIcon className="w-6 h-6 text-green-600 shrink-0" />
+
+                                    <div className="flex-1 text-left">
+                                        <p className="text-xs text-green-700">
+                                            Espacio seleccionado
+                                        </p>
+                                        <p className="text-sm font-semibold text-gray-800 capitalize">
+                                            {selectSpace.ALIAS}
+                                        </p>
+                                        <p className="text-sm text-gray-800 capitalize">
+                                            {selectSpace.NAME_SPACE}
+                                        </p>
+                                    </div>
+
+                                    <button
+                                        type="button"
+                                        aria-label="Limpiar fecha"
+                                        onClick={() => {
+                                            setSelectSpace(null);
+                                        }}
+                                        className="p-2 text-gray-400 hover:text-red-500"
+                                    >
+                                        <CloseIcon className="w-5 h-5" />
+                                    </button>
+                                </div>
+                            )}
+                            <div className="flex gap-3 mt-6">
+                                <button
+                                    disabled={!selectSpace}
+                                    onClick={(e) => {
+                                        actulizarFechasHoras(e, selectSpace.BUS_SPACES_ID);
+                                        setStep(2);
+                                    }}
+                                    className={`flex-[1.4] flex items-center justify-center gap-2 px-4 py-3 rounded-xl font-semibold transition-all ${selectSpace
+                                        ? "bg-orange-500 text-white hover:bg-orange-600"
+                                        : "bg-gray-200 text-gray-400 cursor-not-allowed"
+                                        }`}
+                                >
+                                    Continuar →
+                                </button>
+
+                            </div>
+
                         </>
                         }
 
@@ -662,11 +727,11 @@ export function AddAppoinBusinesssAnon() {
                                         <input
                                             type="text"
                                             placeholder="Ingresa el nombre"
-                                            className="w-full  px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-orange-500 focus:outline-none"
+                                            className="w-full mb-4 px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-orange-500 focus:outline-none"
                                             value={nombre} onChange={handleChangeName} required
                                         />
                                     </div>
-                                    <div className='flex items-center mt-4 mb-4'>
+                                    {/* <div className='flex items-center mt-4 mb-4'>
                                         <h4>¿Deseas que sea por número de teléfono?</h4>
                                         <label className="inline-flex items-center cursor-pointer ml-4">
                                             <input type="checkbox" checked={bSwitchPhoneEmail} onChange={ModSwitchPhoneEmail} className="sr-only peer" />
@@ -675,17 +740,22 @@ export function AddAppoinBusinesssAnon() {
                                                 after:rounded-full after:bg-white after:transition-transform peer-checked:after:translate-x-4 "
                                             />
                                         </label>
-                                    </div>
+                                    </div> */}
                                     {bSwitchPhoneEmail ?
                                         <div className='grid'>
                                             <h4>{bSwitchPhoneEmail ? '¿Cuál es el número de teléfono?' : '¿Cuál es el correo electrónico?'}</h4>
-                                            <input
-                                                type="tel"
-                                                placeholder="Número de teléfono"
-                                                className="px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-orange-500 focus:outline-none"
-                                                value={phone}
-                                                onChange={handleChangePhone} required
-                                            />
+                                            <div className="relative">
+                                                <input
+                                                    type="tel"
+                                                    placeholder="Número de teléfono"
+                                                    className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-orange-500 focus:outline-none"
+                                                    value={phone}
+                                                    onChange={handleChangePhone} required
+                                                />
+                                                <label className="absolute top-3 right-3 text-gray-500 hover:text-orange-500">
+                                                    {phone.replace(/\D/g, '').length || "0"} / 10
+                                                </label>
+                                            </div>
                                             {errorPhone != '' ? <label htmlFor="" style={{ color: 'red' }}>{errorPhone}</label> : <></>}
                                             <span>En este número de teléfono recibirá un recordatorio de su vista.</span>
                                         </div> :
@@ -708,19 +778,23 @@ export function AddAppoinBusinesssAnon() {
                                         <></>
                                     }
                                 </div>
-                                <div className="flex justify-between mt-4 mb-4">
-
-                                    <button className="px-6 py-3 rounded-xl border border-gray-300 text-gray-600 font-medium hover:bg-gray-100 transition-all"
+                                {/* Navegación */}
+                                <div className="flex gap-3 mt-6">
+                                    <button
+                                        type="button"
                                         onClick={() => {
                                             if (spaces.length > 0)
                                                 setStep(1);
                                             else setStep(2);
                                         }}
+                                        className="flex-1 px-4 py-3 rounded-xl border border-gray-300 text-gray-700 font-semibold hover:bg-gray-50 transition-all"
                                     >
                                         ← Atrás
                                     </button>
 
                                     <button
+                                        type="button"
+                                        disabled={!puedeContinuar}
                                         onClick={(e) => {
                                             if (!puedeContinuar) {
                                                 toast.error('Completa todos los campos.');
@@ -728,99 +802,215 @@ export function AddAppoinBusinesssAnon() {
                                             }
                                             setStep(3);
                                         }}
-                                        className={`px-6 py-3 rounded-xl font-semibold transition-all shadow-md 
-                                            ${puedeContinuar ? "bg-orange-500 text-white hover:bg-orange-600 hover:shadow-lg"
-                                                : "bg-gray-200 text-gray-400 cursor-not-allowed shadow-none"} `} >
-                                        Siguiente →
+                                        className={`flex-[1.4] flex items-center justify-center gap-2 px-4 py-3 rounded-xl font-semibold transition-all ${puedeContinuar
+                                            ? "bg-orange-500 text-white hover:bg-orange-600"
+                                            : "bg-gray-200 text-gray-400 cursor-not-allowed"
+                                            }`}
+                                    >
+                                        Continuar →
                                     </button>
-
                                 </div>
-
                             </>
                         }
 
                         {/* Div - Agendar */}
-                        {step === 3 &&
-                            <>
-                                {bAcceder ?
-                                    <div className='items-center justify-center '>
-                                        {showHours && <hr className="my-4" />}
 
-                                        {showHours && <div className="text-left px-4">
-                                            <h4 className="text-lg font-semibold mb-2">📅 ¿Qué día deseas asistir?</h4>
-                                        </div>}
-                                        {showHours && <div className='flex justify-center items-center ms-4'>
-                                            <div>
-                                                <DatePicker className='text-gray-400 text-left'
-                                                    inline
-                                                    dateFormat="dd/MM/yyyy"
-                                                    excludeDates={_excludeDates}
-                                                    selected={startDate}
-                                                    onChange={(date) => { setStartDate(date); SelectDateTime(date); setselectedTime(''); setselectedIndex(); }}
-                                                    minDate={initialDate}
-                                                    maxDate={lastDate}
-                                                />
+                        {step === 3 && (
+                            bAcceder ? (
+                                <div className="w-full max-w-lg mx-auto px-2 py-4">
+
+                                    {showHours && (
+                                        <>
+                                            {/* Encabezado */}
+                                            <div className="flex items-start gap-3 mb-5">
+                                                <CalendarDaysIcon className="w-7 h-7 text-orange-500" />
+                                                <div>
+                                                    <h3 className="text-lg font-bold text-gray-800">
+                                                        ¿Qué día deseas asistir?
+                                                    </h3>
+                                                    <p className="text-sm text-gray-500">
+                                                        Selecciona una fecha disponible
+                                                    </p>
+                                                </div>
                                             </div>
-                                        </div>}
 
+                                            {/* Selector de vistas */}
+                                            <div className="flex bg-gray-100 p-1 rounded-xl mb-5">
+                                                <button
+                                                    type="button"
+                                                    onClick={() => setViewCalendario(false)}
+                                                    className={`flex-1 py-2.5 px-2 rounded-lg text-sm font-semibold transition-all ${!viewCalendario
+                                                        ? "bg-white text-orange-600 shadow-sm"
+                                                        : "text-gray-500 hover:text-gray-700"
+                                                        }`}
+                                                >
+                                                    Próximas fechas
+                                                </button>
 
-
-                                        {startDate && (
-                                            <div className="mb-1 text-sm text-green-600 font-medium">
-                                                ✓ Fecha seleccionada: {dateSpanish(startDate)}
+                                                <button
+                                                    type="button"
+                                                    onClick={() => setViewCalendario(true)}
+                                                    className={`flex-1 py-2.5 px-2 rounded-lg text-sm font-semibold transition-all ${viewCalendario
+                                                        ? "bg-white text-orange-600 shadow-sm"
+                                                        : "text-gray-500 hover:text-gray-700"
+                                                        }`}
+                                                >
+                                                    Calendario
+                                                </button>
                                             </div>
-                                        )}
 
-                                        {startDate && (
-                                            <button
-                                                onClick={() => {
-                                                    setStartDate(null);
-                                                    setselectedTime(null);
-                                                    setselectedIndex(null);
-                                                }}
-                                                className="text-red-500 text-sm"
-                                            >
-                                                Limpiar fecha
-                                            </button>
-                                        )}
+                                            {/* Próximas fechas */}
+                                            {!viewCalendario && (
+                                                <div className="grid grid-cols-3 gap-3">
+                                                    {citas
+                                                        .filter(h =>
+                                                            h.APPOINTMENT.some(a => a.STATUS === "free")
+                                                        )
+                                                        .slice(0, 5)
+                                                        .map((h, index) => {
+                                                            const disponibles = h.APPOINTMENT.filter(
+                                                                a => a.STATUS === "free"
+                                                            ).length;
 
-                                        <div className="flex justify-between mt-4 mb-4">
+                                                            const [year, month, day] =
+                                                                h.APPOINTMENT_DATE.split("-").map(Number);
 
-                                            <button className="px-6 py-3 rounded-xl border border-gray-300 text-gray-600 font-medium hover:bg-gray-100 transition-all"
-                                                onClick={() => {
-                                                    setStep(2);
-                                                }}
-                                            >
-                                                ← Atrás
-                                            </button>
+                                                            const fecha = new Date(year, month - 1, day);
 
-                                            <button
-                                                disabled={!startDate}
-                                                onClick={() => setStep(4)}
-                                                className={`px-6 py-3 rounded-xl font-semibold transition-all shadow-md 
-                                                                    ${startDate ? "bg-orange-500 text-white hover:bg-orange-600 hover:shadow-lg"
-                                                        : "bg-gray-200 text-gray-400 cursor-not-allowed shadow-none"} `} >
-                                                Siguiente →
-                                            </button>
+                                                            const seleccionado =
+                                                                startDate &&
+                                                                startDate.toDateString() === fecha.toDateString();
 
-                                        </div>
+                                                            return (
+                                                                <button
+                                                                    type="button"
+                                                                    key={`${h.APPOINTMENT_DATE}-${index}`}
+                                                                    onClick={() => {
+                                                                        setStartDate(fecha);
+                                                                        SelectDateTime(fecha);
+                                                                        setselectedTime("");
+                                                                        setselectedIndex(null);
+                                                                    }}
+                                                                    className={`flex flex-col items-center justify-center rounded-xl border-2 px-2 py-4 transition-all duration-200 
+                                                                        ${seleccionado
+                                                                            ? "border-orange-500 bg-orange-50 shadow-sm"
+                                                                            : "border-gray-200 bg-white hover:border-orange-300"
+                                                                        }`}
+                                                                >
+                                                                    <span className="text-xs text-gray-500 capitalize">
+                                                                        {fecha.toLocaleDateString("es-MX", {
+                                                                            weekday: "short"
+                                                                        }).replace(".", "")}
+                                                                    </span>
 
+                                                                    <span className="text-2xl font-bold text-gray-800 my-1">
+                                                                        {day}
+                                                                    </span>
+
+                                                                    <span className="text-xs text-gray-500">
+                                                                        {fecha.toLocaleDateString("es-MX", {
+                                                                            month: "short"
+                                                                        }).replace(".", "")}
+                                                                    </span>
+
+                                                                    <span className={`mt-3 rounded-full px-2.5 py-1 text-xs font-semibold ${seleccionado
+                                                                        ? "bg-orange-500 text-white"
+                                                                        : "bg-orange-100 text-orange-700"
+                                                                        }`}>
+                                                                        {disponibles} libres
+                                                                    </span>
+                                                                </button>
+                                                            );
+                                                        })}
+                                                </div>
+                                            )}
+
+                                            {/* Calendario completo */}
+                                            {viewCalendario && (
+                                                <div className="calendar-custom flex justify-center">
+                                                    <DatePicker
+                                                        className="text-gray-700"
+                                                        inline
+                                                        dateFormat="dd/MM/yyyy"
+                                                        excludeDates={_excludeDates}
+                                                        selected={startDate}
+                                                        onChange={(date) => {
+                                                            setStartDate(date);
+                                                            SelectDateTime(date);
+                                                            setselectedTime("");
+                                                            setselectedIndex(null);
+                                                        }}
+                                                        minDate={initialDate}
+                                                        maxDate={lastDate}
+                                                        locale="es"
+                                                    />
+                                                </div>
+                                            )}
+
+                                            {/* Fecha seleccionada */}
+                                            {startDate && (
+                                                <div className="flex items-center gap-3 mt-5 bg-green-50 border border-green-100 rounded-xl p-3">
+                                                    <CheckCircleIcon className="w-6 h-6 text-green-600 shrink-0" />
+
+                                                    <div className="flex-1 text-left">
+                                                        <p className="text-xs text-green-700">
+                                                            Fecha seleccionada
+                                                        </p>
+                                                        <p className="text-sm font-semibold text-gray-800 capitalize">
+                                                            {dateSpanish(startDate)}
+                                                        </p>
+                                                    </div>
+
+                                                    <button
+                                                        type="button"
+                                                        aria-label="Limpiar fecha"
+                                                        onClick={() => {
+                                                            setStartDate(null);
+                                                            setselectedTime(null);
+                                                            setselectedIndex(null);
+                                                        }}
+                                                        className="p-2 text-gray-400 hover:text-red-500"
+                                                    >
+                                                        <CloseIcon className="w-5 h-5" />
+                                                    </button>
+                                                </div>
+                                            )}
+                                        </>
+                                    )}
+
+                                    {/* Navegación */}
+                                    <div className="flex gap-3 mt-6">
+                                        <button
+                                            type="button"
+                                            onClick={() => setStep(2)}
+                                            className="flex-1 px-4 py-3 rounded-xl border border-gray-300 text-gray-700 font-semibold hover:bg-gray-50 transition-all"
+                                        >
+                                            ← Atrás
+                                        </button>
+
+                                        <button
+                                            type="button"
+                                            disabled={!startDate}
+                                            onClick={() => setStep(4)}
+                                            className={`flex-[1.4] flex items-center justify-center gap-2 px-4 py-3 rounded-xl font-semibold transition-all ${startDate
+                                                ? "bg-orange-500 text-white hover:bg-orange-600"
+                                                : "bg-gray-200 text-gray-400 cursor-not-allowed"
+                                                }`}
+                                        >
+                                            Continuar →
+                                        </button>
                                     </div>
+                                </div>
+                            ) : (
+                                <div className="flex flex-col items-center justify-center py-12">
+                                    <div className="w-10 h-10 rounded-full border-4 border-orange-500 border-t-transparent animate-spin" />
+                                    <p className="mt-4 text-sm text-gray-400">
+                                        Cargando...
+                                    </p>
+                                </div>
+                            )
+                        )}
 
-                                    : <div>
-                                        <hr className="my-4" />
-                                        <div className="flex items-center justify-center p-4">
-                                            <div className="flex flex-col items-center justify-center py-12">
-                                                <div className="w-10 h-10 rounded-full border-4 border-orange-500 border-t-transparent animate-spin"></div>
-
-                                                <p className="mt-4 text-sm text-gray-400">
-                                                    Cargando...
-                                                </p>
-                                            </div>
-                                        </div>
-                                    </div>}
-                            </>
-                        }
 
                         {step === 4 &&
                             <>
@@ -855,23 +1045,27 @@ export function AddAppoinBusinesssAnon() {
                                                 ✓ Horario seleccionado: {selectedTime}
                                             </div>
                                         )}
-
-                                        <div className="flex justify-between">
-
-                                            <button className="px-6 py-3 rounded-xl border border-gray-300 text-gray-600 font-medium hover:bg-gray-100 transition-all"
-                                                onClick={() => setStep(3)} >
+                                        {/* Navegación */}
+                                        <div className="flex gap-3 mt-6">
+                                            <button
+                                                type="button"
+                                                onClick={() => setStep(3)}
+                                                className="flex-1 px-4 py-3 rounded-xl border border-gray-300 text-gray-700 font-semibold hover:bg-gray-50 transition-all"
+                                            >
                                                 ← Atrás
                                             </button>
 
                                             <button
+                                                type="button"
                                                 disabled={!selectedTime}
                                                 onClick={() => setStep(5)}
-                                                className={`px-6 py-3 rounded-xl font-semibold transition-all shadow-md 
-                                            ${selectedTime ? "bg-orange-500 text-white hover:bg-orange-600 hover:shadow-lg"
-                                                        : "bg-gray-200 text-gray-400 cursor-not-allowed shadow-none"} `} >
-                                                Siguiente →
+                                                className={`flex-[1.4] flex items-center justify-center gap-2 px-4 py-3 rounded-xl font-semibold transition-all ${selectedTime
+                                                    ? "bg-orange-500 text-white hover:bg-orange-600"
+                                                    : "bg-gray-200 text-gray-400 cursor-not-allowed"
+                                                    }`}
+                                            >
+                                                Continuar →
                                             </button>
-
                                         </div>
 
                                     </div>
