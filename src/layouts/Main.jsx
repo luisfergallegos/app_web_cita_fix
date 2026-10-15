@@ -51,7 +51,7 @@ function Main() {
         <div className="relative">
 
           {/* 📱 Banner */}
-          {isMobileBrowser && showMobileBanner && (
+          {/* {isMobileBrowser && showMobileBanner && (
             <div className="fixed bottom-20 left-1/2 transform -translate-x-1/2 w-[90%] max-w-md bg-white shadow-xl rounded-2xl p-4 flex items-center justify-between z-50 animate-fade-in">
               <div>
                 <p className="font-semibold text-gray-900">
@@ -82,7 +82,7 @@ function Main() {
                 </button>
               </div>
             </div>
-          )}
+          )} */}
 
           {/* Navbar */}
           <Navbar />

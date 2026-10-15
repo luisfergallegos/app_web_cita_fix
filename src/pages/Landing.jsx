@@ -433,7 +433,7 @@ export function Landing() {
                             </h3>
 
                             <div className="mt-5">
-                                <a
+                                {/* <a
                                     href="https://play.google.com/store/apps/details?id=com.citafix.cita_fix&hl=es_419"
                                     className="group inline-flex items-center gap-2 text-gray-500 transition hover:text-black"
                                 >
@@ -442,7 +442,7 @@ export function Landing() {
                                     <span className="transition group-hover:translate-x-1">
                                         →
                                     </span>
-                                </a>
+                                </a> */}
                             </div>
                         </div>
 
