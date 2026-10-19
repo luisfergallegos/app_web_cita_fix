@@ -183,31 +183,46 @@ export function FindBusiness() {
                             ))}
                         </div>
                     ) : (
-                        <div className="text-white space-y-4">
-                            <div className="mt-10 max-w-5xl mx-auto">
-                                {empresas[index] && (
-                                    <div className="grid justify-center">
-                                        <div className="flex items-center mb-4 text-left">
-                                            <h3 className="inline-flex items-center gap-2 text-lg font-semibold text-white">
-                                                <span>✨</span>
-                                                <span>Servicios destacados</span>
-                                            </h3>
-                                        </div>
-                                        <CardBusiness
-                                            key={empresas[index].BUSSINESS_ID}
-                                            userId={userId}
-                                            userName={userName}
-                                            empresa={empresas[index]}
-                                            setIsOpen={setIsOpen}
-                                            setIndexEmp={setIndexEmp}
-                                            setQualifications={setQualifications}
-                                            setSelectBusiness={setSelectBusiness}
-                                            selectBusiness={selectBusiness}
-                                        />
-                                    </div>
-                                )}
-                            </div>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                            {empresas.map((empresa) => (
+                                <CardBusiness
+                                    key={empresa.BUSSINESS_ID}
+                                    userId={userId}
+                                    userName={userName}
+                                    empresa={empresa}
+                                    setIsOpen={setIsOpen}
+                                    setIndexEmp={setIndexEmp}
+                                    setQualifications={setQualifications}
+                                    setSelectBusiness={setSelectBusiness}
+                                    selectBusiness={selectBusiness}
+                                />
+                            ))}
                         </div>
+                        // <div className="text-white space-y-4">
+                        //     <div className="mt-10 max-w-5xl mx-auto">
+                        //         {empresas[index] && (
+                        //             <div className="grid justify-center">
+                        //                 <div className="flex items-center mb-4 text-left">
+                        //                     <h3 className="inline-flex items-center gap-2 text-lg font-semibold text-white">
+                        //                         <span>✨</span>
+                        //                         <span>Servicios destacados</span>
+                        //                     </h3>
+                        //                 </div>
+                        //                 <CardBusiness
+                        //                     key={empresas[index].BUSSINESS_ID}
+                        //                     userId={userId}
+                        //                     userName={userName}
+                        //                     empresa={empresas[index]}
+                        //                     setIsOpen={setIsOpen}
+                        //                     setIndexEmp={setIndexEmp}
+                        //                     setQualifications={setQualifications}
+                        //                     setSelectBusiness={setSelectBusiness}
+                        //                     selectBusiness={selectBusiness}
+                        //                 />
+                        //             </div>
+                        //         )}
+                        //     </div>
+                        // </div>
                     )}
 
                     {/* Modal */}

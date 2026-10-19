@@ -322,65 +322,109 @@ export function AddAppoin() {
     const { abierto, mensaje, hora } = getBusinessStatus(Horario);
 
 
+
     useEffect(() => {
         const fData = async () => {
-            if (userId == '') {
-                navigate("/");
-            }
-            else if (sCorreo == null && sPassword == null) {
-                navigate("/");
-            }
-            //Solicitar por GET
-            try {
-                const response = await fetch(`${urlApi}spaceBusinessId?bussiness_id=${BUSSINESS_ID}`);
-                if (response.status == 200) {
-                    const json = await response.json();
-                    setSpaces(json['data']);
-                    setLoading(false);
-                }
-                else if (response.status == 500) {
-                    setStep(2);
-                    //Solicitar por GET
-                    try {
-                        // bussiness_id=1&busSpacesId=2
-                        const response = await fetch(`${urlApi}appoinBussDateDays?bussiness_id=${BUSSINESS_ID}`);
-                        if (!response.ok) {
-                            console.log(`Error getting getDaysInactive.`);
-                            throw new Error(`HTTP error! status: ${response.status}`);
-                        }
-                        const json = await response.json();
-                        setExcludeDates(selectableDayPredicate(json.data || []));
 
-                        //Solicitar por GET
-                        try {
-                            const response = await fetch(`${urlApi}appoinBussDate?bussiness_id=${BUSSINESS_ID}`);
-                            if (!response.ok) {
-                                console.log(`Error getting getDaysInactive.`);
-                                throw new Error(`HTTP error! status: ${response.status}`);
-                            }
-                            const json = await response.json();
-                            setCitas(json['data']);
-
-                        }
-                        catch (e) {
-                            return;
-                        }
-
-                        setLoading(false);
-                    }
-                    catch (e) {
-                        return;
-                    }
-                }
-
-            }
-            catch (e) {
+            // 1. Validar sesión y negocio
+            if (!userId || !BUSSINESS_ID) {
+                navigate("/", { replace: true });
                 return;
+            }
+
+            if (sCorreo == null && sPassword == null) {
+                navigate("/", { replace: true });
+                return;
+            }
+
+            setLoading(true);
+
+            try {
+                // 2. Consultar espacios del negocio
+                const response = await fetch(
+                    `${urlApi}spaceBusinessId?bussiness_id=${BUSSINESS_ID}`
+                );
+
+                if (!response.ok) {
+                    throw new Error(
+                        `Error consultando espacios: ${response.status}`
+                    );
+                }
+
+                const json = await response.json();
+
+                if (json.sucess === false) {
+                    throw new Error("No fue posible consultar los espacios");
+                }
+
+                const listaEspacios = Array.isArray(json.data)
+                    ? json.data
+                    : [];
+
+                setSpaces(listaEspacios);
+
+                // 3. Negocio CON espacios
+                if (listaEspacios.length > 0) {
+                    console.log(
+                        "Negocio con espacios:",
+                        listaEspacios.length
+                    );
+
+                    setStep(1);
+                    return;
+                }
+
+                // 4. Negocio SIN espacios
+                console.log("Negocio sin espacios de servicio");
+
+                setStep(2);
+
+                // Consultar disponibilidad general del negocio
+                const [responseDays, responseDates] =
+                    await Promise.all([
+                        fetch(
+                            `${urlApi}appoinBussDateDays?bussiness_id=${BUSSINESS_ID}`
+                        ),
+                        fetch(
+                            `${urlApi}appoinBussDate?bussiness_id=${BUSSINESS_ID}`
+                        )
+                    ]);
+
+                if (!responseDays.ok || !responseDates.ok) {
+                    throw new Error(
+                        "No fue posible cargar la disponibilidad"
+                    );
+                }
+
+                const [days, dates] = await Promise.all([
+                    responseDays.json(),
+                    responseDates.json()
+                ]);
+
+                setExcludeDates(
+                    selectableDayPredicate(days.data || [])
+                );
+
+                setCitas(
+                    Array.isArray(dates.data) ? dates.data : []
+                );
+
+            } catch (error) {
+                console.error(
+                    "Error cargando formulario de citas:",
+                    error
+                );
+
+                toast.error(
+                    "No fue posible cargar la disponibilidad del negocio."
+                );
+
+            } finally {
+                setLoading(false);
             }
         };
         fData();
     }, []);
-
 
     if (loading) {
         return <Loaging />;
@@ -632,29 +676,57 @@ export function AddAppoin() {
                             <h4 className="text-lg font-semibold">Espacio de servicio</h4>
                         </div> : <></>}
 
-                        {spaces.length > 0 ? spaces.map((index) => (
-                            // <div className="font-semibold   shadow-md transition flex items-center justify-between"
-                            <div className={`bg-white py-2 px-2 rounded-md shadow-xl p-10 text-center mb-2
+                        {spaces.length > 0 && !selectSpace ? spaces.map((index) => (
+                                // <div className="font-semibold   shadow-md transition flex items-center justify-between"
+                                <div className={`bg-white py-2 px-2 rounded-md shadow-xl p-10 text-center mb-2
                                 transition-all duration-300 cursor-pointer hover:scale-105 hover:shadow-2xl 
                                 ${selectSpace?.BUS_SPACES_ID == index.BUS_SPACES_ID ? "ring-2 ring-blue-500" : ""} `}
-                                onClick={() => {
-                                    setSelectSpace(selectSpace?.BUS_SPACES_ID == index.BUS_SPACES_ID ? null : index);
-
-                                    setbFin(false);
-                                    setStartDate(null);
-                                    setselectedTime('');
-                                    setselectedIndex();
-                                    setcita([]);
-                                }}>
-                                <div className="flex items-center space-x-4" >
-                                    <TagIcon className={`w-6 h-6 ml-2" ${selectSpace?.BUS_SPACES_ID == index.BUS_SPACES_ID ? "text-blue-500" : "text-orange-600"} `} />
-                                    <div className='flex flex-col'>
-                                        <label className="text-black">{index.ALIAS}</label>
-                                        <p className="text-gray-400">{index.NAME_SPACE}</p>
+                                    onClick={() => {
+                                        setSelectSpace(selectSpace?.BUS_SPACES_ID == index.BUS_SPACES_ID ? null : index);
+                                        setbFin(false);
+                                        setStartDate(null);
+                                        setselectedTime('');
+                                        setselectedIndex();
+                                        setcita([]);
+                                    }}>
+                                    <div className="flex items-center space-x-4" >
+                                        <TagIcon className={`w-6 h-6 ml-2" ${selectSpace?.BUS_SPACES_ID == index.BUS_SPACES_ID ? "text-blue-500" : "text-orange-600"} `} />
+                                        <div className='flex flex-col'>
+                                            <label className="text-black">{index.ALIAS}</label>
+                                            <p className="text-gray-400">{index.NAME_SPACE}</p>
+                                        </div>
                                     </div>
                                 </div>
+                            )) : <></>}
+                        {/* Mostrar espacio seleccionado */}
+                        {selectSpace && (
+                            <div className="flex items-center gap-3 mt-5 bg-green-50 border border-green-100 rounded-xl p-3">
+                                <CheckCircleIcon className="w-6 h-6 text-green-600 shrink-0" />
+
+                                <div className="flex-1 text-left">
+                                    <p className="text-xs text-green-700">
+                                        Espacio seleccionado
+                                    </p>
+                                    <p className="text-sm font-semibold text-gray-800 capitalize">
+                                        {selectSpace.ALIAS}
+                                    </p>
+                                    <p className="text-sm text-gray-800 capitalize">
+                                        {selectSpace.NAME_SPACE}
+                                    </p>
+                                </div>
+
+                                <button
+                                    type="button"
+                                    aria-label="Limpiar fecha"
+                                    onClick={() => {
+                                        setSelectSpace(null);
+                                    }}
+                                    className="p-2 text-gray-400 hover:text-red-500"
+                                >
+                                    <CloseIcon className="w-5 h-5" />
+                                </button>
                             </div>
-                        )) : <></>}
+                        )}
                         <button
                             disabled={!selectSpace}
                             onClick={(e) => {
@@ -835,17 +907,21 @@ export function AddAppoin() {
 
                                     {/* Navegación */}
                                     <div className="flex gap-3 mt-6">
-                                        <button
-                                            type="button"
-                                            onClick={() => {
-                                                if (spaces.length > 0)
-                                                    setStep(1);
-                                                else setStep(2);
-                                            }}
-                                            className="flex-1 px-4 py-3 rounded-xl border border-gray-300 text-gray-700 font-semibold hover:bg-gray-50 transition-all"
-                                        >
-                                            ← Atrás
-                                        </button>
+                                        {spaces.length > 0 && (
+                                            <button
+                                                type="button"
+                                                onClick={() => {
+                                                    if (spaces.length > 0)
+                                                        setStep(1);
+                                                    else setStep(2);
+                                                }}
+                                                className="flex-1 px-4 py-3 rounded-xl border border-gray-300 text-gray-700 font-semibold hover:bg-gray-50 transition-all"
+                                            >
+                                                ← Atrás
+                                            </button>
+
+                                        )}
+
 
                                         <button
                                             type="button"
@@ -1052,12 +1128,12 @@ export function AddAppoin() {
                                         </div>
                                         : <div className="mb-4 text-sm text-green-600 font-medium">
                                             ✓ Seleccionado: Acudir al establecimiento
-                                        </div>}                                      
+                                        </div>}
                                     {/* Navegación */}
                                     <div className="flex gap-3 mt-6">
                                         <button
                                             type="button"
-                                            onClick={() => setStep(3)} 
+                                            onClick={() => setStep(3)}
                                             className="flex-1 px-4 py-3 rounded-xl border border-gray-300 text-gray-700 font-semibold hover:bg-gray-50 transition-all"
                                         >
                                             ← Atrás
