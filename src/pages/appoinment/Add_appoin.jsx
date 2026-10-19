@@ -1052,8 +1052,7 @@ export function AddAppoin() {
                                         </div>
                                         : <div className="mb-4 text-sm text-green-600 font-medium">
                                             ✓ Seleccionado: Acudir al establecimiento
-                                        </div>}
-                                    
+                                        </div>}                                      
                                     {/* Navegación */}
                                     <div className="flex gap-3 mt-6">
                                         <button

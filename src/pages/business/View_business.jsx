@@ -100,15 +100,13 @@ export function ViewBusiness() {
 
     }
 
-    const desplegarPantallaAddAppoin = async (e) => {
+    const desplegarPantallaAddAppoin = (e) => {
         e.stopPropagation();
-        if (!userName) {
-            navigate("/addAppoinBusinessAnon", { state: { empresa: empresa, selectSpace: [] } });
-        }
-        else {
-            navigate("/addAppoin", {
-                state: { userId: userId, userName: userName, business: empresa },
-            });
+        const nombreUsuario = (userName ?? "").trim();
+        if (nombreUsuario === "") {
+            navigate("/addAppoinBusinessAnon", { state: { empresa, selectSpace: null } });
+        } else {
+            navigate("/addAppoin", { state: { userId, userName: nombreUsuario, business: empresa } });
         }
     };
 

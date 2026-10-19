@@ -266,95 +266,94 @@ export function AddAppoinBusinesssAnon() {
 
     useEffect(() => {
         const fData = async () => {
-            if (empresa.BUSSINESS_ID == '') {
-                navigate("/");
+            if (!empresa?.BUSSINESS_ID) {
+                navigate("/", { replace: true });
+                return;
             }
-            // else if (sCorreo == null && sPassword == null) {
-            //     navigate("/");
-            // }
-            else if (!selectSpace) {
-                //Solicitar por GET
-                try {
-                    const response = await fetch(`${urlApi}spaceBusinessId?bussiness_id=${empresa.BUSSINESS_ID}`);
-                    if (response.status == 200) {
-                        const json = await response.json();
-                        setSpaces(json['data']);
-                        setLoading(false);
+
+            setLoading(true);
+
+            try {
+                // Si ya viene un espacio seleccionado
+                if (selectSpace?.BUS_SPACES_ID) {
+                    // console.log("Espacio seleccionado:", selectSpace.BUS_SPACES_ID);
+
+                    const busSpacesId = selectSpace.BUS_SPACES_ID;
+
+                    const [responseDays, responseDates] = await Promise.all([
+                        fetch(`${urlApi}appoinBussDateDays?bussiness_id=${empresa.BUSSINESS_ID}&busSpacesId=${busSpacesId}`),
+                        fetch(`${urlApi}appoinBussDate?bussiness_id=${empresa.BUSSINESS_ID}&busSpacesId=${busSpacesId}`)
+                    ]);
+
+                    if (!responseDays.ok || !responseDates.ok) {
+                        throw new Error("Error al cargar disponibilidad del espacio");
                     }
-                    else if (response.status == 500) {
-                        setStep(2);
-                        //Solicitar por GET
-                        try {
-                            const response = await fetch(`${urlApi}appoinBussDateDays?bussiness_id=${empresa.BUSSINESS_ID}`);
-                            if (!response.ok) {
-                                console.log(`Error getting getDaysInactive.`);
-                                throw new Error(`HTTP error! status: ${response.status}`);
-                            }
-                            const json = await response.json();
-                            setExcludeDates(selectableDayPredicate(json['data']));
 
-                            //Solicitar por GET
-                            try {
-                                const response = await fetch(`${urlApi}appoinBussDate?bussiness_id=${empresa.BUSSINESS_ID}`);
-                                if (!response.ok) {
-                                    console.log(`Error getting getDaysInactive.`);
-                                    throw new Error(`HTTP error! status: ${response.status}`);
-                                }
-                                const json = await response.json();
-                                setCitas(json['data']);
-                                setLoading(false);
-                            }
-                            catch (e) {
-                                return;
-                            }
+                    const [days, dates] = await Promise.all([
+                        responseDays.json(),
+                        responseDates.json()
+                    ]);
 
-                            setLoading(false);
-                        }
-                        catch (e) {
-                            return;
-                        }
+                    setExcludeDates(selectableDayPredicate(days.data || []));
+                    setCitas(dates.data || []);
+                    setStep(2);
+                    setbFin(true);
 
-                    }
-                }
-                catch (e) {
                     return;
                 }
-            }
-            else {
-                //Solicitar por GET
-                try {
-                    const response = await fetch(`${urlApi}appoinBussDateDays?bussiness_id=${empresa.BUSSINESS_ID}&busSpacesId=${selectSpace.BUS_SPACES_ID}`);
-                    if (!response.ok) {
-                        console.log(`Error getting getDaysInactive.`);
-                        throw new Error(`HTTP error! status: ${response.status}`);
-                    }
-                    const json = await response.json();
-                    setExcludeDates(selectableDayPredicate(json['data']));
 
-                    //Solicitar por GET
-                    try {
-                        const response = await fetch(`${urlApi}appoinBussDate?bussiness_id=${empresa.BUSSINESS_ID}&busSpacesId=${selectSpace.BUS_SPACES_ID}`);
-                        if (!response.ok) {
-                            console.log(`Error getting getDaysInactive.`);
-                            throw new Error(`HTTP error! status: ${response.status}`);
-                        }
-                        const json = await response.json();
-                        setCitas(json['data']);
-                        setLoading(false);
-                    }
-                    catch (e) {
-                        return;
-                    }
+                // Si no viene espacio seleccionado, consultar al API
+                const responseSpaces = await fetch(
+                    `${urlApi}spaceBusinessId?bussiness_id=${empresa.BUSSINESS_ID}`
+                );
 
-                    setLoading(false);
+                if (!responseSpaces.ok && responseSpaces.status !== 500) {
+                    throw new Error(`Error consultando espacios: ${responseSpaces.status}`);
                 }
-                catch (e) {
+
+                let listaEspacios = [];
+
+                if (responseSpaces.ok) {
+                    const json = await responseSpaces.json();
+                    listaEspacios = Array.isArray(json.data) ? json.data : [];
+                }
+
+                if (listaEspacios.length > 0) {
+                    // Negocio con espacios: mostrar selección
+                    setSpaces(listaEspacios);
+                    setStep(1);
                     return;
                 }
+
+                // Negocio sin espacios: consultar disponibilidad general
+                // console.log("Negocio sin espacios de servicio");
+
+                setSpaces([]);
+                setStep(2);
+
+                const [responseDays, responseDates] = await Promise.all([
+                    fetch(`${urlApi}appoinBussDateDays?bussiness_id=${empresa.BUSSINESS_ID}`),
+                    fetch(`${urlApi}appoinBussDate?bussiness_id=${empresa.BUSSINESS_ID}`)
+                ]);
+
+                if (!responseDays.ok || !responseDates.ok) {
+                    throw new Error("Error al cargar disponibilidad general");
+                }
+
+                const [days, dates] = await Promise.all([
+                    responseDays.json(),
+                    responseDates.json()
+                ]);
+
+                setExcludeDates(selectableDayPredicate(days.data || []));
+                setCitas(dates.data || []);
+
+            } catch (error) {
+                console.error("Error cargando formulario de citas:", error);
+                toast.error("No fue posible cargar la disponibilidad del negocio.");
+            } finally {
+                setLoading(false);
             }
-
-
-
         };
         fData();
     }, []);

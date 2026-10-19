@@ -19,7 +19,7 @@ const StarRatingNot = (stars) => "✰".repeat(stars);
 
 
 export function CardBusiness({
-    key,
+    // key,
     userId,
     userName,
     empresa,
@@ -55,17 +55,14 @@ export function CardBusiness({
         Horario,
     } = empresa;
 
-    const desplegarPantallaAddAppoin = async (e) => {
+    const desplegarPantallaAddAppoin = (e) => {
         e.stopPropagation();
-        if (!userName) {
-            navigate("/addAppoinBusinessAnon", { state: { empresa: empresa, selectSpace: [] } });
+        const nombreUsuario = (userName ?? "").trim();
+        if (nombreUsuario === "") {
+            navigate("/addAppoinBusinessAnon", { state: { empresa, selectSpace: null } });
+        } else {
+            navigate("/addAppoin", { state: { userId, userName: nombreUsuario, business: empresa } });
         }
-        else {
-            navigate("/addAppoin", {
-                state: { userId: userId, userName: userName, business: empresa },
-            });
-        }
-
     };
 
     const handleButtonIcon = async (e) => {
@@ -202,14 +199,14 @@ export function CardBusiness({
             <div className="flex items-center justify-center gap-2 mt-2">
                 <div
                     className={`w-3 h-3 rounded-full ${abierto
-                            ? "bg-green-500"
-                            : "bg-red-500"
+                        ? "bg-green-500"
+                        : "bg-red-500"
                         }`}
                 />
                 <span
                     className={`font-medium ${abierto
-                            ? "text-green-600"
-                            : "text-red-600"
+                        ? "text-green-600"
+                        : "text-red-600"
                         }`}
                 >
                     {mensaje}
@@ -244,7 +241,7 @@ export function CardBusiness({
                     className="text-gray-500 text-sm leading-tight cursor-pointer"
                     onClick={handleADDRESS}
                 >
-                   📍 {CITY}, {STATE}
+                    📍 {CITY}, {STATE}
                 </p>
             </div>
 
@@ -254,7 +251,7 @@ export function CardBusiness({
                     📞 Llamar ahora
                 </a> : <div className="text-gray-500 text-sm">
                     Este negocio aún no ha agregado información de contacto.
-                </div>}                
+                </div>}
             </div>
 
         </div>
