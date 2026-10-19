@@ -389,19 +389,35 @@ export function Landing() {
                         )}
 
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                        {filteredNames.map((empresa) => (
-                            <CardBusiness
-                                // key={empresa.BUSSINESS_ID}
-                                userId={userId}
-                                userName={userName}
-                                empresa={empresa}
-                                setIsOpen={setIsOpen}
-                                setIndexEmp={setIndexEmp}
-                                setQualifications={setQualifications}
-                                setSelectBusiness={setSelectBusiness}
-                                selectBusiness={selectBusiness}
-                            />
-                        ))}
+                        {searchText !== "" ?
+                            filteredNames.map((empresa) => (
+                                <CardBusiness
+                                    // key={empresa.BUSSINESS_ID}
+                                    userId={userId}
+                                    userName={userName}
+                                    empresa={empresa}
+                                    setIsOpen={setIsOpen}
+                                    setIndexEmp={setIndexEmp}
+                                    setQualifications={setQualifications}
+                                    setSelectBusiness={setSelectBusiness}
+                                    selectBusiness={selectBusiness}
+                                />
+                            ))
+                            :
+                            empresas.map((empresa) => (
+                                <CardBusiness
+                                    key={empresa.BUSSINESS_ID}
+                                    userId={userId}
+                                    userName={userName}
+                                    empresa={empresa}
+                                    setIsOpen={setIsOpen}
+                                    setIndexEmp={setIndexEmp}
+                                    setQualifications={setQualifications}
+                                    setSelectBusiness={setSelectBusiness}
+                                    selectBusiness={selectBusiness}
+                                />
+                            ))
+                        }
                     </div>
                 </div>
 
