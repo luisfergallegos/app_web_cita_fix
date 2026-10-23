@@ -169,17 +169,24 @@ export function AddAppoinBusinesssAnon() {
             var url = bSwitchPhoneEmail ? `${urlApi}appoinW` : `${urlApi}appoin`;
             const response = await fetch(url, options);
             const json = await response.json();
-            if (json['sucess'] == false) {
-                toast.error(`Ya no se encuentra disponible Fecha : ${_selectedDate} Hora : ${selectedTime} Corríjalo e inténtelo nuevamente.`);
-                // console.log(`Error al guardar cita.`);
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-            else {
+            // Cita creada correctamente
+            if (response.ok && json.sucess === true) {
+                toast.success("Cita creada correctamente");
                 navigate("/");
+                return;
             }
+            // Horario ocupado
+            if (response.status === 409 || (response.status === 200 && json.sucess === false && Number(json.data) > 0)) {
+                toast.error(`Ya no se encuentra disponible Fecha: ${_selectedDate} Hora: ${selectedTime}.`);
+                return;
+            }
+            // Otros errores del API
+            console.error("Error creando cita:", json);
+            toast.error(json.message || json.json || "No fue posible crear la cita. Inténtalo nuevamente.");
         }
         catch (e) {
-            return;
+            console.error("Error de conexión:", e);
+            toast.error("No fue posible conectar con el servidor. Inténtalo nuevamente." );
         }
         finally {
             setCanSubmit(true);

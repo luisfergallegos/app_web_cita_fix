@@ -66,27 +66,43 @@ export function CancelarAppoin() {
             try {
                 const response = await fetch(`${urlApi}appoin?apoinment_id=${cita.APOINMENT_ID}&usernotification_id=${cita.BUS_USER_ID}&dorsl=${cita.USER_NAME}&for_who=Bus`, options);
                 const json = await response.json();
-                if (!response.ok) {
-                    // setIsOpenC(false);
-                    // console.log(`Error al calificar cita.`);
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-                if (json['sucess'] == false) {
-                    toast.error("No fue posible cancelar tu cita");
+                // =====================================
+                // 1. Cita cancelada correctamente
+                // =====================================
+                if (response.ok && json.sucess === true) {
+                    toast.success("Cita cancelada correctamente.");
+                    setIsOpen(false);
+                    navigate("/");
                     return;
                 }
-                else {
-                    toast.success("Cita cancelada");
+                // =====================================
+                // 2. Cita ya cancelada
+                // =====================================
+                if (response.status === 409) {
+                    toast.info( typeof json.data === "string" ? json.data : "La cita ya se encontraba cancelada." );
+                    setIsOpen(false);
                     navigate("/");
+                    return;
                 }
-            }
-            catch (e) {
-                return;
+                // =====================================
+                // 3. Cita no encontrada
+                // =====================================
+                if (response.status === 404) {
+                    toast.error("La cita no fue encontrada.");
+                    return;
+                }
+                // =====================================
+                // 4. Otros errores del backend
+                // =====================================
+                console.error("Error al cancelar cita:", json);
+                toast.error( json.message || json.json || (typeof json.data === "string" ? json.data : null) || "No fue posible cancelar la cita.");
+            } catch (error) {
+                console.error("Error de conexión:", error);
+                toast.error("Ocurrió un error de conexión. Verifica el estado de la cita antes de intentarlo nuevamente.");
             }
             finally {
                 setbAcceder(true);
             }
-
         }
     };
 
@@ -306,8 +322,8 @@ export function CancelarAppoin() {
                                         </p>
                                     </div>
                                     <div className="mt-6">
-                                        <button className='w-full bg-orange-500 text-white py-3 rounded-xl font-semibold hover:bg-orange-600 transition' 
-                                        onClick={() => { setIsOpenC(false); navigate("/"); }}>Volver al inicio</button>
+                                        <button className='w-full bg-orange-500 text-white py-3 rounded-xl font-semibold hover:bg-orange-600 transition'
+                                            onClick={() => { setIsOpenC(false); navigate("/"); }}>Volver al inicio</button>
                                     </div>
                                 </div>
                             </div>

@@ -183,14 +183,29 @@ export function AddAppoin() {
                 body: JSON.stringify(body)
             });
             const json = await resp.json();
-            if (json.sucess == false) {
-                toast.error(`Fecha ${selectedDate} / Hora ${selectedTime} ya no está disponible.`);
+            // ====================================
+            // 1. Cita creada correctamente
+            // ====================================
+            if (resp.ok && json.sucess === true) {
+                setIsOpen(false);
+                navigate("/home");
                 return;
             }
-            navigate('/home');
-        } catch (e) {
-            console.error(e);
-            toast.error('Ocurrió un error al guardar la cita. Intenta de nuevo.');
+            // ====================================
+            // 2. Horario ocupado
+            // ====================================
+            if (resp.status === 409) {
+                toast.error( `Fecha ${selectedDate} / Hora ${selectedTime} ya no está disponible.`);
+                return;
+            }
+            // ====================================
+            // 3. Otros errores del API
+            // ====================================
+            console.error("Error API:", json);
+            toast.error( json.message || json.json || "No fue posible guardar la cita.");
+        } catch (error) {
+            console.error("Error de conexión:", error);
+            toast.error("Ocurrió un error de conexión. Verifica si la cita se registró antes de intentarlo nuevamente.");
         }
         finally {
             setCanSubmit(true);
@@ -677,27 +692,27 @@ export function AddAppoin() {
                         </div> : <></>}
 
                         {spaces.length > 0 && !selectSpace ? spaces.map((index) => (
-                                // <div className="font-semibold   shadow-md transition flex items-center justify-between"
-                                <div className={`bg-white py-2 px-2 rounded-md shadow-xl p-10 text-center mb-2
+                            // <div className="font-semibold   shadow-md transition flex items-center justify-between"
+                            <div className={`bg-white py-2 px-2 rounded-md shadow-xl p-10 text-center mb-2
                                 transition-all duration-300 cursor-pointer hover:scale-105 hover:shadow-2xl 
                                 ${selectSpace?.BUS_SPACES_ID == index.BUS_SPACES_ID ? "ring-2 ring-blue-500" : ""} `}
-                                    onClick={() => {
-                                        setSelectSpace(selectSpace?.BUS_SPACES_ID == index.BUS_SPACES_ID ? null : index);
-                                        setbFin(false);
-                                        setStartDate(null);
-                                        setselectedTime('');
-                                        setselectedIndex();
-                                        setcita([]);
-                                    }}>
-                                    <div className="flex items-center space-x-4" >
-                                        <TagIcon className={`w-6 h-6 ml-2" ${selectSpace?.BUS_SPACES_ID == index.BUS_SPACES_ID ? "text-blue-500" : "text-orange-600"} `} />
-                                        <div className='flex flex-col'>
-                                            <label className="text-black">{index.ALIAS}</label>
-                                            <p className="text-gray-400">{index.NAME_SPACE}</p>
-                                        </div>
+                                onClick={() => {
+                                    setSelectSpace(selectSpace?.BUS_SPACES_ID == index.BUS_SPACES_ID ? null : index);
+                                    setbFin(false);
+                                    setStartDate(null);
+                                    setselectedTime('');
+                                    setselectedIndex();
+                                    setcita([]);
+                                }}>
+                                <div className="flex items-center space-x-4" >
+                                    <TagIcon className={`w-6 h-6 ml-2" ${selectSpace?.BUS_SPACES_ID == index.BUS_SPACES_ID ? "text-blue-500" : "text-orange-600"} `} />
+                                    <div className='flex flex-col'>
+                                        <label className="text-black">{index.ALIAS}</label>
+                                        <p className="text-gray-400">{index.NAME_SPACE}</p>
                                     </div>
                                 </div>
-                            )) : <></>}
+                            </div>
+                        )) : <></>}
                         {/* Mostrar espacio seleccionado */}
                         {selectSpace && (
                             <div className="flex items-center gap-3 mt-5 bg-green-50 border border-green-100 rounded-xl p-3">
