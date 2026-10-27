@@ -34,6 +34,14 @@ export function CardCita({ index, bAccederIndex, indexConfirm, bWeek }) {
 
     }
 
+    // Function to convert Base64 string to binary data
+    const arrayBufferToBase64 = (buffer) => {
+        var binary = '';
+        var bytes = [].slice.call(new Uint8Array(buffer));
+        bytes.forEach((b) => binary += String.fromCharCode(b));
+        return btoa(binary);
+    };
+
     return (
 
         <div

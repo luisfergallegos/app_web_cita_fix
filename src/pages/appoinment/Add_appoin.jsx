@@ -380,11 +380,6 @@ export function AddAppoin() {
 
                 // 3. Negocio CON espacios
                 if (listaEspacios.length > 0) {
-                    console.log(
-                        "Negocio con espacios:",
-                        listaEspacios.length
-                    );
-
                     setStep(1);
                     return;
                 }
