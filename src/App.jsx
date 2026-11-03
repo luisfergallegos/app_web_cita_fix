@@ -27,6 +27,7 @@ import UpdateEvento, { UpdateEventoLoader } from './pages/evento/update_evento.j
 import { logoutAction } from "./actions/logout.js";
 import Politicas, { PoliticasLoader } from './pages/Politicas.jsx';
 import Landing, { LandingLoader } from './pages/Landing.jsx';
+import Ubicacion from './pages/business/Ubicacion.jsx';
 
 const router = createBrowserRouter([
   {
@@ -129,6 +130,12 @@ const router = createBrowserRouter([
         path: "viewBusiness",
         element: <ViewBusiness />,
         loader: ViewBusinessLoader,
+        /*action: expensesAction, */
+        errorElement: <Error />
+      },
+      {
+        path: "ubicacion/:id",
+        element: <Ubicacion />,
         /*action: expensesAction, */
         errorElement: <Error />
       },
