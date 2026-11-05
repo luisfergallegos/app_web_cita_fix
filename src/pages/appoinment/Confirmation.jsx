@@ -29,8 +29,9 @@ export function Confirmation() {
     const [bAcceder, setbAcceder] = useState(true);
 
     const [searchParams] = useSearchParams();
-    const apoinment_id = searchParams.get("ai");
-    const keyName = searchParams.get("kn");
+    // const apoinment_id = searchParams.get("ai");
+    // const keyName = searchParams.get("kn");
+    const token = searchParams.get("token");
     const [flagEvent, setFlagEvent] = useState(searchParams.get("fe") == 'true' ? true : false);
 
     // Function to convert Base64 string to binary data
@@ -174,7 +175,7 @@ export function Confirmation() {
 
     useEffect(() => {
         // Cargar user info desde loader
-        if (!apoinment_id) {
+        if (!token) {
             navigate("/");
         }
         const fData = async () => {
@@ -182,7 +183,7 @@ export function Confirmation() {
             try {
                 // const response = await fetch(`${urlApi}getAppoin?apoinment_id=${apoinment_id}`);
                 // console.log("📡 URL:", `${urlApi}getAppoin?apoinment_id=${apoinment_id}`);
-                const response = await fetch(`${urlApi}getAppoin?apoinment_id=${apoinment_id}`)
+                const response = await fetch(`${urlApi}getAppoinByToken?token=${token}`)
                     .catch(err => {
                         console.error("❌ FETCH ERROR:", err);
                     });
